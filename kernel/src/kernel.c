@@ -45,8 +45,8 @@ t_kernel_config crear_archivo_config_kernel(char* ruta) {
     	config.alfa = config_get_int_value(kernel_config, "ALFA");
 
     }
-    //  t_list* dispositivos_IO;		--> ver como manejar las listas
-    //t_list* duraciones_IO;
+    config.dispositivos_IO = config_get_array_value(kernel_config,"DISPOSITIVOS_IO");
+    config.duraciones_IO = config_get_array_value(kernel_config,"DURACIONES_IO");
     config.retardo_cpu = config_get_int_value(kernel_config, "RETARDO_CPU");
     config.grado_multiprogramacion = config_get_int_value(kernel_config, "GRADO_MULTIPROGRAMACION");
     config.grado_multiprocesamiento = config_get_int_value(kernel_config, "GRADO_MULTIPROCESAMIENTO");

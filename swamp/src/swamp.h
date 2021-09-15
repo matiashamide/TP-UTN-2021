@@ -28,7 +28,7 @@ typedef struct {
     int puerto;
     int tamanio_swamp;
     int tamanio_pag;
-    t_list* archivos_swamp;
+    char** archivos_swamp;
     int marcos_max;
     int retardo_swap;
 

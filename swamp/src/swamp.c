@@ -33,16 +33,10 @@ t_swamp_config crear_archivo_config_swamp(char* ruta) {
     config.puerto = config_get_int_value(swamp_config, "PUERTO");
     config.tamanio_swamp = config_get_int_value(swamp_config, "TAMANIO_SWAP");
     config.tamanio_pag = config_get_int_value(swamp_config, "TAMANIO_PAGINA");
-    // ver q hacer con t_list* archivos_swamp;
+    config.archivos_swamp = config_get_array_value(swamp_config,"ARCHIVOS_SWAP");
     config.marcos_max = config_get_int_value(swamp_config, "MARCOS_MAXIMOS");
     config.retardo_swap = config_get_int_value(swamp_config, "RETARDO_SWAP");
 
     return config;
 }
-
-
-  int marcos_max;
-  int retardo_swap;
-
-
 

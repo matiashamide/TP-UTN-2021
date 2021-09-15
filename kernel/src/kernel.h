@@ -29,8 +29,8 @@ typedef struct {
     char* alg_plani;
     int estimacion_inicial;
     int alfa;
-    t_list* dispositivos_IO;
-    t_list* duraciones_IO;
+    char** dispositivos_IO;
+    char** duraciones_IO;
     int retardo_cpu;
     int grado_multiprogramacion;
 	int grado_multiprocesamiento;
