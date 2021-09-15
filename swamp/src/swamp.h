@@ -8,6 +8,36 @@
 #ifndef SWAMP_H_
 #define SWAMP_H_
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <semaphore.h>
+#include <unistd.h>
+#include <pthread.h>
+#include<signal.h>
+#include<unistd.h>
+#include <dirent.h>
+#include<commons/collections/list.h>
+#include<commons/config.h>
+#include<commons/string.h>
+
+
+//ESTRUCTURAS
+
+typedef struct {
+    char* ip;
+    int puerto;
+    int tamanio_swamp;
+    int tamanio_pag;
+    t_list* archivos_swamp;
+    int marcos_max;
+    int retardo_swap;
+
+}t_swamp_config;
+
+
+//FUNCIONES
+t_swamp_config crear_archivo_config_swamp(char* ruta);
+
 
 
 #endif /* SWAMP_H_ */

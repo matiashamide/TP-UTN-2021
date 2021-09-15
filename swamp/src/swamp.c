@@ -8,12 +8,41 @@
  ============================================================================
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include<commons/string.h>
+#include "swamp.h"
 
 int main(void) {
 	char* string = string_new();
 	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
 	return EXIT_SUCCESS;
 }
+
+
+
+//--------------------------------------------------------------------------------------------
+t_swamp_config crear_archivo_config_swamp(char* ruta) {
+    t_config* swamp_config;
+    swamp_config = config_create(ruta);
+    t_swamp_config config;
+
+    if (swamp_config == NULL) {
+        printf("No se pudo leer el archivo de configuracion de Swamp\n");
+        exit(-1);
+    }
+
+    config.ip = config_get_string_value(swamp_config, "IP");
+    config.puerto = config_get_int_value(swamp_config, "PUERTO");
+    config.tamanio_swamp = config_get_int_value(swamp_config, "TAMANIO_SWAP");
+    config.tamanio_pag = config_get_int_value(swamp_config, "TAMANIO_PAGINA");
+    // ver q hacer con t_list* archivos_swamp;
+    config.marcos_max = config_get_int_value(swamp_config, "MARCOS_MAXIMOS");
+    config.retardo_swap = config_get_int_value(swamp_config, "RETARDO_SWAP");
+
+    return config;
+}
+
+
+  int marcos_max;
+  int retardo_swap;
+
+
+
