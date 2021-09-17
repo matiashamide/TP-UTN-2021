@@ -47,6 +47,7 @@ int mate_init(mate_instance *lib_ref, char *config)
 		        		        printf("Error al conectar con Memoria");
 		        		        return 1;
 		    }
+	}
 
   //Reserva memoria del tamanio de estructura administrativa
   lib_ref->group_info = malloc(sizeof(mate_inner_structure));

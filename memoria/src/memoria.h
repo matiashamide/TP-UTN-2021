@@ -46,6 +46,7 @@ typedef struct {
 //FUNCIONES
 t_memoria_config crear_archivo_config_memoria(char* ruta);
 int crear_conexion(char *ip, char* puerto);
+int iniciar_servidor(char* IP, char* PUERTO);
 
 
 

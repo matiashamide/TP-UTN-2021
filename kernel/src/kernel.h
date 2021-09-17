@@ -45,6 +45,7 @@ typedef struct {
 //FUNCIONES
 t_kernel_config crear_archivo_config_kernel(char* ruta);
 int crear_conexion(char *ip, char* puerto);
+int iniciar_servidor(char* IP, char* PUERTO);
 
 #endif /* KERNEL_H_ */
 
