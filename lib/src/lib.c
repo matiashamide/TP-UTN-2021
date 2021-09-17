@@ -21,12 +21,6 @@ int main(void) {
 
 //------------------General Functions---------------------/
 
-typedef struct mate_inner_structure
-{
-  void *memory;
-  sem_t*sem_instance;
-} mate_inner_structure;
-
 int mate_init(mate_instance *lib_ref, char *config)
 {
   lib_ref->group_info = malloc(sizeof(mate_inner_structure));
@@ -37,6 +31,24 @@ int mate_close(mate_instance *lib_ref)
 {
   free(lib_ref->group_info);
   return 0;
+}
+
+t_lib_config crear_archivo_config_kernel(char* ruta) {
+    t_config* lib_config;
+    lib_config = config_create(ruta);
+    t_lib_config config;
+
+    if (lib_config == NULL) {
+        printf("No se pudo leer el archivo de configuracion de Lib\n");
+        exit(-1);
+    }
+
+    config.ip_kernel = config_get_string_value(lib_config, "IP_KERNEL");
+    config.puerto_kernel = config_get_int_value(lib_config, "PUERTO_KERNEL");
+    config.ip_memoria = config_get_string_value(lib_config, "IP_MEMORIA");
+    config.puerto_memoria = config_get_int_value(lib_config, "PUERTO_MEMORIA");
+
+    return config;
 }
 
 //-----------------Semaphore Functions---------------------/

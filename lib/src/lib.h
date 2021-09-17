@@ -15,12 +15,28 @@
 #include <unistd.h>
 #include <string.h>
 #include <semaphore.h>
+#include<commons/config.h>
 
 //-------------------Type Definitions----------------------/
 typedef struct mate_instance
 {
     void *group_info;
 } mate_instance;
+
+typedef struct mate_inner_structure
+{
+  void *memory;
+  sem_t*sem_instance;
+} mate_inner_structure;
+
+typedef struct {
+    char* ip_kernel;
+    int puerto_kernel;
+    char* ip_memoria;
+    int puerto_memoria;
+    //Ver que otras cosas habria que agregar
+
+}t_lib_config;
 
 typedef char *mate_io_resource;
 
@@ -35,6 +51,8 @@ typedef int32_t mate_pointer;
 int mate_init(mate_instance *lib_ref, char *config);
 
 int mate_close(mate_instance *lib_ref);
+
+t_lib_config crear_archivo_config_lib(char* ruta);
 
 //-----------------Semaphore Functions---------------------/
 
