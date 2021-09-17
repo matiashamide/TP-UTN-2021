@@ -19,6 +19,11 @@
 #include<commons/collections/list.h>
 #include<commons/config.h>
 #include<commons/string.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <netdb.h>
+#include <signal.h>
 
 
 //ESTRUCTURAS
@@ -39,6 +44,7 @@ typedef struct {
 
 //FUNCIONES
 t_kernel_config crear_archivo_config_kernel(char* ruta);
+int crear_conexion(char *ip, char* puerto);
 
 #endif /* KERNEL_H_ */
 

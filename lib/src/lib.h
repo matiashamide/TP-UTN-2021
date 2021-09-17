@@ -16,6 +16,15 @@
 #include <string.h>
 #include <semaphore.h>
 #include<commons/config.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <netdb.h>
+#include <signal.h>
+
+//-------------------Variables Globales----------------------/
+
+ char* CONFIG_PATH = "/home/utnso/workspace/tp-2021-2c-DesacatadOS/lib/src/lib.config";
 
 //-------------------Type Definitions----------------------/
 typedef struct mate_instance
@@ -53,6 +62,7 @@ int mate_init(mate_instance *lib_ref, char *config);
 int mate_close(mate_instance *lib_ref);
 
 t_lib_config crear_archivo_config_lib(char* ruta);
+int crear_conexion(char *ip, char* puerto);
 
 //-----------------Semaphore Functions---------------------/
 

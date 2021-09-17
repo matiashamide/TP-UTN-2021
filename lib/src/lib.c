@@ -11,7 +11,15 @@
 #include "lib.h"
 
 int main(void) {
-	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
+	 mate_instance* lib;
+	 int status = mate_init(lib, CONFIG_PATH);
+
+	 if(status != 0) {
+	        printf("Algo salio mal");
+	        exit(-1);
+	    }
+
+
 	return EXIT_SUCCESS;
 }
 
@@ -23,7 +31,30 @@ int main(void) {
 
 int mate_init(mate_instance *lib_ref, char *config)
 {
+	t_lib_config lib_config = crear_archivo_config_lib(config);
+
+    //Conexiones
+	int conexion_kernel = crear_conexion(lib_config.ip_kernel, lib_config.puerto_kernel);
+
+	if(conexion_kernel == (-1)) {
+
+		        printf("No se pudo conectar con el Kernel, inicio de conexion con Memoria");
+
+		        int conexion_memoria = crear_conexion(lib_config.ip_memoria, lib_config.puerto_memoria);
+
+		        if(conexion_memoria == (-1)) {
+
+		        		        printf("Error al conectar con Memoria");
+		        		        return 1;
+		    }
+
+  //Reserva memoria del tamanio de estructura administrativa
   lib_ref->group_info = malloc(sizeof(mate_inner_structure));
+
+  if(lib_ref->group_info == NULL){
+	  return 1;
+  }
+
   return 0;
 }
 
@@ -33,7 +64,7 @@ int mate_close(mate_instance *lib_ref)
   return 0;
 }
 
-t_lib_config crear_archivo_config_kernel(char* ruta) {
+t_lib_config crear_archivo_config_lib(char* ruta) {
     t_config* lib_config;
     lib_config = config_create(ruta);
     t_lib_config config;
@@ -50,6 +81,29 @@ t_lib_config crear_archivo_config_kernel(char* ruta) {
 
     return config;
 }
+
+int crear_conexion(char *ip, char* puerto)
+{
+   struct addrinfo hints;
+   struct addrinfo *server_info;
+
+   memset(&hints, 0, sizeof(hints));
+   hints.ai_family = AF_UNSPEC;
+   hints.ai_socktype = SOCK_STREAM;
+   hints.ai_flags = AI_PASSIVE;
+
+   getaddrinfo(ip, puerto, &hints, &server_info);
+
+   int socket_cliente = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
+
+   if(connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen) == -1)
+      printf("No se pudo conectar\n");
+
+   freeaddrinfo(server_info);
+
+   return socket_cliente;
+}
+
 
 //-----------------Semaphore Functions---------------------/
 
