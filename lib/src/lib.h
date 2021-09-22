@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include<commons/string.h>
 #include <unistd.h>
+#include <pthread.h>
 #include <string.h>
 #include <semaphore.h>
 #include<commons/config.h>
@@ -25,10 +26,12 @@
 //-------------------Variables Globales----------------------/
 
  char* CONFIG_PATH = "/home/utnso/workspace/tp-2021-2c-DesacatadOS/lib/src/lib.config";
+ int CONEXION;
 
 //-------------------Type Definitions----------------------/
 typedef struct mate_instance
 {
+
     void *group_info;
 } mate_instance;
 
@@ -40,12 +43,29 @@ typedef struct mate_inner_structure
 
 typedef struct {
     char* ip_kernel;
-    int puerto_kernel;
+    char* puerto_kernel;
     char* ip_memoria;
-    int puerto_memoria;
+    char* puerto_memoria;
     //Ver que otras cosas habria que agregar
 
 }t_lib_config;
+
+typedef struct
+{
+	int size;
+	void* stream;
+} t_buffer;
+
+typedef enum
+{
+	MENSAJE
+}op_code;
+
+typedef struct
+{
+	op_code codigo_operacion;
+	t_buffer* buffer;
+} t_paquete;
 
 typedef char *mate_io_resource;
 
@@ -63,6 +83,9 @@ int mate_close(mate_instance *lib_ref);
 
 t_lib_config crear_archivo_config_lib(char* ruta);
 int crear_conexion(char *ip, char* puerto);
+void enviar_mensaje(char* mensaje, int socket_cliente);
+void* serializar_paquete(t_paquete* paquete, int *bytes);
+void eliminar_paquete(t_paquete* paquete);
 
 //-----------------Semaphore Functions---------------------/
 

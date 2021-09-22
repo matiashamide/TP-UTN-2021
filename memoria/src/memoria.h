@@ -26,7 +26,11 @@
 #include <signal.h>
 
 
+
+
+
 //ESTRUCTURAS
+
 
 typedef struct {
     char* ip;

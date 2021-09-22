@@ -11,7 +11,7 @@
 #include "lib.h"
 
 int main(void) {
-	 mate_instance* lib;
+	 mate_instance* lib = malloc(sizeof(mate_instance));
 	 int status = mate_init(lib, CONFIG_PATH);
 
 	 if(status != 0) {
@@ -19,13 +19,10 @@ int main(void) {
 	        exit(-1);
 	    }
 
+	 enviar_mensaje("hola como estas", CONEXION);
 
 	return EXIT_SUCCESS;
 }
-
-
-
-
 
 //------------------General Functions---------------------/
 
@@ -34,15 +31,15 @@ int mate_init(mate_instance *lib_ref, char *config)
 	t_lib_config lib_config = crear_archivo_config_lib(config);
 
     //Conexiones
-	int conexion_kernel = crear_conexion(lib_config.ip_kernel, lib_config.puerto_kernel);
+	CONEXION = crear_conexion(lib_config.ip_kernel, lib_config.puerto_kernel);
 
-	if(conexion_kernel == (-1)) {
+	if(CONEXION == (-1)) {
 
 		        printf("No se pudo conectar con el Kernel, inicio de conexion con Memoria");
 
-		        int conexion_memoria = crear_conexion(lib_config.ip_memoria, lib_config.puerto_memoria);
+		        CONEXION = crear_conexion(lib_config.ip_memoria, lib_config.puerto_memoria);
 
-		        if(conexion_memoria == (-1)) {
+		        if(CONEXION == (-1)) {
 
 		        		        printf("Error al conectar con Memoria");
 		        		        return 1;
@@ -76,9 +73,9 @@ t_lib_config crear_archivo_config_lib(char* ruta) {
     }
 
     config.ip_kernel = config_get_string_value(lib_config, "IP_KERNEL");
-    config.puerto_kernel = config_get_int_value(lib_config, "PUERTO_KERNEL");
+    config.puerto_kernel = config_get_string_value(lib_config, "PUERTO_KERNEL");
     config.ip_memoria = config_get_string_value(lib_config, "IP_MEMORIA");
-    config.puerto_memoria = config_get_int_value(lib_config, "PUERTO_MEMORIA");
+    config.puerto_memoria = config_get_string_value(lib_config, "PUERTO_MEMORIA");
 
     return config;
 }
@@ -105,6 +102,50 @@ int crear_conexion(char *ip, char* puerto)
    return socket_cliente;
 }
 
+void enviar_mensaje(char* mensaje, int socket_cliente)
+{
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = MENSAJE;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = strlen(mensaje) + 1;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+	memcpy(paquete->buffer->stream, mensaje, paquete->buffer->size);
+
+	int bytes = paquete->buffer->size + 2*sizeof(int);
+
+	void* a_enviar = serializar_paquete(paquete, bytes);
+
+	send(socket_cliente, a_enviar, bytes, 0);
+
+	free(a_enviar);
+	eliminar_paquete(paquete);
+}
+void* serializar_paquete(t_paquete* paquete, int* bytes)
+{
+
+   int size_serializado = sizeof(op_code) + sizeof(uint32_t) + paquete->buffer->size;
+   void *buffer = malloc(size_serializado);
+
+   int offset = 0;
+
+   memcpy(buffer + offset, &(paquete->codigo_operacion), sizeof(int));
+   offset+= sizeof(int);
+   memcpy(buffer + offset, &(paquete->buffer->size), sizeof(uint32_t));
+   offset+= sizeof(uint32_t);
+   memcpy(buffer + offset, paquete->buffer->stream, paquete->buffer->size);
+   offset+= paquete->buffer->size;
+
+   (*bytes) = size_serializado;
+   return buffer;
+}
+
+void eliminar_paquete(t_paquete* paquete)
+{
+   free(paquete->buffer->stream);
+   free(paquete->buffer);
+   free(paquete);
+}
 
 //-----------------Semaphore Functions---------------------/
 

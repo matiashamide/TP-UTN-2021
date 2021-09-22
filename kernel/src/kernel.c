@@ -12,8 +12,11 @@
 
 
 int main(void) {
+	init_kernel();
+	coordinador_multihilo();
 
-	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
+
+
 	return EXIT_SUCCESS;
 }
 
@@ -33,12 +36,12 @@ t_kernel_config crear_archivo_config_kernel(char* ruta) {
 
 
     config.ip = config_get_string_value(kernel_config, "IP");
-    config.puerto = config_get_int_value(kernel_config, "PUERTO");
+    config.puerto = config_get_string_value(kernel_config, "PUERTO");
     config.alg_plani = config_get_string_value(kernel_config, "ALGORITMO_PLANIFICACION");
 
-    if(strcmp(config.alg_plani,"SJF")){
-    	config.puerto = NULL;
-    	config.puerto = NULL;
+    if(!strcmp(config.alg_plani,"SJF")){
+    	config.estimacion_inicial = 0;
+    	config.alfa = 0;
 
     }else{
     	config.estimacion_inicial = config_get_int_value(kernel_config, "ESTIMACION_INICIAL");
@@ -53,6 +56,18 @@ t_kernel_config crear_archivo_config_kernel(char* ruta) {
 
 
     return config;
+}
+
+void init_kernel(){
+	//Creamos estructura archivo de configuracion
+	CONFIG_KERNEL = crear_archivo_config_kernel("/home/utnso/workspace/tp-2021-2c-DesacatadOS/kernel/src/kernel.config");
+
+	//Inicializamos logger
+	LOGGER = log_create("kernel.log", "KERNEL", 0, LOG_LEVEL_INFO);
+
+	//Iniciamos servidor
+	SERVIDOR_KERNEL = iniciar_servidor(CONFIG_KERNEL.ip,CONFIG_KERNEL.puerto);
+
 }
 
 int crear_conexion(char *ip, char* puerto)
@@ -111,4 +126,76 @@ int iniciar_servidor(char* IP, char* PUERTO)
     return socket_servidor;
 }
 
+
+
+
+void coordinador_multihilo(){
+
+	while(1){
+
+		int socket = esperar_cliente(SERVIDOR_KERNEL);
+
+		pthread_t* hilo_atender_carpincho = malloc(sizeof(pthread_t));
+		pthread_create(hilo_atender_carpincho , NULL , (void*)atender_carpinchos , (void*)socket);
+		pthread_detach(hilo_atender_carpincho);
+
+	}
+}
+
+void atender_carpinchos(int cliente){
+
+		peticion_carpincho operacion = recibir_operacion(cliente);
+
+		switch (operacion) {
+
+			case MENSAJE:;
+				char* mensaje = recibir_mensaje(cliente);
+				printf("%s",mensaje);
+				break;
+
+	}
+}
+
+int esperar_cliente(int socket_servidor)
+{
+  struct sockaddr_in dir_cliente;
+  int tam_direccion = sizeof(struct sockaddr_in);
+
+  int socket_cliente = accept(socket_servidor, (void*) &dir_cliente, &tam_direccion);
+
+
+  printf("Se conecto un cliente\n");
+
+  return socket_cliente;
+}
+
+int recibir_operacion(int socket_cliente)
+{
+   int cod_op;
+   if(recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL) != 0){
+      return cod_op;
+   }
+   else
+   {
+      close(socket_cliente);
+      return -1;
+   }
+}
+char* recibir_mensaje(int socket_cliente)
+{
+   uint32_t size;
+   char* buffer = recibir_buffer(&size, socket_cliente);
+   return buffer;
+}
+
+void* recibir_buffer(uint32_t* size, int socket_cliente)
+{
+   void * buffer;
+
+   recv(socket_cliente, size, sizeof(uint32_t), MSG_WAITALL);
+   buffer = malloc(*size);
+   recv(socket_cliente, buffer, *size, MSG_WAITALL);
+
+   return buffer;
+}
 
