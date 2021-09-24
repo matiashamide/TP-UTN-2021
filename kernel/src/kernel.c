@@ -14,11 +14,11 @@
 int main(void) {
 
 	init_kernel();
-	coordinador_multihilo();
 
-
+	enviar_mensaje("hola como estas", SERVIDOR_MEMORIA);
 
 	return EXIT_SUCCESS;
+
 }
 
 
@@ -36,8 +36,8 @@ t_kernel_config crear_archivo_config_kernel(char* ruta) {
     }
 
 
-    config.ip = config_get_string_value(kernel_config, "IP_MEMORIA");
-    config.puerto = config_get_string_value(kernel_config, "PUERTO_MEMORIA");
+    config.ip_memoria = config_get_string_value(kernel_config, "IP_MEMORIA");
+    config.puerto_memoria = config_get_string_value(kernel_config, "PUERTO_MEMORIA");
     config.alg_plani = config_get_string_value(kernel_config, "ALGORITMO_PLANIFICACION");
 
     if(!strcmp(config.alg_plani,"SJF")){
@@ -66,12 +66,11 @@ void init_kernel(){
 	//Inicializamos logger
 	LOGGER = log_create("kernel.log", "KERNEL", 0, LOG_LEVEL_INFO);
 
-	printf("Config.IP = %s", CONFIG_KERNEL.ip);
-	printf("Config.PUERTO = %s", CONFIG_KERNEL.puerto);
-
 	//Iniciamos servidor
-	SERVIDOR_KERNEL = iniciar_servidor(CONFIG_KERNEL.ip,CONFIG_KERNEL.puerto);
+	SERVIDOR_KERNEL = iniciar_servidor(NULL,"5004");
 
+	//Conexiones
+	SERVIDOR_MEMORIA = crear_conexion(CONFIG_KERNEL.ip_memoria, CONFIG_KERNEL.puerto_memoria);
 }
 
 int crear_conexion(char *ip, char* puerto)
@@ -107,7 +106,7 @@ int iniciar_servidor(char* IP, char* PUERTO)
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
 
-    getaddrinfo(NULL, "5004", &hints, &servinfo);
+    getaddrinfo(IP, PUERTO, &hints, &servinfo);
 
     for (p=servinfo; p != NULL; p = p->ai_next)
     {
@@ -130,46 +129,14 @@ int iniciar_servidor(char* IP, char* PUERTO)
     return socket_servidor;
 }
 
-int iniciar_servidor_2(char* IP, char* PUERTO) {
-	int socket_servidor;
-
-	struct addrinfo hints, *servinfo;
-
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE;
-
-	getaddrinfo(NULL, PUERTO, &hints, &servinfo);
-
-	socket_servidor = socket(servinfo->ai_family,
-	                         servinfo->ai_socktype,
-	                         servinfo->ai_protocol);
-
-	bind(socket_servidor, servinfo->ai_addr, servinfo->ai_addrlen);
-
-	listen(socket_servidor, SOMAXCONN);
-
-	freeaddrinfo(servinfo);
-
-	printf("Listo para escuchar a mi cliente\n");
-
-	return socket_servidor;
-}
-
-
-
-
 void coordinador_multihilo(){
 
 	while(1){
 
-		int* socket = malloc(sizeof(int));
+		int socket = esperar_cliente(SERVIDOR_KERNEL);
 
-		*socket = esperar_cliente(SERVIDOR_KERNEL);
-
-		pthread_t hilo_atender_carpincho;
-		pthread_create(&hilo_atender_carpincho , NULL , (void*)atender_carpinchos , socket);
+		pthread_t* hilo_atender_carpincho = malloc(sizeof(pthread_t));
+		pthread_create(hilo_atender_carpincho , NULL , (void*)atender_carpinchos , (void*)socket);
 		pthread_detach(hilo_atender_carpincho);
 
 	}
@@ -232,3 +199,49 @@ void* recibir_buffer(uint32_t* size, int socket_cliente)
    return buffer;
 }
 
+
+void enviar_mensaje(char* mensaje, int socket_cliente)
+{
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = MENSAJE;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = strlen(mensaje) + 1;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+	memcpy(paquete->buffer->stream, mensaje, paquete->buffer->size);
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	send(socket_cliente, a_enviar, bytes, 0);
+
+	free(a_enviar);
+	eliminar_paquete(paquete);
+}
+
+void* serializar_paquete(t_paquete* paquete, int* bytes)
+{
+
+   int size_serializado = sizeof(peticion_carpincho) + sizeof(uint32_t) + paquete->buffer->size;
+   void *buffer = malloc(size_serializado);
+
+   int offset = 0;
+
+   memcpy(buffer + offset, &(paquete->codigo_operacion), sizeof(int));
+   offset+= sizeof(int);
+   memcpy(buffer + offset, &(paquete->buffer->size), sizeof(uint32_t));
+   offset+= sizeof(uint32_t);
+   memcpy(buffer + offset, paquete->buffer->stream, paquete->buffer->size);
+   offset+= paquete->buffer->size;
+
+   (*bytes) = size_serializado;
+   return buffer;
+}
+
+void eliminar_paquete(t_paquete* paquete)
+{
+   free(paquete->buffer->stream);
+   free(paquete->buffer);
+   free(paquete);
+}

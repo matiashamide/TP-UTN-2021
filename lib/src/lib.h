@@ -31,7 +31,6 @@
 //-------------------Type Definitions----------------------/
 typedef struct mate_instance
 {
-
     void *group_info;
 } mate_instance;
 
@@ -96,6 +95,7 @@ int mate_sem_wait(mate_instance *lib_ref, mate_sem_name sem);
 int mate_sem_post(mate_instance *lib_ref, mate_sem_name sem);
 
 int mate_sem_destroy(mate_instance *lib_ref, mate_sem_name sem);
+
 
 //--------------------IO Functions------------------------/
 
