@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <semaphore.h>
 #include <unistd.h>
 #include <pthread.h>
@@ -63,6 +64,7 @@ int SERVIDOR_KERNEL;
 t_kernel_config crear_archivo_config_kernel(char* ruta);
 int crear_conexion(char *ip, char* puerto);
 int iniciar_servidor(char* IP, char* PUERTO);
+int iniciar_servidor_2(char* IP, char* PUERTO);
 void init_kernel();
 int esperar_cliente(int socket_servidor);
 void atender_carpinchos(int cliente);
