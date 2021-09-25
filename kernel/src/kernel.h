@@ -82,7 +82,7 @@ int iniciar_servidor(char* IP, char* PUERTO);
 int iniciar_servidor_2(char* IP, char* PUERTO);
 void init_kernel();
 int esperar_cliente(int socket_servidor);
-void atender_carpinchos(int cliente);
+void atender_carpinchos(int* cliente);
 void coordinador_multihilo();
 int recibir_operacion(int socket_cliente);
 char* recibir_mensaje(int socket_cliente);

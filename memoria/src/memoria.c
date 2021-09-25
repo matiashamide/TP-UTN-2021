@@ -14,7 +14,7 @@ int main(void) {
 
 	init_memoria();
 
-
+	enviar_mensaje("hola como estas", SERVIDOR_MEMORIA);
 
 	return EXIT_SUCCESS;
 }

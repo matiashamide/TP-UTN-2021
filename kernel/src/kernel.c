@@ -15,7 +15,7 @@ int main(void) {
 
 	init_kernel();
 
-	enviar_mensaje("hola como estas", SERVIDOR_MEMORIA);
+	coordinador_multihilo();
 
 	return EXIT_SUCCESS;
 
@@ -133,24 +133,29 @@ void coordinador_multihilo(){
 
 	while(1){
 
-		int socket = esperar_cliente(SERVIDOR_KERNEL);
+		int* socket = malloc(sizeof(int));
+		*socket = esperar_cliente(SERVIDOR_KERNEL);
 
-		pthread_t* hilo_atender_carpincho = malloc(sizeof(pthread_t));
-		pthread_create(hilo_atender_carpincho , NULL , (void*)atender_carpinchos , (void*)socket);
+		pthread_t hilo_atender_carpincho;// = malloc(sizeof(pthread_t));
+		pthread_create(&hilo_atender_carpincho , NULL , (void*)atender_carpinchos , socket);
 		pthread_detach(hilo_atender_carpincho);
 
 	}
 }
 
-void atender_carpinchos(int cliente){
+void atender_carpinchos(int* cliente){
 
-		peticion_carpincho operacion = recibir_operacion(cliente);
+		peticion_carpincho operacion = recibir_operacion(*cliente);
 
 		switch (operacion) {
 
 			case MENSAJE:;
-				char* mensaje = recibir_mensaje(cliente);
+				char* mensaje = recibir_mensaje(*cliente);
 				printf("%s",mensaje);
+				break;
+
+			default:
+				printf("mensajo no reconocido");
 				break;
 
 	}
@@ -161,10 +166,11 @@ int esperar_cliente(int socket_servidor)
   struct sockaddr_in dir_cliente;
   int tam_direccion = sizeof(struct sockaddr_in);
 
-  int socket_cliente = accept(socket_servidor, (void*) &dir_cliente, &tam_direccion);
+  int socket_cliente = accept(socket_servidor, NULL, NULL);
 
-
-  printf("Se conecto un cliente\n");
+  if(socket_cliente != -1){
+	  printf("Se conecto un cliente\n");
+  }else printf(" no se pudo conectar ");
 
   return socket_cliente;
 }
