@@ -15,10 +15,11 @@ int main(void) {
 	 int status = mate_init(lib, CONFIG_PATH);
 
 	 if(status != 0) {
-	        printf("Algo salio mal");
-	        exit(-1);
-	    }
+		 printf("Algo salio mal");
+	     exit(-1);
+	 }
 
+	 printf("rey");
 	 enviar_mensaje("hola como estas", CONEXION);
 
 	return EXIT_SUCCESS;

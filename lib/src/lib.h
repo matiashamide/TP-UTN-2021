@@ -57,7 +57,16 @@ typedef struct
 
 typedef enum
 {
-	MENSAJE
+	INICIALIZAR_SEM,
+		ESPERAR_SEM,
+		POST_SEM,
+		DESTROY_SEM,
+		CALL_IO,
+		MEMALLOC,
+		MEMREAD,
+		MEMFREE,
+		MEMWRITE,
+		MENSAJE
 }op_code;
 
 typedef struct

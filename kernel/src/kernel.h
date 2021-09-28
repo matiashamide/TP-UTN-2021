@@ -12,26 +12,25 @@
 #include <stdlib.h>
 #include <string.h>
 #include <semaphore.h>
-#include <unistd.h>
 #include <pthread.h>
-#include<signal.h>
-#include<unistd.h>
+#include <signal.h>
+#include <unistd.h>
 #include <dirent.h>
-#include<commons/collections/list.h>
-#include<commons/log.h>
-#include<commons/config.h>
-#include<commons/string.h>
+#include <commons/collections/list.h>
+#include <commons/log.h>
+#include <commons/config.h>
+#include <commons/string.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#include <unistd.h>
 #include <netdb.h>
-#include <signal.h>
 
 //ESTRUCTURAS
 
 typedef struct {
     char* ip_memoria;
     char* puerto_memoria;
+    char* ip_kernel;
+    char* puerto_kernel;
     char* alg_plani;
     int estimacion_inicial;
     int alfa;
@@ -82,7 +81,7 @@ int iniciar_servidor(char* IP, char* PUERTO);
 int iniciar_servidor_2(char* IP, char* PUERTO);
 void init_kernel();
 int esperar_cliente(int socket_servidor);
-void atender_carpinchos(int* cliente);
+void atender_carpinchos(int cliente);
 void coordinador_multihilo();
 int recibir_operacion(int socket_cliente);
 char* recibir_mensaje(int socket_cliente);

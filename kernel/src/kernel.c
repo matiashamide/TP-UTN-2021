@@ -17,10 +17,20 @@ int main(void) {
 
 	coordinador_multihilo();
 
+	/*
+	int* socket = malloc(sizeof(int));
+	*socket = esperar_cliente(SERVIDOR_KERNEL);
+	peticion_carpincho operacion = recibir_operacion(*socket);
+	char* mensaje = recibir_mensaje(*socket);
+	printf("%s",mensaje);
+	 */
+	//pthread_t manejoCarpinchos;
+	//pthread_create(&manejoCarpinchos, NULL, (void*)coordinador_multihilo,NULL);
+	//pthread_detach(manejoCarpinchos);
+
 	return EXIT_SUCCESS;
 
 }
-
 
 
 
@@ -38,6 +48,10 @@ t_kernel_config crear_archivo_config_kernel(char* ruta) {
 
     config.ip_memoria = config_get_string_value(kernel_config, "IP_MEMORIA");
     config.puerto_memoria = config_get_string_value(kernel_config, "PUERTO_MEMORIA");
+
+    config.ip_kernel = config_get_string_value(kernel_config, "IP_KERNEL");
+    config.puerto_kernel = config_get_string_value(kernel_config, "PUERTO_KERNEL");
+
     config.alg_plani = config_get_string_value(kernel_config, "ALGORITMO_PLANIFICACION");
 
     if(!strcmp(config.alg_plani,"SJF")){
@@ -67,32 +81,32 @@ void init_kernel(){
 	LOGGER = log_create("kernel.log", "KERNEL", 0, LOG_LEVEL_INFO);
 
 	//Iniciamos servidor
-	SERVIDOR_KERNEL = iniciar_servidor(NULL,"5004");
+	SERVIDOR_KERNEL = iniciar_servidor(CONFIG_KERNEL.ip_kernel,CONFIG_KERNEL.puerto_kernel);
 
 	//Conexiones
-	SERVIDOR_MEMORIA = crear_conexion(CONFIG_KERNEL.ip_memoria, CONFIG_KERNEL.puerto_memoria);
+	//SERVIDOR_MEMORIA = crear_conexion(CONFIG_KERNEL.ip_memoria, CONFIG_KERNEL.puerto_memoria);
 }
 
 int crear_conexion(char *ip, char* puerto)
 {
-   struct addrinfo hints;
-   struct addrinfo *server_info;
+	struct addrinfo hints;
+	struct addrinfo *server_info;
 
-   memset(&hints, 0, sizeof(hints));
-   hints.ai_family = AF_UNSPEC;
-   hints.ai_socktype = SOCK_STREAM;
-   hints.ai_flags = AI_PASSIVE;
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = AI_PASSIVE;
 
-   getaddrinfo(ip, puerto, &hints, &server_info);
+	getaddrinfo(ip, puerto, &hints, &server_info);
 
-   int socket_cliente = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
+	int socket_cliente = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
 
-   if(connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen) == -1)
-      printf("No se pudo conectar\n");
+	while(connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen) == -1)
+		sleep(3);
 
-   freeaddrinfo(server_info);
+	freeaddrinfo(server_info);
 
-   return socket_cliente;
+	return socket_cliente;
 }
 
 int iniciar_servidor(char* IP, char* PUERTO)
@@ -113,6 +127,9 @@ int iniciar_servidor(char* IP, char* PUERTO)
         if ((socket_servidor = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
             continue;
 
+        uint32_t flag = 1;
+        setsockopt(socket_servidor,SOL_SOCKET,SO_REUSEPORT,&flag, sizeof(flag));
+
         if (bind(socket_servidor, p->ai_addr, p->ai_addrlen) == -1) {
             close(socket_servidor);
             continue;
@@ -122,39 +139,55 @@ int iniciar_servidor(char* IP, char* PUERTO)
 
    listen(socket_servidor, SOMAXCONN);
 
-    freeaddrinfo(servinfo);
+   freeaddrinfo(servinfo);
 
-    printf("Listo para escuchar a mi cliente\n");
+   printf("Listo para escuchar a mi cliente\n");
 
-    return socket_servidor;
+   return socket_servidor;
 }
 
+/*
 void coordinador_multihilo(){
 
-	while(1){
+	while(1) {
 
 		int* socket = malloc(sizeof(int));
 		*socket = esperar_cliente(SERVIDOR_KERNEL);
 
 		pthread_t hilo_atender_carpincho;// = malloc(sizeof(pthread_t));
-		pthread_create(&hilo_atender_carpincho , NULL , (void*)atender_carpinchos , socket);
+		pthread_create(&hilo_atender_carpincho , NULL , (void*)atender_carpinchos, socket);
+		pthread_detach(hilo_atender_carpincho);
+
+	}
+}
+*/
+void coordinador_multihilo(){
+
+	while(1) {
+
+		int socket = esperar_cliente(SERVIDOR_KERNEL);
+
+		pthread_t hilo_atender_carpincho;// = malloc(sizeof(pthread_t));
+		pthread_create(&hilo_atender_carpincho , NULL , (void*)atender_carpinchos, (void*)socket);
 		pthread_detach(hilo_atender_carpincho);
 
 	}
 }
 
-void atender_carpinchos(int* cliente){
+void atender_carpinchos(int cliente){
 
-		peticion_carpincho operacion = recibir_operacion(*cliente);
+	//printf("\n entre a aender \n ");
+	int operacion = recibir_operacion(cliente);
+	//printf("\n 222 a atebder ");
 
 		switch (operacion) {
 
 			case MENSAJE:;
-				char* mensaje = recibir_mensaje(*cliente);
+				char* mensaje = recibir_mensaje(cliente);
 				printf("%s",mensaje);
 				break;
 
-			default:
+			default:;
 				printf("mensajo no reconocido");
 				break;
 
@@ -166,21 +199,22 @@ int esperar_cliente(int socket_servidor)
   struct sockaddr_in dir_cliente;
   int tam_direccion = sizeof(struct sockaddr_in);
 
-  int socket_cliente = accept(socket_servidor, NULL, NULL);
-
-  if(socket_cliente != -1){
+  int socket_cliente = accept(socket_servidor, (void*) &dir_cliente, &tam_direccion);
+/*
+  if (socket_cliente != -1)
 	  printf("Se conecto un cliente\n");
-  }else printf(" no se pudo conectar ");
-
+  else
+	  printf("No se pudo conectar\n ");
+*/
   return socket_cliente;
 }
 
 int recibir_operacion(int socket_cliente)
 {
    int cod_op;
-   if(recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL) != 0){
+   if(recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL) != 0)
       return cod_op;
-   }
+
    else
    {
       close(socket_cliente);
