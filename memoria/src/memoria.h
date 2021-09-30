@@ -75,6 +75,10 @@ typedef struct
 	t_buffer* buffer;
 } t_paquete;
 
+typedef struct{
+
+}t_pagina;
+
 
 //VARIABLES GLOBALES
 
