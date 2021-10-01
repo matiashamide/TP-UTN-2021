@@ -14,8 +14,20 @@ int main(void) {
 
 	init_memoria();
 
-	enviar_mensaje("hola como estas", SERVIDOR_MEMORIA);
+	//enviar_mensaje("hola como estas", SERVIDOR_MEMORIA);
 
+
+	init_tlb(CONFIG.cant_entradas_tlb , CONFIG.alg_reemplazo_tlb);
+	printearTLB(CONFIG.cant_entradas_tlb);
+	entrada_tlb* entrada_vieja = malloc(sizeof(entrada_tlb));
+	entrada_vieja->id= 1;
+	entrada_tlb* entrada_nueva = malloc(sizeof(entrada_tlb));
+	entrada_nueva->id=entrada_vieja->id;
+	entrada_nueva->pid = 3;
+	entrada_nueva-> pag = 4;
+	entrada_nueva->marco = 2;
+	reemplazar_entrada(entrada_nueva , entrada_vieja);
+	printearTLB(CONFIG.cant_entradas_tlb);
 	return EXIT_SUCCESS;
 }
 
