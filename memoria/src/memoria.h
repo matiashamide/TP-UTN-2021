@@ -27,7 +27,7 @@
 #include <netdb.h>
 #include <signal.h>
 
-#include "tlb.h"
+
 
 
 
@@ -82,6 +82,7 @@ typedef struct{
 }t_pagina;
 
 
+
 //VARIABLES GLOBALES
 
 t_memoria_config CONFIG;
@@ -100,6 +101,9 @@ int esperar_cliente(int socket);
 int recibir_operacion(int socket);
 char* recibir_mensaje(int socket_cliente);
 void* recibir_buffer(uint32_t* size, int socket_cliente);
+void atender_carpinchos(int cliente);
+void enviar_mensaje(char* mensaje, int servidor);
+void coordinador_multihilo();
 void atender_carpinchos(int cliente);
 
 #endif /* MEMORIA_H_ */

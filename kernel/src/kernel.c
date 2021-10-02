@@ -185,6 +185,7 @@ void atender_carpinchos(int cliente){
 			case MENSAJE:;
 				char* mensaje = recibir_mensaje(cliente);
 				printf("%s",mensaje);
+				fflush(stdout);
 				break;
 
 			default:;
