@@ -8,21 +8,7 @@
 #ifndef KERNEL_H_
 #define KERNEL_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <semaphore.h>
-#include <pthread.h>
-#include <signal.h>
-#include <unistd.h>
-#include <dirent.h>
-#include <commons/collections/list.h>
-#include <commons/log.h>
-#include <commons/config.h>
-#include <commons/string.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <netdb.h>
+#include "planificacion.h"
 
 //ESTRUCTURAS
 
@@ -79,24 +65,16 @@ t_kernel_config CONFIG_KERNEL;
 t_log* LOGGER;
 int SERVIDOR_KERNEL;
 int SERVIDOR_MEMORIA;
-t_list* LISTA_NEW;
-t_list* LISTA_READY;
-t_list* LISTA_EXEC;
-t_list* LISTA_BLOCKED;
-t_list* LISTA_SUSPENDED_BLOCKED;
-t_list* LISTA_SUSPENDED_READY;
 uint32_t PID_PROX_CARPINCHO;
 
 
 
 //MUTEXES
 pthread_mutex_t mutex_creacion_PID;
-pthread_mutex_t mutex_lista_new;
-pthread_mutex_t mutex_lista_ready;
-pthread_mutex_t mutex_lista_exec;
-pthread_mutex_t mutex_lista_blocked;
-pthread_mutex_t mutex_lista_blocked_suspended;
-pthread_mutex_t mutex_lista_ready_suspended;
+
+
+//SEMAFOROS
+
 
 //FUNCIONES
 t_kernel_config crear_archivo_config_kernel(char* ruta);

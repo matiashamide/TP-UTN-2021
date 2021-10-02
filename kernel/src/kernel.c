@@ -17,17 +17,6 @@ int main(void) {
 
 	coordinador_multihilo();
 
-	/*
-	int* socket = malloc(sizeof(int));
-	*socket = esperar_cliente(SERVIDOR_KERNEL);
-	peticion_carpincho operacion = recibir_operacion(*socket);
-	char* mensaje = recibir_mensaje(*socket);
-	printf("%s",mensaje);
-	 */
-	//pthread_t manejoCarpinchos;
-	//pthread_create(&manejoCarpinchos, NULL, (void*)coordinador_multihilo,NULL);
-	//pthread_detach(manejoCarpinchos);
-
 	return EXIT_SUCCESS;
 
 }
@@ -94,8 +83,18 @@ void init_kernel(){
 	LISTA_SUSPENDED_BLOCKED = list_create();
 	LISTA_SUSPENDED_READY = list_create();
 
+	//Mutexes
+	pthread_mutex_init(&mutex_creacion_PID, NULL);
+	pthread_mutex_init(&mutex_lista_new, NULL);
+
+	//Semaforos
+	sem_init(&sem_cola_new, 0, 0);
+	sem_init(&sem_grado_multiprogramacion, 0, CONFIG_KERNEL.grado_multiprogramacion);
+
 	//Variable que asigna PIDs a los nuevos carpinchos
 	PID_PROX_CARPINCHO = 0;
+
+
 }
 
 int crear_conexion(char *ip, char* puerto)
@@ -202,6 +201,9 @@ void pasar_a_new(PCB* pcb_carpincho) {
 	pthread_mutex_lock(&mutex_lista_new);
 	list_add(LISTA_NEW, pcb_carpincho);
 	pthread_mutex_unlock(&mutex_lista_new);
+
+	sem_post(&sem_cola_new);
+
 }
 
 
