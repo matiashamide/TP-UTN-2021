@@ -67,12 +67,36 @@ typedef struct
 	t_buffer* buffer;
 } t_paquete;
 
+typedef struct
+{
+	uint32_t PID;
+
+}PCB;
+
 
 //VARIABLES GLOBALES
 t_kernel_config CONFIG_KERNEL;
 t_log* LOGGER;
 int SERVIDOR_KERNEL;
 int SERVIDOR_MEMORIA;
+t_list* LISTA_NEW;
+t_list* LISTA_READY;
+t_list* LISTA_EXEC;
+t_list* LISTA_BLOCKED;
+t_list* LISTA_SUSPENDED_BLOCKED;
+t_list* LISTA_SUSPENDED_READY;
+uint32_t PID_PROX_CARPINCHO;
+
+
+
+//MUTEXES
+pthread_mutex_t mutex_creacion_PID;
+pthread_mutex_t mutex_lista_new;
+pthread_mutex_t mutex_lista_ready;
+pthread_mutex_t mutex_lista_exec;
+pthread_mutex_t mutex_lista_blocked;
+pthread_mutex_t mutex_lista_blocked_suspended;
+pthread_mutex_t mutex_lista_ready_suspended;
 
 //FUNCIONES
 t_kernel_config crear_archivo_config_kernel(char* ruta);
@@ -89,6 +113,7 @@ void* recibir_buffer(uint32_t* size, int socket_cliente);
 void enviar_mensaje(char* mensaje, int socket);
 void* serializar_paquete(t_paquete* paquete, int* bytes);
 void eliminar_paquete(t_paquete* paquete);
+void pasar_a_new(PCB* pcb_carpincho);
 
 #endif /* KERNEL_H_ */
 

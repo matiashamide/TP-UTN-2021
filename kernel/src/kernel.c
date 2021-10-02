@@ -85,6 +85,17 @@ void init_kernel(){
 
 	//Conexiones
 	//SERVIDOR_MEMORIA = crear_conexion(CONFIG_KERNEL.ip_memoria, CONFIG_KERNEL.puerto_memoria);
+
+	//Listas y colas de planifiacion
+	LISTA_NEW = list_create();
+	LISTA_READY = list_create();
+	LISTA_EXEC = list_create();
+	LISTA_BLOCKED = list_create();
+	LISTA_SUSPENDED_BLOCKED = list_create();
+	LISTA_SUSPENDED_READY = list_create();
+
+	//Variable que asigna PIDs a los nuevos carpinchos
+	PID_PROX_CARPINCHO = 0;
 }
 
 int crear_conexion(char *ip, char* puerto)
@@ -176,24 +187,23 @@ void coordinador_multihilo(){
 
 void atender_carpinchos(int cliente){
 
-	//printf("\n entre a aender \n ");
-	int operacion = recibir_operacion(cliente);
-	//printf("\n 222 a atebder ");
+	PCB* pcb_carpincho = malloc(sizeof(PCB));
 
-		switch (operacion) {
+	pthread_mutex_lock(&mutex_creacion_PID);
+	pcb_carpincho->PID = PID_PROX_CARPINCHO;
+	PID_PROX_CARPINCHO++;
+	pthread_mutex_unlock(&mutex_creacion_PID);
 
-			case MENSAJE:;
-				char* mensaje = recibir_mensaje(cliente);
-				printf("%s",mensaje);
-				fflush(stdout);
-				break;
-
-			default:;
-				printf("mensajo no reconocido");
-				break;
-
-	}
+	pasar_a_new(pcb_carpincho);
 }
+
+void pasar_a_new(PCB* pcb_carpincho) {
+
+	pthread_mutex_lock(&mutex_lista_new);
+	list_add(LISTA_NEW, pcb_carpincho);
+	pthread_mutex_unlock(&mutex_lista_new);
+}
+
 
 int esperar_cliente(int socket_servidor)
 {
