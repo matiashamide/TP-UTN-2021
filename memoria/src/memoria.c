@@ -49,6 +49,17 @@ void init_memoria(){
 	//Iniciamos servidor
 	SERVIDOR_MEMORIA = iniciar_servidor(CONFIG.ip_memoria,CONFIG.puerto_memoria);
 
+	//Instanciamos memoria principal
+	MEMORIA_PRINCIPAL = malloc(CONFIG.tamanio);
+	if (MEMORIA_PRINCIPAL == NULL) {
+		//NO SE RESERVO LA MEMORIA
+	   	perror("MALLOC FAIL!\n");
+        return;
+	}
+
+	//Iniciamos paginacion
+	iniciar_paginacion();
+
 }
 
 
@@ -66,6 +77,7 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
     config.ip_memoria = config_get_string_value(memoria_config, "IP");
     config.puerto_memoria = config_get_string_value(memoria_config, "PUERTO");
     config.tamanio = config_get_int_value(memoria_config, "TAMANIO");
+    config.tamanio_pagina = config_get_int_value(memoria_config, "TAMANIO_PAGINA");
     config.alg_remp_mmu = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_MMU");
     config.tipo_asignacion = config_get_string_value(memoria_config, "TIPO_ASIGNACION");
     //config.marcos_max = config_get_int_value(memoria_config, "MARCOS_MAXIMOS");  --> ver en que casos esta esta esta config y meter un if
@@ -94,12 +106,12 @@ void coordinador_multihilo(){
 
 void atender_carpinchos(int cliente){
 
-		peticion_carpincho operacion = recibir_operacion(cliente);
+	peticion_carpincho operacion = recibir_operacion(cliente);
 
-		switch (operacion) {
+	switch (operacion) {
 
-			case MENSAJE:;
-				char* mensaje = recibir_mensaje(cliente);
+	case MENSAJE:;
+			char* mensaje = recibir_mensaje(cliente);
 				printf("%s",mensaje);
 				fflush(stdout);
 				break;
@@ -248,9 +260,19 @@ void* serializar_paquete(t_paquete* paquete, int* bytes)
    return buffer;
 }
 
+void iniciar_paginacion() {
 
-void eliminar_paquete(t_paquete* paquete)
-{
+	int cant_frames_ppal = CONFIG.tamanio / CONFIG.tamanio_pagina;
+
+	log_info(LOGGER,"Tengo %d marcos de %d bytes en memoria principal",cant_frames_ppal, CONFIG.tamanio_pagina);
+
+	TABLA_DE_PAGINAS = list_create();
+
+
+}
+
+
+void eliminar_paquete(t_paquete* paquete) {
    free(paquete->buffer->stream);
    free(paquete->buffer);
    free(paquete);

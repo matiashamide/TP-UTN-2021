@@ -14,24 +14,19 @@
 #include <semaphore.h>
 #include <unistd.h>
 #include <pthread.h>
-#include<signal.h>
-#include<unistd.h>
+#include <signal.h>
+#include <unistd.h>
 #include <dirent.h>
-#include<commons/collections/list.h>
-#include<commons/config.h>
-#include<commons/log.h>
-#include<commons/string.h>
+#include <commons/collections/list.h>
+#include <commons/config.h>
+#include <commons/log.h>
+#include <commons/string.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <netdb.h>
 #include <signal.h>
 #include <futiles/futiles.h>
-
-
-
-
-
 
 
 //ESTRUCTURAS
@@ -41,6 +36,7 @@ typedef struct {
     char* ip_memoria;
     char* puerto_memoria;
     int tamanio;
+    int tamanio_pagina;
     char* alg_remp_mmu;
     char* tipo_asignacion;
 	int marcos_max;
@@ -48,7 +44,6 @@ typedef struct {
 	char* alg_reemplazo_tlb;
 	int retardo_acierto_tlb;
 	int retardo_fallo_tlb;
-
 }t_memoria_config;
 
 
@@ -88,7 +83,12 @@ typedef struct{
 
 t_memoria_config CONFIG;
 t_log* LOGGER;
+t_list TABLA_DE_PAGINAS;
 int SERVIDOR_MEMORIA;
+
+/* Memoria ppal */
+void* MEMORIA_PRINCIPAL;
+
 
 //FUNCIONES
 
@@ -106,5 +106,7 @@ void atender_carpinchos(int cliente);
 void enviar_mensaje(char* mensaje, int servidor);
 void coordinador_multihilo();
 void atender_carpinchos(int cliente);
+void iniciar_paginacion();
+int buscar_pagina_en_memoria(int pid, int pag);
 
 #endif /* MEMORIA_H_ */
