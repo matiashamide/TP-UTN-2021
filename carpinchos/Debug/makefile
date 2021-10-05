@@ -26,13 +26,13 @@ endif
 all: carpinchos
 
 dependents:
-	-cd /home/utnso/workspace/matelib/Debug && $(MAKE) all
+	-cd /home/utnso/workspace/tp-2021-2c-DesacatadOS/matelib/Debug && $(MAKE) all
 
 # Tool invocations
-carpinchos: $(OBJS) $(USER_OBJS) /home/utnso/workspace/matelib/Debug/libmatelib.so
+carpinchos: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2021-2c-DesacatadOS/matelib/Debug/libmatelib.so
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L"/home/utnso/workspace/matelib/Debug" -o "carpinchos" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L"/home/utnso/workspace/tp-2021-2c-DesacatadOS/matelib/Debug" -o "carpinchos" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -42,6 +42,6 @@ clean:
 	-@echo ' '
 
 .PHONY: all clean dependents
-/home/utnso/workspace/matelib/Debug/libmatelib.so:
+/home/utnso/workspace/tp-2021-2c-DesacatadOS/matelib/Debug/libmatelib.so:
 
 -include ../makefile.targets
