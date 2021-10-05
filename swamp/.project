@@ -3,6 +3,7 @@
 	<name>swamp</name>
 	<comment></comment>
 	<projects>
+		<project>futiles</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

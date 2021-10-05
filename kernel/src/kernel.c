@@ -13,11 +13,9 @@
 
 int main(void) {
 
-//	init_kernel();
+	init_kernel();
 
-//	coordinador_multihilo();
-
-	printeame_un_cuatro();
+	coordinador_multihilo();
 
 	return EXIT_SUCCESS;
 

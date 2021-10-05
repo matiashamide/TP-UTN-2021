@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <netdb.h>
 #include <signal.h>
+#include <futiles/futiles.h>
 
 
 //ESTRUCTURAS
