@@ -4,7 +4,7 @@
 
 #include "memoria.h"
 
-//ESTRUCTURAS
+//--ESTRUCTURAS
 
 typedef struct {
     int pag;
@@ -13,9 +13,9 @@ typedef struct {
     int ultimo_uso;
 }entrada_tlb;
 
-//VARIABLES
-int TIEMPO_TLB;
+//--VARIABLES
 
+int TIEMPO_TLB;
 t_list* TLB;
 
 //Semaforos
