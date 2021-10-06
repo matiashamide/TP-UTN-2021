@@ -28,7 +28,6 @@
 #include <signal.h>
 #include <futiles/futiles.h>
 
-
 //ESTRUCTURAS
 
 
@@ -83,7 +82,7 @@ typedef struct{
 
 t_memoria_config CONFIG;
 t_log* LOGGER;
-t_list TABLA_DE_PAGINAS;
+t_list* TABLAS_DE_PAGINAS;
 int SERVIDOR_MEMORIA;
 
 /* Memoria ppal */
@@ -108,5 +107,6 @@ void coordinador_multihilo();
 void atender_carpinchos(int cliente);
 void iniciar_paginacion();
 int buscar_pagina_en_memoria(int pid, int pag);
+void printearTLB(int entradas);
 
 #endif /* MEMORIA_H_ */

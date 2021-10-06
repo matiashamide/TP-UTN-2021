@@ -14,22 +14,28 @@ int main(void) {
 
 	init_memoria();
 
-	enviar_mensaje("hola como estas", SERVIDOR_MEMORIA);
+	//enviar_mensaje("hola como estas", SERVIDOR_MEMORIA);
 
-	coordinador_multihilo();
+	//coordinador_multihilo();
 
-	/*init_tlb(CONFIG.cant_entradas_tlb , CONFIG.alg_reemplazo_tlb);
-	printearTLB(CONFIG.cant_entradas_tlb);
-	entrada_tlb* entrada_vieja = malloc(sizeof(entrada_tlb));
-	entrada_vieja->id= 1;
-	entrada_tlb* entrada_nueva = malloc(sizeof(entrada_tlb));
-	entrada_nueva->id=entrada_vieja->id;
-	entrada_nueva->pid = 3;
-	entrada_nueva-> pag = 4;
-	entrada_nueva->marco = 2;
-	reemplazar_entrada(entrada_nueva , entrada_vieja);
-	printearTLB(CONFIG.cant_entradas_tlb);
-	*/
+	init_tlb(CONFIG.cant_entradas_tlb , CONFIG.alg_reemplazo_tlb);
+	printear_TLB(CONFIG.cant_entradas_tlb);
+
+	for(int i = 0 ; i < 5  ; i++){
+
+	sleep(2);
+
+	buscar_frame(i , i+1 );
+
+	printear_TLB(CONFIG.cant_entradas_tlb);
+
+	}
+	sleep(2);
+	buscar_frame( 2 , 3);
+	printear_TLB(CONFIG.cant_entradas_tlb);
+	sleep(2);
+	buscar_frame(10,10);
+	printear_TLB(CONFIG.cant_entradas_tlb);
 	return EXIT_SUCCESS;
 }
 
@@ -266,7 +272,7 @@ void iniciar_paginacion() {
 
 	log_info(LOGGER,"Tengo %d marcos de %d bytes en memoria principal",cant_frames_ppal, CONFIG.tamanio_pagina);
 
-	TABLA_DE_PAGINAS = list_create();
+	TABLAS_DE_PAGINAS = list_create();
 
 
 }
@@ -277,4 +283,12 @@ void eliminar_paquete(t_paquete* paquete) {
    free(paquete->buffer);
    free(paquete);
 }
+
+int buscar_pagina_en_memoria(int pid, int pag){
+	int marco;
+
+
+	return -1;
+}
+
 

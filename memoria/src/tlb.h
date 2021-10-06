@@ -25,14 +25,14 @@ pthread_mutex_t mutexTiempo;
 //FUNCIONES
 
 void init_tlb(int cant_entradas ,  char* algoritmo_reemplazo);
-bool esta_en_tlb(t_pagina* una_pagina , int pid);
+
 void reemplazar_FIFO(int pid, int pag, int frame);
 void reemplazar_LRU(int pid, int pag, int frame);
 t_list* crear_estructura(int entradas);
 
 void printear_TLB(int entradas);
 int obtener_tiempo();
-
+int buscar_frame(int pid, int pag);
 int buscar_frame(int pid, int pag);
 
 #endif /* TLB_H_ */
