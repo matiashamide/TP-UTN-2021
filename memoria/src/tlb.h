@@ -7,7 +7,6 @@
 //ESTRUCTURAS
 
 typedef struct {
-	int id;
     int pag;
     int marco;
     int pid;

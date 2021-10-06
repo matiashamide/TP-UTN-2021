@@ -76,7 +76,11 @@ typedef struct{
 
 }t_pagina;
 
-
+typedef struct{
+	uint32_t prevAlloc;
+	uint32_t nextAlloc;
+	uint8_t isFree;
+}HeapMetaData;
 
 //VARIABLES GLOBALES
 
@@ -108,5 +112,18 @@ void atender_carpinchos(int cliente);
 void iniciar_paginacion();
 int buscar_pagina_en_memoria(int pid, int pag);
 void printearTLB(int entradas);
+
+int memalloc(int size , int pid);
+int memfree();
+
+
+
+
+
+
+
+
+
+
 
 #endif /* MEMORIA_H_ */

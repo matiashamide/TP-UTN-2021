@@ -291,4 +291,11 @@ int buscar_pagina_en_memoria(int pid, int pag){
 	return -1;
 }
 
+int memalloc(int size , int pid){
+
+
+
+	return 0;
+}
+
 
