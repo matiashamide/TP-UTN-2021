@@ -17,6 +17,11 @@ int main(void) {
 
 	coordinador_multihilo();
 
+	iniciar_planificador_largo_plazo();
+
+
+
+
 	return EXIT_SUCCESS;
 
 }
@@ -84,9 +89,11 @@ void init_kernel(){
 	//Mutexes
 	pthread_mutex_init(&mutex_creacion_PID, NULL);
 	pthread_mutex_init(&mutex_lista_new, NULL);
+	pthread_mutex_init(&mutex_lista_ready, NULL);
 
 	//Semaforos
 	sem_init(&sem_cola_new, 0, 0);
+	sem_init(&sem_cola_ready, 0, 0);
 	sem_init(&sem_grado_multiprogramacion, 0, CONFIG_KERNEL.grado_multiprogramacion);
 
 	//Variable que asigna PIDs a los nuevos carpinchos
@@ -123,7 +130,15 @@ void coordinador_multihilo(){
 	}
 }
 
-void atender_carpinchos(int cliente){
+void iniciar_planificador_largo_plazo() {
+
+
+	pthread_create(&planificador_largo_plazo, NULL, (void*)algoritmo_planificador_largo_plazo, NULL);
+	pthread_detach(planificador_largo_plazo);
+
+}
+
+void atender_carpinchos(int cliente) {
 
 	PCB* pcb_carpincho = malloc(sizeof(PCB));
 
@@ -144,3 +159,4 @@ void pasar_a_new(PCB* pcb_carpincho) {
 	sem_post(&sem_cola_new);
 
 }
+

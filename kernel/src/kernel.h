@@ -29,13 +29,6 @@ typedef struct {
 }t_kernel_config;
 
 
-typedef struct
-{
-	uint32_t PID;
-
-}PCB;
-
-
 //VARIABLES GLOBALES
 t_kernel_config CONFIG_KERNEL;
 t_log* LOGGER;
@@ -58,6 +51,7 @@ void init_kernel();
 void atender_carpinchos(int cliente);
 void coordinador_multihilo();
 void pasar_a_new(PCB* pcb_carpincho);
+void iniciar_planificador_largo_plazo();
 
 #endif /* KERNEL_H_ */
 

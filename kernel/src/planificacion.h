@@ -24,8 +24,22 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
+
+//ESTRUCTURAS
+typedef struct
+{
+	uint32_t PID;
+
+}PCB;
+
+//VARIABLES GLOBALES
+t_list_iterator* iterador_lista_ready;
+
+
+
 //SEMAFOROS
 sem_t sem_cola_new;
+sem_t sem_cola_ready;
 sem_t sem_grado_multiprogramacion;
 
 //LISTAS
@@ -44,7 +58,10 @@ pthread_mutex_t mutex_lista_blocked;
 pthread_mutex_t mutex_lista_blocked_suspended;
 pthread_mutex_t mutex_lista_ready_suspended;
 
+//HILOS
+pthread_t planificador_largo_plazo;
 
-void planificador_largo_plazo();
+
+void algoritmo_planificador_largo_plazo();
 
 #endif /* PLANIFICACION_H_ */

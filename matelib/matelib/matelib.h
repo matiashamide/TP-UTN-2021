@@ -25,7 +25,7 @@
 
 //-------------------Variables Globales----------------------/
 
- char* CONFIG_PATH = "/home/utnso/workspace/tp-2021-2c-DesacatadOS/lib/src/lib.config";
+ char* CONFIG_PATH = "/home/utnso/workspace/tp-2021-2c-DesacatadOS/matelib/matelib.config";
  int CONEXION;
 
 //-------------------Type Definitions----------------------/
