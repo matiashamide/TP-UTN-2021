@@ -18,5 +18,7 @@ int main(void) {
 	mate_instance* lib = malloc(sizeof(mate_instance));
 	mate_init(lib, CONFIG_PATH);
 
+
+
 	return EXIT_SUCCESS;
 }

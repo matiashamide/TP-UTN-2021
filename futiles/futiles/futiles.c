@@ -35,7 +35,7 @@ int crear_conexion(char *ip, char* puerto) {
    return socket_cliente;
 }
 
-int iniciar_servidor(char* IP, char* PUERTO)
+/*int iniciar_servidor(char* IP, char* PUERTO)
 {
    int socket_servidor;
 
@@ -66,14 +66,44 @@ int iniciar_servidor(char* IP, char* PUERTO)
    printf("Listo para escuchar a mi cliente\n");
 
    return socket_servidor;
+}*/
+
+int iniciar_servidor(char* IP, char* PUERTO)
+{
+	int socket_servidor;
+
+	struct addrinfo hints, *servinfo;
+
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = AI_PASSIVE;
+
+	getaddrinfo(IP, PUERTO, &hints, &servinfo);
+
+	socket_servidor = socket(servinfo->ai_family,
+	                         servinfo->ai_socktype,
+	                         servinfo->ai_protocol);
+
+	bind(socket_servidor, servinfo->ai_addr, servinfo->ai_addrlen);
+
+	listen(socket_servidor, SOMAXCONN);
+
+	freeaddrinfo(servinfo);
+
+	printf("Listo para escuchar a mi cliente\n");
+
+	return socket_servidor;
+
 }
 
 
 int esperar_cliente(int socket_servidor) {
-  struct sockaddr_in dir_cliente;
-  int tam_direccion = sizeof(struct sockaddr_in);
+  //struct sockaddr_in dir_cliente;
+  //int tam_direccion = sizeof(struct sockaddr_in);
 
-  int socket_cliente = accept(socket_servidor, (void*) &dir_cliente, &tam_direccion);
+  //int socket_cliente = accept(socket_servidor, (void*) &dir_cliente, &tam_direccion);
+  int socket_cliente = accept(socket_servidor, NULL, NULL);
 
   printf("Se conecto un cliente\n");
   return socket_cliente;

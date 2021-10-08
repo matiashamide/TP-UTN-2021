@@ -117,14 +117,33 @@ void coordinador_multihilo(){
 	}
 }
 */
+//void coordinador_multihilo(){
+
+//	while(1) {
+
+//		pthread_t hilo_atender_carpincho;// = malloc(sizeof(pthread_t));
+
+//		int socket = esperar_cliente(SERVIDOR_KERNEL);
+
+//		pthread_create(&hilo_atender_carpincho , NULL , (void*)atender_carpinchos, (void*)socket);
+//		pthread_detach(hilo_atender_carpincho);
+
+//	}
+//}
+
 void coordinador_multihilo(){
 
 	while(1) {
 
-		int socket = esperar_cliente(SERVIDOR_KERNEL);
-
 		pthread_t hilo_atender_carpincho;// = malloc(sizeof(pthread_t));
-		pthread_create(&hilo_atender_carpincho , NULL , (void*)atender_carpinchos, (void*)socket);
+
+		int *socket_cliente = malloc(sizeof(int));
+
+		*socket_cliente = accept(SERVIDOR_KERNEL, NULL, NULL);
+
+		printf("Joder");
+
+		pthread_create(&hilo_atender_carpincho, NULL , (void*)atender_carpinchos, socket_cliente);
 		pthread_detach(hilo_atender_carpincho);
 
 	}
