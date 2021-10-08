@@ -97,6 +97,7 @@ void* serializar_paquete(t_paquete* paquete, int *bytes);
 void eliminar_paquete(t_paquete* paquete);
 void mate_printf();
 
+
 //-----------------Semaphore Functions---------------------/
 
 int mate_sem_init(mate_instance *lib_ref, mate_sem_name sem, unsigned int value);

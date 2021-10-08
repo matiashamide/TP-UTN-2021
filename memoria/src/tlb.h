@@ -20,6 +20,7 @@ t_list* TLB;
 
 //Semaforos
 pthread_mutex_t mutexTiempo;
+pthread_mutex_t mutexTLB;
 
 //FUNCIONES
 

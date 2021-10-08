@@ -83,6 +83,33 @@ void atender_carpinchos(int cliente) {
 	peticion_carpincho operacion = recibir_operacion(cliente);
 
 	switch (operacion) {
+
+	case MEMALLOC:;
+		/*int* pid  = malloc(4);
+		pid = recibir_entero();
+		size = recibir_entero();
+		*/
+
+		int size = 0;
+		int pid = 0;
+
+		memalloc(size , pid);
+
+	break;
+
+	case MEMREAD:;
+	break;
+
+	case MEMFREE:;
+	break;
+
+	case MEMWRITE:;
+	break;
+
+
+
+
+
 	case MENSAJE:;
 		char* mensaje = recibir_mensaje(cliente);
 		printf("%s",mensaje);
@@ -102,10 +129,14 @@ void iniciar_paginacion() {
 
 int buscar_pagina_en_memoria(int pid, int pag) {
 	int marco;
+
 	return -1;
 }
 
 int memalloc(int size , int pid) {
+
+	if(list_get(TABLAS_DE_PAGINAS , pid) == NULL) ;
+
 	return 0;
 }
 
