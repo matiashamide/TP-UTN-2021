@@ -109,6 +109,13 @@ int esperar_cliente(int socket_servidor) {
   return socket_cliente;
 }
 
+int esperar_cliente_kernel(int socket_servidor) {
+	  int socket_cliente = accept(socket_servidor, NULL, NULL);
+
+	  printf("Se conecto un cliente\n");
+	  return socket_cliente;
+}
+
 int recibir_operacion(int socket_cliente) {
    int cod_op;
    if (recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL) != 0) {

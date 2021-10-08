@@ -92,6 +92,7 @@ int mate_close(mate_instance *lib_ref);
 
 t_lib_config crear_archivo_config_lib(char* ruta);
 int crear_conexion(char *ip, char* puerto);
+int crear_conexion_kernel(char *ip, char* puerto);
 void enviar_mensaje(char* mensaje, int socket_cliente);
 void* serializar_paquete(t_paquete* paquete, int *bytes);
 void eliminar_paquete(t_paquete* paquete);

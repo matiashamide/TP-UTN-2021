@@ -32,13 +32,13 @@ int mate_init(mate_instance *lib_ref, char *config)
 	int conexion;
 
     //Conexiones
-	conexion = crear_conexion(lib_config.ip_kernel, lib_config.puerto_kernel);
+	conexion = crear_conexion_kernel(lib_config.ip_kernel, lib_config.puerto_kernel);
 
 	if(conexion == (-1)) {
 
 		        printf("No se pudo conectar con el Kernel, inicio de conexion con Memoria");
 
-		        conexion = crear_conexion(lib_config.ip_memoria, lib_config.puerto_memoria);
+		        conexion = crear_conexion_kernel(lib_config.ip_memoria, lib_config.puerto_memoria);
 
 		        if(conexion == (-1)) {
 
@@ -103,6 +103,28 @@ int crear_conexion(char *ip, char* puerto)
    freeaddrinfo(server_info);
 
    return socket_cliente;
+}
+
+int crear_conexion_kernel(char *ip, char* puerto)
+{
+	struct addrinfo hints;
+	struct addrinfo *server_info;
+
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+
+	getaddrinfo(ip, puerto, &hints, &server_info);
+
+	int socket_cliente = socket(server_info->ai_family,
+	                    server_info->ai_socktype,
+	                    server_info->ai_protocol);
+
+	connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen);
+
+	freeaddrinfo(server_info);
+
+	return socket_cliente;
 }
 
 void enviar_mensaje(char* mensaje, int socket_cliente)

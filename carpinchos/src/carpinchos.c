@@ -13,8 +13,8 @@
 #include <matelib/matelib.h>
 
 int main(void) {
-	mate_instance* lib = malloc(sizeof(mate_instance));
-	mate_init(lib, CONFIG_PATH);
+	mate_instance mate_ref;
+	mate_init(&mate_ref, "/home/utnso/workspace/tp-2021-2c-DesacatadOS/matelib/matelib.config");
 	mate_printf();
 
 

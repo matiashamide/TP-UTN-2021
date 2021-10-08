@@ -17,10 +17,6 @@ int main(void) {
 
 	coordinador_multihilo();
 
-	iniciar_planificador_largo_plazo();
-
-
-
 
 	return EXIT_SUCCESS;
 
@@ -99,7 +95,7 @@ void init_kernel(){
 	//Variable que asigna PIDs a los nuevos carpinchos
 	PID_PROX_CARPINCHO = 0;
 
-
+	iniciar_planificador_largo_plazo();
 }
 
 /*
@@ -141,7 +137,7 @@ void coordinador_multihilo(){
 
 		*socket_cliente = accept(SERVIDOR_KERNEL, NULL, NULL);
 
-		printf("Se conecto un carpincho usando la mateLib");
+		printf("Se conecto un carpincho usando la mateLib\n");
 
 		pthread_create(&hilo_atender_carpincho, NULL , (void*)atender_carpinchos, socket_cliente);
 		pthread_detach(hilo_atender_carpincho);
@@ -151,8 +147,8 @@ void coordinador_multihilo(){
 
 void iniciar_planificador_largo_plazo() {
 
-
 	pthread_create(&planificador_largo_plazo, NULL, (void*)algoritmo_planificador_largo_plazo, NULL);
+	printf("Ya cree el planificador de largo plazo\n");
 	pthread_detach(planificador_largo_plazo);
 
 }
@@ -167,6 +163,8 @@ void atender_carpinchos(int cliente) {
 	pthread_mutex_unlock(&mutex_creacion_PID);
 
 	pasar_a_new(pcb_carpincho);
+
+
 }
 
 void pasar_a_new(PCB* pcb_carpincho) {
