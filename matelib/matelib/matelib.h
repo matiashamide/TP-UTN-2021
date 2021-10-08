@@ -26,7 +26,7 @@
 //-------------------Variables Globales----------------------/
 
  char* CONFIG_PATH = "/home/utnso/workspace/tp-2021-2c-DesacatadOS/matelib/matelib.config";
- int CONEXION;
+ //int CONEXION;
 
 //-------------------Type Definitions----------------------/
 typedef struct mate_instance
@@ -38,6 +38,7 @@ typedef struct mate_inner_structure
 {
   void *memory;
   sem_t* sem_instance;
+  int* socket;
 } mate_inner_structure;
 
 typedef struct {

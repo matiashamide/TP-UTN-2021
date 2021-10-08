@@ -141,7 +141,7 @@ void coordinador_multihilo(){
 
 		*socket_cliente = accept(SERVIDOR_KERNEL, NULL, NULL);
 
-		printf("Joder");
+		printf("Se conecto un carpincho usando la mateLib");
 
 		pthread_create(&hilo_atender_carpincho, NULL , (void*)atender_carpinchos, socket_cliente);
 		pthread_detach(hilo_atender_carpincho);

@@ -29,16 +29,18 @@ int mate_init(mate_instance *lib_ref, char *config)
 {
 	t_lib_config lib_config = crear_archivo_config_lib(config);
 
-    //Conexiones
-	CONEXION = crear_conexion(lib_config.ip_kernel, lib_config.puerto_kernel);
+	int conexion;
 
-	if(CONEXION == (-1)) {
+    //Conexiones
+	conexion = crear_conexion(lib_config.ip_kernel, lib_config.puerto_kernel);
+
+	if(conexion == (-1)) {
 
 		        printf("No se pudo conectar con el Kernel, inicio de conexion con Memoria");
 
-		        CONEXION = crear_conexion(lib_config.ip_memoria, lib_config.puerto_memoria);
+		        conexion = crear_conexion(lib_config.ip_memoria, lib_config.puerto_memoria);
 
-		        if(CONEXION == (-1)) {
+		        if(conexion == (-1)) {
 
 		        		        printf("Error al conectar con Memoria");
 		        		        return 1;
@@ -51,6 +53,8 @@ int mate_init(mate_instance *lib_ref, char *config)
   if(lib_ref->group_info == NULL){
 	  return 1;
   }
+
+  //TODO lib_ref->group_info->
 
   return 0;
 }
@@ -148,7 +152,7 @@ void eliminar_paquete(t_paquete* paquete)
 }
 
 void mate_printf() {
-	printf("Aca esta la matelib imprimiendo algo");
+	printf("Aca esta la matelib imprimiendo algo\n");
 }
 
 //-----------------Semaphore Functions---------------------/

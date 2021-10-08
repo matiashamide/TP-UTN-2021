@@ -13,11 +13,9 @@
 #include <matelib/matelib.h>
 
 int main(void) {
-	puts("!!!Hello Carpinchos!!!"); /* prints !!!Hello World!!! */
-	mate_printf();
 	mate_instance* lib = malloc(sizeof(mate_instance));
 	mate_init(lib, CONFIG_PATH);
-
+	mate_printf();
 
 
 	return EXIT_SUCCESS;
