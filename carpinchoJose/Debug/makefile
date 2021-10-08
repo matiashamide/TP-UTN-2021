@@ -23,22 +23,22 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: carpinchoElsa
+all: carpinchoJose
 
 dependents:
-	-cd /home/utnso/workspace/tp-2021-2c-DesacatadOS/matelib/Debug && $(MAKE) clean all
+	-cd /home/utnso/workspace/tp-2021-2c-DesacatadOS/matelib/Debug && $(MAKE) all
 
 # Tool invocations
-carpinchoElsa: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2021-2c-DesacatadOS/matelib/Debug/libmatelib.so
+carpinchoJose: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2021-2c-DesacatadOS/matelib/Debug/libmatelib.so
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L"/home/utnso/workspace/tp-2021-2c-DesacatadOS/matelib/Debug" -o "carpinchoElsa" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L"/home/utnso/workspace/tp-2021-2c-DesacatadOS/matelib/Debug" -o "carpinchoJose" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) carpinchoElsa
+	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) carpinchoJose
 	-@echo ' '
 
 .PHONY: all clean dependents
