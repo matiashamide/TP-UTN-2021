@@ -54,15 +54,16 @@ int mate_init(mate_instance *lib_ref, char *config)
 	  return 1;
   }
 
-  //TODO lib_ref->group_info->
+  ((mate_inner_structure *)lib_ref->group_info)->socket_conexion = conexion;
 
   return 0;
 }
 
 int mate_close(mate_instance *lib_ref)
 {
-  free(lib_ref->group_info);
-  return 0;
+	close(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
+	free(lib_ref->group_info);
+	return 0;
 }
 
 t_lib_config crear_archivo_config_lib(char* ruta) {

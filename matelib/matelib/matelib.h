@@ -38,7 +38,7 @@ typedef struct mate_inner_structure
 {
   void *memory;
   sem_t* sem_instance;
-  int* socket;
+  int socket_conexion;
 } mate_inner_structure;
 
 typedef struct {

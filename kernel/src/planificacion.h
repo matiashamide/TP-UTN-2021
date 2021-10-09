@@ -29,6 +29,7 @@
 typedef struct
 {
 	uint32_t PID;
+	uint32_t real_anterior;
 
 }PCB;
 
@@ -41,6 +42,7 @@ t_list_iterator* iterador_lista_ready;
 sem_t sem_cola_new;
 sem_t sem_cola_ready;
 sem_t sem_grado_multiprogramacion;
+sem_t sem_grado_multiprocesamiento;
 
 //LISTAS
 t_list* LISTA_NEW;
@@ -63,5 +65,6 @@ pthread_t planificador_largo_plazo;
 
 
 void algoritmo_planificador_largo_plazo();
+void algoritmo_planificador_corto_plazo();
 
 #endif /* PLANIFICACION_H_ */

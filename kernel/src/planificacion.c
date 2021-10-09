@@ -27,5 +27,13 @@ void algoritmo_planificador_largo_plazo() {
 		free(pcb);
 	}
 
+}
+
+void algoritmo_planificador_corto_plazo() {
+
+	while(1) {
+		sem_wait(&sem_cola_ready);
+		sem_wait(&sem_grado_multiprocesamiento);
+	}
 
 }

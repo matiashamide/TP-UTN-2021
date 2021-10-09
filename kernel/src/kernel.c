@@ -91,6 +91,7 @@ void init_kernel(){
 	sem_init(&sem_cola_new, 0, 0);
 	sem_init(&sem_cola_ready, 0, 0);
 	sem_init(&sem_grado_multiprogramacion, 0, CONFIG_KERNEL.grado_multiprogramacion);
+	sem_init(&sem_grado_multiprocesamiento, 0, CONFIG_KERNEL.grado_multiprocesamiento);
 
 	//Variable que asigna PIDs a los nuevos carpinchos
 	PID_PROX_CARPINCHO = 0;
@@ -161,6 +162,8 @@ void atender_carpinchos(int cliente) {
 	pcb_carpincho->PID = PID_PROX_CARPINCHO;
 	PID_PROX_CARPINCHO++;
 	pthread_mutex_unlock(&mutex_creacion_PID);
+
+	pcb_carpincho->real_anterior = 0;
 
 	pasar_a_new(pcb_carpincho);
 
