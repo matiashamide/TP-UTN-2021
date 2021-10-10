@@ -6,6 +6,9 @@ void init_tlb(int entradas , char* algoritmo){
 	TLB = list_create();
 	TLB = crear_estructura(entradas);
 	TIEMPO_TLB = 0;
+
+	HIT_TOTALES = 0;
+	MISS_TOTALES = 0;
 }
 
 t_list* crear_estructura(int cant_entradas){
@@ -39,12 +42,14 @@ int buscar_frame(int pid, int pag) {
 	pthread_mutex_unlock(&mutexTLB);
 
 	if (entrada != NULL) {
+		HIT_TOTALES ++;
 		log_info(LOGGER , "TLB hit : " , "pag %i" ,  entrada->pag ,"pid %i" ,  entrada->pid);
 		entrada->ultimo_uso = obtener_tiempo();
 		return entrada->marco;
 	}
 
 	int frame = buscar_pagina_en_memoria(pid, pag);
+	MISS_TOTALES ++;
 
 	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb,"LRU")) {
 		reemplazar_LRU(pid, pag, frame);
@@ -119,6 +124,18 @@ void printear_TLB(int entradas){
 	}
 }
 
+void print_SIGINT(){
+	printf("cantidad de hit  totales : %i \n" , HIT_TOTALES );
+	printf("cantidad de miss totales : %i \n" , MISS_TOTALES);
+
+	int cant_procesos = list_size(TABLAS_DE_PAGINAS);
+
+	for(int i =0 ; i < cant_procesos ; i++){
+		 // imprimir tlb hit y miss por proceso: deberiamos guardar en una
+		 //variable dentro de alguna estructura, o hacer una estrucutra para guardar ese valor
+	}
+
+}
 
 
 

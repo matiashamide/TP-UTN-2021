@@ -14,27 +14,12 @@ int main(void) {
 
 	init_memoria();
 
-	//enviar_mensaje("hola como estas", SERVIDOR_MEMORIA);
-	//coordinador_multihilo();
+	enviar_mensaje("hola como estas", SERVIDOR_MEMORIA);
+	coordinador_multihilo();
 
-	init_tlb(CONFIG.cant_entradas_tlb , CONFIG.alg_reemplazo_tlb);
-	printear_TLB(CONFIG.cant_entradas_tlb);
 
-	for(int i = 0 ; i < 5  ; i++){
+    signal( SIGINT, &print_SIGINT);
 
-	sleep(2);
-
-	buscar_frame(i , i+1 );
-
-	printear_TLB(CONFIG.cant_entradas_tlb);
-
-	}
-	sleep(2);
-	buscar_frame( 2 , 3);
-	printear_TLB(CONFIG.cant_entradas_tlb);
-	sleep(2);
-	buscar_frame(10,10);
-	printear_TLB(CONFIG.cant_entradas_tlb);
 	return EXIT_SUCCESS;
 }
 

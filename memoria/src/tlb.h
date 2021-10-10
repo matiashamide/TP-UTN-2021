@@ -18,6 +18,9 @@ typedef struct {
 int TIEMPO_TLB;
 t_list* TLB;
 
+int HIT_TOTALES;
+int MISS_TOTALES;
+
 //Semaforos
 pthread_mutex_t mutexTiempo;
 pthread_mutex_t mutexTLB;
@@ -34,5 +37,7 @@ void printear_TLB(int entradas);
 int obtener_tiempo();
 int buscar_frame(int pid, int pag);
 int buscar_frame(int pid, int pag);
+
+void print_SIGINT();
 
 #endif /* TLB_H_ */

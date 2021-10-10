@@ -9,6 +9,7 @@
 #define MEMORIA_H_
 
 #include <futiles/futiles.h>
+#include "tlb.h"
 
 //ESTRUCTURAS
 typedef struct {

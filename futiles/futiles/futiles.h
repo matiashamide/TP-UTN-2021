@@ -27,6 +27,7 @@
 #include <netdb.h>
 #include <signal.h>
 
+
 typedef enum {
 	INICIALIZAR_SEM,
 	ESPERAR_SEM,
