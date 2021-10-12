@@ -26,7 +26,7 @@
 #include <unistd.h>
 #include <netdb.h>
 #include <signal.h>
-
+#include <math.h>
 
 typedef enum {
 	INICIALIZAR_SEM,

@@ -15,7 +15,7 @@
 typedef struct {
     char* ip_memoria;
     char* puerto_memoria;
-    int tamanio;
+    int tamanio_memoria;
     int tamanio_pagina;
     char* alg_remp_mmu;
     char* tipo_asignacion;
@@ -28,7 +28,6 @@ typedef struct {
 
 typedef struct
 {
-    int PID;
     int frame_ppal;
     int frame_virtual;
     int presencia;
@@ -48,6 +47,11 @@ typedef struct
 }t_tabla_pagina;
 
 typedef struct{
+	int id;
+	bool ocupado;
+}t_frame;
+
+typedef struct{
 	uint32_t prev_alloc;
 	uint32_t next_alloc;
 	uint8_t is_free;
@@ -58,7 +62,12 @@ typedef struct{
 t_memoria_config CONFIG;
 t_log* LOGGER;
 t_list* TABLAS_DE_PAGINAS;
+t_list* MARCOS_MEMORIA;
 int SERVIDOR_MEMORIA;
+
+pthread_mutex_t mutexMemoria;
+pthread_mutex_t mutexMarcos;
+pthread_mutex_t mutexTablas;
 
 /* Memoria ppal */
 void* MEMORIA_PRINCIPAL;
@@ -79,6 +88,6 @@ void printearTLB(int entradas);
 
 int memalloc(int size , int pid);
 int memfree();
-
+t_list* verificar_solicitar_marcos(int cant_marcos);
 
 #endif /* MEMORIA_H_ */

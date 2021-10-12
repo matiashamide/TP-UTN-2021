@@ -38,7 +38,7 @@ void init_memoria(){
 	SERVIDOR_MEMORIA = iniciar_servidor(CONFIG.ip_memoria,CONFIG.puerto_memoria);
 
 	//Instanciamos memoria principal
-	MEMORIA_PRINCIPAL = malloc(CONFIG.tamanio);
+	MEMORIA_PRINCIPAL = malloc(CONFIG.tamanio_memoria);
 
 	if (MEMORIA_PRINCIPAL == NULL) {
 	   	perror("MALLOC FAIL!\n");
@@ -105,11 +105,23 @@ void atender_carpinchos(int cliente) {
 
 void iniciar_paginacion() {
 
-	int cant_frames_ppal = CONFIG.tamanio / CONFIG.tamanio_pagina;
+	int cant_frames_ppal = CONFIG.tamanio_memoria / CONFIG.tamanio_pagina;
 
 	log_info(LOGGER,"Tengo %d marcos de %d bytes en memoria principal",cant_frames_ppal, CONFIG.tamanio_pagina);
 
 	TABLAS_DE_PAGINAS = list_create();
+
+
+	MARCOS_MEMORIA = list_create();
+	for(int i = 0 ; i < cant_frames_ppal ; i++){
+
+		t_frame* frame = malloc(sizeof(t_frame));
+		frame->ocupado = 0;
+		frame->id = i;
+
+		list_add(MARCOS_MEMORIA , frame );
+	}
+
 }
 
 int buscar_pagina_en_memoria(int pid, int pag) {
@@ -120,23 +132,53 @@ int buscar_pagina_en_memoria(int pid, int pag) {
 
 int memalloc(int size , int pid) {
 
+
 	if(list_get(TABLAS_DE_PAGINAS , pid) == NULL){
+
 		//Crea tabla de paginas para el proceso
-		t_tabla_pagina nueva_tabla = malloc(sizeof(t_tabla_pagina));
+		t_tabla_pagina* nueva_tabla = malloc(sizeof(t_tabla_pagina));
 		nueva_tabla->paginas = list_create();
 		nueva_tabla->PID = pid;
 
-		//Asignarle marcos para el size solicitado
+		//Chequear que me pidan un size coherente
+		int marcos_necesarios = ceil(size / CONFIG.tamanio_pagina);
+
+		if(marcos_necesarios > CONFIG.marcos_max ){
+
+			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) " , size , pid);
+			log_info(LOGGER , "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) " , size , pid);
+
+			return EXIT_FAILURE;
+		}
+
+		//Verificar si entra en memoria y solicitamos marcos
+		t_list* frames_dados = verificar_solicitar_marcos(marcos_necesarios);
+
+		if(frames_dados == NULL){
+			printf(" No hay mas espacio en la memoria para el proceso %i ", pid);
+			log_info(LOGGER," No hay mas espacio en la memoria para el proceso %i ", pid);
+			return EXIT_FAILURE;
+		}
+
+		for(int i = 0 ; i < list_size(frames_dados) ; i++){
+			t_pagina* pagina = malloc(sizeof(t_pagina));
+
+			pagina->frame_ppal = ((t_frame*)list_get(frames_dados , i))-> id;
+
+			list_add(nueva_tabla->paginas , pagina);
+		}
+
+		pthread_mutex_lock(&mutexTablas);
+		list_add(TABLAS_DE_PAGINAS,nueva_tabla);
+		pthread_mutex_unlock(&mutexTablas);
 
 	}
+
 
 
 	return 0;
 }
 
-int alloc_disponible(int tamanio_requerido){
-
-}
 
 t_memoria_config crear_archivo_config_memoria(char* ruta) {
     t_config* memoria_config;
@@ -150,7 +192,7 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
 
     config.ip_memoria = config_get_string_value(memoria_config, "IP");
     config.puerto_memoria = config_get_string_value(memoria_config, "PUERTO");
-    config.tamanio = config_get_int_value(memoria_config, "TAMANIO");
+    config.tamanio_memoria = config_get_int_value(memoria_config, "TAMANIO");
     config.tamanio_pagina = config_get_int_value(memoria_config, "TAMANIO_PAGINA");
     config.alg_remp_mmu = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_MMU");
     config.tipo_asignacion = config_get_string_value(memoria_config, "TIPO_ASIGNACION");
@@ -162,4 +204,41 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
 
     return config;
 }
+
+t_list* verificar_solicitar_marcos(int cant_marcos){
+
+	bool marco_libre(t_frame* marco){
+		return marco->ocupado;
+	}
+
+	void ocupar_frame(t_frame* marco){
+		marco->ocupado = 1;
+	}
+
+	pthread_mutex_lock(&mutexMarcos);
+	t_list* marcos_libres = list_filter(MARCOS_MEMORIA , (void*)marco_libre);
+
+	if(list_size(marcos_libres) < cant_marcos){
+	pthread_mutex_unlock(&mutexMarcos);
+		return NULL;
+	}
+
+	t_list* marcos_asignados = list_take(marcos_libres , cant_marcos);
+
+	for(int i = 0 ; i < list_size(marcos_asignados) ; i++){
+		ocupar_frame((t_frame*)list_take(marcos_asignados , i));
+	}
+	pthread_mutex_unlock(&mutexMarcos);
+
+	return marcos_asignados;
+}
+
+
+
+
+
+
+
+
+
 
