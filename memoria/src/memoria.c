@@ -120,9 +120,22 @@ int buscar_pagina_en_memoria(int pid, int pag) {
 
 int memalloc(int size , int pid) {
 
-	if(list_get(TABLAS_DE_PAGINAS , pid) == NULL) ;
+	if(list_get(TABLAS_DE_PAGINAS , pid) == NULL){
+		//Crea tabla de paginas para el proceso
+		t_tabla_pagina nueva_tabla = malloc(sizeof(t_tabla_pagina));
+		nueva_tabla->paginas = list_create();
+		nueva_tabla->PID = pid;
+
+		//Asignarle marcos para el size solicitado
+
+	}
+
 
 	return 0;
+}
+
+int alloc_disponible(int tamanio_requerido){
+
 }
 
 t_memoria_config crear_archivo_config_memoria(char* ruta) {

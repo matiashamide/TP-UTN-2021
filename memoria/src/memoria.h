@@ -26,9 +26,26 @@ typedef struct {
 	int retardo_fallo_tlb;
 }t_memoria_config;
 
-typedef struct{
-
+typedef struct
+{
+    int PID;
+    int frame_ppal;
+    int frame_virtual;
+    int presencia;
+    int uso;
+    int modificado;
+    int lock;
+    int tiempo_uso;
+    int tamanio_disponible;
+    int frag_interna;
 }t_pagina;
+
+typedef struct
+{
+    int PID;
+    //int direPcb;
+    t_list* paginas;
+}t_tabla_pagina;
 
 typedef struct{
 	uint32_t prev_alloc;
