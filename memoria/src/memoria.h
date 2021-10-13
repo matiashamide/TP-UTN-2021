@@ -89,5 +89,8 @@ void printearTLB(int entradas);
 int memalloc(int size , int pid);
 int memfree();
 t_list* verificar_solicitar_marcos(int cant_marcos);
+heap_metadata* desserializar_header(void* buffer);
+
+void* traer_marquinhos_del_proceso(int pid);
 
 #endif /* MEMORIA_H_ */

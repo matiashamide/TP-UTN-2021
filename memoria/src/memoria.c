@@ -18,7 +18,7 @@ int main(void) {
 	coordinador_multihilo();
 
 
-    signal( SIGINT, &print_SIGINT);
+    signal(SIGINT, &print_SIGINT);
 
 	return EXIT_SUCCESS;
 }
@@ -132,8 +132,7 @@ int buscar_pagina_en_memoria(int pid, int pag) {
 
 int memalloc(int size , int pid) {
 
-
-	if(list_get(TABLAS_DE_PAGINAS , pid) == NULL){
+	if (list_get(TABLAS_DE_PAGINAS, pid) == NULL) {
 
 		//Crea tabla de paginas para el proceso
 		t_tabla_pagina* nueva_tabla = malloc(sizeof(t_tabla_pagina));
@@ -143,7 +142,7 @@ int memalloc(int size , int pid) {
 		//Chequear que me pidan un size coherente
 		int marcos_necesarios = ceil(size / CONFIG.tamanio_pagina);
 
-		if(marcos_necesarios > CONFIG.marcos_max ){
+		if (marcos_necesarios > CONFIG.marcos_max) {
 
 			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) " , size , pid);
 			log_info(LOGGER , "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) " , size , pid);
@@ -154,13 +153,13 @@ int memalloc(int size , int pid) {
 		//Verificar si entra en memoria y solicitamos marcos
 		t_list* frames_dados = verificar_solicitar_marcos(marcos_necesarios);
 
-		if(frames_dados == NULL){
+		if (frames_dados == NULL) {
 			printf(" No hay mas espacio en la memoria para el proceso %i ", pid);
 			log_info(LOGGER," No hay mas espacio en la memoria para el proceso %i ", pid);
 			return EXIT_FAILURE;
 		}
 
-		for(int i = 0 ; i < list_size(frames_dados) ; i++){
+		for (int i = 0 ; i < list_size(frames_dados) ; i++) {
 			t_pagina* pagina = malloc(sizeof(t_pagina));
 
 			pagina->frame_ppal = ((t_frame*)list_get(frames_dados , i))-> id;
@@ -172,13 +171,50 @@ int memalloc(int size , int pid) {
 		list_add(TABLAS_DE_PAGINAS,nueva_tabla);
 		pthread_mutex_unlock(&mutexTablas);
 
+		//heap_metadata header;
+		//header.is_free = false;
+		//header.next_alloc =
+
 	}
 
+	else
+	// Si el proceso ya existe en memoria
+	{
+		void* marquinhos = traer_marquinhos_del_proceso(pid);
+		heap_metadata* header;
 
 
+
+
+	}
 	return 0;
 }
 
+void* traer_marquinhos_del_proceso(int pid) {
+
+	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+
+	void* buffer = malloc(sizeof(CONFIG.tamanio_pagina) * list_size(paginas_proceso));
+
+	for (int i = 0 ; i < list_size(paginas_proceso) ; i++) {
+		int frame_aux = ((t_pagina*)list_get(paginas_proceso, i))->frame_ppal;
+		memcpy(buffer + i * CONFIG.tamanio_pagina, MEMORIA_PRINCIPAL + frame_aux * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
+	}
+
+	return buffer;
+}
+
+heap_metadata* desserializar_header(void* buffer) {
+	int offset = 0;
+	heap_metadata* header = malloc(sizeof(heap_metadata));
+
+	memcpy(&(header->prev_alloc), buffer + offset, sizeof(uint32_t));
+	offset += sizeof(uint32_t);
+	memcpy(&(header->next_alloc), buffer + offset, sizeof(uint32_t));
+	offset += sizeof(uint32_t);
+	memcpy(&(header->is_free), buffer + offset, sizeof(uint8_t));
+	return header;
+}
 
 t_memoria_config crear_archivo_config_memoria(char* ruta) {
     t_config* memoria_config;
@@ -205,40 +241,31 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
     return config;
 }
 
-t_list* verificar_solicitar_marcos(int cant_marcos){
+t_list* verificar_solicitar_marcos(int cant_marcos) {
 
-	bool marco_libre(t_frame* marco){
+	bool marco_libre(t_frame* marco) {
 		return marco->ocupado;
 	}
 
-	void ocupar_frame(t_frame* marco){
+	void ocupar_frame(t_frame* marco) {
 		marco->ocupado = 1;
 	}
 
 	pthread_mutex_lock(&mutexMarcos);
 	t_list* marcos_libres = list_filter(MARCOS_MEMORIA , (void*)marco_libre);
 
-	if(list_size(marcos_libres) < cant_marcos){
-	pthread_mutex_unlock(&mutexMarcos);
+	if (list_size(marcos_libres) < cant_marcos){
+		pthread_mutex_unlock(&mutexMarcos);
 		return NULL;
 	}
 
-	t_list* marcos_asignados = list_take(marcos_libres , cant_marcos);
+	t_list* marcos_asignados = list_take(marcos_libres, cant_marcos);
 
-	for(int i = 0 ; i < list_size(marcos_asignados) ; i++){
+	for (int i = 0 ; i < list_size(marcos_asignados) ; i++) {
 		ocupar_frame((t_frame*)list_take(marcos_asignados , i));
 	}
 	pthread_mutex_unlock(&mutexMarcos);
 
 	return marcos_asignados;
 }
-
-
-
-
-
-
-
-
-
 
