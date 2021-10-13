@@ -14,11 +14,14 @@ int main(void) {
 
 	init_memoria();
 
-	enviar_mensaje("hola como estas", SERVIDOR_MEMORIA);
-	coordinador_multihilo();
+	//enviar_mensaje("hola como estas", SERVIDOR_MEMORIA);
+	//coordinador_multihilo();
 
+	//memalloc(10,0);
+	while(1){
 
-    signal(SIGINT, &print_SIGINT);
+	}
+	signal(SIGINT, &print_SIGINT);
 
 	return EXIT_SUCCESS;
 }
@@ -183,9 +186,48 @@ int memalloc(int size , int pid) {
 		void* marquinhos = traer_marquinhos_del_proceso(pid);
 		heap_metadata* header;
 
+		do{
+			header = desserializar_header(marquinhos);
+			if(header->is_free && header->next_alloc != NULL){
+				heap_metadata* header_siguiente = desserializar_header(marquinhos + header->next_alloc);
 
+				if (size == header->next_alloc - header_siguiente->prev_alloc - 9){
+					//guardo directamente
+					header->is_free = false;
+					break;
+				}
+				else if(size + 9 < header->next_alloc - header_siguiente->prev_alloc - 9){
 
+					header->is_free = false;
 
+					// creo header y guardo
+					heap_metadata* nuevo_header = malloc(sizeof(heap_metadata));
+
+					//Inicializo header
+					nuevo_header->is_free = true;
+					nuevo_header->next_alloc = header->next_alloc;
+					nuevo_header->prev_alloc = header_siguiente->prev_alloc;
+
+					//Actualizo el header anterior al nuevo
+					header->next_alloc = header_siguiente->prev_alloc + size  + 9;
+
+					//Actualizo el header posterior al nuevo
+					header_siguiente->prev_alloc = header->next_alloc;
+
+					memcpy(marquinhos + nuevo_header->prev_alloc, header, 9);
+					memcpy(marquinhos + header->next_alloc, nuevo_header, 9);
+					memcpy(marquinhos + nuevo_header->next_alloc, header_siguiente, 9);
+
+					break;
+				}else{
+					//no entra
+				}
+			}
+
+		}
+		while(header->next_alloc != NULL );
+
+		//crear paginas nuevas xq no habia
 	}
 	return 0;
 }
