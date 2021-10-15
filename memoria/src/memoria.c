@@ -14,13 +14,12 @@ int main(void) {
 
 	init_memoria();
 
+	printf("%i" , sizeof(heap_metadata));
 	//enviar_mensaje("hola como estas", SERVIDOR_MEMORIA);
 	//coordinador_multihilo();
 
 	//memalloc(10,0);
-	while(1){
 
-	}
 	signal(SIGINT, &print_SIGINT);
 
 	return EXIT_SUCCESS;
@@ -185,18 +184,24 @@ int memalloc(int size , int pid) {
 	{
 		void* marquinhos = traer_marquinhos_del_proceso(pid);
 		heap_metadata* header;
+		uint32_t i = 0;
 
 		do{
-			header = desserializar_header(marquinhos);
+
+			header = desserializar_header(marquinhos + i);
+			i = header->next_alloc;
+
+
 			if(header->is_free && header->next_alloc != NULL){
 				heap_metadata* header_siguiente = desserializar_header(marquinhos + header->next_alloc);
 
-				if (size == header->next_alloc - header_siguiente->prev_alloc - 9){
+				if (size == header->next_alloc - header_siguiente->prev_alloc - sizeof(heap_metadata)){
 					//guardo directamente
 					header->is_free = false;
-					break;
+					memcpy(marquinhos + header_siguiente->prev_alloc , header , sizeof(heap_metadata) );
+
 				}
-				else if(size + 9 < header->next_alloc - header_siguiente->prev_alloc - 9){
+				else if(size + sizeof(heap_metadata) < header->next_alloc - header_siguiente->prev_alloc - sizeof(heap_metadata)){
 
 					header->is_free = false;
 
@@ -209,24 +214,65 @@ int memalloc(int size , int pid) {
 					nuevo_header->prev_alloc = header_siguiente->prev_alloc;
 
 					//Actualizo el header anterior al nuevo
-					header->next_alloc = header_siguiente->prev_alloc + size  + 9;
+					header->next_alloc = header_siguiente->prev_alloc + size  + sizeof(heap_metadata);
 
 					//Actualizo el header posterior al nuevo
 					header_siguiente->prev_alloc = header->next_alloc;
 
-					memcpy(marquinhos + nuevo_header->prev_alloc, header, 9);
-					memcpy(marquinhos + header->next_alloc, nuevo_header, 9);
-					memcpy(marquinhos + nuevo_header->next_alloc, header_siguiente, 9);
+					memcpy(marquinhos + nuevo_header->prev_alloc, header, sizeof(heap_metadata));
+					memcpy(marquinhos + header->next_alloc, nuevo_header, sizeof(heap_metadata));
+					memcpy(marquinhos + nuevo_header->next_alloc, header_siguiente, sizeof(heap_metadata));
+
+					free(nuevo_header);
+
+				}
+				free(header_siguiente);
+				break;
+			}
+			else if(header->next_alloc == NULL && header->is_free){
+				//caso que el ultimo sea NULL
+
+				heap_metadata* header_anterior = desserializar_header(marquinhos + header->prev_alloc);
+
+				int espacio_total = sizeof(marquinhos);
+
+				if(espacio_total - header_anterior->next_alloc + sizeof(heap_metadata) == size){
+					header->is_free = false;
+					memcpy(marquinhos + header_anterior->next_alloc , header , sizeof(heap_metadata) );
 
 					break;
-				}else{
-					//no entra
 				}
+				if( size + 9 > espacio_total - header_anterior->next_alloc + sizeof(heap_metadata)  ){
+
+					heap_metadata* nuevo_header = malloc(sizeof(heap_metadata));
+
+					//actualizo el header original
+					header->is_free = false;
+					header->next_alloc = header_anterior->next_alloc + sizeof(heap_metadata) + size;
+
+					//Inicializo header nuevo
+					nuevo_header->is_free = true;
+					nuevo_header->prev_alloc = header_anterior->next_alloc;
+					nuevo_header->next_alloc = NULL;
+
+					//lo meto a memoria el actualizado
+					memcpy(marquinhos + header_anterior->next_alloc , header , sizeof(heap_metadata));
+					//lo meto a memoria el nuevo
+					memcpy(marquinhos + header->next_alloc , nuevo_header , sizeof(heap_metadata));
+
+					free(nuevo_header);
+					break;
+				}
+
+
 			}
+
+
 
 		}
 		while(header->next_alloc != NULL );
 
+		free(header);
 		//crear paginas nuevas xq no habia
 	}
 	return 0;

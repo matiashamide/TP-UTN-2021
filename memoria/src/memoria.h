@@ -55,7 +55,7 @@ typedef struct{
 	uint32_t prev_alloc;
 	uint32_t next_alloc;
 	uint8_t is_free;
-}heap_metadata;
+}__attribute__((packed))heap_metadata;
 
 //VARIABLES GLOBALES
 
