@@ -186,11 +186,11 @@ int memalloc(int size , int pid) {
 		heap_metadata* header;
 		uint32_t i = 0;
 
+		header = desserializar_header(marquinhos + i);
+
 		do{
 
-			header = desserializar_header(marquinhos + i);
 			i = header->next_alloc;
-
 
 			if(header->is_free && header->next_alloc != NULL){
 				heap_metadata* header_siguiente = desserializar_header(marquinhos + header->next_alloc);
