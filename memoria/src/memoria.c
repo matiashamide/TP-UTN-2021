@@ -173,10 +173,29 @@ int memalloc(int size , int pid) {
 		list_add(TABLAS_DE_PAGINAS,nueva_tabla);
 		pthread_mutex_unlock(&mutexTablas);
 
-		//heap_metadata header;
-		//header.is_free = false;
-		//header.next_alloc =
+		//inicializo header inicial
+		heap_metadata* header = malloc(sizeof(heap_metadata));
+		header->is_free = false;
+		header->next_alloc = sizeof(heap_metadata) + size;
+		header->prev_alloc = NULL;
 
+		//armo el alloc siguiente
+		heap_metadata* header_siguiente = malloc(sizeof(heap_metadata));
+		header->is_free = true;
+		header->next_alloc = NULL;
+		header->prev_alloc = 0;
+
+		//inicializo marquinhos y les agrego los header
+		void* marquinhos = malloc(marcos_necesarios * CONFIG.tamanio_pagina);
+
+		memcpy(marquinhos , header , sizeof(heap_metadata));
+		memcpy(marquinhos + sizeof(heap_metadata) + size , header_siguiente , sizeof(heap_metadata) );
+
+		//meto todo a memoria
+		serializar_paginas_en_memoria(nueva_tabla->paginas , marquinhos);
+
+		free(header);
+		free(header_siguiente);
 	}
 
 	else
@@ -188,6 +207,8 @@ int memalloc(int size , int pid) {
 
 		header = desserializar_header(marquinhos + i);
 
+		t_list* tabla_proceso  = ((t_tabla_pagina*) list_get(TABLAS_DE_PAGINAS , pid))->paginas;
+
 		do{
 
 			i = header->next_alloc;
@@ -198,7 +219,8 @@ int memalloc(int size , int pid) {
 				if (size == header->next_alloc - header_siguiente->prev_alloc - sizeof(heap_metadata)){
 					//guardo directamente
 					header->is_free = false;
-					memcpy(marquinhos + header_siguiente->prev_alloc , header , sizeof(heap_metadata) );
+					memcpy(marquinhos + header_siguiente->prev_alloc , header , sizeof(heap_metadata));
+
 
 				}
 				else if(size + sizeof(heap_metadata) < header->next_alloc - header_siguiente->prev_alloc - sizeof(heap_metadata)){
@@ -268,13 +290,15 @@ int memalloc(int size , int pid) {
 			}
 
 
-
+			serializar_paginas_en_memoria(tabla_proceso , marquinhos);
 		}
 		while(header->next_alloc != NULL );
+
 
 		free(header);
 		//crear paginas nuevas xq no habia
 	}
+ loo
 	return 0;
 }
 
@@ -302,6 +326,18 @@ heap_metadata* desserializar_header(void* buffer) {
 	offset += sizeof(uint32_t);
 	memcpy(&(header->is_free), buffer + offset, sizeof(uint8_t));
 	return header;
+}
+
+void serializar_paginas_en_memoria(t_list* paginas , void* contenido){
+
+	for(int i = 0 ; i< list_size(paginas) ; i++){
+
+		int offset = ((t_pagina*)list_get(paginas , i))->frame_ppal * CONFIG.tamanio_pagina ;
+
+		memcpy(MEMORIA_PRINCIPAL + offset , contenido + i * CONFIG.tamanio_pagina , CONFIG.tamanio_pagina);
+	}
+
+	return;
 }
 
 t_memoria_config crear_archivo_config_memoria(char* ruta) {
