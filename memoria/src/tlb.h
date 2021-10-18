@@ -36,8 +36,10 @@ t_list* crear_estructura(int entradas);
 void printear_TLB(int entradas);
 int obtener_tiempo();
 int buscar_frame(int pid, int pag);
-int buscar_frame(int pid, int pag);
 
-void print_SIGINT();
+//// ---- funciones signals
+void generar_metricas_tlb();
+void dumpear_tlb();
+void limpiar_tlb();
 
 #endif /* TLB_H_ */

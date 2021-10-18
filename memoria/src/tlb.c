@@ -48,7 +48,8 @@ int buscar_frame(int pid, int pag) {
 		return entrada->marco;
 	}
 
-	int frame = buscar_pagina_en_memoria(pid, pag);
+	int frame = 0;
+			//TODO: buscar_pagina_en_memoria(pid, pag);
 	MISS_TOTALES ++;
 
 	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb,"LRU")) {
@@ -124,7 +125,7 @@ void printear_TLB(int entradas){
 	}
 }
 
-void print_SIGINT(){
+void generar_metricas_tlb(){
 	printf("cantidad de hit  totales : %i \n" , HIT_TOTALES );
 	printf("cantidad de miss totales : %i \n" , MISS_TOTALES);
 
@@ -134,7 +135,14 @@ void print_SIGINT(){
 		 // imprimir tlb hit y miss por proceso: deberiamos guardar en una
 		 //variable dentro de alguna estructura, o hacer una estrucutra para guardar ese valor
 	}
+}
 
+void dumpear_tlb(){
+
+}
+
+void limpiar_tlb(){
+	list_clean_and_destroy_elements(TLB, free);
 }
 
 

@@ -92,6 +92,11 @@ int memfree();
 void* memread();
 int memwrite();
 
+//// ---- funciones senales
+void signal_metricas();
+void signal_dump();
+void signal_clean_tlb();
+
 
 t_list* obtener_marcos(int cant_marcos);
 heap_metadata* desserializar_header(void* buffer);

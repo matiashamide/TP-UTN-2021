@@ -20,7 +20,7 @@ int main(void) {
 
 	//memalloc(10,0);
 
-	signal(SIGINT, &print_SIGINT);
+	signal(SIGINT, &imprimir_tlb);
 
 	return EXIT_SUCCESS;
 }
@@ -47,6 +47,11 @@ void init_memoria(){
 	   	log_info(LOGGER,"No se pudo alocar correctamente la memoria principal.");
         return;
 	}
+
+	//Senales
+	signal(SIGINT,  &signal_metricas);
+	signal(SIGUSR1, &signal_dump);
+	signal(SIGUSR2, &signal_clean_tlb);
 
 	//Iniciamos paginacion
 	iniciar_paginacion();
@@ -209,14 +214,15 @@ int memalloc(int size , int pid) {
 			i = header->next_alloc;
 
 			if (header->is_free && header->next_alloc != NULL){
+
 				heap_metadata* header_siguiente = desserializar_header(marquinhos + header->next_alloc);
 
-				if (size == header->next_alloc - header_siguiente->prev_alloc - sizeof(heap_metadata)){
-					//guardo directamente
+				if (size == header->next_alloc - header_siguiente->prev_alloc - sizeof(heap_metadata)) {
+					//Guardo directamente
 					header->is_free = false;
 					memcpy(marquinhos + header_siguiente->prev_alloc, header, sizeof(heap_metadata));
-
 				}
+
 				else if(size + sizeof(heap_metadata) < header->next_alloc - header_siguiente->prev_alloc - sizeof(heap_metadata)){
 
 					header->is_free = false;
@@ -244,6 +250,7 @@ int memalloc(int size , int pid) {
 				}
 				free(header_siguiente);
 				break;
+
 			}
 			else if(header->next_alloc == NULL && header->is_free){
 				//caso que el ultimo sea NULL
@@ -358,6 +365,19 @@ t_list* obtener_marcos(int cant_marcos) {
 	return marcos_asignados;
 }
 
+void signal_metricas(){
+	log_info(LOGGER, "[MEMORIA]: Recibi la senial de imprimir metricas, imprimiendo\n...");
+	generar_metricas_tlb();
+}
+void signal_dump(){
+	log_info(LOGGER, "[MEMORIA]: Recibi la senial de generar el dump, generando\n...");
+	dumpear_tlb();
+}
+void signal_clean_tlb(){
+	log_info(LOGGER, "[MEMORIA]: Recibi la senial para limpiar TLB, limpiando\n...");
+	limpiar_tlb();
+}
+
 t_memoria_config crear_archivo_config_memoria(char* ruta) {
     t_config* memoria_config;
     memoria_config = config_create(ruta);
@@ -368,17 +388,17 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
         exit(-1);
     }
 
-    config.ip_memoria = config_get_string_value(memoria_config, "IP");
-    config.puerto_memoria = config_get_string_value(memoria_config, "PUERTO");
-    config.tamanio_memoria = config_get_int_value(memoria_config, "TAMANIO");
-    config.tamanio_pagina = config_get_int_value(memoria_config, "TAMANIO_PAGINA");
-    config.alg_remp_mmu = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_MMU");
-    config.tipo_asignacion = config_get_string_value(memoria_config, "TIPO_ASIGNACION");
-    //config.marcos_max = config_get_int_value(memoria_config, "MARCOS_MAXIMOS");  --> ver en que casos esta esta esta config y meter un if
-    config.cant_entradas_tlb = config_get_int_value(memoria_config, "CANTIDAD_ENTRADAS_TLB");
-    config.alg_reemplazo_tlb = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_TLB");
-    config.retardo_acierto_tlb = config_get_int_value(memoria_config, "RETARDO_ACIERTO_TLB");
-    config.retardo_fallo_tlb = config_get_int_value(memoria_config, "RETARDO_FALLO_TLB");
+    config.ip_memoria          = config_get_string_value(memoria_config, "IP");
+    config.puerto_memoria      = config_get_string_value(memoria_config, "PUERTO");
+    config.tamanio_memoria     = config_get_int_value   (memoria_config, "TAMANIO");
+    config.tamanio_pagina      = config_get_int_value   (memoria_config, "TAMANIO_PAGINA");
+    config.alg_remp_mmu        = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_MMU");
+    config.tipo_asignacion     = config_get_string_value(memoria_config, "TIPO_ASIGNACION");
+    config.marcos_max          = config_get_int_value   (memoria_config, "MARCOS_MAXIMOS");  //TODO:--> ver en que casos esta esta esta config y meter un if
+    config.cant_entradas_tlb   = config_get_int_value   (memoria_config, "CANTIDAD_ENTRADAS_TLB");
+    config.alg_reemplazo_tlb   = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_TLB");
+    config.retardo_acierto_tlb = config_get_int_value   (memoria_config, "RETARDO_ACIERTO_TLB");
+    config.retardo_fallo_tlb   = config_get_int_value   (memoria_config, "RETARDO_FALLO_TLB");
 
     return config;
 }
