@@ -30,11 +30,14 @@ typedef struct
 {
 	uint32_t PID;
 	uint32_t real_anterior;
+	uint32_t estimado_anterior;
 
 }PCB;
 
 //VARIABLES GLOBALES
 t_list_iterator* iterador_lista_ready;
+t_kernel_config CONFIG_KERNEL;
+t_log* LOGGER;
 
 
 

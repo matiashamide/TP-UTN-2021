@@ -164,6 +164,7 @@ void atender_carpinchos(int cliente) {
 	pthread_mutex_unlock(&mutex_creacion_PID);
 
 	pcb_carpincho->real_anterior = 0;
+	pcb_carpincho->estimado_anterior = CONFIG_KERNEL.estimacion_inicial;
 
 	pasar_a_new(pcb_carpincho);
 

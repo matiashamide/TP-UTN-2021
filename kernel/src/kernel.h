@@ -30,8 +30,6 @@ typedef struct {
 
 
 //VARIABLES GLOBALES
-t_kernel_config CONFIG_KERNEL;
-t_log* LOGGER;
 int SERVIDOR_KERNEL;
 int SERVIDOR_MEMORIA;
 uint32_t PID_PROX_CARPINCHO;
