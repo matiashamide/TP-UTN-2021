@@ -115,14 +115,28 @@ void reemplazar_LRU(int pid, int pag, int frame){
 
 }
 
-void registrar_hit(int pid, entrada_tlb* entrada){
+
+//0 -> HIT
+//1 -> MISS
+void registrar_evento(int pid, int event){
+
+	int _proceso_con_id(tlb_event* evento) {
+		return (evento->pid == pid);
+	}
+
+	t_list* event_list = event ? TLB_HITS : TLB_MISS;
+
+	tlb_event* nodo_proceso = (tlb_event*)list_find(event_list, (void*)_proceso_con_id);
+
+	if (nodo_proceso != NULL) {
+		nodo_proceso->contador++;
+	} else {
+		tlb_event* nodo_nuevo;
+		nodo_nuevo->pid = pid;
+		nodo_nuevo->contador = 1;
+	}
 
 }
-
-void registrar_miss(int pid, int pag){
-
-}
-
 
 void printear_TLB(int entradas){
 	printf("-------------------\n");
@@ -139,9 +153,21 @@ void generar_metricas_tlb(){
 	prinft("METRICAS TLB:\n");
 
 	printf("[HITS TOTALES]: %i \n", list_size(TLB_HITS));
+	printf("[HITS POR PROCESO]");
+
+	for (int i=0 ; i < list_size(TLB_HITS) ; i++) {
+		tlb_event* nodo = (tlb_event*)list_get(TLB_HITS, i);
+		printf("Proceso %i ---> %i HITS", nodo->pid, nodo->contador);
+	}
 
 
 	printf("[MISS TOTALES]: %i \n", list_size(TLB_MISS));
+	printf("[MISS POR PROCESO]");
+
+	for (int i=0 ; i < list_size(TLB_HITS) ; i++) {
+		tlb_event* nodo = (tlb_event*)list_get(TLB_HITS, i);
+		printf("Proceso %i ---> %i HITS", nodo->pid, nodo->contador);
+	}
 }
 
 void dumpear_tlb(){

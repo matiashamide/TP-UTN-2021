@@ -15,7 +15,7 @@ typedef struct {
 
 typedef struct {
 	int pid;
-	t_list* event;
+	int contador;
 }tlb_event;
 
 // VARIABLES
@@ -42,8 +42,7 @@ void printear_TLB(int entradas);
 int obtener_tiempo();
 int buscar_frame(int pid, int pag);
 
-void registrar_hit(int pid, entrada_tlb* entrada);
-void registrar_miss(int pid, int pag);
+void registrar_evento(int pid, int event);
 
 //// ---- funciones signals
 void generar_metricas_tlb();
