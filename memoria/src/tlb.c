@@ -7,8 +7,8 @@ void init_tlb(int entradas , char* algoritmo){
 	TLB = crear_estructura(entradas);
 	TIEMPO_TLB = 0;
 
-	HIT_TOTALES = 0;
-	MISS_TOTALES = 0;
+	TLB_HITS = list_create();
+	TLB_MISS = list_create();
 }
 
 t_list* crear_estructura(int cant_entradas){
@@ -42,15 +42,16 @@ int buscar_frame(int pid, int pag) {
 	pthread_mutex_unlock(&mutexTLB);
 
 	if (entrada != NULL) {
-		HIT_TOTALES ++;
-		log_info(LOGGER , "TLB hit : " , "pag %i" ,  entrada->pag ,"pid %i" ,  entrada->pid);
+		registrar_hit(pid, entrada);
+		log_info(LOGGER , "TLB HIT: " , "pag %i" ,  entrada->pag ,"pid %i" ,  entrada->pid);
 		entrada->ultimo_uso = obtener_tiempo();
 		return entrada->marco;
 	}
 
+	registrar_miss(pid, pag);
+
 	int frame = 0;
 			//TODO: buscar_pagina_en_memoria(pid, pag);
-	MISS_TOTALES ++;
 
 	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb,"LRU")) {
 		reemplazar_LRU(pid, pag, frame);
@@ -114,27 +115,33 @@ void reemplazar_LRU(int pid, int pag, int frame){
 
 }
 
+void registrar_hit(int pid, entrada_tlb* entrada){
+
+}
+
+void registrar_miss(int pid, int pag){
+
+}
+
 
 void printear_TLB(int entradas){
 	printf("-------------------\n");
-	for(int i=0 ; i< entradas ; i++){
-		printf("entrada %i :\n " , i);
-		printf("  pag   %i     " , ((entrada_tlb*)list_get(TLB , i))->pag  );
-		printf("  marco %i     " , ((entrada_tlb*)list_get(TLB , i))->marco  );
-		printf("  ultimo uso   %i   \n" , ((entrada_tlb*)list_get(TLB , i))->ultimo_uso);
+	for(int i=0 ; i < entradas ; i++){
+		printf("entrada      %i :\n " , i);
+		printf("pag          %i     " , ((entrada_tlb*)list_get(TLB , i))->pag  );
+		printf("marco        %i     " , ((entrada_tlb*)list_get(TLB , i))->marco  );
+		printf("ultimo uso   %i   \n" , ((entrada_tlb*)list_get(TLB , i))->ultimo_uso);
 	}
 }
 
 void generar_metricas_tlb(){
-	printf("cantidad de hit  totales : %i \n" , HIT_TOTALES );
-	printf("cantidad de miss totales : %i \n" , MISS_TOTALES);
+	printf("-----------------------------------------\n");
+	prinft("METRICAS TLB:\n");
 
-	int cant_procesos = list_size(TABLAS_DE_PAGINAS);
+	printf("[HITS TOTALES]: %i \n", list_size(TLB_HITS));
 
-	for(int i =0 ; i < cant_procesos ; i++){
-		 // imprimir tlb hit y miss por proceso: deberiamos guardar en una
-		 //variable dentro de alguna estructura, o hacer una estrucutra para guardar ese valor
-	}
+
+	printf("[MISS TOTALES]: %i \n", list_size(TLB_MISS));
 }
 
 void dumpear_tlb(){
@@ -143,6 +150,8 @@ void dumpear_tlb(){
 
 void limpiar_tlb(){
 	list_clean_and_destroy_elements(TLB, free);
+	list_clean_and_destroy_elements(TLB_HITS, free);
+	list_clean_and_destroy_elements(TLB_MISS, free);
 }
 
 

@@ -35,7 +35,7 @@ void init_memoria(){
 	CONFIG = crear_archivo_config_memoria("/home/utnso/workspace/tp-2021-2c-DesacatadOS/memoria/src/memoria.config");
 
 	//Iniciamos servidor
-	SERVIDOR_MEMORIA = iniciar_servidor(CONFIG.ip_memoria,CONFIG.puerto_memoria);
+	SERVIDOR_MEMORIA = iniciar_servidor(CONFIG.ip_memoria, CONFIG.puerto_memoria);
 
 	//Instanciamos memoria principal
 	MEMORIA_PRINCIPAL = malloc(CONFIG.tamanio_memoria);
@@ -58,9 +58,11 @@ void init_memoria(){
 
 void coordinador_multihilo(){
 
-	while(1){
+	while(1) {
 
 		int socket = esperar_cliente(SERVIDOR_MEMORIA);
+
+		log_info(LOGGER, "Se conecto un cliente %i\n", socket);
 
 		pthread_t* hilo_atender_carpincho = malloc(sizeof(pthread_t));
 		pthread_create(hilo_atender_carpincho, NULL, (void*)atender_carpinchos, (void*)socket);

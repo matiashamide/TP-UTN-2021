@@ -4,7 +4,7 @@
 
 #include "memoria.h"
 
-//--ESTRUCTURAS
+// ESTRUCTURAS
 
 typedef struct {
     int pag;
@@ -13,19 +13,24 @@ typedef struct {
     int ultimo_uso;
 }entrada_tlb;
 
-//--VARIABLES
+typedef struct {
+	int pid;
+	t_list* event;
+}tlb_event;
+
+// VARIABLES
 
 int TIEMPO_TLB;
 t_list* TLB;
 
-int HIT_TOTALES;
-int MISS_TOTALES;
+t_list* TLB_HITS;
+t_list* TLB_MISS;
 
-//Semaforos
+//// --- semaforos
 pthread_mutex_t mutexTiempo;
 pthread_mutex_t mutexTLB;
 
-//FUNCIONES
+// FUNCIONES
 
 void init_tlb(int cant_entradas ,  char* algoritmo_reemplazo);
 
@@ -36,6 +41,9 @@ t_list* crear_estructura(int entradas);
 void printear_TLB(int entradas);
 int obtener_tiempo();
 int buscar_frame(int pid, int pag);
+
+void registrar_hit(int pid, entrada_tlb* entrada);
+void registrar_miss(int pid, int pag);
 
 //// ---- funciones signals
 void generar_metricas_tlb();
