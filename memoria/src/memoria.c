@@ -20,8 +20,6 @@ int main(void) {
 
 	//memalloc(10,0);
 
-	signal(SIGINT, &imprimir_tlb);
-
 	return EXIT_SUCCESS;
 }
 
