@@ -60,7 +60,7 @@ void coordinador_multihilo(){
 		int socket = esperar_cliente(SERVIDOR_MEMORIA);
 
 		pthread_t* hilo_atender_carpincho = malloc(sizeof(pthread_t));
-		pthread_create(hilo_atender_carpincho , NULL , (void*)atender_carpinchos , (void*)socket);
+		pthread_create(hilo_atender_carpincho, NULL, (void*)atender_carpinchos, (void*)socket);
 		pthread_detach(*hilo_atender_carpincho);
 	}
 }
@@ -81,7 +81,6 @@ void atender_carpinchos(int cliente) {
 		int pid = 0;
 
 		memalloc(size , pid);
-
 	break;
 
 	case MEMREAD:;
@@ -93,15 +92,15 @@ void atender_carpinchos(int cliente) {
 	case MEMWRITE:;
 	break;
 
-
-
-
-
 	case MENSAJE:;
 		char* mensaje = recibir_mensaje(cliente);
 		printf("%s",mensaje);
 		fflush(stdout);
 	break;
+
+	//Faltan algunos cases;
+	default:; break;
+
 	}
 }
 
@@ -109,31 +108,27 @@ void iniciar_paginacion() {
 
 	int cant_frames_ppal = CONFIG.tamanio_memoria / CONFIG.tamanio_pagina;
 
-	log_info(LOGGER,"Tengo %d marcos de %d bytes en memoria principal",cant_frames_ppal, CONFIG.tamanio_pagina);
+	log_info(LOGGER, "Tengo %d marcos de %d bytes en memoria principal", cant_frames_ppal, CONFIG.tamanio_pagina);
 
+	//Creamos lista de tablas de paginas
 	TABLAS_DE_PAGINAS = list_create();
 
-
+	//Creamos lista de frames de memoria ppal.
 	MARCOS_MEMORIA = list_create();
-	for(int i = 0 ; i < cant_frames_ppal ; i++){
+
+	for (int i = 0 ; i < cant_frames_ppal ; i++) {
 
 		t_frame* frame = malloc(sizeof(t_frame));
 		frame->ocupado = 0;
 		frame->id = i;
 
-		list_add(MARCOS_MEMORIA , frame );
+		list_add(MARCOS_MEMORIA, frame);
 	}
-
-}
-
-int buscar_pagina_en_memoria(int pid, int pag) {
-	int marco;
-
-	return -1;
 }
 
 int memalloc(int size , int pid) {
 
+	//Si el proceso no tiene nada guardado en memoria
 	if (list_get(TABLAS_DE_PAGINAS, pid) == NULL) {
 
 		//Crea tabla de paginas para el proceso
@@ -141,7 +136,7 @@ int memalloc(int size , int pid) {
 		nueva_tabla->paginas = list_create();
 		nueva_tabla->PID = pid;
 
-		//Chequear que me pidan un size coherente
+		//Chequear que el size a guardar sea menor a la cantidad max de marcos permitida
 		int marcos_necesarios = ceil(size / CONFIG.tamanio_pagina);
 
 		if (marcos_necesarios > CONFIG.marcos_max) {
@@ -153,24 +148,24 @@ int memalloc(int size , int pid) {
 		}
 
 		//Verificar si entra en memoria y solicitamos marcos
-		t_list* frames_dados = verificar_solicitar_marcos(marcos_necesarios);
+		t_list* marcos_a_ocupar = obtener_marcos(marcos_necesarios);
 
-		if (frames_dados == NULL) {
+		if (marcos_a_ocupar == NULL) {
 			printf(" No hay mas espacio en la memoria para el proceso %i ", pid);
 			log_info(LOGGER," No hay mas espacio en la memoria para el proceso %i ", pid);
 			return EXIT_FAILURE;
 		}
 
-		for (int i = 0 ; i < list_size(frames_dados) ; i++) {
+		//Se agregan los marcos a ocupar en la tabla de paginas del proceso
+		for (int i = 0 ; i < list_size(marcos_a_ocupar) ; i++) {
 			t_pagina* pagina = malloc(sizeof(t_pagina));
 
-			pagina->frame_ppal = ((t_frame*)list_get(frames_dados , i))-> id;
-
-			list_add(nueva_tabla->paginas , pagina);
+			pagina->frame_ppal = ((t_frame*)list_get(marcos_a_ocupar, i))-> id;
+			list_add(nueva_tabla->paginas, pagina);
 		}
 
 		pthread_mutex_lock(&mutexTablas);
-		list_add(TABLAS_DE_PAGINAS,nueva_tabla);
+		list_add(TABLAS_DE_PAGINAS, nueva_tabla);
 		pthread_mutex_unlock(&mutexTablas);
 
 		//inicializo header inicial
@@ -185,14 +180,14 @@ int memalloc(int size , int pid) {
 		header->next_alloc = NULL;
 		header->prev_alloc = 0;
 
-		//inicializo marquinhos y les agrego los header
+		//Bloque en donde se meteran los header
 		void* marquinhos = malloc(marcos_necesarios * CONFIG.tamanio_pagina);
 
-		memcpy(marquinhos , header , sizeof(heap_metadata));
-		memcpy(marquinhos + sizeof(heap_metadata) + size , header_siguiente , sizeof(heap_metadata) );
+		memcpy(marquinhos, header, sizeof(heap_metadata));
+		memcpy(marquinhos + sizeof(heap_metadata) + size, header_siguiente, sizeof(heap_metadata));
 
-		//meto todo a memoria
-		serializar_paginas_en_memoria(nueva_tabla->paginas , marquinhos);
+		//Copia del bloque 'marquinhos' a memoria;
+		serializar_paginas_en_memoria(nueva_tabla->paginas, marquinhos);
 
 		free(header);
 		free(header_siguiente);
@@ -207,27 +202,26 @@ int memalloc(int size , int pid) {
 
 		header = desserializar_header(marquinhos + i);
 
-		t_list* tabla_proceso  = ((t_tabla_pagina*) list_get(TABLAS_DE_PAGINAS , pid))->paginas;
+		t_list* tabla_proceso  = ((t_tabla_pagina*) list_get(TABLAS_DE_PAGINAS, pid))->paginas;
 
-		do{
+		do {
 
 			i = header->next_alloc;
 
-			if(header->is_free && header->next_alloc != NULL){
+			if (header->is_free && header->next_alloc != NULL){
 				heap_metadata* header_siguiente = desserializar_header(marquinhos + header->next_alloc);
 
 				if (size == header->next_alloc - header_siguiente->prev_alloc - sizeof(heap_metadata)){
 					//guardo directamente
 					header->is_free = false;
-					memcpy(marquinhos + header_siguiente->prev_alloc , header , sizeof(heap_metadata));
-
+					memcpy(marquinhos + header_siguiente->prev_alloc, header, sizeof(heap_metadata));
 
 				}
 				else if(size + sizeof(heap_metadata) < header->next_alloc - header_siguiente->prev_alloc - sizeof(heap_metadata)){
 
 					header->is_free = false;
 
-					// creo header y guardo
+					//Creo header y guardo
 					heap_metadata* nuevo_header = malloc(sizeof(heap_metadata));
 
 					//Inicializo header
@@ -285,20 +279,16 @@ int memalloc(int size , int pid) {
 					free(nuevo_header);
 					break;
 				}
-
-
 			}
 
 
 			serializar_paginas_en_memoria(tabla_proceso , marquinhos);
 		}
+
 		while(header->next_alloc != NULL );
-
-
 		free(header);
 		//crear paginas nuevas xq no habia
 	}
- loo
 	return 0;
 }
 
@@ -328,16 +318,44 @@ heap_metadata* desserializar_header(void* buffer) {
 	return header;
 }
 
-void serializar_paginas_en_memoria(t_list* paginas , void* contenido){
+void serializar_paginas_en_memoria(t_list* paginas , void* contenido) {
 
-	for(int i = 0 ; i< list_size(paginas) ; i++){
+	for (int i = 0 ; i< list_size(paginas); i++) {
 
 		int offset = ((t_pagina*)list_get(paginas , i))->frame_ppal * CONFIG.tamanio_pagina ;
 
-		memcpy(MEMORIA_PRINCIPAL + offset , contenido + i * CONFIG.tamanio_pagina , CONFIG.tamanio_pagina);
+		memcpy(MEMORIA_PRINCIPAL + offset, contenido + i * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
 	}
 
 	return;
+}
+
+t_list* obtener_marcos(int cant_marcos) {
+
+	bool marco_libre(t_frame* marco) {
+		return marco->ocupado;
+	}
+
+	void ocupar_frame(t_frame* marco) {
+		marco->ocupado = 1;
+	}
+
+	pthread_mutex_lock(&mutexMarcos);
+	t_list* marcos_libres = list_filter(MARCOS_MEMORIA, (void*)marco_libre);
+
+	if (list_size(marcos_libres) < cant_marcos) {
+		pthread_mutex_unlock(&mutexMarcos);
+		return NULL;
+	}
+
+	t_list* marcos_asignados = list_take(marcos_libres, cant_marcos);
+
+	for (int i = 0 ; i < list_size(marcos_asignados) ; i++) {
+		ocupar_frame((t_frame*)list_take(marcos_asignados , i));
+	}
+	pthread_mutex_unlock(&mutexMarcos);
+
+	return marcos_asignados;
 }
 
 t_memoria_config crear_archivo_config_memoria(char* ruta) {
@@ -363,33 +381,5 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
     config.retardo_fallo_tlb = config_get_int_value(memoria_config, "RETARDO_FALLO_TLB");
 
     return config;
-}
-
-t_list* verificar_solicitar_marcos(int cant_marcos) {
-
-	bool marco_libre(t_frame* marco) {
-		return marco->ocupado;
-	}
-
-	void ocupar_frame(t_frame* marco) {
-		marco->ocupado = 1;
-	}
-
-	pthread_mutex_lock(&mutexMarcos);
-	t_list* marcos_libres = list_filter(MARCOS_MEMORIA , (void*)marco_libre);
-
-	if (list_size(marcos_libres) < cant_marcos){
-		pthread_mutex_unlock(&mutexMarcos);
-		return NULL;
-	}
-
-	t_list* marcos_asignados = list_take(marcos_libres, cant_marcos);
-
-	for (int i = 0 ; i < list_size(marcos_asignados) ; i++) {
-		ocupar_frame((t_frame*)list_take(marcos_asignados , i));
-	}
-	pthread_mutex_unlock(&mutexMarcos);
-
-	return marcos_asignados;
 }
 
