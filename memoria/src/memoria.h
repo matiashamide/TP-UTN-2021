@@ -11,7 +11,8 @@
 #include <futiles/futiles.h>
 #include "tlb.h"
 
-//ESTRUCTURAS
+// ESTRUCTURAS
+
 typedef struct {
     char* ip_memoria;
     char* puerto_memoria;
@@ -26,8 +27,7 @@ typedef struct {
 	int retardo_fallo_tlb;
 }t_memoria_config;
 
-typedef struct
-{
+typedef struct {
     int frame_ppal;
     int frame_virtual;
     int presencia;
@@ -39,14 +39,13 @@ typedef struct
     int frag_interna;
 }t_pagina;
 
-typedef struct
-{
+typedef struct {
     int PID;
     //int direPcb;
     t_list* paginas;
 }t_tabla_pagina;
 
-typedef struct{
+typedef struct {
 	int id;
 	bool ocupado;
 }t_frame;
@@ -57,41 +56,48 @@ typedef struct{
 	uint8_t is_free;
 }__attribute__((packed))heap_metadata;
 
-//VARIABLES GLOBALES
+// VARIABLES GLOBALES
 
+int SERVIDOR_MEMORIA;
 t_memoria_config CONFIG;
 t_log* LOGGER;
+
 t_list* TABLAS_DE_PAGINAS;
 t_list* MARCOS_MEMORIA;
-int SERVIDOR_MEMORIA;
 
+//// ---- memoria principal
+void* MEMORIA_PRINCIPAL;
+
+//// ---- semaforos
 pthread_mutex_t mutexMemoria;
 pthread_mutex_t mutexMarcos;
 pthread_mutex_t mutexTablas;
 
-/* Memoria ppal */
-void* MEMORIA_PRINCIPAL;
 
+// FUNCIONES
 
-//FUNCIONES
-
+//// ---- funciones de inicializacion y coordinacion servidor multihilo
 void init_memoria();
+void iniciar_paginacion();
+
 t_memoria_config crear_archivo_config_memoria(char* ruta);
 
 void atender_carpinchos(int cliente);
 void coordinador_multihilo();
 
-void iniciar_paginacion();
 
-int buscar_pagina_en_memoria(int pid, int pag);
-void printearTLB(int entradas);
-
-int memalloc(int size , int pid);
+//// ---- funciones principales
+int memalloc(int size, int pid);
 int memfree();
-t_list* verificar_solicitar_marcos(int cant_marcos);
+void* memread();
+int memwrite();
+
+
+t_list* obtener_marcos(int cant_marcos);
 heap_metadata* desserializar_header(void* buffer);
 void serializar_paginas_en_memoria(t_list* paginas , void* contenido);
-
 void* traer_marquinhos_del_proceso(int pid);
+
+void printearTLB(int entradas);
 
 #endif /* MEMORIA_H_ */
