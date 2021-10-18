@@ -97,6 +97,7 @@ void init_kernel(){
 	PID_PROX_CARPINCHO = 0;
 
 	iniciar_planificador_largo_plazo();
+	iniciar_planificador_corto_plazo();
 }
 
 /*
@@ -154,6 +155,14 @@ void iniciar_planificador_largo_plazo() {
 
 }
 
+void iniciar_planificador_corto_plazo() {
+
+	pthread_create(&planificador_corto_plazo, NULL, (void*)algoritmo_planificador_corto_plazo, NULL);
+	printf("Ya cree el planificador de corto plazo\n");
+	pthread_detach(planificador_largo_plazo);
+
+}
+
 void atender_carpinchos(int cliente) {
 
 	PCB* pcb_carpincho = malloc(sizeof(PCB));
@@ -165,6 +174,7 @@ void atender_carpinchos(int cliente) {
 
 	pcb_carpincho->real_anterior = 0;
 	pcb_carpincho->estimado_anterior = CONFIG_KERNEL.estimacion_inicial;
+	pcb_carpincho->tiempo_espera = 0;
 
 	pasar_a_new(pcb_carpincho);
 

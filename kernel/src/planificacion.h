@@ -31,8 +31,24 @@ typedef struct
 	uint32_t PID;
 	uint32_t real_anterior;
 	uint32_t estimado_anterior;
+	uint32_t tiempo_espera;
 
 }PCB;
+
+typedef struct {
+    char* ip_memoria;
+    char* puerto_memoria;
+    char* ip_kernel;
+    char* puerto_kernel;
+    char* alg_plani;
+    int estimacion_inicial;
+    int alfa;
+    char** dispositivos_IO;
+    char** duraciones_IO;
+    int retardo_cpu;
+    int grado_multiprogramacion;
+	int grado_multiprocesamiento;
+}t_kernel_config;
 
 //VARIABLES GLOBALES
 t_list_iterator* iterador_lista_ready;
@@ -65,9 +81,14 @@ pthread_mutex_t mutex_lista_ready_suspended;
 
 //HILOS
 pthread_t planificador_largo_plazo;
+pthread_t planificador_corto_plazo;
 
 
 void algoritmo_planificador_largo_plazo();
 void algoritmo_planificador_corto_plazo();
+void algoritmo_SJF();
+void algoritmo_HRRN();
+void* minimum(PCB*, PCB*);
+bool criterio_remocion_lista(void* pcb);
 
 #endif /* PLANIFICACION_H_ */

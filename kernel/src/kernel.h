@@ -13,21 +13,6 @@
 
 //ESTRUCTURAS
 
-typedef struct {
-    char* ip_memoria;
-    char* puerto_memoria;
-    char* ip_kernel;
-    char* puerto_kernel;
-    char* alg_plani;
-    int estimacion_inicial;
-    int alfa;
-    char** dispositivos_IO;
-    char** duraciones_IO;
-    int retardo_cpu;
-    int grado_multiprogramacion;
-	int grado_multiprocesamiento;
-}t_kernel_config;
-
 
 //VARIABLES GLOBALES
 int SERVIDOR_KERNEL;
@@ -50,6 +35,7 @@ void atender_carpinchos(int cliente);
 void coordinador_multihilo();
 void pasar_a_new(PCB* pcb_carpincho);
 void iniciar_planificador_largo_plazo();
+void iniciar_planificador_corto_plazo();
 
 #endif /* KERNEL_H_ */
 
