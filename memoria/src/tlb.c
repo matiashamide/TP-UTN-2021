@@ -42,16 +42,16 @@ int buscar_frame(int pid, int pag) {
 	pthread_mutex_unlock(&mutexTLB);
 
 	if (entrada != NULL) {
-		registrar_hit(pid, entrada);
+		registrar_evento(pid, 0);
 		log_info(LOGGER , "TLB HIT: " , "pag %i" ,  entrada->pag ,"pid %i" ,  entrada->pid);
 		entrada->ultimo_uso = obtener_tiempo();
 		return entrada->marco;
 	}
 
-	registrar_miss(pid, pag);
+	registrar_evento(pid, 1);
 
-	int frame = 0;
-			//TODO: buscar_pagina_en_memoria(pid, pag);
+	int frame = buscar_pagina_en_memoria(pid, pag);
+	//TODO: Si no encuentra el frame va a devolver -1, contemplar caso
 
 	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb,"LRU")) {
 		reemplazar_LRU(pid, pag, frame);
@@ -103,7 +103,7 @@ void reemplazar_LRU(int pid, int pag, int frame){
 
 	int masVieja(entrada_tlb* una_entrada, entrada_tlb* otra_entrada){
 	      return (otra_entrada->ultimo_uso > una_entrada->ultimo_uso);
-      }
+     }
 
 	pthread_mutex_lock(&mutexTLB);
 	list_sort(TLB, (void*) masVieja);
@@ -116,8 +116,8 @@ void reemplazar_LRU(int pid, int pag, int frame){
 }
 
 
-//0 -> HIT
-//1 -> MISS
+//0 --> HIT
+//1 --> MISS
 void registrar_evento(int pid, int event){
 
 	int _proceso_con_id(tlb_event* evento) {
@@ -131,11 +131,11 @@ void registrar_evento(int pid, int event){
 	if (nodo_proceso != NULL) {
 		nodo_proceso->contador++;
 	} else {
-		tlb_event* nodo_nuevo;
+		tlb_event* nodo_nuevo = malloc(sizeof(tlb_event));
 		nodo_nuevo->pid = pid;
 		nodo_nuevo->contador = 1;
+		list_add(event_list, nodo_nuevo);
 	}
-
 }
 
 void printear_TLB(int entradas){
@@ -150,7 +150,7 @@ void printear_TLB(int entradas){
 
 void generar_metricas_tlb(){
 	printf("-----------------------------------------\n");
-	prinft("METRICAS TLB:\n");
+	printf("METRICAS TLB:\n");
 
 	printf("[HITS TOTALES]: %i \n", list_size(TLB_HITS));
 	printf("[HITS POR PROCESO]");
@@ -159,7 +159,6 @@ void generar_metricas_tlb(){
 		tlb_event* nodo = (tlb_event*)list_get(TLB_HITS, i);
 		printf("Proceso %i ---> %i HITS", nodo->pid, nodo->contador);
 	}
-
 
 	printf("[MISS TOTALES]: %i \n", list_size(TLB_MISS));
 	printf("[MISS POR PROCESO]");

@@ -99,6 +99,7 @@ void signal_clean_tlb();
 
 
 t_list* obtener_marcos(int cant_marcos);
+int buscar_pagina_en_memoria(int pid, int pag);
 heap_metadata* desserializar_header(void* buffer);
 void serializar_paginas_en_memoria(t_list* paginas , void* contenido);
 void* traer_marquinhos_del_proceso(int pid);
