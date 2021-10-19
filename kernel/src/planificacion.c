@@ -8,10 +8,8 @@ void algoritmo_planificador_largo_plazo() {
 		sem_wait(&sem_cola_new);
 		sem_wait(&sem_grado_multiprogramacion);
 
-		PCB* pcb = malloc(sizeof(PCB));
-
 		pthread_mutex_lock(&mutex_lista_new);
-		pcb = (PCB*) list_remove(LISTA_NEW, 0);
+		PCB* pcb = (PCB*) list_remove(LISTA_NEW, 0);
 		pthread_mutex_unlock(&mutex_lista_new);
 
 		pthread_mutex_lock(&mutex_lista_ready);
@@ -27,8 +25,6 @@ void algoritmo_planificador_largo_plazo() {
 		pthread_mutex_unlock(&mutex_lista_ready);
 
 		sem_post(&sem_cola_ready);
-
-		free(pcb);
 	}
 
 }
@@ -52,7 +48,6 @@ void algoritmo_planificador_corto_plazo() {
 
 void algoritmo_SJF() {
 
-	PCB* pcb = malloc(sizeof(PCB));
 
 	void* _eleccion_SJF(void* elemento1, void* elemento2) {
 
@@ -70,7 +65,7 @@ void algoritmo_SJF() {
 	}
 
 	pthread_mutex_lock(&mutex_lista_ready);
-	pcb = (PCB*) list_get_minimum(LISTA_READY, _eleccion_SJF);
+	PCB* pcb = (PCB*) list_get_minimum(LISTA_READY, _eleccion_SJF);
 	pthread_mutex_unlock(&mutex_lista_ready);
 
 	bool _criterio_remocion_lista(void* elemento) {
@@ -99,8 +94,6 @@ void algoritmo_SJF() {
 
 void algoritmo_HRRN() {
 
-	PCB* pcb = malloc(sizeof(PCB));
-
 	void* _eleccion_HRRN(void* elemento1, void* elemento2) {
 
 		uint32_t valor_actual1;
@@ -121,7 +114,7 @@ void algoritmo_HRRN() {
 	}
 
 	pthread_mutex_lock(&mutex_lista_ready);
-	pcb = (PCB*) list_get_maximum(LISTA_READY, _eleccion_HRRN);
+	PCB* pcb = (PCB*) list_get_maximum(LISTA_READY, _eleccion_HRRN);
 	pthread_mutex_unlock(&mutex_lista_ready);
 
 
