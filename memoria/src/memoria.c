@@ -131,6 +131,8 @@ void iniciar_paginacion() {
 	}
 }
 
+
+
 int memalloc(int size , int pid) {
 
 	int dir_logica = -1;
@@ -138,22 +140,23 @@ int memalloc(int size , int pid) {
 	//[CASO A]: Si el proceso no tiene nada guardado en memoria
 	if (list_get(TABLAS_DE_PAGINAS, pid) == NULL) {
 
+
 		//Crea tabla de paginas para el proceso
 		t_tabla_pagina* nueva_tabla = malloc(sizeof(t_tabla_pagina));
 		nueva_tabla->paginas = list_create();
 		nueva_tabla->PID = pid;
 
-		//Chequear que el size a guardar sea menor a la cantidad max de marcos permitida
 		int marcos_necesarios = ceil(size / CONFIG.tamanio_pagina);
 
+		//Chequear que el size a guardar sea menor a la cantidad max de marcos permitida
 		if (marcos_necesarios > CONFIG.marcos_max) {
 
 			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) " , size , pid);
 			log_info(LOGGER , "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) " , size , pid);
 
 			return -1;
-		}
 
+		}
 		//Verificar si entra en memoria y solicitamos marcos
 		t_list* marcos_a_ocupar = obtener_marcos(marcos_necesarios);
 
@@ -342,6 +345,84 @@ int memalloc(int size , int pid) {
 
 	}
 	return dir_logica;
+}
+
+int memalloc2(int pid , int size){
+	int dir_logica = -1;
+
+	//[CASO A]: Llega una proceso nuevo
+	if(list_get(TABLAS_DE_PAGINAS , pid) == NULL){
+
+	if(alocar_en_swap(pid , size) == -1 ){
+		printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) " , size , pid);
+		log_info(LOGGER , "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) " , size , pid);
+
+		return -1;
+	}
+
+	int marcos_necesarios = ceil(size / CONFIG.tamanio_pagina);
+
+	//Crea tabla de paginas para el proceso
+	t_tabla_pagina* nueva_tabla = malloc(sizeof(t_tabla_pagina));
+	nueva_tabla->paginas = list_create();
+	nueva_tabla->PID = pid;
+
+	pthread_mutex_lock(&mutexTablas);
+	list_add(TABLAS_DE_PAGINAS, nueva_tabla);
+	pthread_mutex_unlock(&mutexTablas);
+
+	//inicializo header inicial
+	heap_metadata* header = malloc(sizeof(heap_metadata));
+	header->is_free = false;
+	header->next_alloc = sizeof(heap_metadata) + size;
+	header->prev_alloc = NULL;
+
+	//armo el alloc siguiente
+	heap_metadata* header_siguiente = malloc(sizeof(heap_metadata));
+	header->is_free = true;
+	header->next_alloc = NULL;
+	header->prev_alloc = 0;
+
+	//Bloque en donde se meteran los headers
+	void* marquinhos = malloc(marcos_necesarios * CONFIG.tamanio_pagina);
+
+	memcpy(marquinhos, header, sizeof(heap_metadata));
+	memcpy(marquinhos + sizeof(heap_metadata) + size, header_siguiente, sizeof(heap_metadata));
+
+	//Copia del bloque 'marquinhos' a memoria;
+	serializar_paginas_en_memoria(nueva_tabla->paginas, marquinhos);
+
+	dir_logica = header_siguiente->prev_alloc;
+
+	free(header);
+	free(header_siguiente);
+
+	//crea las paginas y las guarda segun asignacion y algoritmos
+	guardar_en_memoria( pid , marcos_necesarios , nueva_tabla->paginas , marquinhos );
+
+	}
+
+
+
+	return dir_logica;
+}
+
+int guardar_en_memoria( int pid , int marcos_necesarios , t_list* paginas , void* contenido ){
+
+	//chequear esquema de asignacion
+	//chequear espacio -> swapear otras paginas en ese caso
+	//guardar en paginas libres de a una pagina (hacer un for para guardar y swapear de a una)
+	//serializar contenido en la memoria posta
+	//Copia del bloque 'marquinhos' a memoria; ->	serializar_paginas_en_memoria(nueva_tabla->paginas, marquinhos);
+	return 0;
+}
+
+int alocar_en_swap(pid , size){
+	//abrir conexion
+	//enviar datos
+	//chequear respuesta ( 1 o -1)
+
+	return 0;
 }
 
 int obtener_ultimo_header(int pid) {

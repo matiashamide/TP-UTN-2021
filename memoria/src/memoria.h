@@ -88,6 +88,7 @@ void coordinador_multihilo();
 
 //// ---- funciones principales
 int memalloc(int size, int pid);
+int memalloc2(int pid , int size);
 int memfree();
 void* memread();
 int memwrite();
@@ -97,12 +98,16 @@ void signal_metricas();
 void signal_dump();
 void signal_clean_tlb();
 
-
+int alocar_en_swap( int pid , int size);
+int guardar_en_memoria( int pid , int marcos_necesarios , t_list* paginas , void* contenido );
+int guardar_en_swap( int pid , void* contenido );
 t_list* obtener_marcos(int cant_marcos);
 int buscar_pagina_en_memoria(int pid, int pag);
 heap_metadata* desserializar_header(void* buffer);
 void serializar_paginas_en_memoria(t_list* paginas , void* contenido);
 void* traer_marquinhos_del_proceso(int pid);
+
+
 
 void printearTLB(int entradas);
 
