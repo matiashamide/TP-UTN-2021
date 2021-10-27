@@ -350,12 +350,12 @@ int memalloc(int size , int pid) {
 int memalloc2(int pid , int size){
 	int dir_logica = -1;
 
-	//[CASO A]: Llega una proceso nuevo
+	//[CASO A]: Llega un proceso nuevo
 	if(list_get(TABLAS_DE_PAGINAS , pid) == NULL){
 
 	if(alocar_en_swap(pid , size) == -1 ){
-		printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) " , size , pid);
-		log_info(LOGGER , "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) " , size , pid);
+		printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+		log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 
 		return -1;
 	}
@@ -398,16 +398,51 @@ int memalloc2(int pid , int size){
 	free(header_siguiente);
 
 	//crea las paginas y las guarda segun asignacion y algoritmos
-	guardar_en_memoria( pid , marcos_necesarios , nueva_tabla->paginas , marquinhos );
+	guardar_paginas_en_memoria(pid , marcos_necesarios , nueva_tabla->paginas , marquinhos);
 
 	}
 
+	else
+	//[CASO B]: El proceso existe en memoria
+	{
+		int alloc = obtener_alloc_disponible(pid, size);
 
+		if (alloc != -1) {
+			//guardar en memoria
+			return alloc;
+		}
+
+		// hay que agregar paginas
+		// verificar si el proceso puede tener mas dependiendo el algoritmo de reemplazo
+
+
+	}
 
 	return dir_logica;
 }
 
-int guardar_en_memoria( int pid , int marcos_necesarios , t_list* paginas , void* contenido ){
+int obtener_alloc_disponible(int pid, int size) {
+	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+
+	t_pagina* buffer_pag;
+	for (int i = 0; i < list_size(paginas_proceso); i++) {
+		buffer_pag = list_get(paginas_proceso, i);
+
+		if (buffer_pag->presencia) { //Si esta en principal == 1
+			heap_metadata* header = desserializar_header(MEMORIA_PRINCIPAL + buffer_pag->frame_ppal * CONFIG.tamanio_pagina);
+			if (!header->is_free) {
+				// me muevo al siguiente
+			}
+			// No esta free ? me muevo al siguiente
+			// Esta free -> me entra? devuelvo : no entra -> me muevo al siguiente
+
+		}
+	}
+
+	return -1;
+}
+
+int guardar_paginas_en_memoria( int pid , int marcos_necesarios , t_list* paginas , void* contenido ){
 
 	//chequear esquema de asignacion
 	//chequear espacio -> swapear otras paginas en ese caso
