@@ -405,7 +405,7 @@ int memalloc2(int pid , int size){
 	else
 	//[CASO B]: El proceso existe en memoria
 	{
-		int alloc = obtener_alloc_disponible(pid, size);
+		int alloc = obtener_alloc_disponible(pid, size,0);
 
 		if (alloc != -1) {
 			//guardar en memoria
@@ -421,25 +421,52 @@ int memalloc2(int pid , int size){
 	return dir_logica;
 }
 
-int obtener_alloc_disponible(int pid, int size) {
+int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
+
 	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+	int nro_pagina = 0, offset = 0;
 
-	t_pagina* buffer_pag;
-	for (int i = 0; i < list_size(paginas_proceso); i++) {
-		buffer_pag = list_get(paginas_proceso, i);
+	nro_pagina = ceil(posicion_heap_actual / CONFIG.tamanio_pagina);
+	offset = posicion_heap_actual - CONFIG.tamanio_pagina * nro_pagina;
 
-		if (buffer_pag->presencia) { //Si esta en principal == 1
-			heap_metadata* header = desserializar_header(MEMORIA_PRINCIPAL + buffer_pag->frame_ppal * CONFIG.tamanio_pagina);
-			if (!header->is_free) {
-				// me muevo al siguiente
-			}
-			// No esta free ? me muevo al siguiente
-			// Esta free -> me entra? devuelvo : no entra -> me muevo al siguiente
+	t_pagina* buffer_pag = malloc(sizeof(t_pagina));
+	buffer_pag = list_get(paginas_proceso, nro_pagina);
 
+	if (!buffer_pag->presencia) { //Si esta en principal == 1
+			//lo traigo
 		}
+
+	heap_metadata* header = desserializar_header(MEMORIA_PRINCIPAL + buffer_pag->frame_ppal * CONFIG.tamanio_pagina + offset);
+
+	if (header->is_free) {
+				// [Caso A] : El next alloc es NULL
+				if(header->next_alloc == NULL){
+					void* marquinhos = traer_marquinhos_del_proceso(pid);
+					int tamanio_total = sizeof(marquinhos);
+
+					if(tamanio_total - posicion_heap_actual - 9 >= size){
+							return posicion_heap_actual;
+						}else {
+							return -1;
+						  }
+				}else {
+					// [Caso B] : El next alloc NO es NULL
+					if(header->next_alloc - posicion_heap_actual - 9 >= size){
+						return posicion_heap_actual;
+						} else {
+							//Si no entra hago lo mismo con el siguiente header
+							obtener_alloc_disponible(pid,size,header->next_alloc);
+						}
+				}
+
+			}
+	 // No esta free
+	if(header->next_alloc != NULL){
+		 obtener_alloc_disponible(pid,size,header->next_alloc);
 	}
 
-	return -1;
+	 return -1;
+
 }
 
 int guardar_paginas_en_memoria( int pid , int marcos_necesarios , t_list* paginas , void* contenido ){
