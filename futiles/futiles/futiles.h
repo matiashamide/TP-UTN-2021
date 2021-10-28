@@ -51,6 +51,11 @@ typedef struct {
 	t_buffer* buffer;
 } t_paquete;
 
+typedef enum{
+	SWAP_IN,
+	SWAP_OUT
+}peticion_swap;
+
 
 void printeame_un_cuatro();
 int crear_conexion(char *ip, char* puerto);

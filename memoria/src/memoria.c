@@ -435,9 +435,10 @@ int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 	t_pagina* buffer_pag = malloc(sizeof(t_pagina));
 	buffer_pag = list_get(paginas_proceso, nro_pagina);
 
-	if (!buffer_pag->presencia) { //Si esta en principal == 1
-			//TODO: lo traigo
-		}
+	if (!buffer_pag->presencia) {
+		//Si esta en principal == 1
+		//TODO: lo traigo :: traer_pagina_a_memoria();
+	}
 
 	heap_metadata* header = desserializar_header(MEMORIA_PRINCIPAL + buffer_pag->frame_ppal * CONFIG.tamanio_pagina + offset);
 
@@ -460,7 +461,8 @@ int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 							t_pagina* buffer_pag_nueva = malloc(sizeof(t_pagina));
 							buffer_pag_nueva = list_get(paginas_proceso, nro_pagina_nueva);
 
-							if (!buffer_pag_nueva->presencia) { //Si esta en principal == 1
+							if (!buffer_pag_nueva->presencia) {
+								//Si esta en principal == 1
 								//TODO: lo traigo
 							}
 
@@ -548,6 +550,11 @@ int guardar_paginas_en_memoria( int pid , int marcos_necesarios , t_list* pagina
 	//guardar en paginas libres de a una pagina (hacer un for para guardar y swapear de a una)
 	//serializar contenido en la memoria posta
 	//Copia del bloque 'marquinhos' a memoria; ->	serializar_paginas_en_memoria(nueva_tabla->paginas, marquinhos);
+	return 0;
+}
+
+int guardar_alloc_en_memoria(pid, size, alloc){
+
 	return 0;
 }
 

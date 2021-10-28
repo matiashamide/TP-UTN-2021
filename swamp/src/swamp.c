@@ -11,9 +11,16 @@
 #include "swamp.h"
 
 int main(void) {
-	char* string = string_new();
-	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
-	return EXIT_SUCCESS;
+
+	init_swamp();
+
+while(1){
+	int cliente = esperar_cliente(SERVIDOR_SWAP);
+	//mutex_lock para que no sea multiplexado
+	atender_peticiones(cliente);
+	//mutex_unlock
+}
+
 }
 
 
@@ -30,7 +37,7 @@ t_swamp_config crear_archivo_config_swamp(char* ruta) {
     }
 
     config.ip = config_get_string_value(swamp_config, "IP");
-    config.puerto = config_get_int_value(swamp_config, "PUERTO");
+    config.puerto = config_get_string_value(swamp_config, "PUERTO");
     config.tamanio_swamp = config_get_int_value(swamp_config, "TAMANIO_SWAP");
     config.tamanio_pag = config_get_int_value(swamp_config, "TAMANIO_PAGINA");
     config.archivos_swamp = config_get_array_value(swamp_config,"ARCHIVOS_SWAP");
@@ -60,4 +67,36 @@ int crear_conexion(char *ip, char* puerto)
    freeaddrinfo(server_info);
 
    return socket_cliente;
+}
+
+void init_swamp(){
+
+	//incializamos logger
+	LOGGER = log_create("swamp.log", "SWAMP", 0, LOG_LEVEL_INFO);
+
+	//inicializamos config
+	CONFIG = crear_archivo_config_swamp("/home/utnso/workspace/tp-2021-2c-DesacatadOS/swamp/src/swamp.config");
+
+	//iniciamos servidor
+	SERVIDOR_SWAP = iniciar_servidor(CONFIG.ip, CONFIG.puerto);
+}
+
+void atender_peticiones(int cliente) {
+
+	peticion_carpincho operacion = recibir_operacion(cliente);
+
+	switch (operacion) {
+
+	case SWAP_IN:
+
+	break;
+
+	case SWAP_OUT:
+
+	break;
+
+	default:
+	; break;
+
+	}
 }
