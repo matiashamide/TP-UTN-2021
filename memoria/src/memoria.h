@@ -110,7 +110,8 @@ void serializar_paginas_en_memoria(t_list* paginas, void* contenido);
 void* traer_marquinhos_del_proceso(int pid);
 
 
-
+void swap(int cantidad_pags);
+void reemplazar_pag_en_memoria(void);
 void printearTLB(int entradas);
 
 #endif /* MEMORIA_H_ */

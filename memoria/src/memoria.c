@@ -692,3 +692,27 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
     return config;
 }
 
+void swap(int cantidad_pags){
+	for(int i = 0; i < cantidad_pags; i ++){
+		reemplazar_pag_en_memoria();
+	}
+}
+
+void reemplazar_pag_en_memoria(){
+	//reemplazar segun asignacion
+
+	void* pagina_victima; // conseguida despues de correr el algoritmo
+
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+	paquete->codigo_operacion = SWAP_OUT;
+
+	t_buffer* buffer = malloc(sizeof(t_buffer));
+	buffer->size = CONFIG.tamanio_pagina;
+	buffer->stream = pagina_victima;
+
+	void* pagina_a_enviar = serializar_paquete(paquete , CONFIG.tamanio_pagina + sizeof(int) *2);
+
+	//enviar_paquete(paquete , conexion con swap); swap sera servidor?
+
+	eliminar_paquete(paquete);
+}
