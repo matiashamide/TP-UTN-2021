@@ -432,113 +432,127 @@ int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 	nro_pagina = ceil(posicion_heap_actual / CONFIG.tamanio_pagina);
 	offset = posicion_heap_actual - CONFIG.tamanio_pagina * nro_pagina;
 
-	t_pagina* buffer_pag = malloc(sizeof(t_pagina));
-	buffer_pag = list_get(paginas_proceso, nro_pagina);
+	t_pagina* pag = malloc(sizeof(t_pagina));
+	pag = list_get(paginas_proceso, nro_pagina);
 
-	if (!buffer_pag->presencia) {
+	if (!pag->presencia) {
 		//Si esta en principal == 1
 		//TODO: lo traigo :: traer_pagina_a_memoria();
 	}
 
-	heap_metadata* header = desserializar_header(MEMORIA_PRINCIPAL + buffer_pag->frame_ppal * CONFIG.tamanio_pagina + offset);
+	heap_metadata* header = desserializar_header(MEMORIA_PRINCIPAL + pag->frame_ppal * CONFIG.tamanio_pagina + offset);
 
 	if (header->is_free) {
-				// [Caso A] : El next alloc es NULL
-				if(header->next_alloc == NULL){
 
-					int tamanio_total = list_size(paginas_proceso) * CONFIG.tamanio_pagina;
+		//-------------------------------//
+		// [Caso A]: El next alloc es NULL
+		//-------------------------------//
 
-					if(tamanio_total - posicion_heap_actual - 9 == size) {
-							header->is_free = false;
-							memcpy(MEMORIA_PRINCIPAL + buffer_pag->frame_ppal * CONFIG.tamanio_pagina + offset, header, sizeof(heap_metadata));
-							return posicion_heap_actual;
-						}else if(tamanio_total - posicion_heap_actual - 18 > size) {
+		if(header->next_alloc == NULL){
 
-							int nro_pagina_nueva = 0, offset_pagina_nueva = 0;
-							nro_pagina_nueva = ceil((posicion_heap_actual + size + 9) / CONFIG.tamanio_pagina);
-							offset_pagina_nueva = posicion_heap_actual + size + 9 - CONFIG.tamanio_pagina * nro_pagina_nueva;
+			int tamanio_total = list_size(paginas_proceso) * CONFIG.tamanio_pagina;
 
-							t_pagina* buffer_pag_nueva = malloc(sizeof(t_pagina));
-							buffer_pag_nueva = list_get(paginas_proceso, nro_pagina_nueva);
+			if (tamanio_total - posicion_heap_actual - sizeof(heap_metadata) * 2 > size) {
 
-							if (!buffer_pag_nueva->presencia) {
-								//Si esta en principal == 1
-								//TODO: lo traigo
-							}
+				//Creo header nuevo
+				heap_metadata* header_nuevo =   malloc(sizeof(heap_metadata));
+				header_nuevo->is_free = true;
+				header_nuevo->next_alloc = NULL;
+				header_nuevo->prev_alloc = posicion_heap_actual;
 
-							//Creo header nuevo
-							heap_metadata* header_nuevo =   malloc(sizeof(heap_metadata));
-							header_nuevo->is_free = true;
-							header_nuevo->next_alloc = NULL;
-							header_nuevo->prev_alloc = posicion_heap_actual;
+				//Actualizo header viejo
+				header->is_free = false;
+				header->next_alloc = posicion_heap_actual + sizeof(heap_metadata) + size;
 
-							//Actualizo header viejo
-							header->is_free = false;
-							header->next_alloc = posicion_heap_actual + size + 9;
-
-							//Guardo headers en memoria
-							memcpy(MEMORIA_PRINCIPAL + buffer_pag->frame_ppal * CONFIG.tamanio_pagina + offset, header, sizeof(heap_metadata));
-							memcpy(MEMORIA_PRINCIPAL + buffer_pag_nueva->frame_ppal * CONFIG.tamanio_pagina + offset_pagina_nueva , header_nuevo, sizeof(heap_metadata));
-							return header->next_alloc;
-						}
-
-						return -1;
-
-				}else {
-					// [Caso B] : El next alloc NO es NULL
-					if(header->next_alloc - posicion_heap_actual - 9 == size){
-						header->is_free = false;
-						memcpy(MEMORIA_PRINCIPAL + buffer_pag->frame_ppal * CONFIG.tamanio_pagina + offset, header, sizeof(heap_metadata));
-						return posicion_heap_actual;
-
-					}else if(header->next_alloc  - posicion_heap_actual - 18 > size) {
-						//Si no entra hago lo mismo con el siguiente header
-						//Busco header siguiente antes de insertar
-						int nro_pagina_nueva = 0, offset_pagina_nueva = 0;
-						nro_pagina_nueva = ceil((posicion_heap_actual + size + 9) / CONFIG.tamanio_pagina);
-						offset_pagina_nueva = posicion_heap_actual + size + 9 - CONFIG.tamanio_pagina * nro_pagina_nueva;
-
-						t_pagina* buffer_pag_nueva = malloc(sizeof(t_pagina));
-						buffer_pag_nueva = list_get(paginas_proceso, nro_pagina_nueva);
-
-						if (!buffer_pag_nueva->presencia) { //Si esta en principal == 1
-							//TODO: lo traigo
-						}
-
-						heap_metadata* heap_siguiente = desserializar_header(MEMORIA_PRINCIPAL + buffer_pag_nueva->frame_ppal * CONFIG.tamanio_pagina + offset_pagina_nueva );
-
-
-						//Creo header nuevo
-						heap_metadata* header_nuevo =   malloc(sizeof(heap_metadata));
-						header_nuevo->is_free = true;
-						header_nuevo->next_alloc = NULL;
-						header_nuevo->prev_alloc = posicion_heap_actual;
-
-						}
-
-					obtener_alloc_disponible(pid,size,header->next_alloc);
-				}
+				//Copio 1ero el header viejo actualizado y despues el header nuevo
+				guardar_header(pid, nro_pagina, offset, header);
+				guardar_header(pid, nro_pagina, offset + size, header_nuevo);
+				return header->next_alloc;
 			}
+
+			return -1;
+
+		//------------------------------------//
+		// [Caso B] : El next alloc NO es NULL
+		//------------------------------------//
+
+		} else {
+
+			// B.A. entra justo, reutilizo el alloc libre
+			if (header->next_alloc - posicion_heap_actual - sizeof(heap_metadata) == size) {
+				header->is_free = false;
+				guardar_header(pid, nro_pagina, offset, header);
+				return posicion_heap_actual;
+
+			// B.B. sobra espacio, hay que meter un header nuevo
+			}  else if(header->next_alloc - posicion_heap_actual - sizeof(heap_metadata)*2 > size) {
+
+				//Pag. en donde vamos a insertar el nuevo header
+				int nro_pagina_nueva = 0, offset_pagina_nueva = 0;
+				nro_pagina_nueva = ceil((posicion_heap_actual + size + 9) / CONFIG.tamanio_pagina);
+				offset_pagina_nueva = posicion_heap_actual + size + 9 - CONFIG.tamanio_pagina * nro_pagina_nueva;
+
+				t_pagina* pag_nueva = malloc(sizeof(t_pagina));
+				pag_nueva = (t_pagina*)list_get(paginas_proceso, nro_pagina_nueva);
+
+				if (!pag_nueva->presencia) { //Si esta en principal == 1
+					//TODO: lo traigo
+				}
+
+				//Pag. en donde esta el header siguiente al header final (puede ser la misma pag. que la anterior)
+				int nro_pagina_final = 0, offset_pagina_final = 0;
+				nro_pagina_final = ceil((header->next_alloc) / CONFIG.tamanio_pagina);
+
+				if (nro_pagina_nueva != nro_pagina_final) {
+					offset_pagina_final = header->next_alloc - CONFIG.tamanio_pagina * nro_pagina_nueva;
+
+					t_pagina* pag_final = malloc(sizeof(t_pagina));
+					pag_final = (t_pagina*)list_get(paginas_proceso, nro_pagina_final);
+
+					if (!pag_nueva->presencia) { //Si esta en principal == 1
+						//TODO: lo traigo
+					}
+				}
+
+				heap_metadata* heap_siguiente = desserializar_header(MEMORIA_PRINCIPAL + buffer_pag_nueva->frame_ppal * CONFIG.tamanio_pagina + offset_pagina_nueva );
+
+
+				//Creo header nuevo
+				heap_metadata* header_nuevo =   malloc(sizeof(heap_metadata));
+				header_nuevo->is_free = true;
+				header_nuevo->next_alloc = NULL;
+				header_nuevo->prev_alloc = posicion_heap_actual;
+
+			}
+
+			obtener_alloc_disponible(pid,size,header->next_alloc);
+		}
+	}
+
 	 // No esta free
-	if(header->next_alloc != NULL){
-		 obtener_alloc_disponible(pid,size,header->next_alloc);
+	if (header->next_alloc != NULL){
+		obtener_alloc_disponible(pid,size,header->next_alloc);
 	}
 
 	 return -1;
-
 }
 
-void guardar_header(int pid, int pagina, int offset, heap_metadata* header){
+void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 
 	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
-	int posicion = pagina * CONFIG.tamanio_pagina;
+	t_pagina* pagina = (t_pagina*)list_get(paginas_proceso, nro_pagina);
+
 	int diferencia = CONFIG.tamanio_pagina - offset - 9;
 
-	if(diferencia > 0){
-		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * pagina + offset, header, sizeof(heap_metadata));
-	}
-	if(diferencia < 0){
+	//El header entra completo en la pagina
+	if(diferencia >= 0){
+		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * pagina->frame_ppal + offset, header, sizeof(heap_metadata));
 
+	} else {
+		diferencia = abs(diferencia);
+		t_pagina* pag_sig = (t_pagina*)list_get(paginas_proceso, nro_pagina+1);
+		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * pagina->frame_ppal + offset, header, 9 - diferencia);
+		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * pag_sig->frame_ppal, header+(9-diferencia), diferencia);
 	}
 }
 
@@ -692,7 +706,7 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
     return config;
 }
 
-void swap(int cantidad_pags){
+void swap(int cantidad_pags) {
 	for(int i = 0; i < cantidad_pags; i ++){
 		reemplazar_pag_en_memoria();
 	}
@@ -710,7 +724,7 @@ void reemplazar_pag_en_memoria(){
 	buffer->size = CONFIG.tamanio_pagina;
 	buffer->stream = pagina_victima;
 
-	void* pagina_a_enviar = serializar_paquete(paquete , CONFIG.tamanio_pagina + sizeof(int) *2);
+	void* pagina_a_enviar = serializar_paquete(paquete , CONFIG.tamanio_pagina + sizeof(int) * 2);
 
 	//enviar_paquete(paquete , conexion con swap); swap sera servidor?
 

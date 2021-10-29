@@ -14,13 +14,12 @@ int main(void) {
 
 	init_swamp();
 
-while(1){
-	int cliente = esperar_cliente(SERVIDOR_SWAP);
-	//mutex_lock para que no sea multiplexado
-	atender_peticiones(cliente);
-	//mutex_unlock
-}
-
+	while(1){
+		int cliente = esperar_cliente(SERVIDOR_SWAP);
+		//mutex_lock para que no sea multiplexado
+		atender_peticiones(cliente);
+		//mutex_unlock
+	}
 }
 
 
