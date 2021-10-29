@@ -131,223 +131,7 @@ void iniciar_paginacion() {
 	}
 }
 
-
-
-int memalloc(int size , int pid) {
-
-	int dir_logica = -1;
-
-	//[CASO A]: Si el proceso no tiene nada guardado en memoria
-	if (list_get(TABLAS_DE_PAGINAS, pid) == NULL) {
-
-
-		//Crea tabla de paginas para el proceso
-		t_tabla_pagina* nueva_tabla = malloc(sizeof(t_tabla_pagina));
-		nueva_tabla->paginas = list_create();
-		nueva_tabla->PID = pid;
-
-		int marcos_necesarios = ceil(size / CONFIG.tamanio_pagina);
-
-		//Chequear que el size a guardar sea menor a la cantidad max de marcos permitida
-		if (marcos_necesarios > CONFIG.marcos_max) {
-
-			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) " , size , pid);
-			log_info(LOGGER , "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) " , size , pid);
-
-			return -1;
-
-		}
-		//Verificar si entra en memoria y solicitamos marcos
-		t_list* marcos_a_ocupar = obtener_marcos(marcos_necesarios);
-
-		if (marcos_a_ocupar == NULL) {
-			printf("No hay mas espacio en la memoria para el proceso %i \n", pid);
-			log_info(LOGGER,"No hay mas espacio en la memoria para el proceso %i \n", pid);
-			return -1;
-		}
-
-		//Se agregan los marcos a ocupar en la tabla de paginas del proceso
-		for (int i = 0 ; i < list_size(marcos_a_ocupar) ; i++) {
-			t_pagina* pagina = malloc(sizeof(t_pagina));
-
-			pagina->frame_ppal = ((t_frame*)list_get(marcos_a_ocupar, i))-> id;
-			list_add(nueva_tabla->paginas, pagina);
-		}
-
-		pthread_mutex_lock(&mutexTablas);
-		list_add(TABLAS_DE_PAGINAS, nueva_tabla);
-		pthread_mutex_unlock(&mutexTablas);
-
-		//inicializo header inicial
-		heap_metadata* header = malloc(sizeof(heap_metadata));
-		header->is_free = false;
-		header->next_alloc = sizeof(heap_metadata) + size;
-		header->prev_alloc = NULL;
-
-		//armo el alloc siguiente
-		heap_metadata* header_siguiente = malloc(sizeof(heap_metadata));
-		header->is_free = true;
-		header->next_alloc = NULL;
-		header->prev_alloc = 0;
-
-		//Bloque en donde se meteran los headers
-		void* marquinhos = malloc(marcos_necesarios * CONFIG.tamanio_pagina);
-
-		memcpy(marquinhos, header, sizeof(heap_metadata));
-		memcpy(marquinhos + sizeof(heap_metadata) + size, header_siguiente, sizeof(heap_metadata));
-
-		//Copia del bloque 'marquinhos' a memoria;
-		serializar_paginas_en_memoria(nueva_tabla->paginas, marquinhos);
-
-		dir_logica = header_siguiente->prev_alloc;
-
-		free(header);
-		free(header_siguiente);
-	}
-	else
-	//[CASO B]: Si el proceso ya existe en memoria
-	{
-		void* marquinhos = traer_marquinhos_del_proceso(pid);
-		heap_metadata* header;
-		uint32_t i = 0;
-
-		t_list* tabla_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
-
-		do {
-
-			header = desserializar_header(marquinhos + i);
-
-			i = header->next_alloc;
-
-			//[CASO 1]: hay un espacio y el ultimo alloc no es null
-			if (header->is_free && header->next_alloc != NULL) {
-
-				heap_metadata* header_siguiente = desserializar_header(marquinhos + header->next_alloc);
-
-				//[CASO 1.1]: Entra justo
-				if (size == header->next_alloc - header_siguiente->prev_alloc - sizeof(heap_metadata)) {
-					header->is_free = false;
-					memcpy(marquinhos + header_siguiente->prev_alloc, header, sizeof(heap_metadata));
-					dir_logica = header_siguiente->prev_alloc;
-				}
-
-				//[CASO 1.2]: Entra y queda un excedente (ponemos 2 headers)
-				else if(size + sizeof(heap_metadata) < header->next_alloc - header_siguiente->prev_alloc - sizeof(heap_metadata)) {
-
-					header->is_free = false;
-
-					//Creo header y guardo
-					heap_metadata* nuevo_header = malloc(sizeof(heap_metadata));
-
-					//Inicializo header
-					nuevo_header->is_free = true;
-					nuevo_header->next_alloc = header->next_alloc;
-					nuevo_header->prev_alloc = header_siguiente->prev_alloc;
-
-					//Actualizo el header anterior al nuevo
-					header->next_alloc = header_siguiente->prev_alloc + size  + sizeof(heap_metadata);
-
-					//Actualizo el header posterior al nuevo
-					header_siguiente->prev_alloc = header->next_alloc;
-
-					memcpy(marquinhos + nuevo_header->prev_alloc, header, sizeof(heap_metadata));
-					memcpy(marquinhos + header->next_alloc, nuevo_header, sizeof(heap_metadata));
-					memcpy(marquinhos + nuevo_header->next_alloc, header_siguiente, sizeof(heap_metadata));
-
-					dir_logica = header_siguiente->prev_alloc;
-					free(nuevo_header);
-				}
-				free(header_siguiente);
-				break;
-
-			}
-
-			//[CASO 2]: hay un espacio en el ultimo alloc
-			else if(header->next_alloc == NULL && header->is_free){
-
-				heap_metadata* header_anterior = desserializar_header(marquinhos + header->prev_alloc);
-
-				int espacio_total = sizeof(marquinhos);
-
-				//[CASO 2.1]: Entra justo
-				if (espacio_total - header_anterior->next_alloc + sizeof(heap_metadata) == size){
-					header->is_free = false;
-					memcpy(marquinhos + header_anterior->next_alloc , header , sizeof(heap_metadata));
-					dir_logica = header_anterior->next_alloc;
-					break;
-				}
-
-				//[CASO 2.2]: Entra y queda un excedente (ponemos 2 headers)
-				if (size + 9 > espacio_total - header_anterior->next_alloc + sizeof(heap_metadata)){
-
-					heap_metadata* nuevo_header = malloc(sizeof(heap_metadata));
-
-					//actualizo el header original
-					header->is_free = false;
-					header->next_alloc = header_anterior->next_alloc + sizeof(heap_metadata) + size;
-
-					//Inicializo header nuevo
-					nuevo_header->is_free = true;
-					nuevo_header->prev_alloc = header_anterior->next_alloc;
-					nuevo_header->next_alloc = NULL;
-
-					//lo meto a memoria el actualizado
-					memcpy(marquinhos + header_anterior->next_alloc, header, sizeof(heap_metadata));
-					//lo meto a memoria el nuevo
-					memcpy(marquinhos + header->next_alloc, nuevo_header, sizeof(heap_metadata));
-
-					dir_logica = header->next_alloc;
-					free(nuevo_header);
-					break;
-				}
-			}
-
-			serializar_paginas_en_memoria(tabla_proceso, marquinhos);
-
-		} while(header->next_alloc != NULL);
-
-		free(header);
-
-		//[CASO C]: El proceso necesita mas paginas
-
-		//Chequear que el size a guardar sea menor a la cantidad max de marcos permitida
-		int marcos_necesarios = ceil(size / CONFIG.tamanio_pagina);
-
-		if (marcos_necesarios + tabla_proceso > CONFIG.marcos_max) {
-
-			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) " , size , pid);
-			log_info(LOGGER , "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) " , size , pid);
-
-			return -1;
-		}
-
-		//Verificar si entra en memoria y solicitamos marcos
-
-		t_list* marcos_a_ocupar = obtener_marcos(marcos_necesarios);
-
-		if (marcos_a_ocupar == NULL) {
-
-			printf("No hay mas espacio en la memoria para el proceso %i \n", pid);
-			log_info(LOGGER,"No hay mas espacio en la memoria para el proceso %i \n", pid);
-
-			return -1;
-		}
-
-		//Se agregan los marcos a ocupar en la tabla de paginas del proceso
-		for (int i = 0 ; i < list_size(marcos_a_ocupar) ; i++) {
-			t_pagina* pagina = malloc(sizeof(t_pagina));
-
-			pagina->frame_ppal = ((t_frame*)list_get(marcos_a_ocupar, i))-> id;
-			list_add(tabla_proceso, pagina);
-		}
-
-
-
-	}
-	return dir_logica;
-}
-
-int memalloc2(int pid , int size){
+int memalloc(int pid , int size){
 	int dir_logica = -1;
 
 	//[CASO A]: Llega un proceso nuevo
@@ -440,13 +224,13 @@ int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 		//TODO: lo traigo :: traer_pagina_a_memoria();
 	}
 
-	heap_metadata* header = desserializar_header(MEMORIA_PRINCIPAL + pag->frame_ppal * CONFIG.tamanio_pagina + offset);
+	heap_metadata* header = desserializar_header(pid, nro_pagina, offset);
 
 	if (header->is_free) {
 
-		//-------------------------------//
-		// [Caso A]: El next alloc es NULL
-		//-------------------------------//
+		//----------------------------------//
+		//  [Caso A]: El next alloc es NULL
+		//----------------------------------//
 
 		if(header->next_alloc == NULL){
 
@@ -472,19 +256,19 @@ int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 
 			return -1;
 
-		//------------------------------------//
-		// [Caso B] : El next alloc NO es NULL
-		//------------------------------------//
+		//-------------------------------------//
+		//  [Caso B]: El next alloc NO es NULL
+		//-------------------------------------//
 
 		} else {
 
-			// B.A. entra justo, reutilizo el alloc libre
+			// B.A. Entra justo, reutilizo el alloc libre
 			if (header->next_alloc - posicion_heap_actual - sizeof(heap_metadata) == size) {
 				header->is_free = false;
 				guardar_header(pid, nro_pagina, offset, header);
 				return posicion_heap_actual;
 
-			// B.B. sobra espacio, hay que meter un header nuevo
+			// B.B. Sobra espacio, hay que meter un header nuevo
 			}  else if(header->next_alloc - posicion_heap_actual - sizeof(heap_metadata)*2 > size) {
 
 				//Pag. en donde vamos a insertar el nuevo header
@@ -503,25 +287,29 @@ int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 				int nro_pagina_final = 0, offset_pagina_final = 0;
 				nro_pagina_final = ceil((header->next_alloc) / CONFIG.tamanio_pagina);
 
-				if (nro_pagina_nueva != nro_pagina_final) {
-					offset_pagina_final = header->next_alloc - CONFIG.tamanio_pagina * nro_pagina_nueva;
+				offset_pagina_final = header->next_alloc - CONFIG.tamanio_pagina * nro_pagina_nueva;
 
-					t_pagina* pag_final = malloc(sizeof(t_pagina));
-					pag_final = (t_pagina*)list_get(paginas_proceso, nro_pagina_final);
+				t_pagina* pag_final = malloc(sizeof(t_pagina));
+				pag_final = (t_pagina*)list_get(paginas_proceso, nro_pagina_final);
 
-					if (!pag_nueva->presencia) { //Si esta en principal == 1
-						//TODO: lo traigo
-					}
+				if (!pag_nueva->presencia) { //Si esta en principal == 1
+					//TODO: lo traigo
 				}
 
-				heap_metadata* heap_siguiente = desserializar_header(MEMORIA_PRINCIPAL + buffer_pag_nueva->frame_ppal * CONFIG.tamanio_pagina + offset_pagina_nueva );
+				heap_metadata* header_final = desserializar_header(pid, nro_pagina_final, offset_pagina_final);
 
-
-				//Creo header nuevo
-				heap_metadata* header_nuevo =   malloc(sizeof(heap_metadata));
+				//Creo header nuevo y lo guardo
+				heap_metadata* header_nuevo = malloc(sizeof(heap_metadata));
 				header_nuevo->is_free = true;
-				header_nuevo->next_alloc = NULL;
 				header_nuevo->prev_alloc = posicion_heap_actual;
+				header_nuevo->next_alloc = header->next_alloc;
+				guardar_header(pid, nro_pagina_nueva, offset_pagina_nueva, header_nuevo);
+
+				//Actualizo y guardo los headers que ya estaban.
+				header->next_alloc = posicion_heap_actual + sizeof(heap_metadata) + size;
+				header_final->prev_alloc = posicion_heap_actual + sizeof(heap_metadata) + size;
+				guardar_header(pid, nro_pagina, offset, header);
+				guardar_header(pid, nro_pagina_final, offset_pagina_final, header_final);
 
 			}
 
@@ -542,7 +330,7 @@ void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
 	t_pagina* pagina = (t_pagina*)list_get(paginas_proceso, nro_pagina);
 
-	int diferencia = CONFIG.tamanio_pagina - offset - 9;
+	int diferencia = CONFIG.tamanio_pagina - offset - sizeof(heap_metadata);
 
 	//El header entra completo en la pagina
 	if(diferencia >= 0){
@@ -551,8 +339,8 @@ void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 	} else {
 		diferencia = abs(diferencia);
 		t_pagina* pag_sig = (t_pagina*)list_get(paginas_proceso, nro_pagina+1);
-		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * pagina->frame_ppal + offset, header, 9 - diferencia);
-		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * pag_sig->frame_ppal, header+(9-diferencia), diferencia);
+		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * pagina->frame_ppal + offset, header, sizeof(heap_metadata) - diferencia);
+		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * pag_sig->frame_ppal, header + sizeof(heap_metadata) - diferencia, diferencia);
 	}
 }
 
@@ -606,9 +394,23 @@ void* traer_marquinhos_del_proceso(int pid) {
 	return buffer;
 }
 
-heap_metadata* desserializar_header(void* buffer) {
+heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
 	int offset = 0;
 	heap_metadata* header = malloc(sizeof(heap_metadata));
+	void* buffer = malloc(sizeof(heap_metadata));
+
+	t_list* pags_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+	t_pagina* pagina = (t_pagina*) list_get(pags_proceso, nro_pag);
+
+	int diferencia = CONFIG.tamanio_pagina - offset_header - sizeof(heap_metadata);
+	if (diferencia >= 0) {
+		memcpy(buffer, MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina + offset_header, sizeof(heap_metadata));
+	} else {
+		t_pagina* pagina_sig = (t_pagina*) list_get(pags_proceso, nro_pag+1);
+		diferencia = abs(diferencia);
+		memcpy(buffer, MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina + offset_header, sizeof(heap_metadata) - diferencia);
+		memcpy(buffer+sizeof(heap_metadata) - diferencia, MEMORIA_PRINCIPAL + pagina_sig->frame_ppal * CONFIG.tamanio_pagina, diferencia);
+	}
 
 	memcpy(&(header->prev_alloc), buffer + offset, sizeof(uint32_t));
 	offset += sizeof(uint32_t);
