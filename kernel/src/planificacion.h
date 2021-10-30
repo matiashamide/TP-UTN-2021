@@ -32,7 +32,7 @@ typedef struct
 	uint32_t real_anterior;
 	uint32_t estimado_anterior;
 	uint32_t tiempo_espera;
-
+	int conexion;
 }PCB;
 
 typedef struct {
@@ -50,12 +50,15 @@ typedef struct {
 	int grado_multiprocesamiento;
 }t_kernel_config;
 
+typedef struct {
+	PCB* lugar_PCB;
+	sem_t sem_exec;
+}t_procesador;
+
 //VARIABLES GLOBALES
 t_list_iterator* iterador_lista_ready;
 t_kernel_config CONFIG_KERNEL;
 t_log* LOGGER;
-
-
 
 //SEMAFOROS
 sem_t sem_cola_new;
@@ -70,6 +73,7 @@ t_list* LISTA_EXEC;
 t_list* LISTA_BLOCKED;
 t_list* LISTA_SUSPENDED_BLOCKED;
 t_list* LISTA_SUSPENDED_READY;
+t_list* LISTA_PROCESADORES;
 
 //MUTEXES
 pthread_mutex_t mutex_lista_new;
@@ -83,12 +87,12 @@ pthread_mutex_t mutex_lista_ready_suspended;
 pthread_t planificador_largo_plazo;
 pthread_t planificador_corto_plazo;
 
-
 void algoritmo_planificador_largo_plazo();
 void algoritmo_planificador_corto_plazo();
 void algoritmo_SJF();
 void algoritmo_HRRN();
 void* minimum(PCB*, PCB*);
 bool criterio_remocion_lista(void* pcb);
+void ejecutar(t_procesador*);
 
 #endif /* PLANIFICACION_H_ */

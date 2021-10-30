@@ -14,7 +14,7 @@ void algoritmo_planificador_largo_plazo() {
 
 		pthread_mutex_lock(&mutex_lista_ready);
 		list_add(LISTA_READY, pcb);
-		//TODO esto es algo solamente para testear que pasen los procesos necesarios a Ready
+		// Esto es algo solamente para testear que pasen los procesos necesarios a Ready
 		PCB* pcb_test = malloc(sizeof(PCB));
 		pcb_test = (PCB*) list_get(LISTA_READY, 0);
 		printf("LISTA READY\n");
@@ -78,7 +78,7 @@ void algoritmo_SJF() {
 
 	pthread_mutex_lock(&mutex_lista_exec);
 	list_add(LISTA_EXEC, pcb);
-	//TODO esto es algo solamente para testear que pasen los procesos necesarios a Exec
+	// Esto es algo solamente para testear que pasen los procesos necesarios a Exec
 	PCB* pcb_test = malloc(sizeof(PCB));
 	pcb_test = (PCB*) list_get(LISTA_EXEC, 0);
 	printf("LISTA EXEC\n");
@@ -89,6 +89,10 @@ void algoritmo_SJF() {
 	pthread_mutex_unlock(&mutex_lista_exec);
 
 	//TODO aca deberian ponerse a ejecutar los procesos en los hilos de multiprocesamiento
+
+	// TODO que recorra hasta encontrar un lugar vacio p meter el pcb
+	// void *list_find(t_list *, bool(*closure)(void*));
+	// TODO hacerle signal al semaforo del procesador correspondiente
 
 }
 
@@ -128,7 +132,7 @@ void algoritmo_HRRN() {
 
 	pthread_mutex_lock(&mutex_lista_exec);
 	list_add(LISTA_EXEC, pcb);
-	//TODO esto es algo solamente para testear que pasen los procesos necesarios a Exec
+	// Esto es algo solamente para testear que pasen los procesos necesarios a Exec
 	PCB* pcb_test = malloc(sizeof(PCB));
 	pcb_test = (PCB*) list_get(LISTA_EXEC, 0);
 	printf("LISTA EXEC\n");
@@ -139,6 +143,34 @@ void algoritmo_HRRN() {
 
 	//TODO aca deberian ponerse a ejecutar los procesos en los hilos de multiprocesamiento
 
+	// TODO que recorra hasta encontrar un lugar vacio p meter el pcb
+	// void *list_find(t_list *, bool(*closure)(void*));
+	// TODO hacerle signal al semaforo del procesador correspondiente
 
 }
 
+void ejecutar(t_procesador* estructura_procesador) {
+	while (1) {
+		sem_wait(&estructura_procesador->sem_exec);
+	}
+}
+
+/* while (1) {
+		int cod_op = recibir_operacion(cliente_fd);
+		switch (cod_op) {
+		case MENSAJE:
+			recibir_mensaje(cliente_fd);
+			break;
+		case PAQUETE:
+			lista = recibir_paquete(cliente_fd);
+			log_info(logger, "Me llegaron los siguientes valores:\n");
+			list_iterate(lista, (void*) iterator);
+			break;
+		case -1:
+			log_error(logger, "el cliente se desconecto. Terminando servidor");
+			return EXIT_FAILURE;
+		default:
+			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
+			break;
+		}
+	} */

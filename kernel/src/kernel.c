@@ -74,13 +74,14 @@ void init_kernel(){
 	//Conexiones
 	//SERVIDOR_MEMORIA = crear_conexion(CONFIG_KERNEL.ip_memoria, CONFIG_KERNEL.puerto_memoria);
 
-	//Listas y colas de planifiacion
+	//Listas y colas de planificacion
 	LISTA_NEW = list_create();
 	LISTA_READY = list_create();
 	LISTA_EXEC = list_create();
 	LISTA_BLOCKED = list_create();
 	LISTA_SUSPENDED_BLOCKED = list_create();
 	LISTA_SUSPENDED_READY = list_create();
+	LISTA_PROCESADORES = list_create();
 
 	//Mutexes
 	pthread_mutex_init(&mutex_creacion_PID, NULL);
@@ -98,42 +99,14 @@ void init_kernel(){
 
 	iniciar_planificador_largo_plazo();
 	iniciar_planificador_corto_plazo();
+	crear_procesadores();
 }
-
-/*
-void coordinador_multihilo(){
-
-	while(1) {
-
-		int* socket = malloc(sizeof(int));
-		*socket = esperar_cliente(SERVIDOR_KERNEL);
-
-		pthread_t hilo_atender_carpincho;// = malloc(sizeof(pthread_t));
-		pthread_create(&hilo_atender_carpincho , NULL , (void*)atender_carpinchos, socket);
-		pthread_detach(hilo_atender_carpincho);
-
-	}
-}
-*/
-//void coordinador_multihilo(){
-
-//	while(1) {
-
-//		pthread_t hilo_atender_carpincho;// = malloc(sizeof(pthread_t));
-
-//		int socket = esperar_cliente(SERVIDOR_KERNEL);
-
-//		pthread_create(&hilo_atender_carpincho , NULL , (void*)atender_carpinchos, (void*)socket);
-//		pthread_detach(hilo_atender_carpincho);
-
-//	}
-//}
 
 void coordinador_multihilo(){
 
 	while(1) {
 
-		pthread_t hilo_atender_carpincho;// = malloc(sizeof(pthread_t));
+		pthread_t hilo_atender_carpincho;
 
 		int *socket_cliente = malloc(sizeof(int));
 
@@ -152,7 +125,6 @@ void iniciar_planificador_largo_plazo() {
 	pthread_create(&planificador_largo_plazo, NULL, (void*)algoritmo_planificador_largo_plazo, NULL);
 	printf("Ya cree el planificador de largo plazo\n");
 	pthread_detach(planificador_largo_plazo);
-
 }
 
 void iniciar_planificador_corto_plazo() {
@@ -160,7 +132,6 @@ void iniciar_planificador_corto_plazo() {
 	pthread_create(&planificador_corto_plazo, NULL, (void*)algoritmo_planificador_corto_plazo, NULL);
 	printf("Ya cree el planificador de corto plazo\n");
 	pthread_detach(planificador_largo_plazo);
-
 }
 
 void atender_carpinchos(int cliente) {
@@ -175,10 +146,9 @@ void atender_carpinchos(int cliente) {
 	pcb_carpincho->real_anterior = 0;
 	pcb_carpincho->estimado_anterior = CONFIG_KERNEL.estimacion_inicial;
 	pcb_carpincho->tiempo_espera = 0;
+	pcb_carpincho->conexion = cliente;
 
 	pasar_a_new(pcb_carpincho);
-
-
 }
 
 void pasar_a_new(PCB* pcb_carpincho) {
@@ -188,6 +158,28 @@ void pasar_a_new(PCB* pcb_carpincho) {
 	pthread_mutex_unlock(&mutex_lista_new);
 
 	sem_post(&sem_cola_new);
-
 }
+
+void crear_procesadores() {
+
+	for(int i = 0; i < CONFIG_KERNEL.grado_multiprocesamiento; i++) {
+
+		t_procesador* estructura_procesador = malloc(sizeof(t_procesador));
+		PCB* pcb = malloc(sizeof(PCB));
+		sem_init(&estructura_procesador->sem_exec, 0, 0);
+
+		list_add(LISTA_PROCESADORES, estructura_procesador);
+
+		pthread_t hilo_procesador;
+
+		pthread_create(&hilo_procesador, NULL, (void*)ejecutar, estructura_procesador);
+		printf("Cree un procesador\n");
+		pthread_detach(hilo_procesador);
+
+	}
+}
+
+
+
+
 
