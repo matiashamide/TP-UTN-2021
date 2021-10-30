@@ -35,8 +35,6 @@ typedef struct {
     int modificado;
     int lock;
     int tiempo_uso;
-    int tamanio_disponible;
-    int frag_interna;
 }t_pagina;
 
 typedef struct {
@@ -101,7 +99,6 @@ int alocar_en_swap(int pid, int size);
 int guardar_paginas_en_memoria(int pid, int marcos_necesarios, t_list* paginas, void* contenido);
 void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header);
 int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual);
-int guardar_alloc_en_memoria(int pid, int  size,int alloc);
 int guardar_en_swap(int pid, void* contenido);
 t_list* obtener_marcos(int cant_marcos);
 int buscar_pagina_en_memoria(int pid, int pag);

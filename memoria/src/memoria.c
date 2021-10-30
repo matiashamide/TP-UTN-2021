@@ -1,13 +1,3 @@
-/*
- ============================================================================
- Name        : memoria.c
- Author      : 
- Version     :
- Copyright   : Your copyright notice
- Description : Hello World in C, Ansi-style
- ============================================================================
- */
-
 #include "memoria.h"
 
 int main(void) {
@@ -24,9 +14,9 @@ int main(void) {
 }
 
 
-//--------------------------------------------------------------------------------------------
+//------------------------------------------------------------- INICIALIZACION MEMORIA ------------------------------------------------------------//
 
-void init_memoria(){
+void init_memoria() {
 
 	//Inicializamos logger
 	LOGGER = log_create("memoria.log", "MEMORIA", 0, LOG_LEVEL_INFO);
@@ -55,6 +45,54 @@ void init_memoria(){
 	iniciar_paginacion();
 }
 
+t_memoria_config crear_archivo_config_memoria(char* ruta) {
+    t_config* memoria_config;
+    memoria_config = config_create(ruta);
+    t_memoria_config config;
+
+    if (memoria_config == NULL) {
+        log_info(LOGGER, "No se pudo leer el archivo de configuracion de memoria\n");
+        exit(-1);
+    }
+
+    config.ip_memoria          = config_get_string_value(memoria_config, "IP");
+    config.puerto_memoria      = config_get_string_value(memoria_config, "PUERTO");
+    config.tamanio_memoria     = config_get_int_value   (memoria_config, "TAMANIO");
+    config.tamanio_pagina      = config_get_int_value   (memoria_config, "TAMANIO_PAGINA");
+    config.alg_remp_mmu        = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_MMU");
+    config.tipo_asignacion     = config_get_string_value(memoria_config, "TIPO_ASIGNACION");
+    config.marcos_max          = config_get_int_value   (memoria_config, "MARCOS_MAXIMOS");  //TODO:--> ver en que casos esta esta esta config y meter un if
+    config.cant_entradas_tlb   = config_get_int_value   (memoria_config, "CANTIDAD_ENTRADAS_TLB");
+    config.alg_reemplazo_tlb   = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_TLB");
+    config.retardo_acierto_tlb = config_get_int_value   (memoria_config, "RETARDO_ACIERTO_TLB");
+    config.retardo_fallo_tlb   = config_get_int_value   (memoria_config, "RETARDO_FALLO_TLB");
+
+    return config;
+}
+
+void iniciar_paginacion() {
+
+	int cant_frames_ppal = CONFIG.tamanio_memoria / CONFIG.tamanio_pagina;
+
+	log_info(LOGGER, "Tengo %d marcos de %d bytes en memoria principal", cant_frames_ppal, CONFIG.tamanio_pagina);
+
+	//Creamos lista de tablas de paginas
+	TABLAS_DE_PAGINAS = list_create();
+
+	//Creamos lista de frames de memoria ppal.
+	MARCOS_MEMORIA = list_create();
+
+	for (int i = 0 ; i < cant_frames_ppal ; i++) {
+
+		t_frame* frame = malloc(sizeof(t_frame));
+		frame->ocupado = 0;
+		frame->id = i;
+
+		list_add(MARCOS_MEMORIA, frame);
+	}
+}
+
+//--------------------------------------------------------- COORDINACION DE CARPINCHOS ----------------------------------------------------------//
 
 void coordinador_multihilo(){
 
@@ -109,27 +147,7 @@ void atender_carpinchos(int cliente) {
 	}
 }
 
-void iniciar_paginacion() {
-
-	int cant_frames_ppal = CONFIG.tamanio_memoria / CONFIG.tamanio_pagina;
-
-	log_info(LOGGER, "Tengo %d marcos de %d bytes en memoria principal", cant_frames_ppal, CONFIG.tamanio_pagina);
-
-	//Creamos lista de tablas de paginas
-	TABLAS_DE_PAGINAS = list_create();
-
-	//Creamos lista de frames de memoria ppal.
-	MARCOS_MEMORIA = list_create();
-
-	for (int i = 0 ; i < cant_frames_ppal ; i++) {
-
-		t_frame* frame = malloc(sizeof(t_frame));
-		frame->ocupado = 0;
-		frame->id = i;
-
-		list_add(MARCOS_MEMORIA, frame);
-	}
-}
+//------------------------------------------------------------- FUNCIONES PRINCIPALES ------------------------------------------------------------//
 
 int memalloc(int pid , int size){
 	int dir_logica = -1;
@@ -137,83 +155,91 @@ int memalloc(int pid , int size){
 	//[CASO A]: Llega un proceso nuevo
 	if(list_get(TABLAS_DE_PAGINAS , pid) == NULL){
 
-	if (alocar_en_swap(pid, size) == -1 ){
-		printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
-		log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+		if (alocar_en_swap(pid, size) == -1 ){
+			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+			log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 
-		return -1;
-	}
+			return -1;
+		}
 
-	int frames_necesarios = ceil(size / CONFIG.tamanio_pagina);
+		int frames_necesarios = ceil(size / CONFIG.tamanio_pagina);
 
-	//Crea tabla de paginas para el proceso
-	t_tabla_pagina* nueva_tabla = malloc(sizeof(t_tabla_pagina));
-	nueva_tabla->paginas = list_create();
-	nueva_tabla->PID = pid;
+		//Crea tabla de paginas para el proceso
+		t_tabla_pagina* nueva_tabla = malloc(sizeof(t_tabla_pagina));
+		nueva_tabla->paginas = list_create();
+		nueva_tabla->PID = pid;
 
-	pthread_mutex_lock(&mutexTablas);
-	list_add(TABLAS_DE_PAGINAS, nueva_tabla);
-	pthread_mutex_unlock(&mutexTablas);
+		pthread_mutex_lock(&mutexTablas);
+		list_add(TABLAS_DE_PAGINAS, nueva_tabla);
+		pthread_mutex_unlock(&mutexTablas);
 
-	for (int i = 0 ; i < frames_necesarios ; i++) {
-		//asignarle el frame a la pag y llenar la t_pag por cada pag
-		t_pagina* pagina = malloc(sizeof(t_pagina));
-		pagina->frame_ppal = solicitar_frame_en_ppal();
-	}
+		//inicializo header inicial
+		heap_metadata* header 	  = malloc(sizeof(heap_metadata));
+		header->is_free           = false;
+		header->next_alloc        = sizeof(heap_metadata) + size;
+		header->prev_alloc        = NULL;
 
-	//inicializo header inicial
-	heap_metadata* header 	  = malloc(sizeof(heap_metadata));
-	header->is_free           = false;
-	header->next_alloc        = sizeof(heap_metadata) + size;
-	header->prev_alloc        = NULL;
+		//Armo el alloc siguiente
+		heap_metadata* header_sig = malloc(sizeof(heap_metadata));
+		header->is_free    		  = true;
+		header->next_alloc 		  = NULL;
+		header->prev_alloc        = 0;
 
-	//Armo el alloc siguiente
-	heap_metadata* header_sig = malloc(sizeof(heap_metadata));
-	header->is_free    		  = true;
-	header->next_alloc 		  = NULL;
-	header->prev_alloc        = 0;
+		//Bloque de paginas en donde se meten los headers
+		void* buffer_pags_proceso = malloc(frames_necesarios * CONFIG.tamanio_pagina);
 
-	//Bloque de paginas en donde se meten los headers
-	void* buffer_pags_proceso = malloc(frames_necesarios * CONFIG.tamanio_pagina);
+		memcpy(buffer_pags_proceso, header, sizeof(heap_metadata));
+		memcpy(buffer_pags_proceso + sizeof(heap_metadata) + size, header_sig, sizeof(heap_metadata));
 
-	memcpy(buffer_pags_proceso, header, sizeof(heap_metadata));
-	memcpy(buffer_pags_proceso + sizeof(heap_metadata) + size, header_siguiente, sizeof(heap_metadata));
+		//Crea las paginas y las guarda en memoria
+		for (int i = 0 ; i < frames_necesarios ; i++) {
 
-	//Copia del buffer a memoria;
+			t_pagina* pagina      = malloc(sizeof(t_pagina));
+			pagina->frame_ppal    = solicitar_frame_en_ppal();
+			pagina->frame_virtual = -1;
+			pagina->modificado    = 1;
+			pagina->lock          = 1;
+			pagina->presencia     = 1;
+			//pagina->tiempo_uso  = ;
+			//pagina->uso         = ;
 
-	serializar_paginas_en_memoria(nueva_tabla->paginas, buffer_pags_proceso);
+			list_add(nueva_tabla->paginas, pagina);
 
-	dir_logica = header_siguiente->prev_alloc;
+			memcpy(MEMORIA_PRINCIPAL + pagina->frame_ppal, buffer_pags_proceso + i * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
 
-	free(header);
-	free(header_siguiente);
+		}
 
-	//crea las paginas y las guarda segun asignacion y algoritmos
-	guardar_paginas_en_memoria(pid , marcos_necesarios , nueva_tabla->paginas , marquinhos);
+		dir_logica = header_sig->prev_alloc;
+		free(header);
 
-	}
+	} else {
 
-	else
 	//[CASO B]: El proceso existe en memoria
-	{
+
 		int alloc = obtener_alloc_disponible(pid, size, 0);
 
 		if (alloc != -1) {
-			guardar_alloc_en_memoria(pid, size, alloc);
 			return alloc;
 		}
 
 		// hay que agregar paginas
 		// verificar si el proceso puede tener mas dependiendo el algoritmo de reemplazo
 
-
 	}
 
 	return dir_logica;
 }
+
+int memfree() 	{return 0;}
+void* memread() {return 0;}
+int memwrite()	{return 0;}
+
+
+//------------------------------------------------------------- FUNCIONES SECUNDARIAS ------------------------------------------------------------//
+
+
 //TODO: Ver si estamos devolviendo la DL o DF
 //TODO: Poner lock a la pagina para que no me la saque otro proceso mientras la uso
-
 int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 
 	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
@@ -365,10 +391,6 @@ int guardar_paginas_en_memoria( int pid , int marcos_necesarios , t_list* pagina
 	return 0;
 }
 
-int guardar_alloc_en_memoria(pid, size, alloc){
-
-	return 0;
-}
 
 int alocar_en_swap(pid , size){
 	//abrir conexion
@@ -376,32 +398,6 @@ int alocar_en_swap(pid , size){
 	//chequear respuesta ( 1 o -1)
 
 	return 0;
-}
-
-int obtener_ultimo_header(int pid) {
-	void* marquinhos_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
-
-/*
-	for (int i = 0 ; i < list_size(paginas_proceso) ; i++) {
-		int frame_aux = ((t_pagina*)list_get(paginas_proceso, i))->frame_ppal;
-		void* header_buffer = malloc(sizeof(heap_metadata));
-		memcpy(header_buffer, MEMORIA_PRINCIPAL + frame_aux * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
-	}
-*/
-}
-
-void* traer_marquinhos_del_proceso(int pid) {
-
-	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
-
-	void* buffer = malloc(sizeof(CONFIG.tamanio_pagina) * list_size(paginas_proceso));
-
-	for (int i = 0 ; i < list_size(paginas_proceso) ; i++) {
-		int frame_aux = ((t_pagina*)list_get(paginas_proceso, i))->frame_ppal;
-		memcpy(buffer + i * CONFIG.tamanio_pagina, MEMORIA_PRINCIPAL + frame_aux * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
-	}
-
-	return buffer;
 }
 
 heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
@@ -474,44 +470,7 @@ int buscar_pagina_en_memoria(int pid, int pag) {
 int solicitar_frame_en_ppal(){
 	//busco frames lbires en ppal
 	//si no hay swapeo con los algoritmos
-}
-
-void signal_metricas(){
-	log_info(LOGGER, "[MEMORIA]: Recibi la senial de imprimir metricas, imprimiendo\n...");
-	generar_metricas_tlb();
-}
-void signal_dump(){
-	log_info(LOGGER, "[MEMORIA]: Recibi la senial de generar el dump, generando\n...");
-	dumpear_tlb();
-}
-void signal_clean_tlb(){
-	log_info(LOGGER, "[MEMORIA]: Recibi la senial para limpiar TLB, limpiando\n...");
-	limpiar_tlb();
-}
-
-t_memoria_config crear_archivo_config_memoria(char* ruta) {
-    t_config* memoria_config;
-    memoria_config = config_create(ruta);
-    t_memoria_config config;
-
-    if (memoria_config == NULL) {
-        log_info(LOGGER, "No se pudo leer el archivo de configuracion de memoria\n");
-        exit(-1);
-    }
-
-    config.ip_memoria          = config_get_string_value(memoria_config, "IP");
-    config.puerto_memoria      = config_get_string_value(memoria_config, "PUERTO");
-    config.tamanio_memoria     = config_get_int_value   (memoria_config, "TAMANIO");
-    config.tamanio_pagina      = config_get_int_value   (memoria_config, "TAMANIO_PAGINA");
-    config.alg_remp_mmu        = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_MMU");
-    config.tipo_asignacion     = config_get_string_value(memoria_config, "TIPO_ASIGNACION");
-    config.marcos_max          = config_get_int_value   (memoria_config, "MARCOS_MAXIMOS");  //TODO:--> ver en que casos esta esta esta config y meter un if
-    config.cant_entradas_tlb   = config_get_int_value   (memoria_config, "CANTIDAD_ENTRADAS_TLB");
-    config.alg_reemplazo_tlb   = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_TLB");
-    config.retardo_acierto_tlb = config_get_int_value   (memoria_config, "RETARDO_ACIERTO_TLB");
-    config.retardo_fallo_tlb   = config_get_int_value   (memoria_config, "RETARDO_FALLO_TLB");
-
-    return config;
+	//todo: CREO Q OBTENER MARCOS HACE LO MISMO
 }
 
 void swap(int cantidad_pags) {
@@ -537,4 +496,19 @@ void reemplazar_pag_en_memoria(){
 	//enviar_paquete(paquete , conexion con swap); swap sera servidor?
 
 	eliminar_paquete(paquete);
+}
+
+//------------------------------------------------------------- FUNCIONES SIGNAL ------------------------------------------------------------//
+
+void signal_metricas(){
+	log_info(LOGGER, "[MEMORIA]: Recibi la senial de imprimir metricas, imprimiendo\n...");
+	generar_metricas_tlb();
+}
+void signal_dump(){
+	log_info(LOGGER, "[MEMORIA]: Recibi la senial de generar el dump, generando\n...");
+	dumpear_tlb();
+}
+void signal_clean_tlb(){
+	log_info(LOGGER, "[MEMORIA]: Recibi la senial para limpiar TLB, limpiando\n...");
+	limpiar_tlb();
 }
