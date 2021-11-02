@@ -31,7 +31,7 @@ t_list* crear_estructura(int cant_entradas){
 
 
 
-int buscar_frame(int pid, int pag) {
+int buscar_pag_tlb(int pid, int pag) {
 
 	int _mismo_pid_y_pag(entrada_tlb* entrada) {
 		return (entrada->pid == pid && entrada->pag == pag);
@@ -50,7 +50,7 @@ int buscar_frame(int pid, int pag) {
 
 	registrar_evento(pid, 1);
 
-	int frame = buscar_pagina_en_memoria(pid, pag);
+	int frame = buscar_pag_tlb(pid, pag);
 	//TODO: Si no encuentra el frame va a devolver -1, contemplar caso
 
 	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb,"LRU")) {

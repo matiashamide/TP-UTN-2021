@@ -164,6 +164,15 @@ int memalloc(int pid , int size){
 
 		int frames_necesarios = ceil(size / CONFIG.tamanio_pagina);
 
+		//TODO: crear funcion y aclarar los casos.
+		if (!hay_lugar_en_mp(frames_necesarios)) {
+			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+			log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+
+			return -1;
+		}
+
+
 		//Crea tabla de paginas para el proceso
 		t_tabla_pagina* nueva_tabla = malloc(sizeof(t_tabla_pagina));
 		nueva_tabla->paginas = list_create();
@@ -196,7 +205,6 @@ int memalloc(int pid , int size){
 
 			t_pagina* pagina      = malloc(sizeof(t_pagina));
 			pagina->frame_ppal    = solicitar_frame_en_ppal();
-			pagina->frame_virtual = -1;
 			pagina->modificado    = 1;
 			pagina->lock          = 1;
 			pagina->presencia     = 1;
@@ -222,8 +230,30 @@ int memalloc(int pid , int size){
 			return alloc;
 		}
 
-		// hay que agregar paginas
-		// verificar si el proceso puede tener mas dependiendo el algoritmo de reemplazo
+		if (alocar_en_swap(pid, size) == -1 ){
+			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+			log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+
+			return -1;
+		}
+
+
+		if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
+			int cant_max_marcos = CONFIG.marcos_max;
+			t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+
+			int frames_necesarios = ceil(size / CONFIG.tamanio_pagina);
+
+
+		} else {
+
+
+
+			//cuantas pags voy a agregar
+			//insertar y modificar heaps
+			//mandar a reemplazar y copiar
+
+		}
 
 	}
 
@@ -236,6 +266,22 @@ int memwrite()	{return 0;}
 
 
 //------------------------------------------------------------- FUNCIONES SECUNDARIAS ------------------------------------------------------------//
+int obtener_pos_ultimo_alloc(int pid) {
+
+	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+	int pos_ult_alloc = -1;
+	void* buffer_alloc;
+	void* buffer_pag = malloc(CONFIG.tamanio_pagina);
+
+
+	while () {
+
+			solicitar
+
+	}
+
+	return pos_ult_alloc;
+}
 
 
 //TODO: Ver si estamos devolviendo la DL o DF
@@ -457,15 +503,40 @@ t_list* obtener_marcos(int cant_marcos) {
 	return marcos_asignados;
 }
 
-int buscar_pagina_en_memoria(int pid, int pag) {
+int buscar_pagina(int pid, int pag) {
 	t_list* pags_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+	t_pagina* pagina = (t_pagina*)list_get(pags_proceso, pag);
+	int frame = 0;
 
-	if (pags_proceso == NULL) {
+	if (pags_proceso == NULL || pagina == NULL) {
 		return -1;
 	}
 
-	return ((t_pagina*)list_get(pags_proceso, pag))->frame_ppal;
+	if (!pagina->presencia) {
+		frame = traer_pagina_swap(pid, pag);
+	} else {
+
+		frame = buscar_pag_tlb(pid, pag);
+
+		if (frame == -1) {
+			frame = pagina->frame_ppal;
+			//agregarle la data a la tlb
+		}
+	}
+
+	return frame;
 }
+
+int traer_pagina_swap(int pid, int pag) {
+	//abrir conexion con swap
+	//pedirle la pagina pag del proceso pid
+	//correr el algoritmo de reemplazo para asignarle un frame en ppal
+	//tener en cuenta el reemplazo en tlb tmb.
+	//retornar frame ppal
+
+	return 0;
+}
+
 
 int solicitar_frame_en_ppal(){
 	//busco frames lbires en ppal

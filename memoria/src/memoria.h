@@ -16,20 +16,19 @@
 typedef struct {
     char* ip_memoria;
     char* puerto_memoria;
-    int tamanio_memoria;
-    int tamanio_pagina;
+    int   tamanio_memoria;
+    int   tamanio_pagina;
     char* alg_remp_mmu;
     char* tipo_asignacion;
-	int marcos_max;
-	int cant_entradas_tlb;
+	int   marcos_max;
+	int   cant_entradas_tlb;
 	char* alg_reemplazo_tlb;
-	int retardo_acierto_tlb;
-	int retardo_fallo_tlb;
+	int   retardo_acierto_tlb;
+	int   retardo_fallo_tlb;
 }t_memoria_config;
 
 typedef struct {
     int frame_ppal;
-    int frame_virtual;
     int presencia;
     int uso;
     int modificado;
@@ -101,7 +100,8 @@ void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header);
 int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual);
 int guardar_en_swap(int pid, void* contenido);
 t_list* obtener_marcos(int cant_marcos);
-int buscar_pagina_en_memoria(int pid, int pag);
+int buscar_pag(int pid, int pag);
+int traer_pagina_swap(int pid, int pag)
 heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header);
 void* traer_marquinhos_del_proceso(int pid);
 

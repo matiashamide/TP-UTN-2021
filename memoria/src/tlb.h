@@ -40,7 +40,7 @@ t_list* crear_estructura(int entradas);
 
 void printear_TLB(int entradas);
 int obtener_tiempo();
-int buscar_frame(int pid, int pag);
+int buscar_pag_tlb(int pid, int pag);
 
 void registrar_evento(int pid, int event);
 
