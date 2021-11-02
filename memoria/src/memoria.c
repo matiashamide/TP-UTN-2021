@@ -273,13 +273,7 @@ int obtener_pos_ultimo_alloc(int pid) {
 	void* buffer_alloc;
 	void* buffer_pag = malloc(CONFIG.tamanio_pagina);
 
-
-	while () {
-
-			solicitar
-
-	}
-
+	//todo
 	return pos_ult_alloc;
 }
 
