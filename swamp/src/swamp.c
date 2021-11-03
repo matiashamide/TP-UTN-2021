@@ -23,6 +23,7 @@ int main(void) {
 }
 
 //--------------------------------------------------------------------------------------------
+
 t_swamp_config crear_archivo_config_swamp(char* ruta) {
     t_config* swamp_config;
     swamp_config = config_create(ruta);
@@ -54,19 +55,22 @@ void init_swamp(){
 
 	//iniciamos servidor
 	SERVIDOR_SWAP = iniciar_servidor(CONFIG.ip, CONFIG.puerto);
+
+	//Ceamos archivos correspondientes
+	crear_archivos();
 }
 
 void atender_peticiones(int cliente) {
 
-	peticion_carpincho operacion = recibir_operacion(cliente);
+	peticion_swap operacion = recibir_operacion(cliente);
 
 	switch (operacion) {
 
-	case SWAP_IN:
+	case TRAER_DE_SWAP:
 
 	break;
 
-	case SWAP_OUT:
+	case TIRAR_A_SWAP:
 
 	break;
 
@@ -74,4 +78,20 @@ void atender_peticiones(int cliente) {
 	; break;
 
 	}
+}
+
+void crear_archivos(){
+
+	char* vector_de_paths[strlen(CONFIG.archivos_swamp)];
+
+	strcpy(vector_de_paths[0] , CONFIG.archivos_swamp[0]);
+
+	int cant_archivos = strlen(vector_de_paths);
+
+	for(int i = 0 ; vector_de_paths[i] != NULL ; i++){
+
+
+		strcpy(vector_de_paths[0] , CONFIG.archivos_swamp[0]);
+	}
+
 }

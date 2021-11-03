@@ -53,8 +53,8 @@ typedef struct {
 } t_paquete;
 
 typedef enum{
-	SWAP_IN,
-	SWAP_OUT
+	TIRAR_A_SWAP, //de swap a memoria
+	TRAER_DE_SWAP //de memoria a swap
 }peticion_swap;
 
 
