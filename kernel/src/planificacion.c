@@ -34,19 +34,37 @@ void algoritmo_planificador_corto_plazo() {
 	while(1) {
 		sem_wait(&sem_cola_ready);
 		sem_wait(&sem_grado_multiprocesamiento);
+		PCB* pcb;
 
 		if(strcmp(CONFIG_KERNEL.alg_plani, "SJF") == 0) {
-			algoritmo_SJF();
+			pcb = algoritmo_SJF();
 		} else if (strcmp(CONFIG_KERNEL.alg_plani, "HRRN") == 0){
-			algoritmo_HRRN();
+			pcb = algoritmo_HRRN();
 		} else {
 			log_info(LOGGER, "El algoritmo de planificacion ingresado no existe\n");
 		}
+
+		correr_dispatcher(pcb);
+
 	}
 
 }
 
-void algoritmo_SJF() {
+void correr_dispatcher(PCB* pcb) {
+
+	bool _criterio_procesador_libre(void* elemento) {
+			return (((t_procesador*)elemento)->bit_de_ocupado == 0);
+		}
+
+	pthread_mutex_lock(&mutex_lista_procesadores);
+	t_procesador* procesador_libre = list_find(LISTA_PROCESADORES, _criterio_procesador_libre);
+	procesador_libre->lugar_PCB = pcb;
+	procesador_libre->bit_de_ocupado = 1;
+	sem_post(&procesador_libre->sem_exec);
+	pthread_mutex_unlock(&mutex_lista_procesadores);
+}
+
+PCB* algoritmo_SJF() {
 
 
 	void* _eleccion_SJF(void* elemento1, void* elemento2) {
@@ -76,27 +94,10 @@ void algoritmo_SJF() {
 	list_remove_by_condition(LISTA_READY, _criterio_remocion_lista);
 	pthread_mutex_unlock(&mutex_lista_ready);
 
-	pthread_mutex_lock(&mutex_lista_exec);
-	list_add(LISTA_EXEC, pcb);
-	// Esto es algo solamente para testear que pasen los procesos necesarios a Exec
-	PCB* pcb_test = malloc(sizeof(PCB));
-	pcb_test = (PCB*) list_get(LISTA_EXEC, 0);
-	printf("LISTA EXEC\n");
-	printf("Tamanio exec %d\n", list_size(LISTA_EXEC));
-	printf("PID carpincho: %d\n", pcb_test->PID);
-	//free(pcb_test);
-	//ACA termina el testeo
-	pthread_mutex_unlock(&mutex_lista_exec);
-
-	//TODO aca deberian ponerse a ejecutar los procesos en los hilos de multiprocesamiento
-
-	// TODO que recorra hasta encontrar un lugar vacio p meter el pcb
-	// void *list_find(t_list *, bool(*closure)(void*));
-	// TODO hacerle signal al semaforo del procesador correspondiente
-
+	return pcb;
 }
 
-void algoritmo_HRRN() {
+PCB* algoritmo_HRRN() {
 
 	void* _eleccion_HRRN(void* elemento1, void* elemento2) {
 
@@ -130,29 +131,15 @@ void algoritmo_HRRN() {
 	list_remove_by_condition(LISTA_READY, _criterio_remocion_lista);
 	pthread_mutex_unlock(&mutex_lista_ready);
 
-	pthread_mutex_lock(&mutex_lista_exec);
-	list_add(LISTA_EXEC, pcb);
-	// Esto es algo solamente para testear que pasen los procesos necesarios a Exec
-	PCB* pcb_test = malloc(sizeof(PCB));
-	pcb_test = (PCB*) list_get(LISTA_EXEC, 0);
-	printf("LISTA EXEC\n");
-	printf("PID carpincho: %d\n", pcb_test->PID);
-	//free(pcb_test);
-	//ACA termina el testeo
-	pthread_mutex_unlock(&mutex_lista_exec);
-
-	//TODO aca deberian ponerse a ejecutar los procesos en los hilos de multiprocesamiento
-
-	// TODO que recorra hasta encontrar un lugar vacio p meter el pcb
-	// void *list_find(t_list *, bool(*closure)(void*));
-	// TODO hacerle signal al semaforo del procesador correspondiente
+	return pcb;
 
 }
 
 void ejecutar(t_procesador* estructura_procesador) {
-	while (1) {
-		sem_wait(&estructura_procesador->sem_exec);
-	}
+	//while (1) {
+	sem_wait(&estructura_procesador->sem_exec);
+	printf("Estoy ejecutando...\n Mi bit de ocupado es: %d\n El pid de mi PCB es %d\n", estructura_procesador->bit_de_ocupado, estructura_procesador->lugar_PCB->PID);
+	//}
 }
 
 /* while (1) {

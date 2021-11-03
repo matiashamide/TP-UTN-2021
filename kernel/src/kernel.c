@@ -87,6 +87,7 @@ void init_kernel(){
 	pthread_mutex_init(&mutex_creacion_PID, NULL);
 	pthread_mutex_init(&mutex_lista_new, NULL);
 	pthread_mutex_init(&mutex_lista_ready, NULL);
+	pthread_mutex_init(&mutex_lista_procesadores, NULL);
 
 	//Semaforos
 	sem_init(&sem_cola_new, 0, 0);
@@ -97,9 +98,9 @@ void init_kernel(){
 	//Variable que asigna PIDs a los nuevos carpinchos
 	PID_PROX_CARPINCHO = 0;
 
+	crear_procesadores();
 	iniciar_planificador_largo_plazo();
 	iniciar_planificador_corto_plazo();
-	crear_procesadores();
 }
 
 void coordinador_multihilo(){
@@ -165,8 +166,8 @@ void crear_procesadores() {
 	for(int i = 0; i < CONFIG_KERNEL.grado_multiprocesamiento; i++) {
 
 		t_procesador* estructura_procesador = malloc(sizeof(t_procesador));
-		PCB* pcb = malloc(sizeof(PCB));
 		sem_init(&estructura_procesador->sem_exec, 0, 0);
+		estructura_procesador->bit_de_ocupado = 0;
 
 		list_add(LISTA_PROCESADORES, estructura_procesador);
 

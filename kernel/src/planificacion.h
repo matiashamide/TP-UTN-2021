@@ -53,6 +53,7 @@ typedef struct {
 typedef struct {
 	PCB* lugar_PCB;
 	sem_t sem_exec;
+	int bit_de_ocupado;
 }t_procesador;
 
 //VARIABLES GLOBALES
@@ -82,6 +83,7 @@ pthread_mutex_t mutex_lista_exec;
 pthread_mutex_t mutex_lista_blocked;
 pthread_mutex_t mutex_lista_blocked_suspended;
 pthread_mutex_t mutex_lista_ready_suspended;
+pthread_mutex_t mutex_lista_procesadores;
 
 //HILOS
 pthread_t planificador_largo_plazo;
@@ -89,8 +91,9 @@ pthread_t planificador_corto_plazo;
 
 void algoritmo_planificador_largo_plazo();
 void algoritmo_planificador_corto_plazo();
-void algoritmo_SJF();
-void algoritmo_HRRN();
+void correr_dispatcher(PCB* pcb);
+PCB* algoritmo_SJF();
+PCB* algoritmo_HRRN();
 void* minimum(PCB*, PCB*);
 bool criterio_remocion_lista(void* pcb);
 void ejecutar(t_procesador*);
