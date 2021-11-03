@@ -14,14 +14,6 @@ void algoritmo_planificador_largo_plazo() {
 
 		pthread_mutex_lock(&mutex_lista_ready);
 		list_add(LISTA_READY, pcb);
-		// Esto es algo solamente para testear que pasen los procesos necesarios a Ready
-		PCB* pcb_test = malloc(sizeof(PCB));
-		pcb_test = (PCB*) list_get(LISTA_READY, 0);
-		printf("LISTA READY\n");
-		printf("Tamanio ready %d\n", list_size(LISTA_READY));
-		printf("PID carpincho: %d\n", pcb_test->PID);
-		//free(pcb_test);
-		//ACA termina el testeo
 		pthread_mutex_unlock(&mutex_lista_ready);
 
 		sem_post(&sem_cola_ready);
@@ -136,28 +128,52 @@ PCB* algoritmo_HRRN() {
 }
 
 void ejecutar(t_procesador* estructura_procesador) {
-	//while (1) {
-	sem_wait(&estructura_procesador->sem_exec);
-	printf("Estoy ejecutando...\n Mi bit de ocupado es: %d\n El pid de mi PCB es %d\n", estructura_procesador->bit_de_ocupado, estructura_procesador->lugar_PCB->PID);
-	//}
-}
+	while (1) {
+		//TODO este semaforo esta desbalanceado
+		sem_wait(&estructura_procesador->sem_exec);
+		sem_post(&estructura_procesador->sem_exec);
 
-/* while (1) {
-		int cod_op = recibir_operacion(cliente_fd);
+		peticion_carpincho cod_op = recibir_operacion(estructura_procesador->lugar_PCB->conexion);
+
 		switch (cod_op) {
+		case INICIALIZAR_SEM:
+			//TODO DEFINIR
+			break;
+		case ESPERAR_SEM:
+			//TODO DEFINIR
+			break;
+		case POST_SEM:
+			//TODO DEFINIR
+			break;
+		case DESTROY_SEM:
+			//TODO DEFINIR
+			break;
+		case CALL_IO:
+			//TODO DEFINIR
+			break;
+		case MEMALLOC:
+			//TODO DEFINIR
+			break;
+		case MEMREAD:
+			//TODO DEFINIR
+			break;
+		case MEMFREE:
+			//TODO DEFINIR
+			break;
+		case MEMWRITE:
+			//TODO DEFINIR
+			break;
+		case CLOSE:
+			//TODO DEFINIR
+			break;
 		case MENSAJE:
-			recibir_mensaje(cliente_fd);
+			//TODO DEFINIR
 			break;
-		case PAQUETE:
-			lista = recibir_paquete(cliente_fd);
-			log_info(logger, "Me llegaron los siguientes valores:\n");
-			list_iterate(lista, (void*) iterator);
-			break;
-		case -1:
-			log_error(logger, "el cliente se desconecto. Terminando servidor");
-			return EXIT_FAILURE;
 		default:
-			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
+			log_warning(LOGGER,"Operacion desconocida. No quieras meter la pata");
 			break;
 		}
-	} */
+
+	}
+}
+

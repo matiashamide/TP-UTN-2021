@@ -82,12 +82,15 @@ void init_kernel(){
 	LISTA_SUSPENDED_BLOCKED = list_create();
 	LISTA_SUSPENDED_READY = list_create();
 	LISTA_PROCESADORES = list_create();
+	LISTA_SEMAFOROS_MATE = list_create();
+
 
 	//Mutexes
 	pthread_mutex_init(&mutex_creacion_PID, NULL);
 	pthread_mutex_init(&mutex_lista_new, NULL);
 	pthread_mutex_init(&mutex_lista_ready, NULL);
 	pthread_mutex_init(&mutex_lista_procesadores, NULL);
+	pthread_mutex_init(&mutex_lista_semaforos_mate, NULL);
 
 	//Semaforos
 	sem_init(&sem_cola_new, 0, 0);

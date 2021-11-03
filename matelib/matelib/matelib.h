@@ -67,7 +67,8 @@ typedef enum
 		MEMREAD,
 		MEMFREE,
 		MEMWRITE,
-		MENSAJE
+		MENSAJE,
+		CLOSE
 }op_code;
 
 typedef struct
@@ -81,6 +82,11 @@ typedef char *mate_io_resource;
 typedef char *mate_sem_name;
 
 typedef int32_t mate_pointer;
+
+void recibir_permiso_para_continuar(int conexion);
+int recibir_operacion(int socket_cliente);
+char* recibir_mensaje(int socket_cliente);
+void* recibir_buffer(uint32_t* size, int socket_cliente);
 
 // TODO: Docstrings
 
