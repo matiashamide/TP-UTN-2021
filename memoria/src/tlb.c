@@ -42,28 +42,16 @@ int buscar_pag_tlb(int pid, int pag) {
 	pthread_mutex_unlock(&mutexTLB);
 
 	if (entrada != NULL) {
+		//tlb hit
 		registrar_evento(pid, 0);
 		log_info(LOGGER , "TLB HIT: " , "pag %i" ,  entrada->pag ,"pid %i" ,  entrada->pid);
 		entrada->ultimo_uso = obtener_tiempo();
 		return entrada->marco;
 	}
 
+	//tlb miss
 	registrar_evento(pid, 1);
-
-	int frame = buscar_pagina(pid, pag);
-
-
-	if(frame < 0){
-
-	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb,"LRU")) {
-		reemplazar_LRU(pid, pag, frame);
-	}
-	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb, "FIFO")) {
-		reemplazar_FIFO(pid, pag, frame);
-	}
-	}
-
-	return frame;
+	return -1;
 }
 
 int obtener_tiempo(){
@@ -91,6 +79,17 @@ void reemplazar_FIFO(int pid, int pag, int frame){
 	pthread_mutex_unlock(&mutexTLB);
 
 	log_info(LOGGER ," entrada victima por LRU : pag %i" , victima->pag ," pid %i \n" , victima->pid);
+
+}
+
+void actualizar_tlb(int pid, int pag, int frame){
+
+	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb,"LRU")) {
+		reemplazar_LRU(pid, pag, frame);
+	}
+	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb, "FIFO")) {
+		reemplazar_FIFO(pid, pag, frame);
+	}
 
 }
 

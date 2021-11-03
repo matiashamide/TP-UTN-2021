@@ -41,7 +41,7 @@ t_list* crear_estructura(int entradas);
 void printear_TLB(int entradas);
 int obtener_tiempo();
 int buscar_pag_tlb(int pid, int pag);
-
+void actualizar_tlb(int pid, int pag, int frame);
 void registrar_evento(int pid, int event);
 
 //// ---- funciones signals

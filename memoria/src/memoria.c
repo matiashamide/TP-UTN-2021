@@ -266,13 +266,27 @@ int memwrite()	{return 0;}
 
 
 //------------------------------------------------------------- FUNCIONES SECUNDARIAS ------------------------------------------------------------//
+
 int obtener_pos_ultimo_alloc(int pid) {
 
 	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
 	int pos_ult_alloc = -1;
-	void* buffer_alloc;
+	void* buffer_alloc = malloc(sizeof(heap_metadata));
 	void* buffer_pag = malloc(CONFIG.tamanio_pagina);
 
+	heap_metadata* header = malloc(sizeof(heap_metadata));
+
+	int offset = 0;
+
+	for(int i = 0 ; header->next_alloc == NULL ; i++ ){
+
+	buscar_pagina(pid , i);
+
+	header = desserializar_header(pid , i , offset );
+
+	offset = header->next_alloc;
+
+	}
 	//todo
 	return pos_ult_alloc;
 }
@@ -500,7 +514,8 @@ t_list* obtener_marcos(int cant_marcos) {
 int buscar_pagina(int pid, int pag) {
 	t_list* pags_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
 	t_pagina* pagina = (t_pagina*)list_get(pags_proceso, pag);
-	int frame = 0;
+
+	int frame = -1;
 
 	if (pags_proceso == NULL || pagina == NULL) {
 		return -1;
@@ -509,12 +524,11 @@ int buscar_pagina(int pid, int pag) {
 	if (!pagina->presencia) {
 		frame = traer_pagina_swap(pid, pag);
 	} else {
-
 		frame = buscar_pag_tlb(pid, pag);
 
 		if (frame == -1) {
 			frame = pagina->frame_ppal;
-			//agregarle la data a la tlb
+			actualizar_tlb(pid, pag ,frame);
 		}
 	}
 
