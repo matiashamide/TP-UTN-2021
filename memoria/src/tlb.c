@@ -50,14 +50,17 @@ int buscar_pag_tlb(int pid, int pag) {
 
 	registrar_evento(pid, 1);
 
-	int frame = buscar_pag_tlb(pid, pag);
-	//TODO: Si no encuentra el frame va a devolver -1, contemplar caso
+	int frame = buscar_pagina(pid, pag);
+
+
+	if(frame < 0){
 
 	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb,"LRU")) {
 		reemplazar_LRU(pid, pag, frame);
 	}
 	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb, "FIFO")) {
 		reemplazar_FIFO(pid, pag, frame);
+	}
 	}
 
 	return frame;
