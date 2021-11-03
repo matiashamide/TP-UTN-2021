@@ -38,7 +38,8 @@ typedef enum {
 	MEMREAD,
 	MEMFREE,
 	MEMWRITE,
-	MENSAJE
+	MENSAJE,
+	CLOSE
 } peticion_carpincho;
 
 typedef struct {

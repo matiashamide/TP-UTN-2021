@@ -23,6 +23,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <futiles/futiles.h>
 
 
 //ESTRUCTURAS
@@ -56,6 +57,11 @@ typedef struct {
 	int bit_de_ocupado;
 }t_procesador;
 
+typedef struct {
+	char* nombre;
+	int value;
+}t_semaforo_mate;
+
 //VARIABLES GLOBALES
 t_list_iterator* iterador_lista_ready;
 t_kernel_config CONFIG_KERNEL;
@@ -75,6 +81,7 @@ t_list* LISTA_BLOCKED;
 t_list* LISTA_SUSPENDED_BLOCKED;
 t_list* LISTA_SUSPENDED_READY;
 t_list* LISTA_PROCESADORES;
+t_list* LISTA_SEMAFOROS_MATE;
 
 //MUTEXES
 pthread_mutex_t mutex_lista_new;
@@ -84,6 +91,7 @@ pthread_mutex_t mutex_lista_blocked;
 pthread_mutex_t mutex_lista_blocked_suspended;
 pthread_mutex_t mutex_lista_ready_suspended;
 pthread_mutex_t mutex_lista_procesadores;
+pthread_mutex_t mutex_lista_semaforos_mate;
 
 //HILOS
 pthread_t planificador_largo_plazo;

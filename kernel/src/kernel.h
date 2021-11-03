@@ -9,7 +9,6 @@
 #define KERNEL_H_
 
 #include "planificacion.h"
-#include <futiles/futiles.h>
 
 //ESTRUCTURAS
 
