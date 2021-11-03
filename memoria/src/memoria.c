@@ -155,6 +155,21 @@ int memalloc(int pid , int size){
 	//[CASO A]: Llega un proceso nuevo
 	if(list_get(TABLAS_DE_PAGINAS , pid) == NULL){
 
+		int frames_necesarios;
+
+		if(string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")){
+			frames_necesarios = CONFIG.marcos_max;
+		}else if(string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")){
+			frames_necesarios = ceil(size / CONFIG.tamanio_pagina);
+		}
+
+		if ( string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA") && !hay_lugar_en_mp(frames_necesarios)) {
+			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+			log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+
+			return -1;
+		}
+
 		if (alocar_en_swap(pid, size) == -1 ){
 			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 			log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
@@ -162,15 +177,8 @@ int memalloc(int pid , int size){
 			return -1;
 		}
 
-		int frames_necesarios = ceil(size / CONFIG.tamanio_pagina);
-
 		//TODO: crear funcion y aclarar los casos.
-		if (!hay_lugar_en_mp(frames_necesarios)) {
-			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
-			log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 
-			return -1;
-		}
 
 
 		//Crea tabla de paginas para el proceso
@@ -214,7 +222,7 @@ int memalloc(int pid , int size){
 			list_add(nueva_tabla->paginas, pagina);
 
 			memcpy(MEMORIA_PRINCIPAL + pagina->frame_ppal, buffer_pags_proceso + i * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
-
+			//unlock_pagina();
 		}
 
 		dir_logica = header_sig->prev_alloc;
@@ -269,25 +277,20 @@ int memwrite()	{return 0;}
 
 int obtener_pos_ultimo_alloc(int pid) {
 
-	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
-	int pos_ult_alloc = -1;
-	void* buffer_alloc = malloc(sizeof(heap_metadata));
-	void* buffer_pag = malloc(CONFIG.tamanio_pagina);
+	int pos_ult_alloc = 0;
 
 	heap_metadata* header = malloc(sizeof(heap_metadata));
+	header->next_alloc = 0;
 
-	int offset = 0;
+	while(header->next_alloc != NULL){
 
-	for(int i = 0 ; header->next_alloc == NULL ; i++ ){
+		header = desserializar_header(pid , floor(pos_ult_alloc / CONFIG.tamanio_pagina ) ,header->next_alloc);
 
-	buscar_pagina(pid , i);
-
-	header = desserializar_header(pid , i , offset );
-
-	offset = header->next_alloc;
+		pos_ult_alloc = header->next_alloc;
 
 	}
-	//todo
+
+	free(header);
 	return pos_ult_alloc;
 }
 
@@ -304,11 +307,6 @@ int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 
 	t_pagina* pag = malloc(sizeof(t_pagina));
 	pag = list_get(paginas_proceso, nro_pagina);
-
-	if (!pag->presencia) {
-		//Si esta en principal == 1
-		//TODO: lo traigo :: traer_pagina_a_memoria();
-	}
 
 	heap_metadata* header = desserializar_header(pid, nro_pagina, offset);
 
@@ -380,10 +378,6 @@ int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 
 				t_pagina* pag_final = malloc(sizeof(t_pagina));
 				pag_final = (t_pagina*)list_get(paginas_proceso, nro_pagina_final);
-
-				if (!pag_final->presencia) { //Si esta en principal == 1
-					//TODO: lo traigo
-				}
 
 				heap_metadata* header_final = desserializar_header(pid, nro_pagina_final, offset_pagina_final);
 
@@ -460,16 +454,20 @@ heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
 	void* buffer = malloc(sizeof(heap_metadata));
 
 	t_list* pags_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
-	t_pagina* pagina = (t_pagina*) list_get(pags_proceso, nro_pag);
+
+	int frame_pagina = buscar_pagina(pid , nro_pag);
+
+	//lock_pagina(pid , nro pag);
+	//lock_pagina(pid , nro pag + 1);
 
 	int diferencia = CONFIG.tamanio_pagina - offset_header - sizeof(heap_metadata);
 	if (diferencia >= 0) {
-		memcpy(buffer, MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina + offset_header, sizeof(heap_metadata));
+		memcpy(buffer, MEMORIA_PRINCIPAL + frame_pagina * CONFIG.tamanio_pagina + offset_header, sizeof(heap_metadata));
 	} else {
-		t_pagina* pagina_sig = (t_pagina*) list_get(pags_proceso, nro_pag+1);
+		int frame_pag_siguiente = buscar_pagina(pid , nro_pag + 1);
 		diferencia = abs(diferencia);
-		memcpy(buffer, MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina + offset_header, sizeof(heap_metadata) - diferencia);
-		memcpy(buffer+sizeof(heap_metadata) - diferencia, MEMORIA_PRINCIPAL + pagina_sig->frame_ppal * CONFIG.tamanio_pagina, diferencia);
+		memcpy(buffer, MEMORIA_PRINCIPAL + frame_pagina * CONFIG.tamanio_pagina + offset_header, sizeof(heap_metadata) - diferencia);
+		memcpy(buffer+sizeof(heap_metadata) - diferencia, MEMORIA_PRINCIPAL + frame_pag_siguiente * CONFIG.tamanio_pagina, diferencia);
 	}
 
 	memcpy(&(header->prev_alloc), buffer + offset, sizeof(uint32_t));
@@ -477,6 +475,9 @@ heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
 	memcpy(&(header->next_alloc), buffer + offset, sizeof(uint32_t));
 	offset += sizeof(uint32_t);
 	memcpy(&(header->is_free), buffer + offset, sizeof(uint8_t));
+
+	//unlock_pagina(pid , nro pag);
+	//unlock_pagina(pid , nro pag + 1);
 
 	free(buffer);
 
