@@ -213,7 +213,7 @@ int memalloc(int pid , int size){
 		for (int i = 0 ; i < frames_necesarios ; i++) {
 
 			t_pagina* pagina      = malloc(sizeof(t_pagina));
-			pagina->frame_ppal    = solicitar_frame_en_ppal();
+			pagina->frame_ppal    = solicitar_frame_en_ppal(pid);
 			pagina->modificado    = 1;
 			pagina->lock          = 1;
 			pagina->presencia     = 1;
@@ -285,28 +285,27 @@ int memalloc(int pid , int size){
 				t_pagina* pagina      = malloc(sizeof(t_pagina));
 				pagina->frame_ppal    = solicitar_frame_en_ppal();
 				pagina->modificado    = 1;
-				pagina->lock          = 0;
+				pagina->lock          = 1;
 				pagina->presencia     = 1;
 				//pagina->tiempo_uso  = ;
 				//pagina->uso         = ;
 
 				list_add(paginas_proceso, pagina);
+				//unlock pagina
 			}
 
 			dir_logica = ultimo_header->next_alloc;
 			guardar_header(pid, nro_pagina, offset, ultimo_header);
 			guardar_header(pid, nro_pagina_nueva , offset_nuevo, nuevo_header);
-			//TODO: unlock_pagina();
+
 			free(ultimo_header);
 			free(nuevo_header);
 
 		}
-			//cuantas pags voy a agregar
-			//insertar y modificar heaps
-			//mandar a reemplazar y copiar
+
 	}
 
-	return dir_logica;
+	return dir_logica + sizeof(heap_metadata);
 }
 
 int memfree() 	{return 0;}
@@ -545,33 +544,7 @@ heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
 	return header;
 }
 
-t_list* obtener_marcos(int cant_marcos) {
 
-	bool marco_libre(t_frame* marco) {
-		return marco->ocupado;
-	}
-
-	void ocupar_frame(t_frame* marco) {
-		marco->ocupado = 1;
-	}
-
-	pthread_mutex_lock(&mutexMarcos);
-	t_list* marcos_libres = list_filter(MARCOS_MEMORIA, (void*)marco_libre);
-
-	if (list_size(marcos_libres) < cant_marcos) {
-		pthread_mutex_unlock(&mutexMarcos);
-		return NULL;
-	}
-
-	t_list* marcos_asignados = list_take(marcos_libres, cant_marcos);
-
-	for (int i = 0 ; i < list_size(marcos_asignados) ; i++) {
-		ocupar_frame((t_frame*)list_take(marcos_asignados , i));
-	}
-	pthread_mutex_unlock(&mutexMarcos);
-
-	return marcos_asignados;
-}
 
 int buscar_pagina(int pid, int pag) {
 	t_list* pags_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
@@ -608,10 +581,45 @@ int traer_pagina_swap(int pid, int pag) {
 }
 
 
-int solicitar_frame_en_ppal(){
-	//busco frames lbires en ppal
-	//si no hay swapeo con los algoritmos
-	//todo: CREO Q OBTENER MARCOS HACE LO MISMO
+int solicitar_frame_en_ppal(int pid){
+
+	if ( string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
+		t_list* pags_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+
+		if(list_size(pags_proceso) < CONFIG.marcos_max){
+
+			t_frame * frame = malloc(sizeof(t_frame));
+
+			pthread_mutex_lock(&mutexMarcos);
+			frame = (t_frame*) list_take(list_filter(MARCOS_MEMORIA, (void*)marco_libre),0);
+			frame->ocupado = false;
+			pthread_mutex_unlock(&mutexMarcos);
+
+			return frame->id;
+		}
+		return ejecutar_algoritmo_reemplazo(pid);
+	}
+
+	t_frame * frame = malloc(sizeof(t_frame));
+
+	pthread_mutex_lock(&mutexMarcos);
+	frame = (t_frame*)list_take(list_filter(MARCOS_MEMORIA, (void*)marco_libre),0);
+	frame->ocupado = false;
+	pthread_mutex_unlock(&mutexMarcos);
+
+	if(frame == NULL){
+		return ejecutar_algoritmo_reemplazo(pid);
+	}
+
+	return frame->id;
+}
+
+bool marco_libre(t_frame* marco) {
+	return marco->ocupado;
+}
+
+int ejecutar_algoritmo_reemplazo(int pid){
+
 }
 
 void swap(int cantidad_pags) {
