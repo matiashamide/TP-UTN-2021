@@ -53,6 +53,11 @@ typedef struct{
 	uint8_t is_free;
 }__attribute__((packed))heap_metadata;
 
+typedef struct{
+	int direc_logica;
+	bool flag_ultimo_alloc;
+}t_alloc_disponible;
+
 // VARIABLES GLOBALES
 
 int SERVIDOR_MEMORIA;
@@ -94,10 +99,10 @@ void signal_metricas();
 void signal_dump();
 void signal_clean_tlb();
 
-int alocar_en_swap(int pid, int size);
+int alocar_en_swap(int pid, int paginas);
 int guardar_paginas_en_memoria(int pid, int marcos_necesarios, t_list* paginas, void* contenido);
 void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header);
-int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual);
+t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual);
 int obtener_pos_ultimo_alloc(int pid);
 int guardar_en_swap(int pid, void* contenido);
 t_list* obtener_marcos(int cant_marcos);
