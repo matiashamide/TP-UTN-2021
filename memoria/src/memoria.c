@@ -600,10 +600,12 @@ int solicitar_frame_en_ppal(int pid){
 		return ejecutar_algoritmo_reemplazo(pid);
 	}
 
+	//caso asignacion dinamica
+
 	t_frame * frame = malloc(sizeof(t_frame));
 
 	pthread_mutex_lock(&mutexMarcos);
-	frame = (t_frame*)list_take(list_filter(MARCOS_MEMORIA, (void*)marco_libre),0);
+	frame = (t_frame*)list_find(MARCOS_MEMORIA, (void*)marco_libre);
 	frame->ocupado = false;
 	pthread_mutex_unlock(&mutexMarcos);
 
@@ -619,6 +621,22 @@ bool marco_libre(t_frame* marco) {
 }
 
 int ejecutar_algoritmo_reemplazo(int pid){
+
+	if(string_equals_ignore_case(CONFIG.alg_reemplazo_tlb , "LRU" )){
+
+		bool mayor_lru(t_frame* frame1 , t_frame* frame2){
+			return frame1->lru > frame2->lru; // ver si hacer en frame o en pagina ese chqueo
+		}
+
+		t_frame* frame = (t_frame)list_take(list_sorted(MARCOS_MEMORIA , (void*)mayor_lru), 0);
+
+		//swapear a swap
+
+		frame->ocupado = 0;
+
+	}else if(string_equals_ignore_case(CONFIG.alg_reemplazo_tlb , "CLOCK-M")){
+
+	}
 
 }
 
