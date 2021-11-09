@@ -36,6 +36,9 @@ void init_memoria() {
         return;
 	}
 
+	//TODO: Conectate con swap y pedile la nota de max marcos rey
+	//MAX_MARCOS_SWAP =
+
 	//Senales
 	signal(SIGINT,  &signal_metricas);
 	signal(SIGUSR1, &signal_dump);
@@ -149,26 +152,24 @@ void atender_carpinchos(int cliente) {
 
 //------------------------------------------------------------- FUNCIONES PRINCIPALES ------------------------------------------------------------//
 
-int memalloc(int pid , int size){
+int memalloc(int pid, int size){
 	int dir_logica = -1;
 
 	//[CASO A]: Llega un proceso nuevo
 	if(list_get(TABLAS_DE_PAGINAS , pid) == NULL){
 
-		int frames_necesarios;
+		int frames_necesarios = ceil(size / CONFIG.tamanio_pagina);
 
-		if(string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")){
-			//TODO: Cambiar marcos_max por marcos_max_swap --> PREGUNTAR SI ES CORRECTOOOU
-			frames_necesarios = CONFIG.marcos_max;
-		}else if(string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")){
-			frames_necesarios = ceil(size / CONFIG.tamanio_pagina);
-		}
+		if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
 
-		if ( string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA") && !hay_lugar_en_mp(frames_necesarios)) {
-			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
-			log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+			if (frames_necesarios > MAX_MARCOS_SWAP || !hay_lugar_en_mp(frames_necesarios)) {
+				printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+				log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 
-			return -1;
+				return -1;
+			}
+
+			frames_necesarios = MAX_MARCOS_SWAP;
 		}
 
 		if (alocar_en_swap(pid, frames_necesarios) == -1 ){
@@ -177,10 +178,6 @@ int memalloc(int pid , int size){
 
 			return -1;
 		}
-
-		//TODO: crear funcion y aclarar los casos.
-
-
 
 		//Crea tabla de paginas para el proceso
 		t_tabla_pagina* nueva_tabla = malloc(sizeof(t_tabla_pagina));
@@ -213,6 +210,8 @@ int memalloc(int pid , int size){
 		for (int i = 0 ; i < frames_necesarios ; i++) {
 
 			t_pagina* pagina      = malloc(sizeof(t_pagina));
+			pagina->pid 		  = pid;
+			pagina->id  		  = i;
 			pagina->frame_ppal    = solicitar_frame_en_ppal(pid);
 			pagina->modificado    = 1;
 			pagina->lock          = 1;
@@ -283,6 +282,8 @@ int memalloc(int pid , int size){
 			for (int i = 0 ; i < cantidad_paginas ; i++) {
 
 				t_pagina* pagina      = malloc(sizeof(t_pagina));
+				pagina->pid 		  = pid;
+				pagina->id  		  = i;
 				pagina->frame_ppal    = solicitar_frame_en_ppal();
 				pagina->modificado    = 1;
 				pagina->lock          = 1;
@@ -557,7 +558,8 @@ int buscar_pagina(int pid, int pag) {
 	}
 
 	if (!pagina->presencia) {
-		frame = traer_pagina_swap(pid, pag);
+		frame = traer_pagina_swap(pagina);
+		actualizar_tlb(pid, pag, frame);
 	} else {
 		frame = buscar_pag_tlb(pid, pag);
 
@@ -570,25 +572,31 @@ int buscar_pagina(int pid, int pag) {
 	return frame;
 }
 
-int traer_pagina_swap(int pid, int pag) {
+int traer_pagina_swap(t_pagina* pagina) {
+	//TODO:
 	//abrir conexion con swap
 	//pedirle la pagina pag del proceso pid
-	//correr el algoritmo de reemplazo para asignarle un frame en ppal
-	//tener en cuenta el reemplazo en tlb tmb.
-	//retornar frame ppal
 
-	return 0;
+	void* pag_serializada;
+	int frame = ejecutar_algoritmo_reemplazo(pagina->pid);
+
+	memcpy(MEMORIA_PRINCIPAL + frame * CONFIG.tamanio_pagina, pag_serializada, CONFIG.tamanio_pagina);
+
+	pagina->presencia = 1;
+	pagina->modificado = 0;
+
+	return frame;
 }
 
 
 int solicitar_frame_en_ppal(int pid){
 
-	if ( string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
+	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
 		t_list* pags_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
 
 		if(list_size(pags_proceso) < CONFIG.marcos_max){
 
-			t_frame * frame = malloc(sizeof(t_frame));
+			t_frame* frame = malloc(sizeof(t_frame));
 
 			pthread_mutex_lock(&mutexMarcos);
 			frame = (t_frame*) list_take(list_filter(MARCOS_MEMORIA, (void*)marco_libre),0);
@@ -620,30 +628,103 @@ bool marco_libre(t_frame* marco) {
 	return marco->ocupado;
 }
 
-int ejecutar_algoritmo_reemplazo(int pid){
+int ejecutar_algoritmo_reemplazo(int pid) {
 
-	if(string_equals_ignore_case(CONFIG.alg_reemplazo_tlb , "LRU" )){
+	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb , "LRU" ))
+		return reemplazar_con_LRU(pid);
 
-		bool mayor_lru(t_frame* frame1 , t_frame* frame2){
-			return frame1->lru > frame2->lru; // ver si hacer en frame o en pagina ese chqueo
-		}
+	if(string_equals_ignore_case(CONFIG.alg_reemplazo_tlb , "CLOCK-M"))
+		return reemplazar_con_CLOCK(pid);
 
-		t_frame* frame = (t_frame)list_take(list_sorted(MARCOS_MEMORIA , (void*)mayor_lru), 0);
+	return -1;
+}
 
-		//swapear a swap
+int reemplazar_con_LRU(int pid) {
 
-		frame->ocupado = 0;
+	t_list* paginas;
 
-	}else if(string_equals_ignore_case(CONFIG.alg_reemplazo_tlb , "CLOCK-M")){
-
+	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
+		t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+		paginas = list_filter(paginas_proceso, (void*)esta_en_mp);
 	}
+
+	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
+		paginas = list_filter(buscar_paginas_mp(), (void*)no_lock);
+	}
+
+	int masVieja(t_pagina* unaPag, t_pagina* otraPag) {
+		return (otraPag->tiempo_uso > unaPag->tiempo_uso);
+	}
+
+	list_sort(paginas, (void*)masVieja);
+
+	//COMO REEMPLAZO SEGUN LRU, ELIJO LA PRIMERA QUE ES LA MAS VIEJA
+	t_pagina* pag_reemplazo = list_get(paginas, 0);
+	log_info(LOGGER, "Voy a reemplazar la pagina %d del proceso %d que estaba en el frame %d", pag_reemplazo->id, pag_reemplazo->pid, pag_reemplazo->frame_ppal);
+	lockear(pag_reemplazo);
+
+	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
+	if(pag_reemplazo->modificado) {
+		//TODO: HACER TIRAR A SWAP
+		tirar_a_swap(pag_reemplazo);
+	} else {
+		pag_reemplazo->presencia = 0;
+		deslockear(pag_reemplazo);
+	}
+
+	return pag_reemplazo->frame_ppal;
+}
+
+void tirar_a_swap(t_pagina* pagina) {
 
 }
 
-void swap(int cantidad_pags) {
-	for(int i = 0; i < cantidad_pags; i ++){
-		reemplazar_pag_en_memoria();
+int reemplazar_con_CLOCK(int pid) {
+
+}
+
+t_list* buscar_paginas_mp(){
+
+	t_list* paginas = list_create();
+
+	//BUSCO TODAS LAS PAGINAS
+
+	void paginasTabla(t_tabla_pagina* unaTabla) {
+		list_add_all(paginas, unaTabla->paginas);
 	}
+	pthread_mutex_lock(&mutexTablas);
+	list_iterate(TABLAS_DE_PAGINAS, (void*)paginasTabla);
+	pthread_mutex_unlock(&mutexTablas);
+
+	//FILTRO LAS QUE TENGAN EL BIT DE PRESENCIA EN 1 => ESTAN EN MP
+	t_list* paginasEnMp = list_filter(paginas, (void*)esta_en_mp);
+
+	list_destroy(paginas);
+	return paginasEnMp;
+}
+
+int no_lock(t_pagina* pag){
+	return !pag->lock;
+}
+
+int esta_en_mp(t_pagina* pag){
+	return pag->presencia;
+}
+
+int esta_en_swap(t_pagina* pag){
+	return !pag->presencia;
+}
+
+void lockear(t_pagina* pag){
+	pag->lock = 1;
+}
+
+void deslockear(t_pagina* pag){
+	pag->lock = 0;
+}
+
+void set_modificado(t_pagina* pag){
+	pag->modificado = 1;
 }
 
 void reemplazar_pag_en_memoria(){

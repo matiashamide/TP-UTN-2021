@@ -28,6 +28,8 @@ typedef struct {
 }t_memoria_config;
 
 typedef struct {
+	int pid;
+	int id;
     int frame_ppal;
     int presencia;
     int uso;
@@ -66,6 +68,8 @@ t_log* LOGGER;
 
 t_list* TABLAS_DE_PAGINAS;
 t_list* MARCOS_MEMORIA;
+
+int MAX_MARCOS_SWAP;
 
 //// ---- memoria principal
 void* MEMORIA_PRINCIPAL;
@@ -115,6 +119,15 @@ bool marco_libre(t_frame* marco);
 
 void swap(int cantidad_pags);
 void reemplazar_pag_en_memoria(void);
+int reemplazar_con_LRU(int pid);
+int reemplazar_con_CLOCK(int pid);
 void printearTLB(int entradas);
+
+int esta_en_mp(t_pagina* pag);
+int esta_en_swap(t_pagina* pag);
+void lockear(t_pagina* pag);
+int no_lock(t_pagina* pag);
+void deslockear(t_pagina* pag);
+void set_modificado(t_pagina* pag);
 
 #endif /* MEMORIA_H_ */
