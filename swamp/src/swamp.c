@@ -115,6 +115,7 @@ void* crear_archivo(char* path, int size) {
 	}
 
 	//TODO Falta llenarlos con el /0 y creo que msynquear
+	memset(addr, 00, CONFIG.tamanio_swamp /2);
 
 	return addr;
 

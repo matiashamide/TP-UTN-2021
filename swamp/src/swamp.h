@@ -25,11 +25,20 @@ typedef struct {
 
 typedef struct {
 	int id;
-	int pid;
 	void* addr;
 	int espacio_disponible;
 }t_metadata_archivo;
 
+typedef struct {
+	int pid; //id del proceso
+	int aid; //archivo en el que se encuentra
+	t_list* pags; //lista de t_pag_virtual
+}t_imagen_proceso;
+
+typedef struct {
+	int id;
+	int offset;
+}t_pag_virtual;
 
 //VARIABLES GLOBALES
 
