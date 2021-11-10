@@ -137,7 +137,7 @@ void ejecutar(t_procesador* estructura_procesador) {
 
 		switch (cod_op) {
 		case INICIALIZAR_SEM:
-			//TODO DEFINIR
+			init_sem(estructura_procesador->lugar_PCB);
 			break;
 		case ESPERAR_SEM:
 			//TODO DEFINIR

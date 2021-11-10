@@ -12,7 +12,7 @@
 
 void dar_permiso_para_continuar(int conexion);
 void init_sem(PCB*);
-void wait_sem(PCB*);
+void wait_sem(t_procesador*);
 void post_sem(PCB*);
 void destroy_sem(PCB*);
 void call_IO(PCB*);

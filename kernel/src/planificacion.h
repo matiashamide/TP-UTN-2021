@@ -60,6 +60,7 @@ typedef struct {
 typedef struct {
 	char* nombre;
 	int value;
+	t_list* cola_bloqueados;
 }t_semaforo_mate;
 
 //VARIABLES GLOBALES
