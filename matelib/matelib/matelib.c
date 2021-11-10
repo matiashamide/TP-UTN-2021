@@ -59,6 +59,8 @@ void* recibir_buffer(uint32_t* size, int socket_cliente) {
    return buffer;
 }
 
+
+
 //------------------General Functions---------------------/
 
 int mate_init(mate_instance *lib_ref, char *config)
@@ -91,6 +93,8 @@ int mate_init(mate_instance *lib_ref, char *config)
   }
 
   ((mate_inner_structure *)lib_ref->group_info)->socket_conexion = conexion;
+
+  recibir_permiso_para_continuar(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
 
   return 0;
 }
@@ -184,6 +188,8 @@ void enviar_mensaje(char* mensaje, int socket_cliente)
 	eliminar_paquete(paquete);
 }
 
+
+
 void* serializar_paquete(t_paquete* paquete, int* bytes)
 {
 
@@ -217,21 +223,56 @@ void mate_printf() {
 //-----------------Semaphore Functions---------------------/
 
 int mate_sem_init(mate_instance *lib_ref, mate_sem_name sem, unsigned int value) {
-  if (strncmp(sem, "SEM1", 4))
-  {
-    return -1;
-  }
-  ((mate_inner_structure *)lib_ref->group_info)->sem_instance = malloc(sizeof(sem_t));
-  sem_init(((mate_inner_structure *)lib_ref->group_info)->sem_instance, 0, value);
-  return 0;
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = INICIALIZAR_SEM;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = strlen(sem) + 1 + sizeof(unsigned int);
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+	int offset = 0;
+	memcpy(paquete->buffer->stream + offset, sem, strlen(sem) + 1);
+	offset += strlen(sem) + 1;
+	memcpy(paquete->buffer->stream + offset, &value, sizeof(unsigned int));
+	offset += sizeof(unsigned int);
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	send(((mate_inner_structure *)lib_ref->group_info)->socket_conexion, a_enviar, bytes, 0);
+
+	printf("yo tambien llegue hasta aqui");
+
+	recibir_permiso_para_continuar(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
+
+	fflush(stdout);
+	free(a_enviar);
+	eliminar_paquete(paquete);
+	return 0;
 }
 
 int mate_sem_wait(mate_instance *lib_ref, mate_sem_name sem) {
-  if (strncmp(sem, "SEM1", 4))
-  {
-    return -1;
-  }
-  return sem_wait(((mate_inner_structure *)lib_ref->group_info)->sem_instance);
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = ESPERAR_SEM;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = strlen(sem) + 1;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+	int offset = 0;
+	memcpy(paquete->buffer->stream + offset, sem, strlen(sem) + 1);
+	offset += strlen(sem) + 1;
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	send(((mate_inner_structure *)lib_ref->group_info)->socket_conexion, a_enviar, bytes, 0);
+
+	recibir_permiso_para_continuar(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
+
+	free(a_enviar);
+	eliminar_paquete(paquete);
+	return 0;
 
 }
 

@@ -8,18 +8,6 @@
 #ifndef MENSAJESMATELIB_H_
 #define MENSAJESMATELIB_H_
 
-#include "planificacion.h"
-
-void dar_permiso_para_continuar(int conexion);
-void init_sem(PCB*);
-void wait_sem(t_procesador*);
-void post_sem(PCB*);
-void destroy_sem(PCB*);
-void call_IO(PCB*);
-void memalloc(PCB*);
-void memread(PCB*);
-void memfree(PCB*);
-void memwrite(PCB*);
 
 
 #endif /* MENSAJESMATELIB_H_ */
