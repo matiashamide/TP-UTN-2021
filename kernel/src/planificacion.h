@@ -106,5 +106,15 @@ PCB* algoritmo_HRRN();
 void* minimum(PCB*, PCB*);
 bool criterio_remocion_lista(void* pcb);
 void ejecutar(t_procesador*);
+void dar_permiso_para_continuar(int conexion);
+void init_sem(t_procesador*);
+void wait_sem(t_procesador*);
+void post_sem(t_procesador*);
+void destroy_sem(t_procesador*);
+void call_IO(PCB*);
+void memalloc(PCB*);
+void memread(PCB*);
+void memfree(PCB*);
+void memwrite(PCB*);
 
 #endif /* PLANIFICACION_H_ */
