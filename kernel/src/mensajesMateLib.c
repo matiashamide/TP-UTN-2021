@@ -77,7 +77,6 @@ void wait_sem(t_procesador* estructura_procesador) {
 			sem_post(&sem_grado_multiprocesamiento);
 		}
 		pthread_mutex_unlock(&mutex_lista_semaforos_mate);
-	// una vez encontrado, un if: si valor=0 no se decrementa y se bloquea. si valor>0 decrementar y dejar continuar
 }
 
 void post_sem(PCB* pcb) {
