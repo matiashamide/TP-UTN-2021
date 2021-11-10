@@ -19,6 +19,7 @@ int main(void) {
 		//mutex_lock para que no sea multiplexado
 		atender_peticiones(cliente);
 		//mutex_unlock
+		//TODO: vamos a tener que encolar los requests o eso lo hace solo el hilo?
 	}
 }
 
@@ -57,6 +58,7 @@ void init_swamp(){
 	SERVIDOR_SWAP = iniciar_servidor(CONFIG.ip, CONFIG.puerto);
 
 	//Ceamos archivos correspondientes
+	METADATA_ARCHIVOS = list_create();
 	crear_archivos();
 }
 
@@ -65,33 +67,55 @@ void atender_peticiones(int cliente) {
 	peticion_swap operacion = recibir_operacion(cliente);
 
 	switch (operacion) {
+	case RESERVAR_ESPACIO:
+		break;
 
 	case TRAER_DE_SWAP:
-
-	break;
+		break;
 
 	case TIRAR_A_SWAP:
+		break;
 
-	break;
-
-	default:
-	; break;
+	default:; break;
 
 	}
 }
 
-void crear_archivos(){
+void crear_archivos() {
 
-	char* vector_de_paths[strlen(CONFIG.archivos_swamp)];
+	int cant_archivos = size_char_array(CONFIG.archivos_swamp);
 
-	strcpy(vector_de_paths[0] , CONFIG.archivos_swamp[0]);
+	for (int i = 0 ; size_char_array(CONFIG.archivos_swamp) ; i++) {
 
-	int cant_archivos = strlen(vector_de_paths);
-
-	for(int i = 0 ; vector_de_paths[i] != NULL ; i++){
-
-
-		strcpy(vector_de_paths[0] , CONFIG.archivos_swamp[0]);
+		t_metadata_archivo* md_archivo = malloc(sizeof(t_metadata_archivo));
+		md_archivo->id                 = i;
+		md_archivo->espacio_disponible = CONFIG.archivos_swamp;
+		md_archivo->addr               = crear_archivo(CONFIG.archivos_swamp[i], CONFIG.tamanio_swamp);
+		list_add(METADATA_ARCHIVOS, md_archivo);
 	}
+
+}
+
+void* crear_archivo(char* path, int size) {
+	int fd;
+	void* addr;
+
+	fd = open(path, O_RDWR | O_CREAT | O_TRUNC, 0777);
+	if (fd < 0) {
+	  exit(EXIT_FAILURE);
+	}
+
+	ftruncate(fd, size);
+
+	addr = mmap(NULL, size, PROT_WRITE, MAP_SHARED, fd, 0);
+
+	if (addr == MAP_FAILED) {
+		perror("Error  mapping \n");
+		exit(1);
+	}
+
+	//TODO Falta llenarlos con el /0 y creo que msynquear
+
+	return addr;
 
 }
