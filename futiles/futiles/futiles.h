@@ -15,18 +15,19 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <signal.h>
-#include <unistd.h>
 #include <dirent.h>
+#include <netdb.h>
+#include <math.h>
+#include <fcntl.h>
 #include <commons/collections/list.h>
 #include <commons/config.h>
 #include <commons/log.h>
 #include <commons/string.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#include <unistd.h>
-#include <netdb.h>
-#include <signal.h>
-#include <math.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 typedef enum {
 	INICIALIZAR_SEM,
@@ -53,6 +54,7 @@ typedef struct {
 } t_paquete;
 
 typedef enum{
+	RESERVAR_ESPACIO,
 	TIRAR_A_SWAP, //de swap a memoria
 	TRAER_DE_SWAP //de memoria a swap
 }peticion_swap;
@@ -68,5 +70,6 @@ void* recibir_buffer(uint32_t* size, int socket_cliente);
 int esperar_cliente(int socket);
 int recibir_operacion(int socket);
 void enviar_mensaje(char* mensaje, int servidor);
+int size_char_array(char** array);
 
 #endif /* FUTILES_H_ */

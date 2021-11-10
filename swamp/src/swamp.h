@@ -8,44 +8,49 @@
 #ifndef SWAMP_H_
 #define SWAMP_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <semaphore.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <signal.h>
-#include <unistd.h>
-#include <dirent.h>
-#include <commons/collections/list.h>
-#include <commons/config.h>
-#include <commons/string.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <netdb.h>
-#include <signal.h>
 #include <futiles/futiles.h>
-
 
 //ESTRUCTURAS
 
 typedef struct {
-    char* ip;
-    char* puerto;
-    int tamanio_swamp;
-    int tamanio_pag;
+    char*  ip;
+    char*  puerto;
+    int    tamanio_swamp;
+    int    tamanio_pag;
     char** archivos_swamp;
-    int marcos_max;
-    int retardo_swap;
+    int    marcos_max;
+    int    retardo_swap;
 
 }t_swamp_config;
 
+typedef struct {
+	int id;
+	void* addr;
+	int espacio_disponible;
+}t_metadata_archivo;
+
+typedef struct {
+	int pid; //id del proceso
+	int aid; //archivo en el que se encuentra
+	t_list* pags; //lista de t_pag_virtual
+}t_imagen_proceso;
+
+typedef struct {
+	int id;
+	int offset;
+}t_pag_virtual;
+
 //VARIABLES GLOBALES
+
 int SERVIDOR_SWAP;
 t_swamp_config CONFIG;
 t_log* LOGGER;
 
+t_list* METADATA_ARCHIVOS;
+
+
 //FUNCIONES
+
 t_swamp_config crear_archivo_config_swamp(char* ruta);
 int crear_conexion(char *ip, char* puerto);
 void init_swamp();

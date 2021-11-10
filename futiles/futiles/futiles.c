@@ -187,3 +187,14 @@ void eliminar_paquete(t_paquete* paquete) {
    free(paquete->buffer);
    free(paquete);
 }
+
+int size_char_array(char** array) {
+
+	int i = 0;
+
+	while(array[i]!= NULL){
+		i++;
+	}
+
+	return i;
+}
