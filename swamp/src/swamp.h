@@ -20,7 +20,6 @@ typedef struct {
     char** archivos_swamp;
     int    marcos_max;
     int    retardo_swap;
-
 }t_swamp_config;
 
 typedef struct {
@@ -55,5 +54,8 @@ t_swamp_config crear_archivo_config_swamp(char* ruta);
 int crear_conexion(char *ip, char* puerto);
 void init_swamp();
 void atender_peticiones(int cliente);
+
+void* crear_archivo(char* path, int size);
+void crear_archivos();
 
 #endif /* SWAMP_H_ */

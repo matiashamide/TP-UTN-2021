@@ -14,6 +14,7 @@ int main(void) {
 
 	init_swamp();
 
+	/*
 	while(1){
 		int cliente = esperar_cliente(SERVIDOR_SWAP);
 		//mutex_lock para que no sea multiplexado
@@ -21,6 +22,7 @@ int main(void) {
 		//mutex_unlock
 		//TODO: vamos a tener que encolar los requests o eso lo hace solo el hilo?
 	}
+	*/
 }
 
 //--------------------------------------------------------------------------------------------
@@ -57,7 +59,7 @@ void init_swamp(){
 	//iniciamos servidor
 	SERVIDOR_SWAP = iniciar_servidor(CONFIG.ip, CONFIG.puerto);
 
-	//Ceamos archivos correspondientes
+	//Creamos archivos correspondientes
 	METADATA_ARCHIVOS = list_create();
 	crear_archivos();
 }
@@ -68,6 +70,9 @@ void atender_peticiones(int cliente) {
 
 	switch (operacion) {
 	case RESERVAR_ESPACIO:
+		//void* buffer = recibir_buffer(sizeof(uint32_t)*2, cliente);
+		//TODO: recibir buffer y agarrar el pid ta ta taa @matihamide
+		reservar_espacio(pid, cant_pag);
 		break;
 
 	case TRAER_DE_SWAP:
@@ -83,9 +88,7 @@ void atender_peticiones(int cliente) {
 
 void crear_archivos() {
 
-	int cant_archivos = size_char_array(CONFIG.archivos_swamp);
-
-	for (int i = 0 ; size_char_array(CONFIG.archivos_swamp) ; i++) {
+	for (int i = 0 ; i < size_char_array(CONFIG.archivos_swamp) ; i++) {
 
 		t_metadata_archivo* md_archivo = malloc(sizeof(t_metadata_archivo));
 		md_archivo->id                 = i;
@@ -110,13 +113,27 @@ void* crear_archivo(char* path, int size) {
 	addr = mmap(NULL, size, PROT_WRITE, MAP_SHARED, fd, 0);
 
 	if (addr == MAP_FAILED) {
-		perror("Error  mapping \n");
+		perror("Error mapping \n");
 		exit(1);
 	}
 
-	//TODO Falta llenarlos con el /0 y creo que msynquear
-	memset(addr, 00, CONFIG.tamanio_swamp /2);
+	//TODO Falta llenarlos con el \0 y creo que msynquear
+	memset(addr, '\0', CONFIG.tamanio_swamp);
 
 	return addr;
 
+}
+
+int reservar_espacio(int pid, int cant_pag) {
+
+
+}
+
+int obtener_archivo_mayor_espacio_libre() {
+	bool _de_mayor_espacio(t_metadata_archivo* un_archivo, t_metadata_archivo* otro_archivo){
+		return un_archivo->espacio_disponible < otro_archivo->espacio_disponible;
+	}
+
+	list_sort(METADATA_ARCHIVOS, (void*)_de_mayor_espacio);
+	return ((t_metadata_archivo*)list_get(METADATA_ARCHIVOS, 0))->id;
 }

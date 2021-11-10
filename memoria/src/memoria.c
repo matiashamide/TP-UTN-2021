@@ -284,7 +284,7 @@ int memalloc(int pid, int size){
 				t_pagina* pagina      = malloc(sizeof(t_pagina));
 				pagina->pid 		  = pid;
 				pagina->id  		  = i;
-				pagina->frame_ppal    = solicitar_frame_en_ppal();
+				pagina->frame_ppal    = solicitar_frame_en_ppal(pid);
 				pagina->modificado    = 1;
 				pagina->lock          = 1;
 				pagina->presencia     = 1;
@@ -339,7 +339,8 @@ int obtener_pos_ultimo_alloc(int pid) {
 //TODO: Ver si estamos devolviendo la DL o DF
 //TODO: Poner lock a la pagina para que no me la saque otro proceso mientras la uso
 t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
-	t_alloc_disponible* alloc = memalloc(sizeof(t_alloc_disponible));
+
+	t_alloc_disponible* alloc = malloc(sizeof(t_alloc_disponible));
 
 	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
 	int nro_pagina = 0, offset = 0;
@@ -680,7 +681,12 @@ void tirar_a_swap(t_pagina* pagina) {
 }
 
 int reemplazar_con_CLOCK(int pid) {
+	return 0;
+}
 
+//TODO
+bool hay_lugar_en_mp(int frames_necesarios) {
+	return true;
 }
 
 t_list* buscar_paginas_mp(){
@@ -727,13 +733,14 @@ void set_modificado(t_pagina* pag){
 	pag->modificado = 1;
 }
 
+//TODO: no olvidar esta funcion
 void reemplazar_pag_en_memoria(){
 	//reemplazar segun asignacion
 
 	void* pagina_victima; // conseguida despues de correr el algoritmo
 
 	t_paquete* paquete = malloc(sizeof(t_paquete));
-	paquete->codigo_operacion = SWAP_OUT;
+	//paquete->codigo_operacion = SWAP_OUT;
 
 	t_buffer* buffer = malloc(sizeof(t_buffer));
 	buffer->size = CONFIG.tamanio_pagina;

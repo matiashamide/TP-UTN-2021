@@ -110,11 +110,13 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 int obtener_pos_ultimo_alloc(int pid);
 int guardar_en_swap(int pid, void* contenido);
  int buscar_pagina(int pid, int pag);
-int traer_pagina_swap(int pid, int pag);
+ t_list* buscar_paginas_mp();
+int traer_pagina_swap(t_pagina* pag);
 heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header);
 void* traer_marquinhos_del_proceso(int pid);
 int solicitar_frame_en_ppal(int pid);
 bool marco_libre(t_frame* marco);
+bool hay_lugar_en_mp(int frames_necesarios);
 
 
 void swap(int cantidad_pags);
