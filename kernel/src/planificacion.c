@@ -182,8 +182,14 @@ void ejecutar(t_procesador* estructura_procesador) {
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-void dar_permiso_para_continuar(int conexion) {
+void recibir_peticion_para_continuar(int conexion) {
 
+	recibir_operacion(conexion);
+	recibir_mensaje(conexion);
+
+}
+
+void dar_permiso_para_continuar(int conexion){
 	char* mensaje = malloc(sizeof(9));
 	mensaje = "Continua";
 
@@ -196,8 +202,6 @@ void init_sem(t_procesador* estructura_procesador) {
 
 	int size;
 	int size_nombre_semaforo;
-
-	printf("iegue hasta aqui");
 
 	recv(estructura_procesador->lugar_PCB->conexion, &size, sizeof(int), MSG_WAITALL);
 
@@ -216,8 +220,8 @@ void init_sem(t_procesador* estructura_procesador) {
 	pthread_mutex_unlock(&mutex_lista_semaforos_mate);
 
 	printf("Tamanio lista de semaforos: %d\n", list_size(LISTA_SEMAFOROS_MATE));
-	//printf("Nombre semaforo: %s\n", nuevo_semaforo->nombre);
-	//printf("Valor semaforo: %d\n", nuevo_semaforo->value);
+	printf("Nombre semaforo: %s\n", nuevo_semaforo->nombre);
+	printf("Valor semaforo: %d\n", nuevo_semaforo->value);
 
 
 	//fflush(stdout);

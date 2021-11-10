@@ -83,6 +83,7 @@ typedef char *mate_sem_name;
 
 typedef int32_t mate_pointer;
 
+void pedir_permiso_para_continuar(int conexion);
 void recibir_permiso_para_continuar(int conexion);
 int recibir_operacion(int socket_cliente);
 char* recibir_mensaje(int socket_cliente);

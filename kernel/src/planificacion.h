@@ -106,6 +106,7 @@ PCB* algoritmo_HRRN();
 void* minimum(PCB*, PCB*);
 bool criterio_remocion_lista(void* pcb);
 void ejecutar(t_procesador*);
+void recibir_peticion_para_continuar(int conexion);
 void dar_permiso_para_continuar(int conexion);
 void init_sem(t_procesador*);
 void wait_sem(t_procesador*);

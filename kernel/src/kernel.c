@@ -120,7 +120,6 @@ void coordinador_multihilo(){
 
 		pthread_create(&hilo_atender_carpincho, NULL , (void*)atender_carpinchos, socket_cliente);
 		pthread_detach(hilo_atender_carpincho);
-
 	}
 }
 
@@ -151,6 +150,8 @@ void atender_carpinchos(int cliente) {
 	pcb_carpincho->estimado_anterior = CONFIG_KERNEL.estimacion_inicial;
 	pcb_carpincho->tiempo_espera = 0;
 	pcb_carpincho->conexion = cliente;
+
+	recibir_peticion_para_continuar(pcb_carpincho->conexion);
 
 	pasar_a_new(pcb_carpincho);
 }

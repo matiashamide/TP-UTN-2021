@@ -23,11 +23,18 @@
 //	return EXIT_SUCCESS;
 //}
 
+void pedir_permiso_para_continuar(int conexion) {
+
+	char* mensaje = malloc(sizeof(9));
+	mensaje = "Quiero continuar";
+	enviar_mensaje(mensaje, conexion);
+
+}
+
 void recibir_permiso_para_continuar(int conexion) {
 
 	recibir_operacion(conexion);
 	recibir_mensaje(conexion);
-
 }
 
 int recibir_operacion(int socket_cliente) {
@@ -94,7 +101,15 @@ int mate_init(mate_instance *lib_ref, char *config)
 
   ((mate_inner_structure *)lib_ref->group_info)->socket_conexion = conexion;
 
+  printf("conexion: %d\n", conexion);
+
+  pedir_permiso_para_continuar(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
+
+  printf("Ya pedi permiso\n");
+
   recibir_permiso_para_continuar(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
+
+  printf("Chau me re bloquee \n");
 
   return 0;
 }
@@ -245,7 +260,7 @@ int mate_sem_init(mate_instance *lib_ref, mate_sem_name sem, unsigned int value)
 
 	recibir_permiso_para_continuar(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
 
-	fflush(stdout);
+	//fflush(stdout);
 	free(a_enviar);
 	eliminar_paquete(paquete);
 	return 0;
