@@ -37,7 +37,7 @@ void init_memoria() {
 	}
 
 	//TODO: Conectate con swap y pedile la nota de max marcos rey
-	//MAX_MARCOS_SWAP =
+	CONEXION_SWAP = crear_conexion(CONFIG.ip_swap, CONFIG.puerto_swap);
 
 	//Senales
 	signal(SIGINT,  &signal_metricas);
@@ -60,6 +60,8 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
 
     config.ip_memoria          = config_get_string_value(memoria_config, "IP");
     config.puerto_memoria      = config_get_string_value(memoria_config, "PUERTO");
+    config.ip_swap             = config_get_string_value(memoria_config, "IP_SWAP");
+	config.puerto_swap         = config_get_string_value(memoria_config, "PUERTO_SWAP");
     config.tamanio_memoria     = config_get_int_value   (memoria_config, "TAMANIO");
     config.tamanio_pagina      = config_get_int_value   (memoria_config, "TAMANIO_PAGINA");
     config.alg_remp_mmu        = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_MMU");
@@ -574,9 +576,8 @@ int buscar_pagina(int pid, int pag) {
 }
 
 int traer_pagina_swap(t_pagina* pagina) {
-	//TODO:
-	//abrir conexion con swap
 	//pedirle la pagina pag del proceso pid
+	//trae pag de id y pid
 
 	void* pag_serializada;
 	int frame = ejecutar_algoritmo_reemplazo(pagina->pid);
@@ -677,7 +678,10 @@ int reemplazar_con_LRU(int pid) {
 }
 
 void tirar_a_swap(t_pagina* pagina) {
-
+	void* buffer_pag = malloc(CONFIG.tamanio_pagina);
+	memcpy(buffer_pag, MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
+	enviar_pagina(TIRAR_A_SWAP, CONFIG.tamanio_pagina, buffer_pag, CONEXION_SWAP);
+	free(buffer_pag);
 }
 
 int reemplazar_con_CLOCK(int pid) {

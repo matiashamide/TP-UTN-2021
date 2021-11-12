@@ -57,7 +57,12 @@ typedef enum{
 	RESERVAR_ESPACIO,
 	TIRAR_A_SWAP, //de swap a memoria
 	TRAER_DE_SWAP //de memoria a swap
-}peticion_swap;
+} t_peticion_swap;
+
+typedef struct {
+	t_peticion_swap cod_op;
+	t_buffer* buffer;
+} t_paquete_swap;
 
 
 void printeame_un_cuatro();
@@ -71,5 +76,10 @@ int esperar_cliente(int socket);
 int recibir_operacion(int socket);
 void enviar_mensaje(char* mensaje, int servidor);
 int size_char_array(char** array);
+
+// Envios MEMORIA - SWAP
+void enviar_pagina(t_peticion_swap sentido_swapeo, int tam_pagina, void* pagina, int socket_cliente);
+void* serializar_paquete_pagina(t_paquete_swap* paquete, int* bytes);
+void eliminar_paquete_pagina(t_paquete_swap*);
 
 #endif /* FUTILES_H_ */

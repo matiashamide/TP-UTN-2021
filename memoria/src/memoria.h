@@ -16,6 +16,8 @@
 typedef struct {
     char* ip_memoria;
     char* puerto_memoria;
+    char* ip_swap;
+    char* puerto_swap;
     int   tamanio_memoria;
     int   tamanio_pagina;
     char* alg_remp_mmu;
@@ -69,6 +71,7 @@ t_log* LOGGER;
 t_list* TABLAS_DE_PAGINAS;
 t_list* MARCOS_MEMORIA;
 
+int CONEXION_SWAP;
 int MAX_MARCOS_SWAP;
 
 //// ---- memoria principal
