@@ -63,7 +63,7 @@ void init_swamp(){
 	METADATA_ARCHIVOS = list_create();
 	FRAMES_SWAP = list_create();
 	crear_archivos();
-	creamos_frames();
+	crear_frames();
 }
 
 void atender_peticiones(int cliente) {
