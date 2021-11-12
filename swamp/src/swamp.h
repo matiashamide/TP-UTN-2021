@@ -28,16 +28,16 @@ typedef struct {
 	int espacio_disponible;
 }t_metadata_archivo;
 
-typedef struct {
-	int pid; //id del proceso
-	int aid; //archivo en el que se encuentra
-	t_list* pags; //lista de t_pag_virtual
-}t_imagen_proceso;
 
 typedef struct {
-	int id;
+	int id;	  //Numero de pagina de memoria
+	int pid; //id del proceso
+	int aid; //archivo en el que se encuentra
 	int offset;
-}t_pag_virtual;
+	bool ocupado;
+}t_pagina;
+
+t_list* FRAMES_SWAP;
 
 //VARIABLES GLOBALES
 
@@ -46,7 +46,7 @@ t_swamp_config CONFIG;
 t_log* LOGGER;
 
 t_list* METADATA_ARCHIVOS;
-
+t_list* IMAGENES_PROCESOS;
 
 //FUNCIONES
 
@@ -57,5 +57,7 @@ void atender_peticiones(int cliente);
 
 void* crear_archivo(char* path, int size);
 void crear_archivos();
-
+t_metadata_archivo* obtener_archivo_mayor_espacio_libre();
+int archivo_proceso_existente(int pid);
+void crear_frames();
 #endif /* SWAMP_H_ */

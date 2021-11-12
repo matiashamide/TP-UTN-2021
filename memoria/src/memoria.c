@@ -279,11 +279,11 @@ int memalloc(int pid, int size){
 			nuevo_header->prev_alloc = alloc->direc_logica;
 			nuevo_header->next_alloc = NULL;
 
-			for (int i = 0 ; i < cantidad_paginas ; i++) {
+			for (int i = 1 ; i <= cantidad_paginas ; i++) {
 
 				t_pagina* pagina      = malloc(sizeof(t_pagina));
 				pagina->pid 		  = pid;
-				pagina->id  		  = i;
+				pagina->id  		  = ((t_pagina*)list_get( ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas, list_size( ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas)))->id + i;
 				pagina->frame_ppal    = solicitar_frame_en_ppal(pid);
 				pagina->modificado    = 1;
 				pagina->lock          = 1;
