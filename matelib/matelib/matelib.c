@@ -25,21 +25,59 @@
 
 void pedir_permiso_para_continuar(int conexion) {
 
-	char* mensaje = malloc(sizeof(9));
-	mensaje = "Quiero continuar";
-	enviar_mensaje(mensaje, conexion);
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	int* permiso = malloc(sizeof(int));
+
+	(*permiso) = 1;
+
+	paquete->codigo_operacion = PERMISO_CONTINUACION;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = sizeof(int);
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+	memcpy(paquete->buffer->stream, &permiso, paquete->buffer->size);
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	send(conexion, a_enviar, bytes, 0);
+
+	free(a_enviar);
+	free(permiso);
+	eliminar_paquete(paquete);
 
 }
 
 void recibir_permiso_para_continuar(int conexion) {
 
 	recibir_operacion(conexion);
-	recibir_mensaje(conexion);
+	//char* mensaje = recibir_mensaje(conexion);
+	//printf("Permiso para continuar: %s\n", mensaje);
+
+	void* buffer;
+	int size;
+
+	recv(conexion, &size, sizeof(int), MSG_WAITALL);
+	buffer = malloc(size);
+	recv(conexion, buffer, size, MSG_WAITALL);
+
+	int* mensaje = malloc(size);
+
+	printf("Llegoooooo\n");
+
+	memcpy(mensaje, buffer, size);
+
+
+	printf("Permiso para continuar: %d\n", (*mensaje));
+
+	free(mensaje);
+
 }
 
 int recibir_operacion(int socket_cliente) {
-   int cod_op;
-   if (recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL) != 0) {
+   peticion_carpincho cod_op;
+   if (recv(socket_cliente, &cod_op, sizeof(peticion_carpincho), MSG_WAITALL) != 0) {
       return cod_op;
    }
    else
@@ -49,17 +87,65 @@ int recibir_operacion(int socket_cliente) {
    }
 }
 
+void enviar_mensaje(char* mensaje, int socket_cliente)
+{
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = MENSAJE;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = strlen(mensaje) + 1;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+	memcpy(paquete->buffer->stream, mensaje, paquete->buffer->size);
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	send(socket_cliente, a_enviar, bytes, 0);
+
+	free(a_enviar);
+	eliminar_paquete(paquete);
+}
+
+
+
+void* serializar_paquete(t_paquete* paquete, int* bytes)
+{
+
+   int size_serializado = sizeof(peticion_carpincho) + sizeof(int) + paquete->buffer->size;
+   void *buffer = malloc(size_serializado);
+
+   int offset = 0;
+
+   memcpy(buffer + offset, &paquete->codigo_operacion, sizeof(int));
+   offset+= sizeof(int);
+   memcpy(buffer + offset, &paquete->buffer->size, sizeof(int));
+   offset+= sizeof(int);
+   memcpy(buffer + offset, paquete->buffer->stream, paquete->buffer->size);
+   offset+= paquete->buffer->size;
+
+   (*bytes) = size_serializado;
+   return buffer;
+}
+
+void eliminar_paquete(t_paquete* paquete)
+{
+   free(paquete->buffer->stream);
+   free(paquete->buffer);
+   free(paquete);
+}
+
 
 char* recibir_mensaje(int socket_cliente) {
-   uint32_t size;
+   int size;
    char* buffer = recibir_buffer(&size, socket_cliente);
    return buffer;
 }
 
-void* recibir_buffer(uint32_t* size, int socket_cliente) {
+void* recibir_buffer(int* size, int socket_cliente) {
    void* buffer;
 
-   recv(socket_cliente, size, sizeof(uint32_t), MSG_WAITALL);
+   recv(socket_cliente, size, sizeof(int), MSG_WAITALL);
    buffer = malloc(*size);
    recv(socket_cliente, buffer, *size, MSG_WAITALL);
 
@@ -183,53 +269,6 @@ int crear_conexion_kernel(char *ip, char* puerto)
 	return socket_cliente;
 }
 
-void enviar_mensaje(char* mensaje, int socket_cliente)
-{
-	t_paquete* paquete = malloc(sizeof(t_paquete));
-
-	paquete->codigo_operacion = MENSAJE;
-	paquete->buffer = malloc(sizeof(t_buffer));
-	paquete->buffer->size = strlen(mensaje) + 1;
-	paquete->buffer->stream = malloc(paquete->buffer->size);
-	memcpy(paquete->buffer->stream, mensaje, paquete->buffer->size);
-
-	int bytes;
-
-	void* a_enviar = serializar_paquete(paquete, &bytes);
-
-	send(socket_cliente, a_enviar, bytes, 0);
-
-	free(a_enviar);
-	eliminar_paquete(paquete);
-}
-
-
-
-void* serializar_paquete(t_paquete* paquete, int* bytes)
-{
-
-   int size_serializado = sizeof(op_code) + sizeof(uint32_t) + paquete->buffer->size;
-   void *buffer = malloc(size_serializado);
-
-   int offset = 0;
-
-   memcpy(buffer + offset, &(paquete->codigo_operacion), sizeof(int));
-   offset+= sizeof(int);
-   memcpy(buffer + offset, &(paquete->buffer->size), sizeof(uint32_t));
-   offset+= sizeof(uint32_t);
-   memcpy(buffer + offset, paquete->buffer->stream, paquete->buffer->size);
-   offset+= paquete->buffer->size;
-
-   (*bytes) = size_serializado;
-   return buffer;
-}
-
-void eliminar_paquete(t_paquete* paquete)
-{
-   free(paquete->buffer->stream);
-   free(paquete->buffer);
-   free(paquete);
-}
 
 void mate_printf() {
 	printf("Aca esta la matelib imprimiendo algo\n");

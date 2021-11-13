@@ -185,15 +185,58 @@ void ejecutar(t_procesador* estructura_procesador) {
 void recibir_peticion_para_continuar(int conexion) {
 
 	recibir_operacion(conexion);
-	recibir_mensaje(conexion);
+	//char* mensaje = recibir_mensaje(conexion);
+	//printf("Permiso para continuar: %s\n", mensaje);
+
+	void* buffer;
+	int size;
+
+	recv(conexion, &size, sizeof(int), MSG_WAITALL);
+	buffer = malloc(size);
+	recv(conexion, buffer, size, MSG_WAITALL);
+
+	int* mensaje = malloc(size);
+
+	printf("Llegoooooo\n");
+
+	memcpy(mensaje, buffer, size);
+
+
+	printf("Permiso para continuar: %d\n", (*mensaje));
+
+	free(mensaje);
+
 
 }
 
 void dar_permiso_para_continuar(int conexion){
-	char* mensaje = malloc(sizeof(9));
-	mensaje = "Continua";
+	//char* mensaje = malloc(sizeof(9));
+	//mensaje = "Continua";
 
-	enviar_mensaje(mensaje, conexion);
+	//enviar_mensaje("Continua", conexion);
+	//free(mensaje);
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	int* permiso = malloc(sizeof(int));
+
+	(*permiso) = 1;
+
+	paquete->codigo_operacion = PERMISO_CONTINUACION;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = sizeof(int);
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+	memcpy(paquete->buffer->stream, permiso, paquete->buffer->size);
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	send(conexion, a_enviar, bytes, 0);
+
+	free(a_enviar);
+	free(permiso);
+	eliminar_paquete(paquete);
+
 }
 
 // TODO manejar error de crear un semaforo con el mismo nombre que uno ya existente

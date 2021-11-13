@@ -118,7 +118,7 @@ int esperar_cliente_kernel(int socket_servidor) {
 
 int recibir_operacion(int socket_cliente) {
    int cod_op;
-   if (recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL) != 0) {
+   if (recv(socket_cliente, &cod_op, sizeof(peticion_carpincho), MSG_WAITALL) != 0) {
       return cod_op;
    }
    else
@@ -197,10 +197,10 @@ void eliminar_paquete_pagina(t_paquete_swap* paquete) {
    free(paquete);
 }
 
-void* recibir_buffer(uint32_t* size, int socket_cliente) {
+void* recibir_buffer(int* size, int socket_cliente) {
    void* buffer;
 
-   recv(socket_cliente, size, sizeof(uint32_t), MSG_WAITALL);
+   recv(socket_cliente, size, sizeof(int), MSG_WAITALL);
    buffer = malloc(*size);
    recv(socket_cliente, buffer, *size, MSG_WAITALL);
 
@@ -209,15 +209,15 @@ void* recibir_buffer(uint32_t* size, int socket_cliente) {
 
 void* serializar_paquete(t_paquete* paquete, int* bytes) {
 
-   int size_serializado = sizeof(peticion_carpincho) + sizeof(uint32_t) + paquete->buffer->size;
+   int size_serializado = sizeof(peticion_carpincho) + sizeof(int) + paquete->buffer->size;
    void *buffer = malloc(size_serializado);
 
    int offset = 0;
 
    memcpy(buffer + offset, &(paquete->codigo_operacion), sizeof(int));
    offset+= sizeof(int);
-   memcpy(buffer + offset, &(paquete->buffer->size), sizeof(uint32_t));
-   offset+= sizeof(uint32_t);
+   memcpy(buffer + offset, &(paquete->buffer->size), sizeof(int));
+   offset+= sizeof(int);
    memcpy(buffer + offset, paquete->buffer->stream, paquete->buffer->size);
    offset+= paquete->buffer->size;
 

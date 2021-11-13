@@ -50,30 +50,30 @@ typedef struct {
 
 }t_lib_config;
 
+typedef enum {
+	PERMISO_CONTINUACION,
+	INICIALIZAR_SEM,
+	ESPERAR_SEM,
+	POST_SEM,
+	DESTROY_SEM,
+	CALL_IO,
+	MEMALLOC,
+	MEMREAD,
+	MEMFREE,
+	MEMWRITE,
+	MENSAJE,
+	CLOSE
+} peticion_carpincho;
+
 typedef struct
 {
 	int size;
 	void* stream;
 } t_buffer;
 
-typedef enum
-{
-	INICIALIZAR_SEM,
-		ESPERAR_SEM,
-		POST_SEM,
-		DESTROY_SEM,
-		CALL_IO,
-		MEMALLOC,
-		MEMREAD,
-		MEMFREE,
-		MEMWRITE,
-		MENSAJE,
-		CLOSE
-}op_code;
-
 typedef struct
 {
-	op_code codigo_operacion;
+	peticion_carpincho codigo_operacion;
 	t_buffer* buffer;
 } t_paquete;
 
@@ -87,7 +87,7 @@ void pedir_permiso_para_continuar(int conexion);
 void recibir_permiso_para_continuar(int conexion);
 int recibir_operacion(int socket_cliente);
 char* recibir_mensaje(int socket_cliente);
-void* recibir_buffer(uint32_t* size, int socket_cliente);
+void* recibir_buffer(int* size, int socket_cliente);
 
 // TODO: Docstrings
 

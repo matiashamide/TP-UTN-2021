@@ -30,6 +30,7 @@
 #include <sys/stat.h>
 
 typedef enum {
+	PERMISO_CONTINUACION,
 	INICIALIZAR_SEM,
 	ESPERAR_SEM,
 	POST_SEM,
@@ -71,7 +72,7 @@ int iniciar_servidor(char* IP, char* PUERTO);
 void* serializar_paquete(t_paquete* paquete, int* bytes);
 void eliminar_paquete(t_paquete*);
 char* recibir_mensaje(int socket_cliente);
-void* recibir_buffer(uint32_t* size, int socket_cliente);
+void* recibir_buffer(int* size, int socket_cliente);
 int esperar_cliente(int socket);
 int recibir_operacion(int socket);
 void enviar_mensaje(char* mensaje, int servidor);
