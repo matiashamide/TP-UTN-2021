@@ -135,6 +135,8 @@ void ejecutar(t_procesador* estructura_procesador) {
 
 		peticion_carpincho cod_op = recibir_operacion(estructura_procesador->lugar_PCB->conexion);
 
+		printf("Peticion del carpincho: %d", cod_op);
+
 		switch (cod_op) {
 		case INICIALIZAR_SEM:
 			init_sem(estructura_procesador);
@@ -171,6 +173,7 @@ void ejecutar(t_procesador* estructura_procesador) {
 			break;
 		default:
 			log_warning(LOGGER,"Operacion desconocida. No quieras meter la pata");
+			printf("Operacion desconocida. No quieras meter la pata\n");
 			break;
 		}
 
@@ -195,26 +198,22 @@ void recibir_peticion_para_continuar(int conexion) {
 	buffer = malloc(size);
 	recv(conexion, buffer, size, MSG_WAITALL);
 
-	int* mensaje = malloc(size);
+	//int* mensaje = malloc(size);
 
-	printf("Llegoooooo\n");
+	//printf("Llegoooooo\n");
 
-	memcpy(mensaje, buffer, size);
+	//memcpy((void*)mensaje, buffer, size);
 
 
-	printf("Permiso para continuar: %d\n", (*mensaje));
+	//printf("Permiso para continuar: %d\n", (*mensaje));
 
-	free(mensaje);
+	//free(mensaje);
 
 
 }
 
 void dar_permiso_para_continuar(int conexion){
-	//char* mensaje = malloc(sizeof(9));
-	//mensaje = "Continua";
 
-	//enviar_mensaje("Continua", conexion);
-	//free(mensaje);
 	t_paquete* paquete = malloc(sizeof(t_paquete));
 
 	int* permiso = malloc(sizeof(int));
@@ -245,6 +244,8 @@ void init_sem(t_procesador* estructura_procesador) {
 
 	int size;
 	int size_nombre_semaforo;
+
+	printf("Por aca ando por lo menos\n");
 
 	recv(estructura_procesador->lugar_PCB->conexion, &size, sizeof(int), MSG_WAITALL);
 

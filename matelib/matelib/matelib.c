@@ -8,20 +8,6 @@
 
 #include "matelib.h"
 
-//int main(void) {
-//	 mate_instance* lib = malloc(sizeof(mate_instance));
-//	 int status = mate_init(lib, CONFIG_PATH);
-//
-//	 if(status != 0) {
-//		 printf("Algo salio mal");
-//	     exit(-1);
-//	 }
-//
-//	 printf("rey");
-//	 enviar_mensaje("hola como estas", CONEXION);
-//
-//	return EXIT_SUCCESS;
-//}
 
 void pedir_permiso_para_continuar(int conexion) {
 
@@ -51,9 +37,9 @@ void pedir_permiso_para_continuar(int conexion) {
 
 void recibir_permiso_para_continuar(int conexion) {
 
+
 	recibir_operacion(conexion);
-	//char* mensaje = recibir_mensaje(conexion);
-	//printf("Permiso para continuar: %s\n", mensaje);
+
 
 	void* buffer;
 	int size;
@@ -62,16 +48,18 @@ void recibir_permiso_para_continuar(int conexion) {
 	buffer = malloc(size);
 	recv(conexion, buffer, size, MSG_WAITALL);
 
-	int* mensaje = malloc(size);
+	//int* mensaje = malloc(size);
 
-	printf("Llegoooooo\n");
+	//printf("Llegoooooo\n");
 
-	memcpy(mensaje, buffer, size);
+	//memcpy((void*)mensaje, buffer, size);
 
 
-	printf("Permiso para continuar: %d\n", (*mensaje));
+	//printf("Permiso para continuar: %d\n", (*mensaje));
 
-	free(mensaje);
+	//free(mensaje);
+
+
 
 }
 
@@ -194,8 +182,6 @@ int mate_init(mate_instance *lib_ref, char *config)
   printf("Ya pedi permiso\n");
 
   recibir_permiso_para_continuar(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
-
-  printf("Chau me re bloquee \n");
 
   return 0;
 }
