@@ -66,15 +66,25 @@ void init_swamp(){
 	crear_frames();
 }
 
-void atender_peticiones(int cliente) {
+void atender_peticiones(int cliente){
 
-	peticion_swap operacion = recibir_operacion(cliente);
+	t_peticion_swap operacion = recibir_operacion_swap(cliente);
 
 	switch (operacion) {
-	case RESERVAR_ESPACIO:
+	case RESERVAR_ESPACIO:;
+
+		void* buffer_pag = malloc(CONFIG.tamanio_pag);
+
+		int pid = recibir_entero(cliente);
+		int nro_pagina = recibir_entero(cliente);
+
+		buffer_pag = recibir_pagina(cliente, CONFIG.tamanio_pag);
 		//void* buffer = recibir_buffer(sizeof(uint32_t)*2, cliente);
 		//TODO: recibir buffer y agarrar el pid ta ta taa @matihamide
-		reservar_espacio(pid, cant_pag);
+		//reservar_espacio(pid, cant_pag);
+
+		printf("\n%i  %i\n ", pid, nro_pagina);
+
 		break;
 
 	case TRAER_DE_SWAP:

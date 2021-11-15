@@ -82,5 +82,8 @@ int size_char_array(char** array);
 void enviar_pagina(t_peticion_swap sentido_swapeo, int tam_pagina, void* pagina, int socket_cliente);
 void* serializar_paquete_pagina(t_paquete_swap* paquete, int* bytes);
 void eliminar_paquete_pagina(t_paquete_swap*);
+int recibir_operacion_swap(int socket_cliente);
+uint32_t recibir_entero(int cliente);
+void* recibir_pagina(int cliente, int tam_pagina);
 
 #endif /* FUTILES_H_ */
