@@ -60,4 +60,5 @@ void crear_archivos();
 t_metadata_archivo* obtener_archivo_mayor_espacio_libre();
 int archivo_proceso_existente(int pid);
 void crear_frames();
+int size_char_array(char** array);
 #endif /* SWAMP_H_ */

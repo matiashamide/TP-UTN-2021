@@ -66,7 +66,9 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
     config.tamanio_pagina      = config_get_int_value   (memoria_config, "TAMANIO_PAGINA");
     config.alg_remp_mmu        = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_MMU");
     config.tipo_asignacion     = config_get_string_value(memoria_config, "TIPO_ASIGNACION");
-    config.marcos_max          = config_get_int_value   (memoria_config, "MARCOS_MAXIMOS");  //TODO:--> ver en que casos esta esta esta config y meter un if
+    if(string_equals_ignore_case(config.tipo_asignacion,"FIJA")){
+    	config.marcos_max          = config_get_int_value   (memoria_config, "MARCOS_MAXIMOS");
+    }
     config.cant_entradas_tlb   = config_get_int_value   (memoria_config, "CANTIDAD_ENTRADAS_TLB");
     config.alg_reemplazo_tlb   = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_TLB");
     config.retardo_acierto_tlb = config_get_int_value   (memoria_config, "RETARDO_ACIERTO_TLB");
@@ -576,8 +578,12 @@ int buscar_pagina(int pid, int pag) {
 }
 
 int traer_pagina_swap(t_pagina* pagina) {
-	//pedirle la pagina pag del proceso pid
-	//trae pag de id y pid
+	//TODO: MUTEX
+	//mutex
+	pedir_pagina_swap(pagina->pid, pagina->id);
+	//recibir //TODO
+	//mutex
+
 
 	void* pag_serializada;
 	int frame = ejecutar_algoritmo_reemplazo(pagina->pid);
@@ -590,6 +596,28 @@ int traer_pagina_swap(t_pagina* pagina) {
 	return frame;
 }
 
+void pedir_pagina_swap(uint32_t pid, uint32_t nro_pagina){
+	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+
+	paquete->cod_op= SOLICITAR_PAGINA_SWAP;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = sizeof(uint32_t) * 2;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	memcpy(paquete->buffer->stream, pid, sizeof(uint32_t));
+	int offset = sizeof(uint32_t);
+	memcpy(paquete->buffer->stream + offset, nro_pagina, sizeof(uint32_t));
+	offset 	  += sizeof(uint32_t);
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete_pagina(paquete, &bytes);
+
+	send(CONEXION_SWAP, a_enviar, bytes, 0);
+
+	free(a_enviar);
+	eliminar_paquete_pagina(paquete);
+}
 
 int solicitar_frame_en_ppal(int pid){
 

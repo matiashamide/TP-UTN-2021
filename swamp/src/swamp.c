@@ -100,6 +100,22 @@ void atender_peticiones(int cliente){
 
 		break;
 
+	case SOLICITAR_PAGINA_SWAP:;
+		int pid_aux = recibir_entero(cliente);
+		int nro_pagina_aux = recibir_entero(cliente);
+
+		bool _pagina_x_pid_y_nro(void * elemento){
+			t_pagina* pagina = (t_pagina*) elemento;
+			return pagina->pid == pid_aux && pagina->id == nro_pagina_aux;
+		}
+
+		t_pagina* pagina = (t_pagina*)list_find(FRAMES_SWAP, _pagina_x_pid_y_nro);
+
+		void* buffer = malloc(CONFIG.tamanio_pag);
+		//memcpy( );
+
+		break;
+
 	default:; break;
 
 	}
@@ -253,4 +269,15 @@ t_metadata_archivo* obtener_archivo_mayor_espacio_libre() {
 
 	list_sort(METADATA_ARCHIVOS, (void*)_de_mayor_espacio);
 	return (t_metadata_archivo*)list_get(METADATA_ARCHIVOS, 0);
+}
+
+int size_char_array(char** array) {
+
+	int i = 0;
+
+	while(array[i]!= NULL){
+		i++;
+	}
+
+	return i;
 }

@@ -57,7 +57,9 @@ typedef struct {
 typedef enum{
 	RESERVAR_ESPACIO,
 	TIRAR_A_SWAP, //de swap a memoria
-	TRAER_DE_SWAP //de memoria a swap
+	TRAER_DE_SWAP, //de memoria a swap
+	SOLICITAR_PAGINA_SWAP
+
 } t_peticion_swap;
 
 typedef struct {
@@ -76,7 +78,7 @@ void* recibir_buffer(int* size, int socket_cliente);
 int esperar_cliente(int socket);
 int recibir_operacion(int socket);
 void enviar_mensaje(char* mensaje, int servidor);
-int size_char_array(char** array);
+
 
 // Envios MEMORIA - SWAP
 void enviar_pagina(t_peticion_swap sentido_swapeo, int tam_pagina, void* pagina, int socket_cliente, uint32_t pid, uint32_t nro_pagina);
