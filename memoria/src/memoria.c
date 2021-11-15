@@ -581,6 +581,7 @@ int traer_pagina_swap(t_pagina* pagina) {
 	//TODO: MUTEX
 	//mutex
 	pedir_pagina_swap(pagina->pid, pagina->id);
+	//hacer recv
 	//recibir //TODO
 	//mutex
 
