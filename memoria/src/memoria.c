@@ -5,10 +5,10 @@ int main(void) {
 	init_memoria();
 
 	printf("%i" , sizeof(heap_metadata));
-	//enviar_mensaje("hola como estas", SERVIDOR_MEMORIA);
-	//coordinador_multihilo();
 
-	//memalloc(10,0);
+	void* buffer = malloc(CONFIG.tamanio_pagina);
+
+	enviar_pagina(TIRAR_A_SWAP, CONFIG.tamanio_pagina, buffer , CONEXION_SWAP , 0 , 2 );
 
 	return EXIT_SUCCESS;
 }
@@ -680,7 +680,7 @@ int reemplazar_con_LRU(int pid) {
 void tirar_a_swap(t_pagina* pagina) {
 	void* buffer_pag = malloc(CONFIG.tamanio_pagina);
 	memcpy(buffer_pag, MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
-	enviar_pagina(TIRAR_A_SWAP, CONFIG.tamanio_pagina, buffer_pag, CONEXION_SWAP);
+	enviar_pagina(TIRAR_A_SWAP, CONFIG.tamanio_pagina, buffer_pag, CONEXION_SWAP, pagina->pid , pagina-> id);
 	free(buffer_pag);
 }
 
