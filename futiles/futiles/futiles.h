@@ -58,7 +58,8 @@ typedef enum{
 	RESERVAR_ESPACIO,     // MP -> SWAP (pid, size)
 	TIRAR_A_SWAP,         // MP -> SWAP (pid, id, pag)
 	TRAER_DE_SWAP,        // MP -> SWAP (pid, id)
-	SOLICITAR_MARCOS_MAX  // MP -> SWAP (nada)
+	SOLICITAR_MARCOS_MAX, // MP -> SWAP (nada)
+	LIBERAR_PAGINA		  // MP -> SWAP (pid, id)
 } t_peticion_swap;
 
 typedef struct {
@@ -81,7 +82,6 @@ void enviar_mensaje(char* mensaje, int servidor);
 
 // Envios MEMORIA - SWAP
 void solicitar_pagina(int socket, int pid, int nro_pagina);
-void reservar_espacio(int socket, int pid, int cant_pags);
 void enviar_pagina(t_peticion_swap sentido_swapeo, int tam_pagina, void* pagina, int socket_cliente, uint32_t pid, uint32_t nro_pagina);
 void* serializar_paquete_swap(t_paquete_swap* paquete, int* bytes);
 void eliminar_paquete_swap(t_paquete_swap*);

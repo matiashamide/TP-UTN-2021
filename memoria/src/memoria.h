@@ -81,7 +81,7 @@ void* MEMORIA_PRINCIPAL;
 pthread_mutex_t mutexMemoria;
 pthread_mutex_t mutexMarcos;
 pthread_mutex_t mutexTablas;
-
+pthread_mutex_t mutexSWAP;
 
 // FUNCIONES
 
@@ -106,7 +106,7 @@ void signal_metricas();
 void signal_dump();
 void signal_clean_tlb();
 
-int alocar_en_swap(int pid, int paginas);
+int reservar_espacio_en_swap(int pid, int cant_pags);
 int guardar_paginas_en_memoria(int pid, int marcos_necesarios, t_list* paginas, void* contenido);
 void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header);
 t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual);
@@ -121,10 +121,9 @@ int solicitar_frame_en_ppal(int pid);
 bool marco_libre(t_frame* marco);
 bool hay_lugar_en_mp(int frames_necesarios);
 
-void solicitar_marcos_max_swap(int socket);
+int solicitar_marcos_max_swap();
 void tirar_a_swap(t_pagina* pagina);
-void pedir_pagina_swap(uint32_t pid, uint32_t nro_pagina);
-void swap(int cantidad_pags);
+void* pedir_pagina_swap(uint32_t pid, uint32_t nro_pagina);
 
 int ejecutar_algoritmo_reemplazo(int pid);
 void reemplazar_pag_en_memoria(void);

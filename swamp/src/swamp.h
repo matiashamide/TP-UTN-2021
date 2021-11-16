@@ -62,6 +62,7 @@ int archivo_proceso_existente(int pid);
 void crear_frames();
 int size_char_array(char** array);
 
+int reservar_espacio(int pid , int cant_paginas);
 void rta_marcos_max(int socket);
 
 #endif /* SWAMP_H_ */

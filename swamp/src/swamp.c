@@ -72,37 +72,47 @@ void atender_peticiones(int cliente){
 
 	t_peticion_swap operacion = recibir_operacion_swap(cliente);
 
+	recibir_entero(cliente);//size
+
+	uint32_t pid;
+	uint32_t nro_pagina;
+
 	switch (operacion) {
 	case RESERVAR_ESPACIO:;
+
+		pid = recibir_entero(cliente);
+		uint32_t cant_paginas = recibir_entero(cliente);
+		log_info(LOGGER, "reservando espacio para el proceso %i de swap",  pid);
+		int rta = reservar_espacio(pid , cant_paginas);
+
+		//todo : enviar_entero(cliente , rta);
 
 		break;
 
 	case TIRAR_A_SWAP:;
 
 		void* buffer_pag = malloc(CONFIG.tamanio_pag);
-
-		uint32_t size        = recibir_entero(cliente);
-		uint32_t pid         = recibir_entero(cliente);
+		log_info(LOGGER, "tirando pagina %i del proceso %i a swap", nro_pagina , pid);
+		pid       = recibir_entero(cliente);
 		uint32_t nro_pagina  = recibir_entero(cliente);
 
 		buffer_pag = recibir_pagina(cliente, CONFIG.tamanio_pag);
 
-				//void* buffer = recibir_buffer(sizeof(uint32_t)*2, cliente);
-				//TODO: recibir buffer y agarrar el pid ta ta taa @matihamide
-				//reservar_espacio(pid, cant_pag);
+		// TODO //meter_contenido_pag_a_archivo() suerte @more
 
-		printf("\n%i  %i %i \n", size, pid, nro_pagina);
 
 		break;
 
 	case TRAER_DE_SWAP:;
 
-		int pid_aux = recibir_entero(cliente);
-		int nro_pagina_aux = recibir_entero(cliente);
+		pid = recibir_entero(cliente);
+		nro_pagina = recibir_entero(cliente);
+		log_info(LOGGER, "trayendo pagina %i del proceso %i de swap", nro_pagina , pid);
+		//TODO enviar_pagina_a_memoria() || swap_in()
 
 		bool _pagina_x_pid_y_nro(void * elemento){
 			t_pagina* pagina = (t_pagina*) elemento;
-			return pagina->pid == pid_aux && pagina->id == nro_pagina_aux;
+			return pagina->pid == pid && pagina->id == nro_pagina;
 		}
 
 		t_pagina* pagina = (t_pagina*)list_find(FRAMES_SWAP, _pagina_x_pid_y_nro);
@@ -112,9 +122,28 @@ void atender_peticiones(int cliente){
 
 		break;
 
-	default:; break;
+	case LIBERAR_PAGINA:;
+
+		pid = recibir_entero(cliente);
+		nro_pagina = recibir_entero(cliente);
+		log_info(LOGGER, "liberando pagina %i del proceso %i de swap", nro_pagina , pid);
+		// TODO free_pag()
+
+	break;
+
+	case SOLICITAR_MARCOS_MAX:;
+
+		log_info(LOGGER, "retornando marcos max");
+		send(cliente, CONFIG.marcos_max, sizeof(uint32_t), 0);
+
+	break;
+
+	default:
+		log_info(LOGGER, "No entiendo la peticion");
+		; break;
 
 	}
+	return;
 }
 
 void crear_archivos() {

@@ -179,7 +179,7 @@ int memalloc(int pid, int size){
 			frames_necesarios = MAX_MARCOS_SWAP;
 		}
 
-		if (alocar_en_swap(pid, frames_necesarios) == -1 ){
+		if (reservar_espacio_en_swap(pid, frames_necesarios) == -1 ){
 			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 			log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 
@@ -258,7 +258,7 @@ int memalloc(int pid, int size){
 			cantidad_paginas = ceil(size_necesario_extra/CONFIG.tamanio_pagina);
 
 
-			if (alocar_en_swap(pid, cantidad_paginas) == -1 ){
+			if (reservar_espacio_en_swap(pid, cantidad_paginas) == -1 ){
 				printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 				log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 
@@ -509,12 +509,33 @@ int guardar_paginas_en_memoria( int pid , int marcos_necesarios , t_list* pagina
 }
 
 
-int alocar_en_swap(pid , paginas){
-	//abrir conexion
-	//enviar datos
-	//chequear respuesta ( 1 o -1)
 
-	return 0;
+int reservar_espacio_en_swap( int pid, int cant_pags) {
+	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+	int offset = 0;
+
+	paquete->cod_op         = RESERVAR_ESPACIO;
+	paquete->buffer         = malloc(sizeof(t_buffer));
+	paquete->buffer->size   = sizeof(uint32_t) * 2;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
+	offset += sizeof(uint32_t);
+	memcpy(paquete->buffer->stream + offset, &cant_pags, sizeof(uint32_t));
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
+
+	pthread_mutex_lock(&mutexSWAP);
+	send(CONEXION_SWAP, a_enviar, bytes, 0);
+	int retorno = recibir_entero(CONEXION_SWAP);
+	pthread_mutex_unlock(&mutexSWAP);
+
+	free(a_enviar);
+	eliminar_paquete_swap(paquete);
+
+	return retorno;
 }
 
 heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
@@ -687,10 +708,12 @@ int reemplazar_con_LRU(int pid) {
 }
 
 void tirar_a_swap(t_pagina* pagina) {
+
 	void* buffer_pag = malloc(CONFIG.tamanio_pagina);
 	memcpy(buffer_pag, MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
 	enviar_pagina(TIRAR_A_SWAP, CONFIG.tamanio_pagina, buffer_pag, CONEXION_SWAP, pagina->pid , pagina-> id);
 	free(buffer_pag);
+
 }
 
 int reemplazar_con_CLOCK(int pid) {
@@ -783,9 +806,8 @@ void signal_clean_tlb(){
 
 //------------------------------------------------------------- CONEXION SWAMP ------------------------------------------------------------//
 
-void solicitar_marcos_max_swap(int socket) {
+int solicitar_marcos_max_swap() {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
-	int offset = 0;
 
 	paquete->cod_op         = SOLICITAR_MARCOS_MAX;
 	paquete->buffer         = malloc(sizeof(t_buffer));
@@ -795,13 +817,19 @@ void solicitar_marcos_max_swap(int socket) {
 	int bytes;
 
 	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
-	send(socket, a_enviar, bytes, 0);
+
+	pthread_mutex_lock(&mutexSWAP);
+	send(CONEXION_SWAP, a_enviar, bytes, 0);
+	int retorno = recibir_entero(CONEXION_SWAP);
+	pthread_mutex_unlock(&mutexSWAP);
 
 	free(a_enviar);
 	eliminar_paquete_swap(paquete);
+
+	return retorno;
 }
 
-void pedir_pagina_swap(uint32_t pid, uint32_t nro_pagina) {
+void* pedir_pagina_swap(uint32_t pid, uint32_t nro_pagina) {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
 
 	paquete->cod_op = TRAER_DE_SWAP;
@@ -817,9 +845,15 @@ void pedir_pagina_swap(uint32_t pid, uint32_t nro_pagina) {
 	int bytes;
 
 	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
+	void* buffer_pag;
 
+	pthread_mutex_lock(&mutexSWAP);
 	send(CONEXION_SWAP, a_enviar, bytes, 0);
+	buffer_pag = recibir_pagina(CONEXION_SWAP , CONFIG.tamanio_pagina);
+	pthread_mutex_unlock(&mutexSWAP);
 
 	free(a_enviar);
 	eliminar_paquete_swap(paquete);
+
+	return buffer_pag;
 }

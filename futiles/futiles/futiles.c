@@ -222,27 +222,6 @@ void solicitar_pagina(int socket, int pid, int nro_pagina) {
 	eliminar_paquete_swap(paquete);
 }
 
-void reservar_espacio(int socket, int pid, int cant_pags) {
-	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
-	int offset = 0;
-
-	paquete->cod_op         = RESERVAR_ESPACIO;
-	paquete->buffer         = malloc(sizeof(t_buffer));
-	paquete->buffer->size   = sizeof(uint32_t) * 2;
-	paquete->buffer->stream = malloc(paquete->buffer->size);
-
-	memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
-	offset += sizeof(uint32_t);
-	memcpy(paquete->buffer->stream + offset, &cant_pags, sizeof(uint32_t));
-
-	int bytes;
-
-	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
-	send(socket, a_enviar, bytes, 0);
-
-	free(a_enviar);
-	eliminar_paquete_swap(paquete);
-}
 
 void enviar_pagina(t_peticion_swap sentido_swapeo, int tam_pagina, void* pagina, int socket_cliente, uint32_t pid , uint32_t nro_pagina) {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
@@ -266,6 +245,10 @@ void enviar_pagina(t_peticion_swap sentido_swapeo, int tam_pagina, void* pagina,
 
 	free(a_enviar);
 	eliminar_paquete_swap(paquete);
+}
+
+void enviar_entero(int conexion){
+	//todo
 }
 
 void* serializar_paquete_swap(t_paquete_swap* paquete, int* bytes) {
