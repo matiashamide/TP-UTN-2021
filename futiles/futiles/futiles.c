@@ -145,13 +145,10 @@ uint32_t recibir_entero(int cliente){
 
 	if (recv(cliente, &entero, sizeof(uint32_t), MSG_WAITALL) != 0) {
 	      return entero;
-	   }
-	   else
-	   {
-	      close(cliente);
-	      return -1;
-	   }
-
+	} else {
+	    close(cliente);
+	    return -1;
+	}
 }
 
 void* recibir_pagina(int cliente, int tam_pagina){
@@ -190,14 +187,16 @@ void enviar_mensaje(char* mensaje, int socket_cliente) {
 void enviar_pagina(t_peticion_swap sentido_swapeo, int tam_pagina, void* pagina, int socket_cliente, uint32_t pid , uint32_t nro_pagina) {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
 
-	paquete->cod_op= sentido_swapeo;
+	paquete->cod_op = sentido_swapeo;
 	paquete->buffer = malloc(sizeof(t_buffer));
 	paquete->buffer->size = tam_pagina + sizeof(uint32_t) * 2;
 	paquete->buffer->stream = malloc(paquete->buffer->size);
 
-	memcpy(paquete->buffer->stream, pid, sizeof(uint32_t));
+	uint32_t* prid = malloc(sizeof(uint32_t));
+
+	memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
 	int offset = sizeof(uint32_t);
-	memcpy(paquete->buffer->stream + offset, nro_pagina, sizeof(uint32_t));
+	memcpy(paquete->buffer->stream + offset, &nro_pagina, sizeof(uint32_t));
 	offset 	  += sizeof(uint32_t);
 	memcpy(paquete->buffer->stream + offset, pagina, tam_pagina);
 

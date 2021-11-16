@@ -87,8 +87,9 @@ void atender_peticiones(int cliente){
 
 		void* buffer_pag = malloc(CONFIG.tamanio_pag);
 
-		int pid = recibir_entero(cliente);
-		int nro_pagina = recibir_entero(cliente);
+		uint32_t size        = recibir_entero(cliente);
+		uint32_t pid         = recibir_entero(cliente);
+		uint32_t nro_pagina  = recibir_entero(cliente);
 
 		buffer_pag = recibir_pagina(cliente, CONFIG.tamanio_pag);
 
@@ -96,7 +97,7 @@ void atender_peticiones(int cliente){
 				//TODO: recibir buffer y agarrar el pid ta ta taa @matihamide
 				//reservar_espacio(pid, cant_pag);
 
-		printf("\n%i  %i\n ", pid, nro_pagina);
+		printf("\n%i  %i %i \n", size, pid, nro_pagina);
 
 		break;
 

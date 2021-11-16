@@ -4,11 +4,13 @@ int main(void) {
 
 	init_memoria();
 
+	printf("estoy por imprimir el sizeof hm: \n");
 	printf("%i" , sizeof(heap_metadata));
+	fflush(stdout);
 
 	void* buffer = malloc(CONFIG.tamanio_pagina);
 
-	enviar_pagina(TIRAR_A_SWAP, CONFIG.tamanio_pagina, buffer , CONEXION_SWAP , 0 , 2 );
+	enviar_pagina(TIRAR_A_SWAP, CONFIG.tamanio_pagina, buffer, CONEXION_SWAP, 0, 2);
 
 	return EXIT_SUCCESS;
 }
