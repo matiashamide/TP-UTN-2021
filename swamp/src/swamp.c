@@ -16,6 +16,7 @@ int main(void) {
 
 	int cliente = esperar_cliente(SERVIDOR_SWAP);
 	atender_peticiones(cliente);
+
 	/*
 	while(1){
 		int cliente = esperar_cliente(SERVIDOR_SWAP);
@@ -27,7 +28,25 @@ int main(void) {
 	*/
 }
 
-//--------------------------------------------------------------------------------------------
+//---------------------------------------------------------- INIT SWAMP ----------------------------------------------------------//
+
+void init_swamp(){
+
+	//incializamos logger
+	LOGGER = log_create("swamp.log", "SWAMP", 0, LOG_LEVEL_INFO);
+
+	//inicializamos config
+	CONFIG = crear_archivo_config_swamp("/home/utnso/workspace/tp-2021-2c-DesacatadOS/swamp/src/swamp.config");
+
+	//iniciamos servidor
+	SERVIDOR_SWAP = iniciar_servidor(CONFIG.ip, CONFIG.puerto);
+
+	//Creamos archivos correspondientes
+	METADATA_ARCHIVOS = list_create();
+	FRAMES_SWAP = list_create();
+	crear_archivos();
+	crear_frames();
+}
 
 t_swamp_config crear_archivo_config_swamp(char* ruta) {
     t_config* swamp_config;
@@ -50,100 +69,25 @@ t_swamp_config crear_archivo_config_swamp(char* ruta) {
     return config;
 }
 
-void init_swamp(){
+void crear_frames() {
 
-	//incializamos logger
-	LOGGER = log_create("swamp.log", "SWAMP", 0, LOG_LEVEL_INFO);
+	int frames_x_archivo = CONFIG.tamanio_swamp/CONFIG.tamanio_pag;
 
-	//inicializamos config
-	CONFIG = crear_archivo_config_swamp("/home/utnso/workspace/tp-2021-2c-DesacatadOS/swamp/src/swamp.config");
+	for (int i = 0 ; i < size_char_array(CONFIG.archivos_swamp) ; i++) {
 
-	//iniciamos servidor
-	SERVIDOR_SWAP = iniciar_servidor(CONFIG.ip, CONFIG.puerto);
+		for (int j= 0 ; j < frames_x_archivo ; j++) {
+			t_pagina* pagina = malloc(sizeof(t_pagina));
 
-	//Creamos archivos correspondientes
-	METADATA_ARCHIVOS = list_create();
-	FRAMES_SWAP = list_create();
-	crear_archivos();
-	crear_frames();
-}
+			pagina->aid     = i;
+			pagina->offset  = j * CONFIG.tamanio_pag;
+			pagina->ocupado = false;
+			pagina->id      = -1;
+			pagina->pid     = -1;
 
-void atender_peticiones(int cliente){
-
-	t_peticion_swap operacion = recibir_operacion_swap(cliente);
-
-	recibir_entero(cliente);//size
-
-	uint32_t pid;
-	uint32_t nro_pagina;
-
-	switch (operacion) {
-	case RESERVAR_ESPACIO:;
-
-		pid = recibir_entero(cliente);
-		uint32_t cant_paginas = recibir_entero(cliente);
-		log_info(LOGGER, "reservando espacio para el proceso %i de swap",  pid);
-		int rta = reservar_espacio(pid , cant_paginas);
-
-		//todo : enviar_entero(cliente , rta);
-
-		break;
-
-	case TIRAR_A_SWAP:;
-
-		void* buffer_pag = malloc(CONFIG.tamanio_pag);
-		log_info(LOGGER, "tirando pagina %i del proceso %i a swap", nro_pagina , pid);
-		pid       = recibir_entero(cliente);
-		uint32_t nro_pagina  = recibir_entero(cliente);
-
-		buffer_pag = recibir_pagina(cliente, CONFIG.tamanio_pag);
-
-		// TODO //meter_contenido_pag_a_archivo() suerte @more
-
-
-		break;
-
-	case TRAER_DE_SWAP:;
-
-		pid = recibir_entero(cliente);
-		nro_pagina = recibir_entero(cliente);
-		log_info(LOGGER, "trayendo pagina %i del proceso %i de swap", nro_pagina , pid);
-		//TODO enviar_pagina_a_memoria() || swap_in()
-
-		bool _pagina_x_pid_y_nro(void * elemento){
-			t_pagina* pagina = (t_pagina*) elemento;
-			return pagina->pid == pid && pagina->id == nro_pagina;
+			list_add(FRAMES_SWAP, pagina);
 		}
 
-		t_pagina* pagina = (t_pagina*)list_find(FRAMES_SWAP, _pagina_x_pid_y_nro);
-
-		void* buffer = malloc(CONFIG.tamanio_pag);
-		//memcpy( );
-
-		break;
-
-	case LIBERAR_PAGINA:;
-
-		pid = recibir_entero(cliente);
-		nro_pagina = recibir_entero(cliente);
-		log_info(LOGGER, "liberando pagina %i del proceso %i de swap", nro_pagina , pid);
-		// TODO free_pag()
-
-	break;
-
-	case SOLICITAR_MARCOS_MAX:;
-
-		log_info(LOGGER, "retornando marcos max");
-		send(cliente, CONFIG.marcos_max, sizeof(uint32_t), 0);
-
-	break;
-
-	default:
-		log_info(LOGGER, "No entiendo la peticion");
-		; break;
-
 	}
-	return;
 }
 
 void crear_archivos() {
@@ -151,33 +95,18 @@ void crear_archivos() {
 	for (int i = 0 ; i < size_char_array(CONFIG.archivos_swamp) ; i++) {
 
 		t_metadata_archivo* md_archivo = malloc(sizeof(t_metadata_archivo));
+
 		md_archivo->id                 = i;
 		md_archivo->espacio_disponible = CONFIG.tamanio_swamp;
-		md_archivo->addr               = crear_archivo(CONFIG.archivos_swamp[i], CONFIG.tamanio_swamp);
+		md_archivo->fd                 = crear_archivo(CONFIG.archivos_swamp[i], CONFIG.tamanio_swamp);
+
 		list_add(METADATA_ARCHIVOS, md_archivo);
 	}
 
 }
 
-void crear_frames(){
 
-	int frames_x_archivo = CONFIG.tamanio_swamp/CONFIG.tamanio_pag;
-
-	for (int i = 0 ; i < size_char_array(CONFIG.archivos_swamp); i++){
-		for(int j= 0; j < frames_x_archivo; j++){
-			t_pagina* pagina = malloc(sizeof(t_pagina));
-			pagina->aid = i;
-			pagina->offset = j * CONFIG.tamanio_pag;
-			pagina->ocupado = false;
-			pagina->id = -1;
-			pagina->pid =-1;
-
-			list_add(FRAMES_SWAP, pagina);
-		}
-	}
-}
-
-void* crear_archivo(char* path, int size) {
+int crear_archivo(char* path, int size) {
 	int fd;
 	void* addr;
 
@@ -195,11 +124,126 @@ void* crear_archivo(char* path, int size) {
 		exit(1);
 	}
 
-	//TODO Falta llenarlos con el \0 y creo que msynquear
 	memset(addr, '\0', CONFIG.tamanio_swamp);
+	munmap(addr, CONFIG.tamanio_swamp);
 
-	return addr;
+	return fd;
+}
 
+//------------------------------------------------------- COORDINADOR Y OPERACIONES PPALES -------------------------------------------------------//
+
+void atender_peticiones(int cliente){
+
+	t_peticion_swap operacion = recibir_operacion_swap(cliente);
+
+	recibir_entero(cliente);//size
+
+	uint32_t pid;
+	uint32_t nro_pagina;
+	t_pagina* pagina = malloc(sizeof(t_pagina));
+	t_metadata_archivo* archivo = malloc(sizeof(t_metadata_archivo));
+	void* addr;
+	void* buffer_pag = malloc(CONFIG.tamanio_pag);
+
+	switch (operacion) {
+	case RESERVAR_ESPACIO:;
+
+		pid = recibir_entero(cliente);
+		uint32_t cant_paginas = recibir_entero(cliente);
+		log_info(LOGGER, "[SWAMP]: Reservando %i paginas para el proceso %i", cant_paginas, pid);
+		int rta = reservar_espacio(pid, cant_paginas);
+
+		//TODO: enviar_entero(cliente , rta);
+
+		break;
+
+	case TIRAR_A_SWAP:;
+
+		pid         = recibir_entero(cliente);
+		nro_pagina  = recibir_entero(cliente);
+		buffer_pag  = recibir_pagina(cliente, CONFIG.tamanio_pag);
+
+		log_info(LOGGER, "[SWAMP]: Guardando la pagina %i del proceso %i en SWAMP", nro_pagina, pid);
+
+		pagina = pagina_x_pid_y_nro(pid, nro_pagina);
+		archivo = (t_metadata_archivo*)list_find(METADATA_ARCHIVOS, pagina->aid);
+
+		addr = mmap(NULL, CONFIG.tamanio_pag, PROT_WRITE, MAP_SHARED, archivo->fd, 0);
+
+		if (addr == MAP_FAILED) {
+			perror("Error mapping \n");
+			exit(1);
+		}
+
+		memcpy(addr+pagina->offset, buffer_pag, CONFIG.tamanio_pag);
+		msync(addr, CONFIG.tamanio_pag, 0);
+
+		munmap(addr, CONFIG.tamanio_swamp);
+		free(buffer_pag);
+
+		break;
+
+	case TRAER_DE_SWAP:;
+
+		pid        = recibir_entero(cliente);
+		nro_pagina = recibir_entero(cliente);
+
+		log_info(LOGGER, "[SWAMP]: Mandando pagina %i del proceso %i a MP", nro_pagina, pid);
+
+		pagina = pagina_x_pid_y_nro(pid, nro_pagina);
+		archivo = (t_metadata_archivo*)list_find(METADATA_ARCHIVOS, pagina->aid);
+
+		addr = mmap(NULL, CONFIG.tamanio_pag, PROT_WRITE, MAP_SHARED, archivo->fd, 0);
+
+		if (addr == MAP_FAILED) {
+			perror("Error mapping \n");
+			exit(1);
+		}
+
+		memcpy(buffer_pag, addr+pagina->offset, CONFIG.tamanio_pag);
+		munmap(addr, CONFIG.tamanio_swamp);
+
+		enviar_pagina(TRAER_DE_SWAP, CONFIG.tamanio_pag, buffer_pag, cliente, pid, nro_pagina);
+
+		break;
+
+	case LIBERAR_PAGINA:;
+
+		pid = recibir_entero(cliente);
+		nro_pagina = recibir_entero(cliente);
+		log_info(LOGGER, "[SWAMP]: Liberando pagina %i del proceso %i", nro_pagina, pid);
+		// TODO free_pag()
+		//aumentar espacio disponible archivo
+		//poner todo de t_pagina en 0 y ocupado false
+
+		pagina = pagina_x_pid_y_nro(pid, nro_pagina);
+		archivo = (t_metadata_archivo*)list_find(METADATA_ARCHIVOS, pagina->aid);
+
+		archivo->espacio_disponible -= CONFIG.tamanio_pag;
+		pagina->id = -1;
+		pagina->pid = -1;
+		pagina->ocupado = false;
+
+	break;
+
+	case SOLICITAR_MARCOS_MAX:;
+
+		log_info(LOGGER, "[SWAMP->MP]: Mandando los marcos_max a MP...");
+		rta_marcos_max(cliente);
+
+	break;
+
+	default: log_info(LOGGER, "[SWAMP]: No entiendo la peticion, rey.");
+	break;
+
+	}
+
+	free(pagina);
+	free(archivo);
+	free(buffer_pag);
+	free(addr);
+
+	return;
 }
 
 int reservar_espacio(int pid, int cant_pag) {
@@ -207,14 +251,14 @@ int reservar_espacio(int pid, int cant_pag) {
 	int nro_archivo = archivo_proceso_existente(pid);
 	t_metadata_archivo* archivo;
 
+	//CASO 1: Proceso existente
+	if (nro_archivo != -1) {
 
-	if(nro_archivo != NULL){
-		//Proceso existente
 		archivo = (t_metadata_archivo*)list_get(METADATA_ARCHIVOS, nro_archivo);
 
-		if(archivo->espacio_disponible >= cant_pag * CONFIG.tamanio_pag){
+		if (archivo->espacio_disponible >= cant_pag * CONFIG.tamanio_pag) {
 
-			for(int i = 1; i <= cant_pag; i++){
+			for (int i = 1; i <= cant_pag; i++) {
 
 				bool pagina_libre_del_archivo(void * elemento){
 					t_pagina* pag_aux = (t_pagina*) elemento;
@@ -235,22 +279,25 @@ int reservar_espacio(int pid, int cant_pag) {
 				pagina->id = ((t_pagina*)list_get_maximum(FRAMES_SWAP,(void*) _ultima_pagina_proceso))->id + i;
 
 			}
+
 			archivo->espacio_disponible -= cant_pag * CONFIG.tamanio_pag;
 
 			log_info(LOGGER, "Se reservó %i paginas para el proceso %i",cant_pag,pid);
 			return 1;
 		}
-			log_info(LOGGER, "No hay espacio disponible para el proceso %i",pid);
-			return -1;
 
-	}else {
-		//Proceso nuevo
+		log_info(LOGGER, "No hay espacio disponible para el proceso %i",pid);
+		return -1;
+
+	} else {
+
+		//CASO 2: Proceso nuevo
 
 		archivo = obtener_archivo_mayor_espacio_libre();
 
-		if(archivo->espacio_disponible >= cant_pag * CONFIG.tamanio_pag){
+		if (archivo->espacio_disponible >= cant_pag * CONFIG.tamanio_pag) {
 
-			for(int i = 0; i < cant_pag; i++){
+			for (int i = 0 ; i < cant_pag ; i++) {
 
 				bool pagina_libre_del_archivo(void * elemento){
 					t_pagina* pag_aux = (t_pagina*) elemento;
@@ -262,7 +309,6 @@ int reservar_espacio(int pid, int cant_pag) {
 				pagina->ocupado = true;
 				pagina->pid = pid;
 				pagina->id = i;
-
 			}
 
 			archivo->espacio_disponible -= cant_pag * CONFIG.tamanio_pag;
@@ -276,37 +322,6 @@ int reservar_espacio(int pid, int cant_pag) {
 	}
 }
 
-
-int archivo_proceso_existente(int pid) {
-
-	bool existe_proceso_por_pid(void* elemento) {
-		t_pagina* pag_aux = (t_pagina*) elemento;
-		return pag_aux->pid == pid;
-	}
-
-    return ((t_pagina*)list_find(FRAMES_SWAP, existe_proceso_por_pid))->aid;
-}
-
-t_metadata_archivo* obtener_archivo_mayor_espacio_libre() {
-	bool _de_mayor_espacio(t_metadata_archivo* un_archivo, t_metadata_archivo* otro_archivo){
-		return un_archivo->espacio_disponible < otro_archivo->espacio_disponible;
-	}
-
-	list_sort(METADATA_ARCHIVOS, (void*)_de_mayor_espacio);
-	return (t_metadata_archivo*)list_get(METADATA_ARCHIVOS, 0);
-}
-
-int size_char_array(char** array) {
-
-	int i = 0;
-
-	while(array[i]!= NULL){
-		i++;
-	}
-
-	return i;
-}
-
 void rta_marcos_max(int socket) {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
 
@@ -315,7 +330,7 @@ void rta_marcos_max(int socket) {
 	paquete->buffer->size   = sizeof(uint32_t);
 	paquete->buffer->stream = malloc(paquete->buffer->size);
 
-	memcpy(paquete->buffer->stream, CONFIG.marcos_max, sizeof(uint32_t));
+	memcpy(paquete->buffer->stream, &CONFIG.marcos_max, sizeof(uint32_t));
 
 	int bytes;
 
@@ -324,4 +339,42 @@ void rta_marcos_max(int socket) {
 
 	free(a_enviar);
 	eliminar_paquete_swap(paquete);
+}
+
+
+//------------------------------------------------------------- FUNCIONES UTILES -------------------------------------------------------------//
+
+int archivo_proceso_existente(int pid) {
+
+	bool existe_proceso_por_pid(void* elemento) {
+		t_pagina* pag_aux = (t_pagina*) elemento;
+		return pag_aux->pid == pid;
+	}
+
+	t_pagina* pag = (t_pagina*)list_find(FRAMES_SWAP, existe_proceso_por_pid);
+
+	if (pag == NULL)
+		return -1;
+
+    return pag->aid;
+}
+
+t_pagina* pagina_x_pid_y_nro(int pid, int nro_pagina) {
+
+	bool _existe_pag_pid_nro(void * elemento) {
+		t_pagina* pagina = (t_pagina*) elemento;
+		return pagina->pid == pid && pagina->id == nro_pagina;
+	}
+
+	return (t_pagina*)list_find(FRAMES_SWAP, _existe_pag_pid_nro);
+}
+
+t_metadata_archivo* obtener_archivo_mayor_espacio_libre() {
+
+	bool _de_mayor_espacio(t_metadata_archivo* un_archivo, t_metadata_archivo* otro_archivo) {
+		return un_archivo->espacio_disponible < otro_archivo->espacio_disponible;
+	}
+
+	list_sort(METADATA_ARCHIVOS, (void*)_de_mayor_espacio);
+	return (t_metadata_archivo*)list_get(METADATA_ARCHIVOS, 0);
 }

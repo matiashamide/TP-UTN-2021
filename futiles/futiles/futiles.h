@@ -78,6 +78,7 @@ void* recibir_buffer(int* size, int socket_cliente);
 int esperar_cliente(int socket);
 int recibir_operacion(int socket);
 void enviar_mensaje(char* mensaje, int servidor);
+int size_char_array(char** array);
 
 
 // Envios MEMORIA - SWAP

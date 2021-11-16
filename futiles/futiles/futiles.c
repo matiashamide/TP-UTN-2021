@@ -198,6 +198,18 @@ void eliminar_paquete(t_paquete* paquete) {
    free(paquete);
 }
 
+int size_char_array(char** array) {
+
+	int i = 0;
+
+	while(array[i]!= NULL){
+		i++;
+	}
+
+	return i;
+}
+
+
 // --------------------------------------------------- MEMORIA + SWAMP ------------------------------------------------------//
 
 void solicitar_pagina(int socket, int pid, int nro_pagina) {
@@ -223,7 +235,7 @@ void solicitar_pagina(int socket, int pid, int nro_pagina) {
 }
 
 
-void enviar_pagina(t_peticion_swap sentido_swapeo, int tam_pagina, void* pagina, int socket_cliente, uint32_t pid , uint32_t nro_pagina) {
+void enviar_pagina(t_peticion_swap sentido_swapeo, int tam_pagina, void* pagina, int socket_cliente, uint32_t pid, uint32_t nro_pagina) {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
 
 	paquete->cod_op = sentido_swapeo;
