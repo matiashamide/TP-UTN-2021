@@ -75,12 +75,6 @@ void atender_peticiones(int cliente){
 	switch (operacion) {
 	case RESERVAR_ESPACIO:;
 
-
-
-		break;
-
-	case TRAER_DE_SWAP:;
-
 		break;
 
 	case TIRAR_A_SWAP:;
@@ -101,7 +95,8 @@ void atender_peticiones(int cliente){
 
 		break;
 
-	case SOLICITAR_PAGINA_SWAP:;
+	case TRAER_DE_SWAP:;
+
 		int pid_aux = recibir_entero(cliente);
 		int nro_pagina_aux = recibir_entero(cliente);
 

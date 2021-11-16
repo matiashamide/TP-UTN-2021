@@ -121,8 +121,10 @@ int solicitar_frame_en_ppal(int pid);
 bool marco_libre(t_frame* marco);
 bool hay_lugar_en_mp(int frames_necesarios);
 
-
+void tirar_a_swap(t_pagina* pagina);
+void pedir_pagina_swap(uint32_t pid, uint32_t nro_pagina);
 void swap(int cantidad_pags);
+int ejecutar_algoritmo_reemplazo(int pid);
 void reemplazar_pag_en_memoria(void);
 int reemplazar_con_LRU(int pid);
 int reemplazar_con_CLOCK(int pid);

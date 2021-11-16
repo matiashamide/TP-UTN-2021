@@ -41,6 +41,7 @@ void init_memoria() {
 	//TODO: Conectate con swap y pedile la nota de max marcos rey
 	CONEXION_SWAP = crear_conexion(CONFIG.ip_swap, CONFIG.puerto_swap);
 
+
 	//Senales
 	signal(SIGINT,  &signal_metricas);
 	signal(SIGUSR1, &signal_dump);
@@ -588,7 +589,7 @@ int traer_pagina_swap(t_pagina* pagina) {
 	//mutex
 
 
-	void* pag_serializada;
+	void* pag_serializada = malloc(CONFIG.tamanio_pagina);
 	int frame = ejecutar_algoritmo_reemplazo(pagina->pid);
 
 	memcpy(MEMORIA_PRINCIPAL + frame * CONFIG.tamanio_pagina, pag_serializada, CONFIG.tamanio_pagina);
@@ -599,27 +600,27 @@ int traer_pagina_swap(t_pagina* pagina) {
 	return frame;
 }
 
-void pedir_pagina_swap(uint32_t pid, uint32_t nro_pagina){
+void pedir_pagina_swap(uint32_t pid, uint32_t nro_pagina) {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
 
-	paquete->cod_op= SOLICITAR_PAGINA_SWAP;
+	paquete->cod_op = TRAER_DE_SWAP;
 	paquete->buffer = malloc(sizeof(t_buffer));
 	paquete->buffer->size = sizeof(uint32_t) * 2;
 	paquete->buffer->stream = malloc(paquete->buffer->size);
 
-	memcpy(paquete->buffer->stream, pid, sizeof(uint32_t));
+	memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
 	int offset = sizeof(uint32_t);
-	memcpy(paquete->buffer->stream + offset, nro_pagina, sizeof(uint32_t));
-	offset 	  += sizeof(uint32_t);
+	memcpy(paquete->buffer->stream + offset, &nro_pagina, sizeof(uint32_t));
+	offset += sizeof(uint32_t);
 
 	int bytes;
 
-	void* a_enviar = serializar_paquete_pagina(paquete, &bytes);
+	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
 
 	send(CONEXION_SWAP, a_enviar, bytes, 0);
 
 	free(a_enviar);
-	eliminar_paquete_pagina(paquete);
+	eliminar_paquete_swap(paquete);
 }
 
 int solicitar_frame_en_ppal(int pid){
@@ -772,7 +773,7 @@ void set_modificado(t_pagina* pag){
 void reemplazar_pag_en_memoria(){
 	//reemplazar segun asignacion
 
-	void* pagina_victima; // conseguida despues de correr el algoritmo
+	void* pagina_victima = malloc(CONFIG.tamanio_pagina); // conseguida despues de correr el algoritmo
 
 	t_paquete* paquete = malloc(sizeof(t_paquete));
 	//paquete->codigo_operacion = SWAP_OUT;
