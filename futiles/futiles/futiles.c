@@ -244,7 +244,6 @@ void reservar_espacio(int socket, int pid, int cant_pags) {
 	eliminar_paquete_swap(paquete);
 }
 
-
 void enviar_pagina(t_peticion_swap sentido_swapeo, int tam_pagina, void* pagina, int socket_cliente, uint32_t pid , uint32_t nro_pagina) {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
 

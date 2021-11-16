@@ -277,3 +277,22 @@ int size_char_array(char** array) {
 
 	return i;
 }
+
+void rta_marcos_max(int socket) {
+	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+
+	paquete->cod_op         = SOLICITAR_MARCOS_MAX;
+	paquete->buffer         = malloc(sizeof(t_buffer));
+	paquete->buffer->size   = sizeof(uint32_t);
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	memcpy(paquete->buffer->stream, CONFIG.marcos_max, sizeof(uint32_t));
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
+	send(socket, a_enviar, bytes, 0);
+
+	free(a_enviar);
+	eliminar_paquete_swap(paquete);
+}

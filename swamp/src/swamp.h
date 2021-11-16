@@ -13,13 +13,13 @@
 //ESTRUCTURAS
 
 typedef struct {
-    char*  ip;
-    char*  puerto;
-    int    tamanio_swamp;
-    int    tamanio_pag;
-    char** archivos_swamp;
-    int    marcos_max;
-    int    retardo_swap;
+	char*  ip;
+	char*  puerto;
+	int    tamanio_swamp;
+	int    tamanio_pag;
+	char** archivos_swamp;
+	int    marcos_max;
+	int    retardo_swap;
 }t_swamp_config;
 
 typedef struct {
@@ -61,4 +61,7 @@ t_metadata_archivo* obtener_archivo_mayor_espacio_libre();
 int archivo_proceso_existente(int pid);
 void crear_frames();
 int size_char_array(char** array);
+
+void rta_marcos_max(int socket);
+
 #endif /* SWAMP_H_ */

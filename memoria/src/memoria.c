@@ -600,29 +600,6 @@ int traer_pagina_swap(t_pagina* pagina) {
 	return frame;
 }
 
-void pedir_pagina_swap(uint32_t pid, uint32_t nro_pagina) {
-	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
-
-	paquete->cod_op = TRAER_DE_SWAP;
-	paquete->buffer = malloc(sizeof(t_buffer));
-	paquete->buffer->size = sizeof(uint32_t) * 2;
-	paquete->buffer->stream = malloc(paquete->buffer->size);
-
-	memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
-	int offset = sizeof(uint32_t);
-	memcpy(paquete->buffer->stream + offset, &nro_pagina, sizeof(uint32_t));
-	offset += sizeof(uint32_t);
-
-	int bytes;
-
-	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
-
-	send(CONEXION_SWAP, a_enviar, bytes, 0);
-
-	free(a_enviar);
-	eliminar_paquete_swap(paquete);
-}
-
 int solicitar_frame_en_ppal(int pid){
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
@@ -802,4 +779,47 @@ void signal_dump(){
 void signal_clean_tlb(){
 	log_info(LOGGER, "[MEMORIA]: Recibi la senial para limpiar TLB, limpiando\n...");
 	limpiar_tlb();
+}
+
+//------------------------------------------------------------- CONEXION SWAMP ------------------------------------------------------------//
+
+void solicitar_marcos_max_swap(int socket) {
+	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+	int offset = 0;
+
+	paquete->cod_op         = SOLICITAR_MARCOS_MAX;
+	paquete->buffer         = malloc(sizeof(t_buffer));
+	paquete->buffer->size   = 0;
+	paquete->buffer->stream = NULL;
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
+	send(socket, a_enviar, bytes, 0);
+
+	free(a_enviar);
+	eliminar_paquete_swap(paquete);
+}
+
+void pedir_pagina_swap(uint32_t pid, uint32_t nro_pagina) {
+	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+
+	paquete->cod_op = TRAER_DE_SWAP;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = sizeof(uint32_t) * 2;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
+	int offset = sizeof(uint32_t);
+	memcpy(paquete->buffer->stream + offset, &nro_pagina, sizeof(uint32_t));
+	offset += sizeof(uint32_t);
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
+
+	send(CONEXION_SWAP, a_enviar, bytes, 0);
+
+	free(a_enviar);
+	eliminar_paquete_swap(paquete);
 }
