@@ -16,7 +16,7 @@ int main(void) {
 }
 
 
-//------------------------------------------------------------- INICIALIZACION MEMORIA ------------------------------------------------------------//
+//--------------------------------------------------- INICIALIZACION MEMORIA ---------------------------------------------//
 
 void init_memoria() {
 
@@ -38,9 +38,8 @@ void init_memoria() {
         return;
 	}
 
-	//TODO: Conectate con swap y pedile la nota de max marcos rey
 	CONEXION_SWAP = crear_conexion(CONFIG.ip_swap, CONFIG.puerto_swap);
-
+	MAX_MARCOS_SWAP = solicitar_marcos_max_swap();
 
 	//Senales
 	signal(SIGINT,  &signal_metricas);
@@ -69,9 +68,11 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
     config.tamanio_pagina      = config_get_int_value   (memoria_config, "TAMANIO_PAGINA");
     config.alg_remp_mmu        = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_MMU");
     config.tipo_asignacion     = config_get_string_value(memoria_config, "TIPO_ASIGNACION");
+
     if(string_equals_ignore_case(config.tipo_asignacion,"FIJA")){
-    	config.marcos_max          = config_get_int_value   (memoria_config, "MARCOS_MAXIMOS");
+    	config.marcos_max      = config_get_int_value   (memoria_config, "MARCOS_MAXIMOS");
     }
+
     config.cant_entradas_tlb   = config_get_int_value   (memoria_config, "CANTIDAD_ENTRADAS_TLB");
     config.alg_reemplazo_tlb   = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_TLB");
     config.retardo_acierto_tlb = config_get_int_value   (memoria_config, "RETARDO_ACIERTO_TLB");
@@ -574,8 +575,6 @@ heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
 	return header;
 }
 
-
-
 int buscar_pagina(int pid, int pag) {
 	t_list* pags_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
 	t_pagina* pagina = (t_pagina*)list_get(pags_proceso, pag);
@@ -656,10 +655,6 @@ int solicitar_frame_en_ppal(int pid){
 	return frame->id;
 }
 
-bool marco_libre(t_frame* marco) {
-	return marco->ocupado;
-}
-
 int ejecutar_algoritmo_reemplazo(int pid) {
 
 	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb , "LRU" ))
@@ -716,6 +711,26 @@ void tirar_a_swap(t_pagina* pagina) {
 
 }
 
+//TODO: no olvidar esta funcion
+void reemplazar_pag_en_memoria(){
+	//reemplazar segun asignacion
+
+	void* pagina_victima = malloc(CONFIG.tamanio_pagina); // conseguida despues de correr el algoritmo
+
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+	//paquete->codigo_operacion = SWAP_OUT;
+
+	t_buffer* buffer = malloc(sizeof(t_buffer));
+	buffer->size = CONFIG.tamanio_pagina;
+	buffer->stream = pagina_victima;
+
+	void* pagina_a_enviar = serializar_paquete(paquete , CONFIG.tamanio_pagina + sizeof(int) * 2);
+
+	//enviar_paquete(paquete , conexion con swap); swap sera servidor?
+
+	eliminar_paquete(paquete);
+}
+
 int reemplazar_con_CLOCK(int pid) {
 	return 0;
 }
@@ -745,6 +760,12 @@ t_list* buscar_paginas_mp(){
 	return paginasEnMp;
 }
 
+//-------------------------------------------- FUNCIONES DE ESTADO - t_frame & t_pagina - ------------------------------//
+
+bool marco_libre(t_frame* marco) {
+	return marco->ocupado;
+}
+
 int no_lock(t_pagina* pag){
 	return !pag->lock;
 }
@@ -769,27 +790,7 @@ void set_modificado(t_pagina* pag){
 	pag->modificado = 1;
 }
 
-//TODO: no olvidar esta funcion
-void reemplazar_pag_en_memoria(){
-	//reemplazar segun asignacion
-
-	void* pagina_victima = malloc(CONFIG.tamanio_pagina); // conseguida despues de correr el algoritmo
-
-	t_paquete* paquete = malloc(sizeof(t_paquete));
-	//paquete->codigo_operacion = SWAP_OUT;
-
-	t_buffer* buffer = malloc(sizeof(t_buffer));
-	buffer->size = CONFIG.tamanio_pagina;
-	buffer->stream = pagina_victima;
-
-	void* pagina_a_enviar = serializar_paquete(paquete , CONFIG.tamanio_pagina + sizeof(int) * 2);
-
-	//enviar_paquete(paquete , conexion con swap); swap sera servidor?
-
-	eliminar_paquete(paquete);
-}
-
-//------------------------------------------------------------- FUNCIONES SIGNAL ------------------------------------------------------------//
+//--------------------------------------------------- FUNCIONES SIGNAL ----------------------------------------------------//
 
 void signal_metricas(){
 	log_info(LOGGER, "[MEMORIA]: Recibi la senial de imprimir metricas, imprimiendo\n...");
@@ -804,7 +805,7 @@ void signal_clean_tlb(){
 	limpiar_tlb();
 }
 
-//------------------------------------------------------------- CONEXION SWAMP ------------------------------------------------------------//
+//--------------------------------------------------- CONEXION SWAMP --------------------------------------------------//
 
 int solicitar_marcos_max_swap() {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));

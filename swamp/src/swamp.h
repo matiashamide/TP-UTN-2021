@@ -64,5 +64,6 @@ t_pagina* pagina_x_pid_y_nro(int pid, int nro_pagina);
 
 int reservar_espacio(int pid , int cant_paginas);
 void rta_marcos_max(int socket);
+void rta_reservar_espacio(int socket, int rta);
 
 #endif /* SWAMP_H_ */

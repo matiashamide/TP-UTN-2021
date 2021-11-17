@@ -259,10 +259,6 @@ void enviar_pagina(t_peticion_swap sentido_swapeo, int tam_pagina, void* pagina,
 	eliminar_paquete_swap(paquete);
 }
 
-void enviar_entero(int conexion){
-	//todo
-}
-
 void* serializar_paquete_swap(t_paquete_swap* paquete, int* bytes) {
 
    int size_serializado = sizeof(t_peticion_swap) + sizeof(uint32_t) + paquete->buffer->size;

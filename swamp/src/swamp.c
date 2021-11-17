@@ -28,20 +28,20 @@ int main(void) {
 	*/
 }
 
-//---------------------------------------------------------- INIT SWAMP ----------------------------------------------------------//
+//------------------------------------------------------ INIT SWAMP -----------------------------------------------------//
 
 void init_swamp(){
 
-	//incializamos logger
+	//Incializamos logger
 	LOGGER = log_create("swamp.log", "SWAMP", 0, LOG_LEVEL_INFO);
 
-	//inicializamos config
+	//Inicializamos archivo de configuracion
 	CONFIG = crear_archivo_config_swamp("/home/utnso/workspace/tp-2021-2c-DesacatadOS/swamp/src/swamp.config");
 
-	//iniciamos servidor
+	//Iniciamos servidor
 	SERVIDOR_SWAP = iniciar_servidor(CONFIG.ip, CONFIG.puerto);
 
-	//Creamos archivos correspondientes
+	//Creamos estructuras correspondientes
 	METADATA_ARCHIVOS = list_create();
 	FRAMES_SWAP = list_create();
 	crear_archivos();
@@ -49,9 +49,8 @@ void init_swamp(){
 }
 
 t_swamp_config crear_archivo_config_swamp(char* ruta) {
-    t_config* swamp_config;
-    swamp_config = config_create(ruta);
-    t_swamp_config config;
+	t_swamp_config config;
+	t_config* swamp_config = config_create(ruta);
 
     if (swamp_config == NULL) {
         printf("No se pudo leer el archivo de configuracion de Swamp\n");
@@ -105,7 +104,6 @@ void crear_archivos() {
 
 }
 
-
 int crear_archivo(char* path, int size) {
 	int fd;
 	void* addr;
@@ -130,13 +128,13 @@ int crear_archivo(char* path, int size) {
 	return fd;
 }
 
-//------------------------------------------------------- COORDINADOR Y OPERACIONES PPALES -------------------------------------------------------//
+//----------------------------------------------- COORDINADOR Y OPERACIONES PPALES -----------------------------------------//
 
 void atender_peticiones(int cliente){
 
 	t_peticion_swap operacion = recibir_operacion_swap(cliente);
 
-	recibir_entero(cliente);//size
+	recibir_entero(cliente); //Size de lo que manda
 
 	uint32_t pid;
 	uint32_t nro_pagina;
@@ -146,14 +144,16 @@ void atender_peticiones(int cliente){
 	void* buffer_pag = malloc(CONFIG.tamanio_pag);
 
 	switch (operacion) {
+
 	case RESERVAR_ESPACIO:;
 
 		pid = recibir_entero(cliente);
 		uint32_t cant_paginas = recibir_entero(cliente);
-		log_info(LOGGER, "[SWAMP]: Reservando %i paginas para el proceso %i", cant_paginas, pid);
-		int rta = reservar_espacio(pid, cant_paginas);
 
-		//TODO: enviar_entero(cliente , rta);
+		log_info(LOGGER, "[SWAMP]: Reservando %i paginas para el proceso %i", cant_paginas, pid);
+
+		int rta = reservar_espacio(pid, cant_paginas);
+		rta_reservar_espacio(cliente, rta);
 
 		break;
 
@@ -212,16 +212,14 @@ void atender_peticiones(int cliente){
 		pid = recibir_entero(cliente);
 		nro_pagina = recibir_entero(cliente);
 		log_info(LOGGER, "[SWAMP]: Liberando pagina %i del proceso %i", nro_pagina, pid);
-		// TODO free_pag()
-		//aumentar espacio disponible archivo
-		//poner todo de t_pagina en 0 y ocupado false
 
-		pagina = pagina_x_pid_y_nro(pid, nro_pagina);
+		pagina  = pagina_x_pid_y_nro(pid, nro_pagina);
 		archivo = (t_metadata_archivo*)list_find(METADATA_ARCHIVOS, pagina->aid);
 
 		archivo->espacio_disponible -= CONFIG.tamanio_pag;
-		pagina->id = -1;
-		pagina->pid = -1;
+
+		pagina->id      = -1;
+		pagina->pid     = -1;
 		pagina->ocupado = false;
 
 	break;
@@ -275,8 +273,8 @@ int reservar_espacio(int pid, int cant_pag) {
 				t_pagina* pagina = list_find(FRAMES_SWAP, pagina_libre_del_archivo);
 
 				pagina->ocupado = true;
-				pagina->pid = pid;
-				pagina->id = ((t_pagina*)list_get_maximum(FRAMES_SWAP,(void*) _ultima_pagina_proceso))->id + i;
+				pagina->pid     = pid;
+				pagina->id      = ((t_pagina*)list_get_maximum(FRAMES_SWAP,(void*) _ultima_pagina_proceso))->id + i;
 
 			}
 
@@ -341,8 +339,27 @@ void rta_marcos_max(int socket) {
 	eliminar_paquete_swap(paquete);
 }
 
+void rta_reservar_espacio(int socket, int rta) {
+	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
 
-//------------------------------------------------------------- FUNCIONES UTILES -------------------------------------------------------------//
+	paquete->cod_op         = RESERVAR_ESPACIO;
+	paquete->buffer         = malloc(sizeof(t_buffer));
+	paquete->buffer->size   = sizeof(uint32_t);
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	memcpy(paquete->buffer->stream, &rta, sizeof(uint32_t));
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
+	send(socket, a_enviar, bytes, 0);
+
+	free(a_enviar);
+	eliminar_paquete_swap(paquete);
+}
+
+
+//--------------------------------------------------- FUNCIONES UTILES ---------------------------------------------------//
 
 int archivo_proceso_existente(int pid) {
 
