@@ -85,6 +85,11 @@ pthread_mutex_t mutex_frames;
 pthread_mutex_t mutex_tablas_dp;
 pthread_mutex_t mutex_swamp;
 
+//// ---- errores MATELIB
+int MATE_FREE_FAULT  = -5;
+int* MATE_READ_FAULT  = -6;
+int MATE_WRITE_FAULT = -7;
+
 // FUNCIONES
 
 //// ---- funciones de inicializacion
@@ -103,6 +108,7 @@ void* memread(int pid,int dir_logica);
 int   memwrite(int pid,int dir_logica,void* contenido,int size);
 
 //// ---- funciones allocs / headers
+void* obtener_contenido_alloc(int pid, int dir_logica);
 t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual);
 int obtener_pos_ultimo_alloc(int pid);
 void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header);

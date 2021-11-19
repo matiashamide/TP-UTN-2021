@@ -216,7 +216,9 @@ void atender_peticiones(int cliente){
 		pagina  = pagina_x_pid_y_nro(pid, nro_pagina);
 		archivo = (t_metadata_archivo*)list_find(METADATA_ARCHIVOS, pagina->aid);
 
-		archivo->espacio_disponible -= CONFIG.tamanio_pag;
+		archivo->espacio_disponible += CONFIG.tamanio_pag;
+
+		//TODO: si es asignacion fija no desasignarle al proceso la pag
 
 		pagina->id      = -1;
 		pagina->pid     = -1;

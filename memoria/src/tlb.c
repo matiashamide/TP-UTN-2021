@@ -29,8 +29,6 @@ t_list* crear_estructura(int cant_entradas){
 	return estructuraTLB;
 }
 
-
-
 int buscar_pag_tlb(int pid, int pag) {
 
 	int _mismo_pid_y_pag(entrada_tlb* entrada) {
@@ -42,15 +40,16 @@ int buscar_pag_tlb(int pid, int pag) {
 	pthread_mutex_unlock(&mutexTLB);
 
 	if (entrada != NULL) {
-		//tlb hit
-		registrar_evento(pid, 0);
+		//TLB HIT
+		registrar_evento(pid, 1);
 		log_info(LOGGER , "TLB HIT: " , "pag %i" ,  entrada->pag ,"pid %i" ,  entrada->pid);
 		entrada->ultimo_uso = obtener_tiempo();
 		return entrada->marco;
 	}
 
-	//tlb miss
-	registrar_evento(pid, 1);
+	//TLB MISS
+	registrar_evento(pid, 0);
+	log_info(LOGGER , "TLB MISS: ", "pag %i" , pag ,"pid %i", pid);
 	return -1;
 }
 
@@ -65,10 +64,10 @@ int obtener_tiempo(){
 void reemplazar_FIFO(int pid, int pag, int frame){
 
 	entrada_tlb* entrada_nueva = malloc(sizeof(entrada_tlb));
-		entrada_nueva->pag = pag;
-		entrada_nueva->pid = pid;
-		entrada_nueva->marco = frame;
-		entrada_nueva->ultimo_uso = -1;
+	entrada_nueva->pag        = pag;
+	entrada_nueva->pid        = pid;
+	entrada_nueva->marco      = frame;
+	entrada_nueva->ultimo_uso = -1;
 
 	log_info(LOGGER , "TLB miss : reemplazamos por la nueva entrada: " , "pag %i" ,  entrada_nueva->pag ,"pid %i \n" ,  entrada_nueva->pid);
 
@@ -83,34 +82,34 @@ void reemplazar_FIFO(int pid, int pag, int frame){
 }
 
 void actualizar_tlb(int pid, int pag, int frame){
-
 	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb,"LRU")) {
 		reemplazar_LRU(pid, pag, frame);
 	}
 	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb, "FIFO")) {
 		reemplazar_FIFO(pid, pag, frame);
 	}
-
 }
 
 void reemplazar_LRU(int pid, int pag, int frame){
 
 	entrada_tlb* entrada_nueva = malloc(sizeof(entrada_tlb));
-		entrada_nueva->pid 	 = pid;
-		entrada_nueva->pag   = pag;
-		entrada_nueva->marco = frame;
-		entrada_nueva->ultimo_uso = obtener_tiempo();
+	entrada_nueva->pid 	      = pid;
+	entrada_nueva->pag        = pag;
+	entrada_nueva->marco      = frame;
+	entrada_nueva->ultimo_uso = obtener_tiempo();
 
 	log_info(LOGGER , "TLB miss : reemplazamos por la nueva entrada: " , "pag %i" ,  entrada_nueva->pag ,"pid %i" ,  entrada_nueva->pid , " ultimo uso %i \n", entrada_nueva ->ultimo_uso);
 
 	int masVieja(entrada_tlb* una_entrada, entrada_tlb* otra_entrada){
-	      return (otra_entrada->ultimo_uso > una_entrada->ultimo_uso);
-     }
+		return (otra_entrada->ultimo_uso > una_entrada->ultimo_uso);
+    }
 
 	pthread_mutex_lock(&mutexTLB);
+
 	list_sort(TLB, (void*) masVieja);
 	entrada_tlb* victima = (entrada_tlb*)list_get(TLB , 0);
-	list_replace_and_destroy_element(TLB , 0 , entrada_nueva , free);
+	list_replace_and_destroy_element(TLB, 0, entrada_nueva, free);
+
 	pthread_mutex_unlock(&mutexTLB);
 
 	log_info(LOGGER ," entrada victima por LRU : pag %i" , victima->pag ," pid %i " , victima->pid , " ultimo uso %i \n", victima ->ultimo_uso);
@@ -118,8 +117,8 @@ void reemplazar_LRU(int pid, int pag, int frame){
 }
 
 
-//0 --> HIT
-//1 --> MISS
+//1 --> HIT
+//0 --> MISS
 void registrar_evento(int pid, int event){
 
 	int _proceso_con_id(tlb_event* evento) {
@@ -134,19 +133,19 @@ void registrar_evento(int pid, int event){
 		nodo_proceso->contador++;
 	} else {
 		tlb_event* nodo_nuevo = malloc(sizeof(tlb_event));
-		nodo_nuevo->pid = pid;
-		nodo_nuevo->contador = 1;
+		nodo_nuevo->pid       = pid;
+		nodo_nuevo->contador  = 1;
 		list_add(event_list, nodo_nuevo);
 	}
 }
 
 void printear_TLB(int entradas){
 	printf("-------------------\n");
-	for(int i=0 ; i < entradas ; i++){
+	for(int i = 0 ; i < entradas ; i++){
 		printf("entrada      %i :\n " , i);
-		printf("pag          %i     " , ((entrada_tlb*)list_get(TLB , i))->pag  );
-		printf("marco        %i     " , ((entrada_tlb*)list_get(TLB , i))->marco  );
-		printf("ultimo uso   %i   \n" , ((entrada_tlb*)list_get(TLB , i))->ultimo_uso);
+		printf("pag          %i     " , ((entrada_tlb*)list_get(TLB, i))->pag       );
+		printf("marco        %i     " , ((entrada_tlb*)list_get(TLB, i))->marco     );
+		printf("ultimo uso   %i   \n" , ((entrada_tlb*)list_get(TLB, i))->ultimo_uso);
 	}
 }
 
@@ -157,7 +156,7 @@ void generar_metricas_tlb(){
 	printf("[HITS TOTALES]: %i \n", list_size(TLB_HITS));
 	printf("[HITS POR PROCESO]");
 
-	for (int i=0 ; i < list_size(TLB_HITS) ; i++) {
+	for (int i = 0 ; i < list_size(TLB_HITS) ; i++) {
 		tlb_event* nodo = (tlb_event*)list_get(TLB_HITS, i);
 		printf("Proceso %i ---> %i HITS", nodo->pid, nodo->contador);
 	}
@@ -180,19 +179,3 @@ void limpiar_tlb(){
 	list_clean_and_destroy_elements(TLB_HITS, free);
 	list_clean_and_destroy_elements(TLB_MISS, free);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
