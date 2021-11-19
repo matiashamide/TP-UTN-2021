@@ -79,10 +79,10 @@ int POSICION_CLOCK;
 void* MEMORIA_PRINCIPAL;
 
 //// ---- semaforos
-pthread_mutex_t mutexMemoria;
-pthread_mutex_t mutexMarcos;
-pthread_mutex_t mutexTablas;
-pthread_mutex_t mutexSWAP;
+pthread_mutex_t mutex_memoria;
+pthread_mutex_t mutex_frames;
+pthread_mutex_t mutex_tablas_dp;
+pthread_mutex_t mutex_swamp;
 
 // FUNCIONES
 
@@ -114,7 +114,7 @@ int obtener_pos_ultimo_alloc(int pid);
 int guardar_en_swap(int pid, void* contenido);
  int buscar_pagina(int pid, int pag);
  t_list* paginas_en_mp();
-int traer_pagina_swap(t_pagina* pag);
+int traer_pagina_a_mp(t_pagina* pag);
 heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header);
 void* traer_marquinhos_del_proceso(int pid);
 int solicitar_frame_en_ppal(int pid);
