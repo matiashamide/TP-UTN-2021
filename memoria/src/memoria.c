@@ -50,6 +50,30 @@ void init_memoria() {
 	iniciar_paginacion();
 }
 
+void iniciar_paginacion() {
+
+	int cant_frames_ppal = CONFIG.tamanio_memoria / CONFIG.tamanio_pagina;
+
+	log_info(LOGGER, "Tengo %d marcos de %d bytes en memoria principal", cant_frames_ppal, CONFIG.tamanio_pagina);
+
+	//Creamos lista de tablas de paginas
+	TABLAS_DE_PAGINAS = list_create();
+
+	//Creamos lista de frames de memoria ppal.
+	FRAMES_MEMORIA = list_create();
+
+	for (int i = 0 ; i < cant_frames_ppal ; i++) {
+
+		t_frame* frame = malloc(sizeof(t_frame));
+		frame->ocupado = false;
+		frame->id      = i;
+
+		list_add(FRAMES_MEMORIA, frame);
+	}
+
+	POSICION_CLOCK = 0;
+}
+
 t_memoria_config crear_archivo_config_memoria(char* ruta) {
     t_config* memoria_config;
     memoria_config = config_create(ruta);
@@ -79,30 +103,6 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
     config.retardo_fallo_tlb   = config_get_int_value   (memoria_config, "RETARDO_FALLO_TLB");
 
     return config;
-}
-
-void iniciar_paginacion() {
-
-	int cant_frames_ppal = CONFIG.tamanio_memoria / CONFIG.tamanio_pagina;
-
-	log_info(LOGGER, "Tengo %d marcos de %d bytes en memoria principal", cant_frames_ppal, CONFIG.tamanio_pagina);
-
-	//Creamos lista de tablas de paginas
-	TABLAS_DE_PAGINAS = list_create();
-
-	//Creamos lista de frames de memoria ppal.
-	FRAMES_MEMORIA = list_create();
-
-	for (int i = 0 ; i < cant_frames_ppal ; i++) {
-
-		t_frame* frame = malloc(sizeof(t_frame));
-		frame->ocupado = false;
-		frame->id      = i;
-
-		list_add(FRAMES_MEMORIA, frame);
-	}
-
-	POSICION_CLOCK = 0;
 }
 
 //--------------------------------------------------------- COORDINACION DE CARPINCHOS ----------------------------------------------------------//
@@ -160,7 +160,7 @@ void atender_carpinchos(int cliente) {
 	}
 }
 
-//------------------------------------------------------------- FUNCIONES PRINCIPALES ------------------------------------------------------------//
+//--------------------------------------------------- FUNCIONES PRINCIPALES ----------------------------------------------//
 
 int memalloc(int pid, int size){
 	int dir_logica = -1;
@@ -324,29 +324,10 @@ void* memread()     {return 0;}
 int   memwrite()	{return 0;}
 
 
-//------------------------------------------------------------- FUNCIONES SECUNDARIAS ------------------------------------------------------------//
+//------------------------------------------------- FUNCIONES ALLOCs/HEADERs ---------------------------------------------//
 
-int obtener_pos_ultimo_alloc(int pid) {
+//TODO: Ver si estamos devolviendo la DL o DF y Poner lock a la pagina para que no me la saque otro proceso mientras la uso
 
-	int pos_ult_alloc = 0;
-
-	heap_metadata* header = malloc(sizeof(heap_metadata));
-	header->next_alloc = 0;
-
-	while(header->next_alloc != NULL){
-
-		header = desserializar_header(pid , floor(pos_ult_alloc / CONFIG.tamanio_pagina ), header->next_alloc);
-		pos_ult_alloc = header->next_alloc;
-
-	}
-
-	free(header);
-	return pos_ult_alloc;
-}
-
-
-//TODO: Ver si estamos devolviendo la DL o DF
-//TODO: Poner lock a la pagina para que no me la saque otro proceso mientras la uso
 t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 
 	t_alloc_disponible* alloc = malloc(sizeof(t_alloc_disponible));
@@ -472,6 +453,24 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 	return alloc;
 }
 
+int obtener_pos_ultimo_alloc(int pid) {
+
+	int pos_ult_alloc = 0;
+
+	heap_metadata* header = malloc(sizeof(heap_metadata));
+	header->next_alloc = 0;
+
+	while(header->next_alloc != NULL){
+
+		header = desserializar_header(pid , floor(pos_ult_alloc / CONFIG.tamanio_pagina ), header->next_alloc);
+		pos_ult_alloc = header->next_alloc;
+
+	}
+
+	free(header);
+	return pos_ult_alloc;
+}
+
 void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 
 	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
@@ -499,34 +498,6 @@ void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 	}
 
 	deslockear(pagina);
-}
-
-int reservar_espacio_en_swap( int pid, int cant_pags) {
-	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
-	int offset = 0;
-
-	paquete->cod_op         = RESERVAR_ESPACIO;
-	paquete->buffer         = malloc(sizeof(t_buffer));
-	paquete->buffer->size   = sizeof(uint32_t) * 2;
-	paquete->buffer->stream = malloc(paquete->buffer->size);
-
-	memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
-	offset += sizeof(uint32_t);
-	memcpy(paquete->buffer->stream + offset, &cant_pags, sizeof(uint32_t));
-
-	int bytes;
-
-	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
-
-	pthread_mutex_lock(&mutex_swamp);
-	send(CONEXION_SWAP, a_enviar, bytes, 0);
-	int retorno = recibir_entero(CONEXION_SWAP);
-	pthread_mutex_unlock(&mutex_swamp);
-
-	free(a_enviar);
-	eliminar_paquete_swap(paquete);
-
-	return retorno;
 }
 
 heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
@@ -566,6 +537,8 @@ heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
 
 	return header;
 }
+
+//------------------------------------------------ FUNCIONES SECUNDARIAS -----------------------------------------------//
 
 int buscar_pagina(int pid, int pag) {
 	t_list* pags_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
@@ -630,6 +603,9 @@ int solicitar_frame_en_ppal(int pid){
 	return ejecutar_algoritmo_reemplazo(pid);
 
 }
+
+
+//------------------------------------------------ ALGORITMOS DE REEMPLAZO -----------------------------------------------//
 
 int ejecutar_algoritmo_reemplazo(int pid) {
 
@@ -725,6 +701,8 @@ int reemplazar_con_CLOCK(int pid) {
 	return victima->frame_ppal;
 }
 
+//--------------------------------------------- FUNCIONES PARA LAS LISTAS ADMIN. -----------------------------------------//
+
 bool hay_frames_libres_mp(int cant_frames_necesarios) {
 	t_list* frames_libes_MP = list_filter(FRAMES_MEMORIA, (void*)esta_libre_frame);
 	return list_size(frames_libes_MP) >= cant_frames_necesarios;
@@ -749,6 +727,123 @@ t_list* paginas_en_mp(){
 
 	list_destroy(paginas);
 	return paginas_en_mp;
+}
+
+//------------------------------------------------ INTERACCIONES CON SWAMP -----------------------------------------------//
+
+int solicitar_marcos_max_swap() {
+	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+
+	paquete->cod_op         = SOLICITAR_MARCOS_MAX;
+	paquete->buffer         = malloc(sizeof(t_buffer));
+	paquete->buffer->size   = 0;
+	paquete->buffer->stream = NULL;
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
+
+	pthread_mutex_lock(&mutex_swamp);
+	send(CONEXION_SWAP, a_enviar, bytes, 0);
+	int retorno = recibir_entero(CONEXION_SWAP);
+	pthread_mutex_unlock(&mutex_swamp);
+
+	free(a_enviar);
+	eliminar_paquete_swap(paquete);
+
+	return retorno;
+}
+
+int reservar_espacio_en_swap(int pid, int cant_pags) {
+	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+	int offset = 0;
+
+	paquete->cod_op         = RESERVAR_ESPACIO;
+	paquete->buffer         = malloc(sizeof(t_buffer));
+	paquete->buffer->size   = sizeof(uint32_t) * 2;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
+	offset += sizeof(uint32_t);
+	memcpy(paquete->buffer->stream + offset, &cant_pags, sizeof(uint32_t));
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
+
+	pthread_mutex_lock(&mutex_swamp);
+	send(CONEXION_SWAP, a_enviar, bytes, 0);
+	int retorno = recibir_entero(CONEXION_SWAP);
+	pthread_mutex_unlock(&mutex_swamp);
+
+	free(a_enviar);
+	eliminar_paquete_swap(paquete);
+
+	return retorno;
+}
+
+int traer_pagina_a_mp(t_pagina* pagina) {
+	//TODO: Mutexear?
+	void* pag_serializada = traer_de_swap(pagina->pid, pagina->id);
+
+	//Frame en donde voy a alojar la pagina que me traigo de SWAP: ya sea un frame libre o bien un frame de pag q reempl.
+
+	pthread_mutex_lock(&mutex_frames);
+	t_frame* frame = (t_frame*)list_find(FRAMES_MEMORIA, (void*)esta_libre_frame);
+	int pos_frame;
+
+	if (frame != NULL) {
+		frame->ocupado = true;
+		pos_frame = frame->id;
+	} else {
+		pos_frame = ejecutar_algoritmo_reemplazo(pagina->pid);
+	}
+	pthread_mutex_unlock(&mutex_frames);
+
+	memcpy(MEMORIA_PRINCIPAL + pos_frame * CONFIG.tamanio_pagina, pag_serializada, CONFIG.tamanio_pagina);
+
+	pagina->presencia  = true;
+	pagina->modificado = 0;
+
+	return pos_frame;
+}
+
+void* traer_de_swap(uint32_t pid, uint32_t nro_pagina) {
+	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+
+	paquete->cod_op         = TRAER_DE_SWAP;
+	paquete->buffer         = malloc(sizeof(t_buffer));
+	paquete->buffer->size   = sizeof(uint32_t) * 2;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
+	int offset = sizeof(uint32_t);
+	memcpy(paquete->buffer->stream + offset, &nro_pagina, sizeof(uint32_t));
+	offset += sizeof(uint32_t);
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
+	void* buffer_pag = malloc;
+
+	pthread_mutex_lock(&mutex_swamp);
+	send(CONEXION_SWAP, a_enviar, bytes, 0);
+	buffer_pag = recibir_pagina(CONEXION_SWAP, CONFIG.tamanio_pagina);
+	pthread_mutex_unlock(&mutex_swamp);
+
+	free(a_enviar);
+	eliminar_paquete_swap(paquete);
+
+	return buffer_pag;
+}
+
+void tirar_a_swap(t_pagina* pagina) {
+
+	void* buffer_pag = malloc(CONFIG.tamanio_pagina);
+	memcpy(buffer_pag, MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
+	enviar_pagina(TIRAR_A_SWAP, CONFIG.tamanio_pagina, buffer_pag, CONEXION_SWAP, pagina->pid , pagina-> id);
+	free(buffer_pag);
+
 }
 
 //-------------------------------------------- FUNCIONES DE ESTADO - t_frame & t_pagina - ------------------------------//
@@ -794,91 +889,4 @@ void signal_dump(){
 void signal_clean_tlb(){
 	log_info(LOGGER, "[MEMORIA]: Recibi la senial para limpiar TLB, limpiando\n...");
 	limpiar_tlb();
-}
-
-//------------------------------------------------ INTERACCIONES CON SWAMP -----------------------------------------------//
-
-int solicitar_marcos_max_swap() {
-	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
-
-	paquete->cod_op         = SOLICITAR_MARCOS_MAX;
-	paquete->buffer         = malloc(sizeof(t_buffer));
-	paquete->buffer->size   = 0;
-	paquete->buffer->stream = NULL;
-
-	int bytes;
-
-	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
-
-	pthread_mutex_lock(&mutex_swamp);
-	send(CONEXION_SWAP, a_enviar, bytes, 0);
-	int retorno = recibir_entero(CONEXION_SWAP);
-	pthread_mutex_unlock(&mutex_swamp);
-
-	free(a_enviar);
-	eliminar_paquete_swap(paquete);
-
-	return retorno;
-}
-
-int traer_pagina_a_mp(t_pagina* pagina) {
-	//TODO: Mutexear?
-	void* pag_serializada = traer_de_swap(pagina->pid, pagina->id);
-
-	//Frame en donde voy a alojar la pagina que me traigo de SWAP: ya sea un frame libre o bien un frame de pag q reempl.
-
-	pthread_mutex_lock(&mutex_frames);
-	t_frame* frame = (t_frame*)list_find(FRAMES_MEMORIA, (void*)esta_libre_frame);
-
-	if (frame != NULL) {
-		frame->ocupado = true;
-	} else {
-		frame = ejecutar_algoritmo_reemplazo(pagina->pid);
-	}
-	pthread_mutex_unlock(&mutex_frames);
-
-	memcpy(MEMORIA_PRINCIPAL + frame * CONFIG.tamanio_pagina, pag_serializada, CONFIG.tamanio_pagina);
-
-	pagina->presencia  = true;
-	pagina->modificado = 0;
-
-	return frame;
-}
-
-void* traer_de_swap(uint32_t pid, uint32_t nro_pagina) {
-	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
-
-	paquete->cod_op         = TRAER_DE_SWAP;
-	paquete->buffer         = malloc(sizeof(t_buffer));
-	paquete->buffer->size   = sizeof(uint32_t) * 2;
-	paquete->buffer->stream = malloc(paquete->buffer->size);
-
-	memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
-	int offset = sizeof(uint32_t);
-	memcpy(paquete->buffer->stream + offset, &nro_pagina, sizeof(uint32_t));
-	offset += sizeof(uint32_t);
-
-	int bytes;
-
-	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
-	void* buffer_pag = malloc;
-
-	pthread_mutex_lock(&mutex_swamp);
-	send(CONEXION_SWAP, a_enviar, bytes, 0);
-	buffer_pag = recibir_pagina(CONEXION_SWAP, CONFIG.tamanio_pagina);
-	pthread_mutex_unlock(&mutex_swamp);
-
-	free(a_enviar);
-	eliminar_paquete_swap(paquete);
-
-	return buffer_pag;
-}
-
-void tirar_a_swap(t_pagina* pagina) {
-
-	void* buffer_pag = malloc(CONFIG.tamanio_pagina);
-	memcpy(buffer_pag, MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
-	enviar_pagina(TIRAR_A_SWAP, CONFIG.tamanio_pagina, buffer_pag, CONEXION_SWAP, pagina->pid , pagina-> id);
-	free(buffer_pag);
-
 }
