@@ -330,7 +330,7 @@ int memfree(int pid, int pos_alloc){
 
 	return 0;
 }
-void* memread(int pid, int dir_logica) {
+int memread(int pid, int dir_logica, void* dest) {
 
 	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
 
@@ -338,16 +338,32 @@ void* memread(int pid, int dir_logica) {
 		return MATE_READ_FAULT;
 	}
 
-	return obtener_contenido_alloc(pid, dir_logica);
+	int pag_en_donde_empieza_el_alloc = floor((dir_logica - sizeof(heap_metadata)) / CONFIG.tamanio_pagina);
+
+	if(pag_en_donde_empieza_el_alloc > list_size(paginas_proceso)){
+		return MATE_READ_FAULT;
+	}
+
+	dest = obtener_contenido_alloc(pid, dir_logica , pag_en_donde_empieza_el_alloc);
+
+	return 1;
 }
 
 int memwrite(int pid, int dir_logica, void* contenido, int size) {
-	// Buscar pagina o paginas en donde esta el alloc
-	// si no estan en mp, traerlas
-	//actualizar uso de pag
+	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
 
-	//fijarse si la direccion del alloc es correcta, sino devolver MATE_WRITE_FAULT (-7)
+		if (paginas_proceso == NULL || list_size(paginas_proceso) == 0) {
+			return MATE_WRITE_FAULT;
+		}
 
+		int pag_en_donde_empieza_el_alloc = floor((dir_logica - sizeof(heap_metadata)) / CONFIG.tamanio_pagina);
+
+		if(pag_en_donde_empieza_el_alloc > list_size(paginas_proceso)){
+			return MATE_WRITE_FAULT;
+		}
+
+
+		escribir_contenido(pid, dir_logica,  contenido, pag_en_donde_empieza_el_alloc);
 	//memcpyar el contenido a donde corresponde
 	//modificado pag = true
 
@@ -359,8 +375,8 @@ int memwrite(int pid, int dir_logica, void* contenido, int size) {
 
 //------------------------------------------------- FUNCIONES ALLOCs/HEADERs ---------------------------------------------//
 
-void* obtener_contenido_alloc(int pid, int dir_logica) {
-	int pag_en_donde_empieza_el_alloc = floor((dir_logica - sizeof(heap_metadata)) / CONFIG.tamanio_pagina);
+void* obtener_contenido_alloc(int pid, int dir_logica, int pag_en_donde_empieza_el_alloc) {
+
 	int frame_en_donde_esta_el_alloc = buscar_pagina(pid, pag_en_donde_empieza_el_alloc);
 
 	int offset = dir_logica - sizeof(heap_metadata) - CONFIG.tamanio_pagina * pag_en_donde_empieza_el_alloc;
@@ -395,6 +411,13 @@ void* obtener_contenido_alloc(int pid, int dir_logica) {
 	}
 
 	return alloc_buffer;
+}
+
+void escribir_contenido(pid, dir_logica, pag_en_donde_empieza_el_alloc){
+
+	//TODO poner locks a las paginas y escribir contenido en memoria
+	//todo agregar size ene memread y write y comparar que no sea mayor al alloc
+
 }
 
 //TODO: Ver si estamos devolviendo la DL o DF y Poner lock a la pagina para que no me la saque otro proceso mientras la uso
