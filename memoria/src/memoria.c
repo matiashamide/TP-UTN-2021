@@ -182,7 +182,7 @@ int memalloc(int pid, int size){
 			frames_necesarios = MAX_MARCOS_SWAP;
 		}
 
-		if (reservar_espacio_en_swap(pid, frames_necesarios) == -1 ){
+		if (reservar_espacio_en_swap(pid, frames_necesarios) == -1) {
 			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 			log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 
@@ -268,7 +268,6 @@ int memalloc(int pid, int size){
 				return -1;
 			}
 
-
 			int nro_pagina,offset;
 			nro_pagina = list_size(paginas_proceso) -1;
 			offset = list_size(paginas_proceso) * CONFIG.tamanio_pagina - alloc->direc_logica;
@@ -319,9 +318,43 @@ int memalloc(int pid, int size){
 	return dir_logica + sizeof(heap_metadata);
 }
 
-int   memfree() 	{return 0;}
-void* memread()     {return 0;}
-int   memwrite()	{return 0;}
+int memfree(int pid, int pos_alloc){
+	// Buscar pagina o paginas en donde esta el alloc
+	// si no estan en mp, traerlas
+	//actualizar uso de pag
+
+	//fijarse si la direccion del alloc es correcta, sino devolver MATE_FREE_FAULT (-5)
+
+	//liberar alloc
+	//moverse 1 antes y uno despues para ver si hay que liberar algo mas
+	//(capaz aca nos serviria tener en la t_pagina un cant. espacio libre e ir sumando, si es == tam pagina, liberar entera)
+
+	return 0;
+}
+void* memread(int pid, int dir_logica) {
+	// Buscar pagina o paginas en donde esta el alloc
+	// si no estan en mp, traerlas
+	//actualizar uso de pag
+
+	//fijarse si la direccion del alloc es correcta, sino devolver MATE_READ_FAULT (-6)
+
+	//memcpyar el contenido del alloc en un buffer y retornarlo
+	return 0;
+}
+int memwrite(int pid, int dir_logica, void* contenido, int size) {
+	// Buscar pagina o paginas en donde esta el alloc
+	// si no estan en mp, traerlas
+	//actualizar uso de pag
+
+	//fijarse si la direccion del alloc es correcta, sino devolver MATE_WRITE_FAULT (-7)
+
+	//memcpyar el contenido a donde corresponde
+	//modificado pag = true
+
+	//retornar la posicion de lo q se acaba de escribir ? (capaz no)
+
+	return 0;
+}
 
 
 //------------------------------------------------- FUNCIONES ALLOCs/HEADERs ---------------------------------------------//
@@ -783,22 +816,27 @@ int reservar_espacio_en_swap(int pid, int cant_pags) {
 }
 
 int traer_pagina_a_mp(t_pagina* pagina) {
-	//TODO: Mutexear?
+	//TODO: Mutexear SWAP?
+	int pos_frame = -1;
 	void* pag_serializada = traer_de_swap(pagina->pid, pagina->id);
 
-	//Frame en donde voy a alojar la pagina que me traigo de SWAP: ya sea un frame libre o bien un frame de pag q reempl.
+	//Busco frame en donde voy a alojar la pagina que me traigo de SWAP: ya sea un frame libre o bien un frame de pag q reempl.
 
-	pthread_mutex_lock(&mutex_frames);
-	t_frame* frame = (t_frame*)list_find(FRAMES_MEMORIA, (void*)esta_libre_frame);
-	int pos_frame;
+	//TODO: Pensar que pasa cuando la asignacion es fija y tenes pags sin usar?
+	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
 
-	if (frame != NULL) {
-		frame->ocupado = true;
-		pos_frame = frame->id;
+		pthread_mutex_lock(&mutex_frames);
+		t_frame* frame = (t_frame*)list_find(FRAMES_MEMORIA, (void*)esta_libre_frame);
+		if (frame != NULL) {
+			frame->ocupado = true;
+			pos_frame = frame->id;
+		} else {
+			pos_frame = ejecutar_algoritmo_reemplazo(pagina->pid);
+		}
+		pthread_mutex_unlock(&mutex_frames);
 	} else {
 		pos_frame = ejecutar_algoritmo_reemplazo(pagina->pid);
 	}
-	pthread_mutex_unlock(&mutex_frames);
 
 	memcpy(MEMORIA_PRINCIPAL + pos_frame * CONFIG.tamanio_pagina, pag_serializada, CONFIG.tamanio_pagina);
 

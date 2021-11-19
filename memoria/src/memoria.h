@@ -97,10 +97,10 @@ void atender_carpinchos(int cliente);
 void coordinador_multihilo();
 
 //// ---- funciones principales
-int   memalloc(int size, int pid);
-int   memfree();
-void* memread();
-int   memwrite();
+int   memalloc(int pid,int size);
+int   memfree(int pid,int pos_alloc);
+void* memread(int pid,int dir_logica);
+int   memwrite(int pid,int dir_logica,void* contenido,int size);
 
 //// ---- funciones allocs / headers
 t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual);
