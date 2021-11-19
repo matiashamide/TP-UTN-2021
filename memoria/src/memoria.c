@@ -91,16 +91,18 @@ void iniciar_paginacion() {
 	TABLAS_DE_PAGINAS = list_create();
 
 	//Creamos lista de frames de memoria ppal.
-	MARCOS_MEMORIA = list_create();
+	FRAMES_MEMORIA = list_create();
 
 	for (int i = 0 ; i < cant_frames_ppal ; i++) {
 
 		t_frame* frame = malloc(sizeof(t_frame));
-		frame->ocupado = 0;
-		frame->id = i;
+		frame->ocupado = false;
+		frame->id      = i;
 
-		list_add(MARCOS_MEMORIA, frame);
+		list_add(FRAMES_MEMORIA, frame);
 	}
+
+	POSICION_CLOCK = 0;
 }
 
 //--------------------------------------------------------- COORDINACION DE CARPINCHOS ----------------------------------------------------------//
@@ -170,7 +172,7 @@ int memalloc(int pid, int size){
 
 		if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
 
-			if (frames_necesarios > MAX_MARCOS_SWAP || !hay_lugar_en_mp(frames_necesarios)) {
+			if (frames_necesarios > MAX_MARCOS_SWAP || !hay_frames_libres_mp(frames_necesarios)) {
 				printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 				log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 
@@ -224,8 +226,8 @@ int memalloc(int pid, int size){
 			pagina->modificado    = 1;
 			pagina->lock          = 1;
 			pagina->presencia     = 1;
-			//pagina->tiempo_uso  = ;
-			//pagina->uso         = ;
+			pagina->tiempo_uso    = obtener_tiempo();
+			pagina->uso           = 0;
 
 			list_add(nueva_tabla->paginas, pagina);
 
@@ -296,8 +298,8 @@ int memalloc(int pid, int size){
 				pagina->modificado    = 1;
 				pagina->lock          = 1;
 				pagina->presencia     = 1;
-				//pagina->tiempo_uso  = ;
-				//pagina->uso         = ;
+				pagina->tiempo_uso    = obtener_tiempo();
+				pagina->uso           = 0;
 
 				list_add(paginas_proceso, pagina);
 				//unlock pagina
@@ -473,8 +475,6 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 
 void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 
-
-
 	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
 	t_pagina* pagina        = (t_pagina*)list_get(paginas_proceso, nro_pagina);
 
@@ -497,19 +497,6 @@ void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 	}
 	//unlock pag
 }
-
-
-int guardar_paginas_en_memoria( int pid , int marcos_necesarios , t_list* paginas , void* contenido ){
-
-	//chequear esquema de asignacion
-	//chequear espacio -> swapear otras paginas en ese caso
-	//guardar en paginas libres de a una pagina (hacer un for para guardar y swapear de a una)
-	//serializar contenido en la memoria posta
-	//Copia del bloque 'marquinhos' a memoria; ->	serializar_paginas_en_memoria(nueva_tabla->paginas, marquinhos);
-	return 0;
-}
-
-
 
 int reservar_espacio_en_swap( int pid, int cant_pags) {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
@@ -546,7 +533,7 @@ heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
 
 	t_list* pags_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
 
-	int frame_pagina = buscar_pagina(pid , nro_pag);
+	int frame_pagina = buscar_pagina(pid, nro_pag);
 
 	//lock_pagina(pid , nro pag);
 	//lock_pagina(pid , nro pag + 1);
@@ -622,6 +609,8 @@ int traer_pagina_swap(t_pagina* pagina) {
 
 int solicitar_frame_en_ppal(int pid){
 
+	//Caso asignacion FIJA
+
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
 		t_list* pags_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
 
@@ -630,8 +619,8 @@ int solicitar_frame_en_ppal(int pid){
 			t_frame* frame = malloc(sizeof(t_frame));
 
 			pthread_mutex_lock(&mutexMarcos);
-			frame = (t_frame*) list_take(list_filter(MARCOS_MEMORIA, (void*)marco_libre),0);
-			frame->ocupado = false;
+			frame = (t_frame*) list_take(list_filter(FRAMES_MEMORIA, (void*)esta_libre_frame),0);
+			frame->ocupado = true;
 			pthread_mutex_unlock(&mutexMarcos);
 
 			return frame->id;
@@ -639,16 +628,16 @@ int solicitar_frame_en_ppal(int pid){
 		return ejecutar_algoritmo_reemplazo(pid);
 	}
 
-	//caso asignacion dinamica
+	//Caso asignacion DINAMICA
 
-	t_frame * frame = malloc(sizeof(t_frame));
+	t_frame* frame = malloc(sizeof(t_frame));
 
 	pthread_mutex_lock(&mutexMarcos);
-	frame = (t_frame*)list_find(MARCOS_MEMORIA, (void*)marco_libre);
-	frame->ocupado = false;
+	frame = (t_frame*)list_find(FRAMES_MEMORIA, (void*)esta_libre_frame);
+	frame->ocupado = true;
 	pthread_mutex_unlock(&mutexMarcos);
 
-	if(frame == NULL){
+	if (frame == NULL){
 		return ejecutar_algoritmo_reemplazo(pid);
 	}
 
@@ -657,10 +646,10 @@ int solicitar_frame_en_ppal(int pid){
 
 int ejecutar_algoritmo_reemplazo(int pid) {
 
-	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb , "LRU" ))
+	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb, "LRU" ))
 		return reemplazar_con_LRU(pid);
 
-	if(string_equals_ignore_case(CONFIG.alg_reemplazo_tlb , "CLOCK-M"))
+	if(string_equals_ignore_case(CONFIG.alg_reemplazo_tlb, "CLOCK-M"))
 		return reemplazar_con_CLOCK(pid);
 
 	return -1;
@@ -676,7 +665,7 @@ int reemplazar_con_LRU(int pid) {
 	}
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
-		paginas = list_filter(buscar_paginas_mp(), (void*)no_lock);
+		paginas = list_filter(paginas_en_mp(), (void*)no_lock);
 	}
 
 	int masVieja(t_pagina* unaPag, t_pagina* otraPag) {
@@ -692,7 +681,6 @@ int reemplazar_con_LRU(int pid) {
 
 	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
 	if(pag_reemplazo->modificado) {
-		//TODO: HACER TIRAR A SWAP
 		tirar_a_swap(pag_reemplazo);
 	} else {
 		pag_reemplazo->presencia = 0;
@@ -700,6 +688,38 @@ int reemplazar_con_LRU(int pid) {
 	}
 
 	return pag_reemplazo->frame_ppal;
+}
+
+int reemplazar_con_CLOCK(int pid) {
+
+	int pag_seleccionada;
+	int no_encontre = 1;
+	int i = POSICION_CLOCK;
+
+	t_list* paginas_mp = paginas_mp;
+	t_pagina* escogida;
+
+	while(no_encontre) {
+
+		if (i >= list_size(paginas_mp)) {
+			i = 0;
+		}
+
+		t_pagina* pagina = list_get(paginas_mp, i);
+
+		if (pagina->uso == 0) {
+			pag_seleccionada = i;
+			POSICION_CLOCK   = i;
+			no_encontre      = 0;
+		} else {
+			pagina->uso      = 0;
+			i++;
+		}
+
+	}
+
+	escogida = list_get(paginas_mp,pag_seleccionada);
+	return escogida->frame_ppal;
 }
 
 void tirar_a_swap(t_pagina* pagina) {
@@ -731,39 +751,36 @@ void reemplazar_pag_en_memoria(){
 	eliminar_paquete(paquete);
 }
 
-int reemplazar_con_CLOCK(int pid) {
-	return 0;
+bool hay_frames_libres_mp(int cant_frames_necesarios) {
+	t_list* frames_libes_MP = list_filter(FRAMES_MEMORIA, (void*)esta_libre_frame);
+	return list_size(frames_libes_MP) >= cant_frames_necesarios;
 }
 
-//TODO
-bool hay_lugar_en_mp(int frames_necesarios) {
-	return true;
-}
-
-t_list* buscar_paginas_mp(){
+t_list* paginas_en_mp(){
 
 	t_list* paginas = list_create();
 
 	//BUSCO TODAS LAS PAGINAS
 
-	void paginasTabla(t_tabla_pagina* unaTabla) {
-		list_add_all(paginas, unaTabla->paginas);
+	void paginas_tabla(t_tabla_pagina* una_tabla) {
+		list_add_all(paginas, una_tabla->paginas);
 	}
+
 	pthread_mutex_lock(&mutexTablas);
-	list_iterate(TABLAS_DE_PAGINAS, (void*)paginasTabla);
+	list_iterate(TABLAS_DE_PAGINAS, (void*)paginas_tabla);
 	pthread_mutex_unlock(&mutexTablas);
 
 	//FILTRO LAS QUE TENGAN EL BIT DE PRESENCIA EN 1 => ESTAN EN MP
-	t_list* paginasEnMp = list_filter(paginas, (void*)esta_en_mp);
+	t_list* paginas_en_mp = list_filter(paginas, (void*)esta_en_mp);
 
 	list_destroy(paginas);
-	return paginasEnMp;
+	return paginas_en_mp;
 }
 
 //-------------------------------------------- FUNCIONES DE ESTADO - t_frame & t_pagina - ------------------------------//
 
-bool marco_libre(t_frame* marco) {
-	return marco->ocupado;
+bool esta_libre_frame(t_frame* frame) {
+	return frame->ocupado;
 }
 
 int no_lock(t_pagina* pag){

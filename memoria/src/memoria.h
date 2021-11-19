@@ -68,11 +68,12 @@ int SERVIDOR_MEMORIA;
 t_memoria_config CONFIG;
 t_log* LOGGER;
 
-t_list* TABLAS_DE_PAGINAS;
-t_list* MARCOS_MEMORIA;
+t_list* TABLAS_DE_PAGINAS;  // Lista de t_tabla_pagina's
+t_list* FRAMES_MEMORIA;     // Lista de t_frame's
 
 int CONEXION_SWAP;
 int MAX_MARCOS_SWAP;
+int POSICION_CLOCK;
 
 //// ---- memoria principal
 void* MEMORIA_PRINCIPAL;
@@ -107,19 +108,18 @@ void signal_dump();
 void signal_clean_tlb();
 
 int reservar_espacio_en_swap(int pid, int cant_pags);
-int guardar_paginas_en_memoria(int pid, int marcos_necesarios, t_list* paginas, void* contenido);
 void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header);
 t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual);
 int obtener_pos_ultimo_alloc(int pid);
 int guardar_en_swap(int pid, void* contenido);
  int buscar_pagina(int pid, int pag);
- t_list* buscar_paginas_mp();
+ t_list* paginas_en_mp();
 int traer_pagina_swap(t_pagina* pag);
 heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header);
 void* traer_marquinhos_del_proceso(int pid);
 int solicitar_frame_en_ppal(int pid);
-bool marco_libre(t_frame* marco);
-bool hay_lugar_en_mp(int frames_necesarios);
+bool esta_libre_frame(t_frame* marco);
+bool hay_frames_libres_mp(int frames_necesarios);
 
 int solicitar_marcos_max_swap();
 void tirar_a_swap(t_pagina* pagina);
