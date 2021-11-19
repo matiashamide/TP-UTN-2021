@@ -97,10 +97,10 @@ void coordinador_multihilo();
 
 
 //// ---- funciones principales
-int memalloc(int size, int pid);
-int memfree();
+int   memalloc(int size, int pid);
+int   memfree();
 void* memread();
-int memwrite();
+int   memwrite();
 
 //// ---- funciones senales
 void signal_metricas();
@@ -123,7 +123,7 @@ bool hay_frames_libres_mp(int frames_necesarios);
 
 int solicitar_marcos_max_swap();
 void tirar_a_swap(t_pagina* pagina);
-void* pedir_pagina_swap(uint32_t pid, uint32_t nro_pagina);
+void* traer_de_swap(uint32_t pid, uint32_t nro_pagina);
 
 int ejecutar_algoritmo_reemplazo(int pid);
 void reemplazar_pag_en_memoria(void);
