@@ -117,5 +117,6 @@ void memalloc(PCB*);
 void memread(PCB*);
 void memfree(PCB*);
 void memwrite(PCB*);
+void mate_close(t_procesador*);
 
 #endif /* PLANIFICACION_H_ */

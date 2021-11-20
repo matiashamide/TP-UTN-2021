@@ -140,8 +140,8 @@ void ejecutar(t_procesador* estructura_procesador) {
 
 		switch (cod_op) {
 		case INICIALIZAR_SEM:
-			printf("Hola como va\n");
-			//init_sem(estructura_procesador);
+			//printf("Hola como va\n");
+			init_sem(estructura_procesador);
 			break;
 		case ESPERAR_SEM:
 			wait_sem(estructura_procesador);
@@ -168,14 +168,13 @@ void ejecutar(t_procesador* estructura_procesador) {
 			//TODO DEFINIR
 			break;
 		case CLOSE:
-			//TODO DEFINIR
+			mate_close(estructura_procesador);
 			break;
 		case MENSAJE:
 			//TODO DEFINIR
 			break;
 		default:
 			log_warning(LOGGER,"Operacion desconocida. No quieras meter la pata");
-			sem_wait(&estructura_procesador->sem_exec);
 			printf("Operacion desconocida. No quieras meter la pata\n");
 			break;
 		}
@@ -211,22 +210,21 @@ void dar_permiso_para_continuar(int conexion){
 
 // TODO manejar error de crear un semaforo con el mismo nombre que uno ya existente
 void init_sem(t_procesador* estructura_procesador) {
+
 	t_semaforo_mate* nuevo_semaforo = malloc(sizeof(t_semaforo_mate));
 
-	int size;
-	int size_nombre_semaforo;
+	uint32_t size;
+	uint32_t size_nombre_semaforo;
 
-	printf("Por aca ando por lo menos\n");
+	recv(estructura_procesador->lugar_PCB->conexion, &size, sizeof(uint32_t), MSG_WAITALL);
 
-	recv(estructura_procesador->lugar_PCB->conexion, &size, sizeof(int), MSG_WAITALL);
-
-	recv(estructura_procesador->lugar_PCB->conexion, &size_nombre_semaforo, sizeof(int), MSG_WAITALL);
+	recv(estructura_procesador->lugar_PCB->conexion, &size_nombre_semaforo, sizeof(uint32_t), MSG_WAITALL);
 
 	nuevo_semaforo->nombre = malloc(size_nombre_semaforo);
 
 	recv(estructura_procesador->lugar_PCB->conexion, nuevo_semaforo->nombre, size_nombre_semaforo, MSG_WAITALL);
 
-	recv(estructura_procesador->lugar_PCB->conexion, &nuevo_semaforo->value, sizeof(int), MSG_WAITALL);
+	recv(estructura_procesador->lugar_PCB->conexion, &nuevo_semaforo->value, sizeof(unsigned int), MSG_WAITALL);
 
 	list_create(nuevo_semaforo->cola_bloqueados);
 
@@ -347,5 +345,18 @@ void memfree(PCB* pcb) {
 }
 
 void memwrite(PCB* pcb) {
+
+}
+
+void mate_close(t_procesador* estructura_procesador) {
+
+	printf("Cierro conexion con carpincho: %d\n", estructura_procesador->lugar_PCB->PID);
+
+
+	dar_permiso_para_continuar(estructura_procesador->lugar_PCB->conexion);
+
+	close(estructura_procesador->lugar_PCB->conexion);
+
+	sem_wait(&estructura_procesador->sem_exec);
 
 }

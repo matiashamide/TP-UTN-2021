@@ -152,12 +152,6 @@ uint32_t recibir_entero(int cliente){
 	}
 }
 
-char* recibir_mensaje(int socket_cliente) {
-   uint32_t size;
-   char* buffer = recibir_buffer(&size, socket_cliente);
-   return buffer;
-}
-
 void enviar_mensaje(char* mensaje, int socket_cliente) {
 	t_paquete* paquete = malloc(sizeof(t_paquete));
 
@@ -177,6 +171,12 @@ void enviar_mensaje(char* mensaje, int socket_cliente) {
 	eliminar_paquete(paquete);
 }
 
+char* recibir_mensaje(int socket_cliente) {
+   uint32_t size;
+   char* buffer = recibir_buffer(&size, socket_cliente);
+   return buffer;
+}
+
 void* recibir_buffer(int* size, int socket_cliente) {
    void* buffer;
 
@@ -189,17 +189,17 @@ void* recibir_buffer(int* size, int socket_cliente) {
 
 void* serializar_paquete(t_paquete* paquete, int* bytes) {
 
-   int size_serializado = sizeof(peticion_carpincho) + sizeof(int) + paquete->buffer->size;
+   int size_serializado = sizeof(peticion_carpincho) + sizeof(uint32_t) + paquete->buffer->size;
    void *buffer = malloc(size_serializado);
 
    int offset = 0;
 
-   memcpy(buffer + offset, &(paquete->codigo_operacion), sizeof(int));
-   offset+= sizeof(int);
-   memcpy(buffer + offset, &(paquete->buffer->size), sizeof(int));
-   offset+= sizeof(int);
+   memcpy(buffer + offset, &(paquete->codigo_operacion), sizeof(peticion_carpincho));
+   offset += sizeof(peticion_carpincho);
+   memcpy(buffer + offset, &(paquete->buffer->size), sizeof(uint32_t));
+   offset += sizeof(uint32_t);
    memcpy(buffer + offset, paquete->buffer->stream, paquete->buffer->size);
-   offset+= paquete->buffer->size;
+   offset += paquete->buffer->size;
 
    (*bytes) = size_serializado;
    return buffer;

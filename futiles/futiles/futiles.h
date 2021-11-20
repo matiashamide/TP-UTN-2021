@@ -49,7 +49,7 @@ typedef struct {
 } t_buffer;
 
 typedef struct {
-	uint32_t codigo_operacion;
+	peticion_carpincho codigo_operacion;
 	t_buffer* buffer;
 } t_paquete;
 

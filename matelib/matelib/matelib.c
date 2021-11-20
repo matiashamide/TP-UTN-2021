@@ -76,20 +76,19 @@ void enviar_mensaje(char* mensaje, int socket_cliente)
 
 
 
-void* serializar_paquete(t_paquete* paquete, int* bytes)
-{
+void* serializar_paquete(t_paquete* paquete, int* bytes) {
 
-   int size_serializado = sizeof(peticion_carpincho) + sizeof(int) + paquete->buffer->size;
+   int size_serializado = sizeof(peticion_carpincho) + sizeof(uint32_t) + paquete->buffer->size;
    void *buffer = malloc(size_serializado);
 
    int offset = 0;
 
-   memcpy(buffer + offset, &paquete->codigo_operacion, sizeof(int));
-   offset+= sizeof(int);
-   memcpy(buffer + offset, &paquete->buffer->size, sizeof(int));
-   offset+= sizeof(int);
+   memcpy(buffer + offset, &(paquete->codigo_operacion), sizeof(peticion_carpincho));
+   offset += sizeof(peticion_carpincho);
+   memcpy(buffer + offset, &(paquete->buffer->size), sizeof(uint32_t));
+   offset += sizeof(uint32_t);
    memcpy(buffer + offset, paquete->buffer->stream, paquete->buffer->size);
-   offset+= paquete->buffer->size;
+   offset += paquete->buffer->size;
 
    (*bytes) = size_serializado;
    return buffer;
@@ -166,9 +165,30 @@ int mate_init(mate_instance *lib_ref, char *config)
 int mate_close(mate_instance *lib_ref)
 {
 
-	close(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
-	free(lib_ref->group_info);
-	return 0;
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+		paquete->codigo_operacion = CLOSE;
+		paquete->buffer = malloc(sizeof(t_buffer));
+		paquete->buffer->size = 0;
+		paquete->buffer->stream = malloc(paquete->buffer->size);
+		int offset = 0;
+
+		int bytes;
+
+		void* a_enviar = serializar_paquete(paquete, &bytes);
+
+		send(((mate_inner_structure *)lib_ref->group_info)->socket_conexion, a_enviar, bytes, 0);
+
+		recibir_permiso_para_continuar(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
+
+		free(a_enviar);
+		eliminar_paquete(paquete);
+		close(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
+		free(lib_ref->group_info);
+
+		printf("Termine de ejecutar, adiosss\n");
+
+		return 0;
 }
 
 t_lib_config crear_archivo_config_lib(char* ruta) {
@@ -241,13 +261,19 @@ void mate_printf() {
 //-----------------Semaphore Functions---------------------/
 
 int mate_sem_init(mate_instance *lib_ref, mate_sem_name sem, unsigned int value) {
+
 	t_paquete* paquete = malloc(sizeof(t_paquete));
 
 	paquete->codigo_operacion = INICIALIZAR_SEM;
 	paquete->buffer = malloc(sizeof(t_buffer));
-	paquete->buffer->size = strlen(sem) + 1 + sizeof(unsigned int);
+	paquete->buffer->size = sizeof(uint32_t) + strlen(sem) + 1 + sizeof(unsigned int);
 	paquete->buffer->stream = malloc(paquete->buffer->size);
 	int offset = 0;
+
+	uint32_t tamanio_nombre_semaforo = strlen(sem) + 1;
+
+	memcpy(paquete->buffer->stream + offset, &tamanio_nombre_semaforo, sizeof(uint32_t));
+	offset += sizeof(uint32_t);
 	memcpy(paquete->buffer->stream + offset, sem, strlen(sem) + 1);
 	offset += (strlen(sem) + 1);
 	memcpy(paquete->buffer->stream + offset, &value, sizeof(unsigned int));
@@ -259,11 +285,9 @@ int mate_sem_init(mate_instance *lib_ref, mate_sem_name sem, unsigned int value)
 
 	send(((mate_inner_structure *)lib_ref->group_info)->socket_conexion, a_enviar, bytes, 0);
 
-	printf("yo tambien llegue hasta aqui");
-
 	recibir_permiso_para_continuar(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
 
-	//fflush(stdout);
+
 	free(a_enviar);
 	eliminar_paquete(paquete);
 	return 0;
