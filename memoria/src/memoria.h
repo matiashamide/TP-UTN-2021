@@ -38,6 +38,7 @@ typedef struct {
     int modificado;
     int lock;
     int tiempo_uso;
+    //int espacio_disponible;
 }t_pagina;
 
 typedef struct {
@@ -85,6 +86,11 @@ pthread_mutex_t mutex_frames;
 pthread_mutex_t mutex_tablas_dp;
 pthread_mutex_t mutex_swamp;
 
+//// ---- errores MATELIB
+int MATE_FREE_FAULT  = -5;
+int MATE_READ_FAULT  = -6;
+int MATE_WRITE_FAULT = -7;
+
 // FUNCIONES
 
 //// ---- funciones de inicializacion
@@ -99,10 +105,12 @@ void coordinador_multihilo();
 //// ---- funciones principales
 int   memalloc(int pid,int size);
 int   memfree(int pid,int pos_alloc);
-void* memread(int pid,int dir_logica);
+int memread(int pid,int dir_logica , void* destination);
 int   memwrite(int pid,int dir_logica,void* contenido,int size);
 
 //// ---- funciones allocs / headers
+void* obtener_contenido_alloc(int pid, int dir_logica , int pag_donde_empieza_el_alloc);
+int escribir_contenido(int pid,int dir_logica, void * contenido, int pag_en_donde_empieza_el_alloc, int size);
 t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual);
 int obtener_pos_ultimo_alloc(int pid);
 void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header);
@@ -134,7 +142,7 @@ int esta_en_mp(t_pagina* pag);
 int esta_en_swap(t_pagina* pag);
 int no_lock(t_pagina* pag);
 void lockear(t_pagina* pag);
-void deslockear(t_pagina* pag);
+void unlockear(t_pagina* pag);
 void set_modificado(t_pagina* pag);
 
 //// ---- funciones signal
