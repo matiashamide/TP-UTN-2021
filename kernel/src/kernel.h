@@ -30,7 +30,7 @@ pthread_mutex_t mutex_creacion_PID;
 //FUNCIONES
 t_kernel_config crear_archivo_config_kernel(char* ruta);
 void init_kernel();
-void atender_carpinchos(int cliente);
+void atender_carpinchos(int* cliente);
 void coordinador_multihilo();
 void pasar_a_new(PCB* pcb_carpincho);
 void iniciar_planificador_largo_plazo();

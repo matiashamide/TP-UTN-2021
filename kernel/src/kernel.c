@@ -15,18 +15,18 @@ int main(void) {
 
 	init_kernel();
 
-	//int *socket_cliente = malloc(sizeof(int));
+	int *socket_cliente = malloc(sizeof(int));
 
-	//*socket_cliente = accept(SERVIDOR_KERNEL, NULL, NULL);
+	*socket_cliente = accept(SERVIDOR_KERNEL, NULL, NULL);
 
-	//recibir_peticion_para_continuar(*socket_cliente);
-	//dar_permiso_para_continuar(*socket_cliente);
+	recibir_peticion_para_continuar(*socket_cliente);
+	dar_permiso_para_continuar(*socket_cliente);
 
 	//printf("%d\n",recibir_operacion_carpincho(*socket_cliente));
 
 
 	//fflush(stdout);
-	coordinador_multihilo();
+	//coordinador_multihilo();
 
 
 	return EXIT_SUCCESS;
@@ -125,7 +125,7 @@ void coordinador_multihilo(){
 
 		int *socket_cliente = malloc(sizeof(int));
 
-		*socket_cliente = accept(SERVIDOR_KERNEL, NULL, NULL);
+		(*socket_cliente) = accept(SERVIDOR_KERNEL, NULL, NULL);
 
 		printf("Se conecto un carpincho usando la mateLib\n");
 
@@ -148,7 +148,7 @@ void iniciar_planificador_corto_plazo() {
 	pthread_detach(planificador_largo_plazo);
 }
 
-void atender_carpinchos(int cliente) {
+void atender_carpinchos(int* cliente) {
 
 	PCB* pcb_carpincho = malloc(sizeof(PCB));
 
@@ -160,7 +160,9 @@ void atender_carpinchos(int cliente) {
 	pcb_carpincho->real_anterior = 0;
 	pcb_carpincho->estimado_anterior = CONFIG_KERNEL.estimacion_inicial;
 	pcb_carpincho->tiempo_espera = 0;
-	pcb_carpincho->conexion = cliente;
+	pcb_carpincho->conexion = (*cliente);
+
+	printf("Conexion %d\n", (*cliente));
 
 	recibir_peticion_para_continuar(pcb_carpincho->conexion);
 
