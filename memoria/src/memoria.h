@@ -115,6 +115,8 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 int obtener_pos_ultimo_alloc(int pid);
 void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header);
 heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header);
+int calcular_pagina_libre( int pid , int pos_inicial, int pos_final);
+int actualizar_headers_por_liberar_pagina(int pid , int nro_pag_liberada);
 
 //// ---- funciones secundarias (buscar / solicitar pagina o frame)
 int buscar_pagina(int pid, int pag);
