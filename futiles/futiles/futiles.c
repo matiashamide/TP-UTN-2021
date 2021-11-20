@@ -128,6 +128,19 @@ int recibir_operacion(int socket_cliente) {
    }
 }
 
+peticion_carpincho recibir_operacion_carpincho(int socket_cliente) {
+	peticion_carpincho cod_op;
+	recv(socket_cliente, &cod_op, sizeof(peticion_carpincho), MSG_WAITALL);
+	//if (recv(socket_cliente, &cod_op, sizeof(peticion_carpincho), MSG_WAITALL) != 0) {
+		return cod_op;
+	//}
+	//else
+	//{
+	//	close(socket_cliente);
+	//	return -1;
+	//}
+}
+
 uint32_t recibir_entero(int cliente){
 	uint32_t entero;
 

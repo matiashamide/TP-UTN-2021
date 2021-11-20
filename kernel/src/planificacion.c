@@ -129,17 +129,19 @@ PCB* algoritmo_HRRN() {
 }
 
 void ejecutar(t_procesador* estructura_procesador) {
+
 	while (1) {
 		sem_wait(&estructura_procesador->sem_exec);
 		sem_post(&estructura_procesador->sem_exec);
 
-		peticion_carpincho cod_op = recibir_operacion(estructura_procesador->lugar_PCB->conexion);
+		peticion_carpincho cod_op = recibir_operacion_carpincho(estructura_procesador->lugar_PCB->conexion);
 
-		printf("Peticion del carpincho: %d", cod_op);
+		printf("Peticion del carpincho: %d\n", cod_op);
 
 		switch (cod_op) {
 		case INICIALIZAR_SEM:
-			init_sem(estructura_procesador);
+			printf("Hola como va\n");
+			//init_sem(estructura_procesador);
 			break;
 		case ESPERAR_SEM:
 			wait_sem(estructura_procesador);
@@ -173,6 +175,7 @@ void ejecutar(t_procesador* estructura_procesador) {
 			break;
 		default:
 			log_warning(LOGGER,"Operacion desconocida. No quieras meter la pata");
+			sem_wait(&estructura_procesador->sem_exec);
 			printf("Operacion desconocida. No quieras meter la pata\n");
 			break;
 		}
@@ -187,54 +190,22 @@ void ejecutar(t_procesador* estructura_procesador) {
 
 void recibir_peticion_para_continuar(int conexion) {
 
-	recibir_operacion(conexion);
-	//char* mensaje = recibir_mensaje(conexion);
-	//printf("Permiso para continuar: %s\n", mensaje);
 
-	void* buffer;
-	int size;
+	uint32_t result;
+	int bytes_recibidos = recv(conexion, &result, sizeof(uint32_t), MSG_WAITALL);
 
-	recv(conexion, &size, sizeof(int), MSG_WAITALL);
-	buffer = malloc(size);
-	recv(conexion, buffer, size, MSG_WAITALL);
-
-	//int* mensaje = malloc(size);
-
-	//printf("Llegoooooo\n");
-
-	//memcpy((void*)mensaje, buffer, size);
-
-
-	//printf("Permiso para continuar: %d\n", (*mensaje));
-
-	//free(mensaje);
+	printf("Ya recibi peticion %d\n", bytes_recibidos);
 
 
 }
 
 void dar_permiso_para_continuar(int conexion){
 
-	t_paquete* paquete = malloc(sizeof(t_paquete));
+	uint32_t handshake = 1;
 
-	int* permiso = malloc(sizeof(int));
+	int numero_de_bytes = send(conexion, &handshake, sizeof(uint32_t), 0);
 
-	(*permiso) = 1;
-
-	paquete->codigo_operacion = PERMISO_CONTINUACION;
-	paquete->buffer = malloc(sizeof(t_buffer));
-	paquete->buffer->size = sizeof(int);
-	paquete->buffer->stream = malloc(paquete->buffer->size);
-	memcpy(paquete->buffer->stream, permiso, paquete->buffer->size);
-
-	int bytes;
-
-	void* a_enviar = serializar_paquete(paquete, &bytes);
-
-	send(conexion, a_enviar, bytes, 0);
-
-	free(a_enviar);
-	free(permiso);
-	eliminar_paquete(paquete);
+	printf("Ya di permiso %d\n", numero_de_bytes);
 
 }
 
@@ -271,6 +242,7 @@ void init_sem(t_procesador* estructura_procesador) {
 	//fflush(stdout);
 
 	dar_permiso_para_continuar(estructura_procesador->lugar_PCB->conexion);
+
 
 }
 

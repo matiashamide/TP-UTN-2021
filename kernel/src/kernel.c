@@ -15,6 +15,17 @@ int main(void) {
 
 	init_kernel();
 
+	//int *socket_cliente = malloc(sizeof(int));
+
+	//*socket_cliente = accept(SERVIDOR_KERNEL, NULL, NULL);
+
+	//recibir_peticion_para_continuar(*socket_cliente);
+	//dar_permiso_para_continuar(*socket_cliente);
+
+	//printf("%d\n",recibir_operacion_carpincho(*socket_cliente));
+
+
+	//fflush(stdout);
 	coordinador_multihilo();
 
 

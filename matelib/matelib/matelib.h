@@ -51,7 +51,6 @@ typedef struct {
 }t_lib_config;
 
 typedef enum {
-	PERMISO_CONTINUACION,
 	INICIALIZAR_SEM,
 	ESPERAR_SEM,
 	POST_SEM,
@@ -67,7 +66,7 @@ typedef enum {
 
 typedef struct
 {
-	int size;
+	uint32_t size;
 	void* stream;
 } t_buffer;
 
@@ -86,6 +85,7 @@ typedef int32_t mate_pointer;
 void pedir_permiso_para_continuar(int conexion);
 void recibir_permiso_para_continuar(int conexion);
 int recibir_operacion(int socket_cliente);
+peticion_carpincho recibir_operacion_carpincho(int socket_cliente);
 char* recibir_mensaje(int socket_cliente);
 void* recibir_buffer(int* size, int socket_cliente);
 

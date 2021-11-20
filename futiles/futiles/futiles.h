@@ -30,7 +30,6 @@
 #include <sys/stat.h>
 
 typedef enum {
-	PERMISO_CONTINUACION,
 	INICIALIZAR_SEM,
 	ESPERAR_SEM,
 	POST_SEM,
@@ -45,12 +44,12 @@ typedef enum {
 } peticion_carpincho;
 
 typedef struct {
-	int size;
+	uint32_t size;
 	void* stream;
 } t_buffer;
 
 typedef struct {
-	peticion_carpincho codigo_operacion;
+	uint32_t codigo_operacion;
 	t_buffer* buffer;
 } t_paquete;
 
@@ -77,6 +76,7 @@ char* recibir_mensaje(int socket_cliente);
 void* recibir_buffer(int* size, int socket_cliente);
 int esperar_cliente(int socket);
 int recibir_operacion(int socket);
+peticion_carpincho recibir_operacion_carpincho(int socket);
 void enviar_mensaje(char* mensaje, int servidor);
 int size_char_array(char** array);
 

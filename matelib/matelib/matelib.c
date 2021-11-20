@@ -11,54 +11,21 @@
 
 void pedir_permiso_para_continuar(int conexion) {
 
-	t_paquete* paquete = malloc(sizeof(t_paquete));
+	uint32_t handshake = 1;
 
-	int* permiso = malloc(sizeof(int));
+	int numero_de_bytes = send(conexion, &handshake, sizeof(uint32_t), 0);
 
-	(*permiso) = 1;
-
-	paquete->codigo_operacion = PERMISO_CONTINUACION;
-	paquete->buffer = malloc(sizeof(t_buffer));
-	paquete->buffer->size = sizeof(int);
-	paquete->buffer->stream = malloc(paquete->buffer->size);
-	memcpy(paquete->buffer->stream, &permiso, paquete->buffer->size);
-
-	int bytes;
-
-	void* a_enviar = serializar_paquete(paquete, &bytes);
-
-	send(conexion, a_enviar, bytes, 0);
-
-	free(a_enviar);
-	free(permiso);
-	eliminar_paquete(paquete);
+	printf("Ya pedi permiso %d\n", numero_de_bytes);
 
 }
 
 void recibir_permiso_para_continuar(int conexion) {
 
 
-	recibir_operacion(conexion);
+	uint32_t result;
+	int bytes_recibidos = recv(conexion, &result, sizeof(uint32_t), MSG_WAITALL);
 
-
-	void* buffer;
-	int size;
-
-	recv(conexion, &size, sizeof(int), MSG_WAITALL);
-	buffer = malloc(size);
-	recv(conexion, buffer, size, MSG_WAITALL);
-
-	//int* mensaje = malloc(size);
-
-	//printf("Llegoooooo\n");
-
-	//memcpy((void*)mensaje, buffer, size);
-
-
-	//printf("Permiso para continuar: %d\n", (*mensaje));
-
-	//free(mensaje);
-
+	printf("Ya recibi permiso %d\n", bytes_recibidos);
 
 
 }
@@ -73,6 +40,18 @@ int recibir_operacion(int socket_cliente) {
       close(socket_cliente);
       return -1;
    }
+}
+
+peticion_carpincho recibir_operacion_carpincho(int socket_cliente) {
+	peticion_carpincho cod_op;
+	if (recv(socket_cliente, &cod_op, sizeof(peticion_carpincho), MSG_WAITALL) != 0) {
+		return cod_op;
+	}
+	else
+	{
+		close(socket_cliente);
+		return -1;
+	}
 }
 
 void enviar_mensaje(char* mensaje, int socket_cliente)
@@ -175,11 +154,9 @@ int mate_init(mate_instance *lib_ref, char *config)
 
   ((mate_inner_structure *)lib_ref->group_info)->socket_conexion = conexion;
 
-  printf("conexion: %d\n", conexion);
+  printf("Conexion: %d\n", conexion);
 
   pedir_permiso_para_continuar(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
-
-  printf("Ya pedi permiso\n");
 
   recibir_permiso_para_continuar(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
 
@@ -188,6 +165,7 @@ int mate_init(mate_instance *lib_ref, char *config)
 
 int mate_close(mate_instance *lib_ref)
 {
+
 	close(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
 	free(lib_ref->group_info);
 	return 0;
@@ -271,7 +249,7 @@ int mate_sem_init(mate_instance *lib_ref, mate_sem_name sem, unsigned int value)
 	paquete->buffer->stream = malloc(paquete->buffer->size);
 	int offset = 0;
 	memcpy(paquete->buffer->stream + offset, sem, strlen(sem) + 1);
-	offset += strlen(sem) + 1;
+	offset += (strlen(sem) + 1);
 	memcpy(paquete->buffer->stream + offset, &value, sizeof(unsigned int));
 	offset += sizeof(unsigned int);
 
@@ -290,6 +268,26 @@ int mate_sem_init(mate_instance *lib_ref, mate_sem_name sem, unsigned int value)
 	eliminar_paquete(paquete);
 	return 0;
 }
+
+/*void enviar_mensaje(char* mensaje, int socket_cliente)
+{
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = MENSAJE;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = strlen(mensaje) + 1;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+	memcpy(paquete->buffer->stream, mensaje, paquete->buffer->size);
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	send(socket_cliente, a_enviar, bytes, 0);
+
+	free(a_enviar);
+	eliminar_paquete(paquete);
+}*/
 
 int mate_sem_wait(mate_instance *lib_ref, mate_sem_name sem) {
 	t_paquete* paquete = malloc(sizeof(t_paquete));
