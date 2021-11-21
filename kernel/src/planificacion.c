@@ -226,7 +226,7 @@ void init_sem(t_procesador* estructura_procesador) {
 
 	recv(estructura_procesador->lugar_PCB->conexion, &nuevo_semaforo->value, sizeof(unsigned int), MSG_WAITALL);
 
-	list_create(nuevo_semaforo->cola_bloqueados);
+	nuevo_semaforo->cola_bloqueados = list_create();
 
 	pthread_mutex_lock(&mutex_lista_semaforos_mate);
 	list_add(LISTA_SEMAFOROS_MATE, nuevo_semaforo);
@@ -246,15 +246,12 @@ void init_sem(t_procesador* estructura_procesador) {
 
 
 void wait_sem(t_procesador* estructura_procesador) {
-	char* nombre;
-	int size;
-	int size_nombre_semaforo;
 
-	recv(estructura_procesador->lugar_PCB->conexion, &size, sizeof(int), MSG_WAITALL);
+	uint32_t size_nombre_semaforo;
 
-	recv(estructura_procesador->lugar_PCB->conexion, &size_nombre_semaforo, sizeof(int), MSG_WAITALL);
+	recv(estructura_procesador->lugar_PCB->conexion, &size_nombre_semaforo, sizeof(uint32_t), MSG_WAITALL);
 
-	nombre = malloc(size_nombre_semaforo);
+	char* nombre = malloc(size_nombre_semaforo);
 
 	recv(estructura_procesador->lugar_PCB->conexion, nombre, size_nombre_semaforo, MSG_WAITALL);
 
@@ -262,13 +259,25 @@ void wait_sem(t_procesador* estructura_procesador) {
 				return (strcmp(((t_semaforo_mate*)elemento)->nombre, nombre) == 0);
 			}
 
+	//TEST
+	pthread_mutex_lock(&mutex_lista_blocked);
+	printf("Tamanio blocked: %d\n", list_size(LISTA_BLOCKED));
+	pthread_mutex_unlock(&mutex_lista_blocked);
+	//FIN TEST
+
 		pthread_mutex_lock(&mutex_lista_semaforos_mate);
-		t_semaforo_mate* semaforo = list_find(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo);
+		t_semaforo_mate* semaforo = (t_semaforo_mate*) list_find(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo);
 		if(semaforo->value > 0) {
 			semaforo->value -= 1;
+			//TEST
+			printf("Tamanio cola bloqueados semaforo: %d\n", list_size(semaforo->cola_bloqueados));
+			//FIN TEST
 			dar_permiso_para_continuar(estructura_procesador->lugar_PCB->conexion);
 		} else {
 			list_add(semaforo->cola_bloqueados, estructura_procesador->lugar_PCB);
+			//TEST
+			printf("Tamanio cola bloqueados semaforo: %d\n", list_size(semaforo->cola_bloqueados));
+			//FIN TEST
 			pthread_mutex_lock(&mutex_lista_blocked);
 			list_add(LISTA_BLOCKED, estructura_procesador->lugar_PCB);
 			pthread_mutex_unlock(&mutex_lista_blocked);
@@ -282,9 +291,11 @@ void wait_sem(t_procesador* estructura_procesador) {
 
 		//TEST
 		pthread_mutex_lock(&mutex_lista_blocked);
-		printf("Tamanio blocked: %d", list_size(LISTA_BLOCKED));
+		printf("Tamanio blocked: %d\n", list_size(LISTA_BLOCKED));
 		pthread_mutex_unlock(&mutex_lista_blocked);
 		//FIN TEST
+
+		free(nombre);
 
 }
 

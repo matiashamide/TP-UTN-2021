@@ -314,6 +314,7 @@ int mate_sem_init(mate_instance *lib_ref, mate_sem_name sem, unsigned int value)
 }*/
 
 int mate_sem_wait(mate_instance *lib_ref, mate_sem_name sem) {
+
 	t_paquete* paquete = malloc(sizeof(t_paquete));
 
 	paquete->codigo_operacion = ESPERAR_SEM;
