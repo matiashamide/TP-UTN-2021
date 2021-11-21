@@ -315,8 +315,7 @@ void post_sem(t_procesador* estructura_procesador) {
 	pthread_mutex_lock(&mutex_lista_semaforos_mate);
 	t_semaforo_mate* semaforo = (t_semaforo_mate*) list_find(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo);
 
-	if(semaforo->value == 0) {
-		semaforo->value += 1;
+	if(semaforo->value == 0 && list_size(semaforo->cola_bloqueados) > 0) {
 		PCB* pcb = (PCB*) list_remove(semaforo->cola_bloqueados, 0);
 
 		bool _criterio_remocion_lista(void* elemento) {
@@ -353,21 +352,30 @@ void post_sem(t_procesador* estructura_procesador) {
 }
 
 void destroy_sem(t_procesador* estructura_procesador) {
-		char* nombre;
-		int size;
-		int size_nombre_semaforo;
+	uint32_t size_nombre_semaforo;
 
-		recv(estructura_procesador->lugar_PCB->conexion, &size, sizeof(int), MSG_WAITALL);
+	recv(estructura_procesador->lugar_PCB->conexion, &size_nombre_semaforo, sizeof(uint32_t), MSG_WAITALL);
 
-		recv(estructura_procesador->lugar_PCB->conexion, &size_nombre_semaforo, sizeof(int), MSG_WAITALL);
+	char* nombre = malloc(size_nombre_semaforo);
 
-		nombre = malloc(size_nombre_semaforo);
+	recv(estructura_procesador->lugar_PCB->conexion, nombre, size_nombre_semaforo, MSG_WAITALL);
 
-		recv(estructura_procesador->lugar_PCB->conexion, nombre, size_nombre_semaforo, MSG_WAITALL);
+	bool _criterio_busqueda_semaforo(void* elemento) {
+		return (strcmp(((t_semaforo_mate*)elemento)->nombre, nombre) == 0);
+	}
 
-		bool _criterio_busqueda_semaforo(void* elemento) {
-					return (strcmp(((t_semaforo_mate*)elemento)->nombre, nombre) == 0);
-				}
+	pthread_mutex_lock(&mutex_lista_semaforos_mate);
+	t_semaforo_mate* semaforo = (t_semaforo_mate*) list_find(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo);
+
+	//TODO desbloquear a todos los procesos que posea en su cola de bloqueados
+	//liberar la memoria de la lista de procesos bloqueados del semaforo
+	//eliminar el semaforo de la lista de semaforos
+	//liberar la memoria de la estructura del semaforo
+
+
+
+	pthread_mutex_unlock(&mutex_lista_semaforos_mate);
+
 	// eliminarlo de la lista list.remove(sem)
 	// liberar memoria
 }
@@ -408,3 +416,27 @@ void mate_close(t_procesador* estructura_procesador) {
 	sem_post(&sem_grado_multiprocesamiento);
 
 }
+
+// TODO balancear sems.
+// TODO crear sem_cola_blocked_suspended en planificacion.h.
+// TODO en el algoritmo que pone en cola new hacer un post a este sem. Cuando sale de new hacer un wait.
+
+/*void algoritmo_planificador_mediano_plazo() {
+    while(1) {
+        sem_wait(&sem_DE NEW A DEFINIR);
+
+        pthread_mutex_lock(&mutex_lista_blocked);
+        int cantidad_procesos = list_size(LISTA_BLOCKED);
+
+        if(cantidad_procesos = CONFIG_KERNEL.grado_multiprogramacion) {
+                    PCB* pcb = (PCB*) list_remove(LISTA_BLOCKED, cantidad_procesos-1);
+
+                    pthread_mutex_lock(&mutex_lista_suspended_blocked);
+                    list_add(LISTA_SUSPENDED_BLOCKED, pcb);
+                    pthread_mutex_unlock(&mutex_lista_suspended_blocked);
+        }
+        pthread_mutex_unlock(&mutex_lista_blocked);
+
+        sem_post(&sem_grado_multiprocesamiento);
+    }
+}*/
