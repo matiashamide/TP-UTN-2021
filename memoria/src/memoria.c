@@ -126,6 +126,7 @@ void atender_carpinchos(int cliente) {
 	peticion_carpincho operacion = recibir_operacion(cliente);
 
 	int size_paquete = recibir_entero(cliente);
+	int retorno;
 	switch (operacion) {
 
 	case MEMALLOC:;
@@ -133,18 +134,39 @@ void atender_carpinchos(int cliente) {
 		int size = recibir_entero(cliente);
 		int pid = recibir_entero(cliente);;
 
-		int dir_logica = memalloc(size , pid);
-		send(cliente, dir_logica, sizeof(uint32_t) , 0);
+		retorno = memalloc(size , pid);
+
 
 	break;
 
 	case MEMREAD:;
+
+		int pid = recibir_entero(cliente);
+		int dir_logica = recibir_entero(cliente);
+		void* dest = malloc(size_paquete - 2* sizeof(int));
+		dest = recv(cliente , dest , size_paquete - 2* sizeof(int));
+
+		retorno = memread( pid, dir_logica ,  dest);
+
 	break;
 
 	case MEMFREE:;
+
+		int pid = recibir_entero(cliente);
+		int dir_logica = recibir_entero(cliente);
+
+		retorno = memfree(pid , dir_logica);
+
 	break;
 
 	case MEMWRITE:;
+
+		int pid = recibir_entero(cliente);
+		int dir_logica = recibir_entero(cliente);
+		void* contenido = malloc(size_paquete - 2* sizeof(int));
+		contenido = recv(cliente , dest , size_paquete - 2* sizeof(int));
+
+		retorno = memwrite(pid , dir_logica , contenido , size_paquete - sizeof(int) * 2 );
 	break;
 
 	case MENSAJE:;
@@ -154,9 +176,14 @@ void atender_carpinchos(int cliente) {
 	break;
 
 	//Faltan algunos cases;
-	default:; break;
+	default:;
+
+	break;
 
 	}
+
+	send(cliente, retorno, sizeof(uint32_t) , 0);
+
 }
 
 //--------------------------------------------------- FUNCIONES PRINCIPALES ----------------------------------------------//
