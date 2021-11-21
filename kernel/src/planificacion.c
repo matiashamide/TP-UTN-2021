@@ -140,14 +140,13 @@ void ejecutar(t_procesador* estructura_procesador) {
 
 		switch (cod_op) {
 		case INICIALIZAR_SEM:
-			//printf("Hola como va\n");
 			init_sem(estructura_procesador);
 			break;
 		case ESPERAR_SEM:
 			wait_sem(estructura_procesador);
 			break;
 		case POST_SEM:
-			//TODO DEFINIR
+			post_sem(estructura_procesador);
 			break;
 		case DESTROY_SEM:
 			//TODO DEFINIR
@@ -309,11 +308,48 @@ void post_sem(t_procesador* estructura_procesador) {
 
 	recv(estructura_procesador->lugar_PCB->conexion, nombre, size_nombre_semaforo, MSG_WAITALL);
 
-		bool _criterio_busqueda_semaforo(void* elemento) {
-					return (strcmp(((t_semaforo_mate*)elemento)->nombre, nombre) == 0);
-				}
-	// una vez encontrado, incrementarle en 1 el valor
-	// desbloquear el proceso q tiene en la cola en primer lugar (FIFO)
+	bool _criterio_busqueda_semaforo(void* elemento) {
+		return (strcmp(((t_semaforo_mate*)elemento)->nombre, nombre) == 0);
+	}
+
+	pthread_mutex_lock(&mutex_lista_semaforos_mate);
+	t_semaforo_mate* semaforo = (t_semaforo_mate*) list_find(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo);
+
+	if(semaforo->value == 0) {
+		semaforo->value += 1;
+		PCB* pcb = (PCB*) list_remove(semaforo->cola_bloqueados, 0);
+
+		bool _criterio_remocion_lista(void* elemento) {
+				return (((PCB*)elemento)->PID == pcb->PID);
+			}
+
+		if(list_any_satisfy(LISTA_BLOCKED, _criterio_remocion_lista)) {
+
+			pthread_mutex_lock(&mutex_lista_blocked);
+			list_remove_by_condition(LISTA_BLOCKED, _criterio_remocion_lista);
+			pthread_mutex_unlock(&mutex_lista_blocked);
+
+			pthread_mutex_lock(&mutex_lista_ready);
+			list_add(LISTA_READY, pcb);
+			pthread_mutex_unlock(&mutex_lista_ready);
+
+			sem_post(&sem_cola_ready);
+		} //TODO ACA HACER UN ELSE SI NO ESTA EN BLOCKED (Que significa que esta en blocked suspended)
+
+	} else {
+		semaforo->value += 1;
+	}
+	pthread_mutex_unlock(&mutex_lista_semaforos_mate);
+
+	dar_permiso_para_continuar(estructura_procesador->lugar_PCB->conexion);
+
+	//TEST
+	pthread_mutex_lock(&mutex_lista_blocked);
+	printf("Tamanio blocked: %d\n", list_size(LISTA_BLOCKED));
+	pthread_mutex_unlock(&mutex_lista_blocked);
+	//FIN TEST
+	// una vez encontrado, incrementarle en 1 el valor. HECHO, fijarse el comentario de arriba
+	// desbloquear el proceso q tiene en la cola en primer lugar (FIFO). HECHO, fijarse el comentario de arriba
 }
 
 void destroy_sem(t_procesador* estructura_procesador) {
@@ -365,6 +401,10 @@ void mate_close(t_procesador* estructura_procesador) {
 
 	close(estructura_procesador->lugar_PCB->conexion);
 
+	pthread_mutex_lock(&mutex_lista_procesadores); // TENER CUIDADO (si se bloquea todo ver aqui)
 	sem_wait(&estructura_procesador->sem_exec);
+	estructura_procesador->bit_de_ocupado = 0;
+	pthread_mutex_unlock(&mutex_lista_procesadores);
+	sem_post(&sem_grado_multiprocesamiento);
 
 }
