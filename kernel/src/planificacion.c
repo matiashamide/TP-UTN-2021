@@ -300,17 +300,14 @@ void wait_sem(t_procesador* estructura_procesador) {
 }
 
 void post_sem(t_procesador* estructura_procesador) {
-		char* nombre;
-		int size;
-		int size_nombre_semaforo;
 
-		recv(estructura_procesador->lugar_PCB->conexion, &size, sizeof(int), MSG_WAITALL);
+	uint32_t size_nombre_semaforo;
 
-		recv(estructura_procesador->lugar_PCB->conexion, &size_nombre_semaforo, sizeof(int), MSG_WAITALL);
+	recv(estructura_procesador->lugar_PCB->conexion, &size_nombre_semaforo, sizeof(uint32_t), MSG_WAITALL);
 
-		nombre = malloc(size_nombre_semaforo);
+	char* nombre = malloc(size_nombre_semaforo);
 
-		recv(estructura_procesador->lugar_PCB->conexion, nombre, size_nombre_semaforo, MSG_WAITALL);
+	recv(estructura_procesador->lugar_PCB->conexion, nombre, size_nombre_semaforo, MSG_WAITALL);
 
 		bool _criterio_busqueda_semaforo(void* elemento) {
 					return (strcmp(((t_semaforo_mate*)elemento)->nombre, nombre) == 0);
