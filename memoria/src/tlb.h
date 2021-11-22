@@ -8,10 +8,10 @@
 
 typedef struct {
     int pag;
-    int marco;
+    int frame;
     int pid;
     int ultimo_uso;
-}entrada_tlb;
+}t_entrada_tlb;
 
 typedef struct {
 	int pid;
@@ -32,21 +32,31 @@ pthread_mutex_t mutexTLB;
 
 // FUNCIONES
 
-void init_tlb(int cant_entradas ,  char* algoritmo_reemplazo);
+//// ---- funciones de inicializacion
+void init_tlb(int cant_entradas,  char* algoritmo_reemplazo);
+void crear_entradas_tlb(int cant_entradas);
 
+//// ---- funciones de reemplazo
 void reemplazar_FIFO(int pid, int pag, int frame);
 void reemplazar_LRU(int pid, int pag, int frame);
-t_list* crear_estructura(int entradas);
 
-void printear_TLB(int entradas);
-int obtener_tiempo();
-int buscar_pag_tlb(int pid, int pag);
+//// ---- funciones principales
+int  buscar_pag_tlb(int pid, int pag);
 void actualizar_tlb(int pid, int pag, int frame);
 void registrar_evento(int pid, int event);
+
+//// ---- funciones secundarias
+int  obtener_tiempo();
+void printear_TLB(int entradas);
 
 //// ---- funciones signals
 void generar_metricas_tlb();
 void dumpear_tlb();
 void limpiar_tlb();
+
+//// ---- funciones DUMP
+void  mostrar_entradas_tlb(FILE* file);
+void  mostrar_entrada(int entrada, FILE* file);
+char* nombrar_dump_file();
 
 #endif /* TLB_H_ */

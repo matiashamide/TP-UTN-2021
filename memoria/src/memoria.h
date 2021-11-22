@@ -63,6 +63,12 @@ typedef struct{
 	bool flag_ultimo_alloc;
 }t_alloc_disponible;
 
+typedef enum {
+	MATE_FREE_FAULT  = -5,
+	MATE_READ_FAULT  = -6,
+	MATE_WRITE_FAULT = -7
+}MATE_ERRORS;
+
 // VARIABLES GLOBALES
 
 int SERVIDOR_MEMORIA;
@@ -86,10 +92,6 @@ pthread_mutex_t mutex_frames;
 pthread_mutex_t mutex_tablas_dp;
 pthread_mutex_t mutex_swamp;
 
-//// ---- errores MATELIB
-int MATE_FREE_FAULT  = -5;
-int MATE_READ_FAULT  = -6;
-int MATE_WRITE_FAULT = -7;
 
 // FUNCIONES
 
