@@ -149,7 +149,7 @@ void ejecutar(t_procesador* estructura_procesador) {
 			post_sem(estructura_procesador);
 			break;
 		case DESTROY_SEM:
-			//TODO DEFINIR
+			destroy_sem(estructura_procesador);
 			break;
 		case CALL_IO:
 			//TODO DEFINIR
@@ -367,17 +367,40 @@ void destroy_sem(t_procesador* estructura_procesador) {
 	pthread_mutex_lock(&mutex_lista_semaforos_mate);
 	t_semaforo_mate* semaforo = (t_semaforo_mate*) list_find(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo);
 
-	//TODO desbloquear a todos los procesos que posea en su cola de bloqueados
-	//liberar la memoria de la lista de procesos bloqueados del semaforo
-	//eliminar el semaforo de la lista de semaforos
-	//liberar la memoria de la estructura del semaforo
+	if(list_size(semaforo->cola_bloqueados) > 0) {
+		int tamanio_cola_blocked = list_size(semaforo->cola_bloqueados);
+		for(int i = 0; i < tamanio_cola_blocked; i++) {
 
+			PCB* pcb = (PCB*) list_remove(semaforo->cola_bloqueados, 0);
 
+			bool _criterio_remocion_lista(void* elemento) {
+							return (((PCB*)elemento)->PID == pcb->PID);
+			}
+
+			if(list_any_satisfy(LISTA_BLOCKED, _criterio_remocion_lista)) {
+
+				pthread_mutex_lock(&mutex_lista_blocked);
+				list_remove_by_condition(LISTA_BLOCKED, _criterio_remocion_lista);
+				pthread_mutex_unlock(&mutex_lista_blocked);
+
+				pthread_mutex_lock(&mutex_lista_ready);
+				list_add(LISTA_READY, pcb);
+				pthread_mutex_unlock(&mutex_lista_ready);
+
+				sem_post(&sem_cola_ready);
+			} //TODO ACA HACER UN ELSE SI NO ESTA EN BLOCKED (Que significa que esta en blocked suspended)
+		}
+	}
+
+	list_remove_by_condition(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo);
 
 	pthread_mutex_unlock(&mutex_lista_semaforos_mate);
 
-	// eliminarlo de la lista list.remove(sem)
-	// liberar memoria
+	free(semaforo->cola_bloqueados);
+	free(semaforo->nombre);
+	free(semaforo);
+
+	dar_permiso_para_continuar(estructura_procesador->lugar_PCB->conexion);
 }
 
 void call_IO(PCB* pcb) {
