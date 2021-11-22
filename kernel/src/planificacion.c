@@ -59,6 +59,38 @@ void algoritmo_planificador_mediano_plazo_ready_suspended() {
 	pthread_mutex_unlock(&mutex_lista_ready);
 }
 
+// TODO balancear sems.
+// TODO crear sem_cola_blocked_suspended en planificacion.h.
+// TODO en el algoritmo que pone en cola new hacer un post a este sem. Cuando sale de new hacer un wait.
+
+void algoritmo_planificador_mediano_plazo_blocked_suspended() {
+
+
+	pthread_mutex_lock(&mutex_lista_blocked);
+
+	int cantidad_procesos_blocked = list_size(LISTA_BLOCKED);
+
+	pthread_mutex_lock(&mutex_lista_new);
+	int cantidad_procesos_new = list_size(LISTA_NEW);
+	pthread_mutex_unlock(&mutex_lista_new);
+
+	if(cantidad_procesos_blocked == CONFIG_KERNEL.grado_multiprogramacion && cantidad_procesos_new > 0) {
+		PCB* pcb = (PCB*) list_remove(LISTA_BLOCKED, cantidad_procesos_blocked-1);
+
+		pthread_mutex_lock(&mutex_lista_blocked_suspended);
+		list_add(LISTA_BLOCKED_SUSPENDED, pcb);
+		//TEST
+		printf("Tamanio blocked suspended: %d\n", list_size(LISTA_BLOCKED_SUSPENDED));
+		//FIN TEST
+		pthread_mutex_unlock(&mutex_lista_blocked_suspended);
+
+		sem_post(&sem_grado_multiprogramacion);
+	}
+
+	pthread_mutex_unlock(&mutex_lista_blocked);
+
+}
+
 
 
 
@@ -326,6 +358,7 @@ void wait_sem(t_procesador* estructura_procesador) {
 			estructura_procesador->bit_de_ocupado = 0;
 			pthread_mutex_unlock(&mutex_lista_procesadores);
 			sem_post(&sem_grado_multiprocesamiento);
+			algoritmo_planificador_mediano_plazo_blocked_suspended();
 		}
 		pthread_mutex_unlock(&mutex_lista_semaforos_mate);
 
@@ -480,29 +513,5 @@ void mate_close(t_procesador* estructura_procesador) {
 	sem_post(&sem_grado_multiprocesamiento);
 
 }
-
-// TODO balancear sems.
-// TODO crear sem_cola_blocked_suspended en planificacion.h.
-// TODO en el algoritmo que pone en cola new hacer un post a este sem. Cuando sale de new hacer un wait.
-
-/*void algoritmo_planificador_mediano_plazo_blocked_suspended() {
-    while(1) {
-        sem_wait(&sem_DE NEW A DEFINIR);
-
-        pthread_mutex_lock(&mutex_lista_blocked);
-        int cantidad_procesos = list_size(LISTA_BLOCKED);
-
-        if(cantidad_procesos = CONFIG_KERNEL.grado_multiprogramacion) {
-                    PCB* pcb = (PCB*) list_remove(LISTA_BLOCKED, cantidad_procesos-1);
-
-                    pthread_mutex_lock(&mutex_lista_suspended_blocked);
-                    list_add(LISTA_SUSPENDED_BLOCKED, pcb);
-                    pthread_mutex_unlock(&mutex_lista_suspended_blocked);
-        }
-        pthread_mutex_unlock(&mutex_lista_blocked);
-
-        sem_post(&sem_grado_multiprocesamiento);
-    }
-}*/
 
 

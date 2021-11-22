@@ -100,6 +100,7 @@ pthread_t planificador_corto_plazo;
 
 void algoritmo_planificador_largo_plazo();
 void algoritmo_planificador_mediano_plazo_ready_suspended();
+void algoritmo_planificador_mediano_plazo_blocked_suspended();
 void algoritmo_planificador_corto_plazo();
 void correr_dispatcher(PCB* pcb);
 PCB* algoritmo_SJF();
