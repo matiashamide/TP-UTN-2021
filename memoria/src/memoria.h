@@ -129,24 +129,26 @@ int reemplazar_con_LRU(int pid);
 int reemplazar_con_CLOCK(int pid);
 
 //// ---- funciones para listas administrativas
-bool hay_frames_libres_mp(int frames_necesarios);
-t_list* paginas_en_mp();
+bool            hay_frames_libres_mp(int frames_necesarios);
+t_list*         paginas_en_mp();
+t_tabla_pagina* tabla_por_pid(int pid);
+t_pagina*       pagina_por_id(int pid, int id);
 
 //// ---- funciones de interaccion con SWAMP
-int solicitar_marcos_max_swap();
-int reservar_espacio_en_swap(int pid, int cant_pags);
-int traer_pagina_a_mp(t_pagina* pag);
-void tirar_a_swap(t_pagina* pagina);
+int   solicitar_marcos_max_swap();
+int   reservar_espacio_en_swap(int pid, int cant_pags);
+int   traer_pagina_a_mp(t_pagina* pag);
+void  tirar_a_swap(t_pagina* pagina);
 void* traer_de_swap(uint32_t pid, uint32_t nro_pagina);
 
 //// ---- funciones de estado
 bool esta_libre_frame(t_frame* marco);
-int esta_en_mp(t_pagina* pag);
-int esta_en_swap(t_pagina* pag);
-int no_lock(t_pagina* pag);
 void lockear(t_pagina* pag);
 void unlockear(t_pagina* pag);
 void set_modificado(t_pagina* pag);
+int  esta_en_mp(t_pagina* pag);
+int  esta_en_swap(t_pagina* pag);
+int  no_lock(t_pagina* pag);
 
 //// ---- funciones signal
 void signal_metricas();
