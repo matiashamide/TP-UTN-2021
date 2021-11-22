@@ -1,16 +1,17 @@
 #include "memoria.h"
 
 int main(void) {
-	log_info(LOGGER. "inicializa memoria");
-	init_memoria();
 
-	printf("estoy por imprimir el sizeof hm: \n");
-	printf("%i" , sizeof(heap_metadata));
-	fflush(stdout);
+	init_memoria();
+	log_info(LOGGER, "inicializa memoria");
+
+	//------PRUEBAS--------//
 
 	void* buffer = malloc(CONFIG.tamanio_pagina);
 
 	enviar_pagina(TIRAR_A_SWAP, CONFIG.tamanio_pagina, buffer, CONEXION_SWAP, 0, 2);
+
+	//---------------------//
 
 	return EXIT_SUCCESS;
 }
@@ -31,6 +32,9 @@ void init_memoria() {
 
 	//Instanciamos memoria principal
 	MEMORIA_PRINCIPAL = malloc(CONFIG.tamanio_memoria);
+
+	//Inicializamos tlb
+	init_tlb(CONFIG.cant_entradas_tlb , CONFIG.alg_reemplazo_tlb);
 
 	if (MEMORIA_PRINCIPAL == NULL) {
 	   	perror("MALLOC FAIL!\n");

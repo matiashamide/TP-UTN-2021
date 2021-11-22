@@ -3,8 +3,6 @@
 
 void init_tlb(int entradas , char* algoritmo){
 
-
-
 	TLB = list_create();
 	TLB = crear_estructura(entradas);
 	TIEMPO_TLB = 0;
