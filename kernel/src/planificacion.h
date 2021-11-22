@@ -69,7 +69,7 @@ t_kernel_config CONFIG_KERNEL;
 t_log* LOGGER;
 
 //SEMAFOROS
-sem_t sem_cola_new;
+sem_t sem_algoritmo_planificador_largo_plazo;
 sem_t sem_cola_ready;
 sem_t sem_grado_multiprogramacion;
 sem_t sem_grado_multiprocesamiento;
@@ -79,8 +79,8 @@ t_list* LISTA_NEW;
 t_list* LISTA_READY;
 t_list* LISTA_EXEC;
 t_list* LISTA_BLOCKED;
-t_list* LISTA_SUSPENDED_BLOCKED;
-t_list* LISTA_SUSPENDED_READY;
+t_list* LISTA_BLOCKED_SUSPENDED;
+t_list* LISTA_READY_SUSPENDED;
 t_list* LISTA_PROCESADORES;
 t_list* LISTA_SEMAFOROS_MATE;
 
@@ -99,6 +99,7 @@ pthread_t planificador_largo_plazo;
 pthread_t planificador_corto_plazo;
 
 void algoritmo_planificador_largo_plazo();
+void algoritmo_planificador_mediano_plazo_ready_suspended();
 void algoritmo_planificador_corto_plazo();
 void correr_dispatcher(PCB* pcb);
 PCB* algoritmo_SJF();

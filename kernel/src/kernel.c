@@ -90,8 +90,8 @@ void init_kernel(){
 	LISTA_READY = list_create();
 	LISTA_EXEC = list_create();
 	LISTA_BLOCKED = list_create();
-	LISTA_SUSPENDED_BLOCKED = list_create();
-	LISTA_SUSPENDED_READY = list_create();
+	LISTA_BLOCKED_SUSPENDED = list_create();
+	LISTA_READY_SUSPENDED = list_create();
 	LISTA_PROCESADORES = list_create();
 	LISTA_SEMAFOROS_MATE = list_create();
 
@@ -104,7 +104,7 @@ void init_kernel(){
 	pthread_mutex_init(&mutex_lista_semaforos_mate, NULL);
 
 	//Semaforos
-	sem_init(&sem_cola_new, 0, 0);
+	sem_init(&sem_algoritmo_planificador_largo_plazo, 0, 0);
 	sem_init(&sem_cola_ready, 0, 0);
 	sem_init(&sem_grado_multiprogramacion, 0, CONFIG_KERNEL.grado_multiprogramacion);
 	sem_init(&sem_grado_multiprocesamiento, 0, CONFIG_KERNEL.grado_multiprocesamiento);
@@ -175,7 +175,7 @@ void pasar_a_new(PCB* pcb_carpincho) {
 	list_add(LISTA_NEW, pcb_carpincho);
 	pthread_mutex_unlock(&mutex_lista_new);
 
-	sem_post(&sem_cola_new);
+	sem_post(&sem_algoritmo_planificador_largo_plazo);
 }
 
 void crear_procesadores() {

@@ -2,7 +2,7 @@
 
 //TODO arreglar mallocs y memory leaks
 
-void algoritmo_planificador_largo_plazo() {
+/*void algoritmo_planificador_largo_plazo() {
 
 	while(1) {
 		sem_wait(&sem_cola_new);
@@ -19,7 +19,48 @@ void algoritmo_planificador_largo_plazo() {
 		sem_post(&sem_cola_ready);
 	}
 
+}*/
+
+void algoritmo_planificador_largo_plazo() {
+
+	while(1) {
+		sem_wait(&sem_algoritmo_planificador_largo_plazo);
+		//TODO el post de este semaforo cuando pasa de blocked suspended a ready suspended
+		sem_wait(&sem_grado_multiprogramacion);
+
+		pthread_mutex_lock(&mutex_lista_ready_suspended);
+
+		if(list_size(LISTA_READY_SUSPENDED) > 0){
+			algoritmo_planificador_mediano_plazo_ready_suspended();
+		} else {
+			pthread_mutex_lock(&mutex_lista_new);
+			PCB* pcb = (PCB*) list_remove(LISTA_NEW, 0);
+			pthread_mutex_unlock(&mutex_lista_new);
+
+			pthread_mutex_lock(&mutex_lista_ready);
+			list_add(LISTA_READY, pcb);
+			pthread_mutex_unlock(&mutex_lista_ready);
+		}
+
+		pthread_mutex_unlock(&mutex_lista_ready_suspended);
+
+		sem_post(&sem_cola_ready);
+	}
+
 }
+
+void algoritmo_planificador_mediano_plazo_ready_suspended() {
+	pthread_mutex_lock(&mutex_lista_ready_suspended);
+	PCB* pcb = (PCB*) list_remove(LISTA_READY_SUSPENDED, 0);
+	pthread_mutex_unlock(&mutex_lista_ready_suspended);
+
+	pthread_mutex_lock(&mutex_lista_ready);
+	list_add(LISTA_READY, pcb);
+	pthread_mutex_unlock(&mutex_lista_ready);
+}
+
+
+
 
 void algoritmo_planificador_corto_plazo() {
 
@@ -444,7 +485,7 @@ void mate_close(t_procesador* estructura_procesador) {
 // TODO crear sem_cola_blocked_suspended en planificacion.h.
 // TODO en el algoritmo que pone en cola new hacer un post a este sem. Cuando sale de new hacer un wait.
 
-/*void algoritmo_planificador_mediano_plazo() {
+/*void algoritmo_planificador_mediano_plazo_blocked_suspended() {
     while(1) {
         sem_wait(&sem_DE NEW A DEFINIR);
 
@@ -463,3 +504,5 @@ void mate_close(t_procesador* estructura_procesador) {
         sem_post(&sem_grado_multiprocesamiento);
     }
 }*/
+
+
