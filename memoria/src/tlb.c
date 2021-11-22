@@ -3,12 +3,16 @@
 
 void init_tlb(int entradas , char* algoritmo){
 
+
+
 	TLB = list_create();
 	TLB = crear_estructura(entradas);
 	TIEMPO_TLB = 0;
 
 	TLB_HITS = list_create();
 	TLB_MISS = list_create();
+
+	log_info(LOGGER , "TLB inicializada correctamente");
 }
 
 t_list* crear_estructura(int cant_entradas){
@@ -175,7 +179,14 @@ void dumpear_tlb(){
 }
 
 void limpiar_tlb(){
-	list_clean_and_destroy_elements(TLB, free);
-	list_clean_and_destroy_elements(TLB_HITS, free);
-	list_clean_and_destroy_elements(TLB_MISS, free);
+
+	void limpiar_entrada(void* elemento){
+		entrada_tlb* entrada = (entrada_tlb*)elemento;
+		entrada->marco = -1;
+		entrada->pag = -1;
+		entrada->pid = -1;
+		entrada->ultimo_uso = -1;
+	}
+
+	list_iterate(TLB , limpiar_entrada);
 }
