@@ -38,16 +38,15 @@ typedef struct {
     int modificado;
     int lock;
     int tiempo_uso;
-    //int espacio_disponible;
 }t_pagina;
 
 typedef struct {
     int PID;
-    //int direPcb;
     t_list* paginas;
 }t_tabla_pagina;
 
 typedef struct {
+	int pid;
 	int id;
 	bool ocupado;
 }t_frame;
@@ -57,11 +56,6 @@ typedef struct{
 	uint32_t next_alloc;
 	uint8_t is_free;
 }__attribute__((packed))heap_metadata;
-
-typedef struct{
-	int direc_logica;
-	bool flag_ultimo_alloc;
-}t_alloc_disponible;
 
 typedef enum {
 	MATE_FREE_FAULT  = -5,
@@ -87,7 +81,6 @@ int POSICION_CLOCK;
 void* MEMORIA_PRINCIPAL;
 
 //// ---- semaforos
-pthread_mutex_t mutex_memoria;
 pthread_mutex_t mutex_frames;
 pthread_mutex_t mutex_tablas_dp;
 pthread_mutex_t mutex_swamp;

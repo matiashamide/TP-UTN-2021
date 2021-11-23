@@ -197,31 +197,37 @@ void atender_carpinchos(int cliente) {
 
 int memalloc(int pid, int size){
 	int dir_logica = -1;
+	int paginas_necesarias = ceil(size / CONFIG.tamanio_pagina);
 
 	//[CASO A]: Llega un proceso nuevo
 	if (tabla_por_pid(pid) == NULL){
 
 		log_info(LOGGER, "el proceso %i no existe, inicializandolo... " , pid);
 
-		int frames_necesarios = ceil(size / CONFIG.tamanio_pagina);
+
+		if (reservar_espacio_en_swap(pid, paginas_necesarias) == -1) {
+			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+			log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+
+			return -1;
+		}
 
 		if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
 
-			if (frames_necesarios > MAX_MARCOS_SWAP || !hay_frames_libres_mp(frames_necesarios)) {
+			pthread_mutex_lock(&mutex_frames);
+			if (!hay_frames_libres_mp(CONFIG.marcos_max)) {
 				printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 				log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 
 				return -1;
 			}
-
-			frames_necesarios = MAX_MARCOS_SWAP;
-		}
-
-		if (reservar_espacio_en_swap(pid, frames_necesarios) == -1) {
-			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
-			log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
-
-			return -1;
+			//Reservamos los frames al PID
+			t_list* frames_libres_MP = list_filter(FRAMES_MEMORIA, (void*)esta_libre_frame);
+			for(int i = 0; i < CONFIG.marcos_max; i++){
+				t_frame* frame_libre = list_get(frames_libres_MP,i);
+				frame_libre->pid = pid;
+			}
+			pthread_mutex_unlock(&mutex_frames);
 		}
 
 		//Crea tabla de paginas para el proceso
@@ -246,13 +252,13 @@ int memalloc(int pid, int size){
 		header->prev_alloc        = 0;
 
 		//Bloque de paginas en donde se meten los headers
-		void* buffer_pags_proceso = malloc(frames_necesarios * CONFIG.tamanio_pagina);
+		void* buffer_pags_proceso = malloc(paginas_necesarias * CONFIG.tamanio_pagina);
 
 		memcpy(buffer_pags_proceso, header, sizeof(heap_metadata));
 		memcpy(buffer_pags_proceso + sizeof(heap_metadata) + size, header_sig, sizeof(heap_metadata));
 
 		//Crea las paginas y las guarda en memoria
-		for (int i = 0 ; i < frames_necesarios ; i++) {
+		for (int i = 0 ; i < paginas_necesarias ; i++) {
 
 			t_pagina* pagina      = malloc(sizeof(t_pagina));
 			pagina->pid 		  = pid;
@@ -263,12 +269,11 @@ int memalloc(int pid, int size){
 			pagina->presencia     = 1;
 			pagina->tiempo_uso    = obtener_tiempo();
 			pagina->uso           = 0;
-			//pagina->espacio_disponible = CONFIG.tamanio_pagina;
 
 			list_add(nueva_tabla->paginas, pagina);
 
 			memcpy(MEMORIA_PRINCIPAL + pagina->frame_ppal* CONFIG.tamanio_pagina, buffer_pags_proceso + i * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
-			//unlock_pagina();
+			unlockear(pagina);
 		}
 
 		dir_logica = header_sig->prev_alloc;
@@ -279,40 +284,46 @@ int memalloc(int pid, int size){
 
 	//[CASO B]: El proceso existe en memoria
 		log_info(LOGGER, "el proceso %i ya existe en memoria, alocando memoria para el mismo " , pid);
-		t_alloc_disponible* alloc = obtener_alloc_disponible(pid, size, 0);
+		dir_logica = obtener_alloc_disponible(pid, size, 0);
 
-		if (alloc->flag_ultimo_alloc) {
+		if(dir_logica == -1){
+
 			//Agregamos paginas si es posible
 			if ( string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
-				printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
-				log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 
-				return -1;
+				if(list_size(tabla_por_pid(pid))+ paginas_necesarias >= MAX_MARCOS_SWAP){
+
+					printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+					log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+
+					return -1;
+				}
 			}
 
 			//Proceso existente con asignacion dinamica
 			int cantidad_paginas;
 			t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 			int tamanio_total = list_size(paginas_proceso) * CONFIG.tamanio_pagina;
-			int size_necesario_extra = size - tamanio_total - alloc->direc_logica;
+			int size_necesario_extra = size - tamanio_total - dir_logica;
 			cantidad_paginas = ceil(size_necesario_extra/CONFIG.tamanio_pagina);
 
+			if ( string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
+				if (reservar_espacio_en_swap(pid, cantidad_paginas) == -1 ){
+					printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+					log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 
-			if (reservar_espacio_en_swap(pid, cantidad_paginas) == -1 ){
-				printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
-				log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
-
-				return -1;
+					return -1;
+				}
 			}
 
 			int nro_pagina,offset;
 			nro_pagina = list_size(paginas_proceso) -1;
-			offset = list_size(paginas_proceso) * CONFIG.tamanio_pagina - alloc->direc_logica;
+			offset = list_size(paginas_proceso) * CONFIG.tamanio_pagina - dir_logica;
 
 			//Actualizamos el ultimo header
 			heap_metadata* ultimo_header = desserializar_header(pid,nro_pagina, offset);
 			ultimo_header->is_free = false;
-			ultimo_header->next_alloc = alloc->direc_logica + size;
+			ultimo_header->next_alloc = dir_logica; + size;
 
 
 			//Creamos nuevo header
@@ -322,7 +333,7 @@ int memalloc(int pid, int size){
 
 			heap_metadata* nuevo_header = malloc(sizeof(heap_metadata));
 			nuevo_header->is_free = true;
-			nuevo_header->prev_alloc = alloc->direc_logica;
+			nuevo_header->prev_alloc = dir_logica;
 			nuevo_header->next_alloc = NULL;
 
 			for (int i = 1 ; i <= cantidad_paginas ; i++) {
@@ -351,8 +362,8 @@ int memalloc(int pid, int size){
 			free(nuevo_header);
 
 		}
-
 	}
+
 	log_info(LOGGER, "Se le asignaron %i bytes al proceso %i, correctamente " , size, pid);
 	return dir_logica + sizeof(heap_metadata);
 }
@@ -632,9 +643,7 @@ int memwrite(int pid, int dir_logica, void* contenido, int size) {
 
 //TODO: Ver si estamos devolviendo la DL o DF y Poner lock a la pagina para que no me la saque otro proceso mientras la uso
 
-t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
-
-	t_alloc_disponible* alloc = malloc(sizeof(t_alloc_disponible));
+int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 	int nro_pagina = 0, offset = 0;
@@ -676,14 +685,10 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 
 				free(header_nuevo);
 
-				alloc->direc_logica = header->next_alloc;
-				alloc->flag_ultimo_alloc = 0;
-				return alloc;
+				return  header->next_alloc;
 			}
 
-			alloc->direc_logica      = -1;
-			alloc->flag_ultimo_alloc =  0;
-			return alloc;
+			return -1;
 
 		//-------------------------------------//
 		//  [Caso B]: El next alloc NO es NULL
@@ -696,9 +701,7 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 				header->is_free = false;
 				guardar_header(pid, nro_pagina, offset, header);
 
-				alloc->direc_logica = posicion_heap_actual;
-				alloc->flag_ultimo_alloc = 0;
-				return alloc;
+				return posicion_heap_actual;
 
 
 			// B.B. Sobra espacio, hay que meter un header nuevo
@@ -745,17 +748,13 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 				free(header_nuevo);
 				free(header_final);
 
-				alloc->direc_logica      = header->next_alloc;
-				alloc->flag_ultimo_alloc = 0;
-				return alloc;
+				return header->next_alloc;
 			}
 			obtener_alloc_disponible(pid,size,header->next_alloc);
 		}
 	}
 
-	alloc->direc_logica      = posicion_heap_actual;
-	alloc->flag_ultimo_alloc = 1;
-	return alloc;
+	return posicion_heap_actual;
 }
 
 int obtener_pos_ultimo_alloc(int pid) {
@@ -848,19 +847,19 @@ heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
 }
 
 int liberar_si_hay_pagina_libre( int pid , int posicion_inicial, int posicion_final){
-	//todo
+
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 
 	int nro_pagina_inicial = floor(posicion_inicial / CONFIG.tamanio_pagina);
 	int nro_pagina_final = floor(posicion_final / CONFIG.tamanio_pagina);
 
 	//CASO A :: caso lindo en el que no se liberan paginas
-	if(nro_pagina_final - nro_pagina_inicial < 1  ){
+	if(nro_pagina_final - nro_pagina_inicial <= 1  ){
 		return 1;
 	}
 	//CASO B :: caso feo en el q hay que liberar
 	else if(nro_pagina_final - nro_pagina_inicial > 1){
-		// no contemplo el caso en el que haya dos paginas libre dentro de un alloc, seria un caso un poco borde y recursivo (pueden se 2 o mas)el cual no pienso hacer salu2
+
 
 		t_pagina* pagina_eliminada = (t_pagina*)list_remove(paginas_proceso , nro_pagina_inicial + 1);
 		int nro_pagina_liberada = pagina_eliminada->id;
@@ -958,7 +957,7 @@ int solicitar_frame_en_ppal(int pid){
 		if (list_size(pags_proceso) < CONFIG.marcos_max) {
 
 			pthread_mutex_lock(&mutex_frames);
-			t_frame* frame = (t_frame*)list_find(FRAMES_MEMORIA, (void*)esta_libre_frame);
+			t_frame* frame = list_get(frames_libres_del_proceso(pid),0);
 
 			if (frame != NULL) {
 				frame->ocupado = true;
@@ -1088,6 +1087,7 @@ int reemplazar_con_CLOCK(int pid) {
 	return victima->frame_ppal;
 }
 
+
 //--------------------------------------------- FUNCIONES PARA LAS LISTAS ADMIN. -----------------------------------------//
 
 bool hay_frames_libres_mp(int cant_frames_necesarios) {
@@ -1143,6 +1143,16 @@ t_pagina* pagina_por_id(int pid, int id) {
 	pagina = list_find(paginas, (void*)_mismo_id);
 
 	return pagina;
+}
+
+t_list* frames_libres_del_proceso(int pid){
+
+	int _mismo_pid_y_libre(t_frame* frame_aux) {
+		return (frame_aux->pid == pid && !frame_aux->ocupado);
+	}
+
+	return list_filter(FRAMES_MEMORIA, (void*)_mismo_pid_y_libre);
+
 }
 
 //------------------------------------------------ INTERACCIONES CON SWAMP -----------------------------------------------//
@@ -1209,7 +1219,16 @@ int traer_pagina_a_mp(t_pagina* pagina) {
 
 	//Busco frame en donde voy a alojar la pagina que me traigo de SWAP: ya sea un frame libre o bien un frame de pag q reempl.
 
-	//TODO: Pensar que pasa cuando la asignacion es fija y tenes pags sin usar?
+	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
+		t_frame* frame = list_get(frames_libres_del_proceso(pagina->pid),0);
+
+		if(frame == NULL){
+			pos_frame = ejecutar_algoritmo_reemplazo(pagina->pid);
+		} else {
+			pos_frame = frame;
+		}
+	}
+
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
 
 		pthread_mutex_lock(&mutex_frames);

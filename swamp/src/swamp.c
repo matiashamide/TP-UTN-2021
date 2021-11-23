@@ -250,7 +250,7 @@ int reservar_espacio(int pid, int cant_pag) {
 
 	int nro_archivo = archivo_proceso_existente(pid);
 	t_metadata_archivo* archivo;
-
+	//TODO: cheuqear asignacion fija para darle marcos max
 	//CASO 1: Proceso existente
 	if (nro_archivo != -1) {
 
