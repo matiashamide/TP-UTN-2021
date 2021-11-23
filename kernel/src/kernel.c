@@ -175,9 +175,9 @@ void pasar_a_new(PCB* pcb_carpincho) {
 	list_add(LISTA_NEW, pcb_carpincho);
 	pthread_mutex_unlock(&mutex_lista_new);
 
-	algoritmo_planificador_mediano_plazo_blocked_suspended();
-
 	sem_post(&sem_algoritmo_planificador_largo_plazo);
+
+	algoritmo_planificador_mediano_plazo_blocked_suspended();
 }
 
 void crear_procesadores() {

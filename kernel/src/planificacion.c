@@ -2,30 +2,10 @@
 
 //TODO arreglar mallocs y memory leaks
 
-/*void algoritmo_planificador_largo_plazo() {
-
-	while(1) {
-		sem_wait(&sem_cola_new);
-		sem_wait(&sem_grado_multiprogramacion);
-
-		pthread_mutex_lock(&mutex_lista_new);
-		PCB* pcb = (PCB*) list_remove(LISTA_NEW, 0);
-		pthread_mutex_unlock(&mutex_lista_new);
-
-		pthread_mutex_lock(&mutex_lista_ready);
-		list_add(LISTA_READY, pcb);
-		pthread_mutex_unlock(&mutex_lista_ready);
-
-		sem_post(&sem_cola_ready);
-	}
-
-}*/
-
 void algoritmo_planificador_largo_plazo() {
 
 	while(1) {
 		sem_wait(&sem_algoritmo_planificador_largo_plazo);
-		//TODO el post de este semaforo cuando pasa de blocked suspended a ready suspended
 		sem_wait(&sem_grado_multiprogramacion);
 
 		pthread_mutex_lock(&mutex_lista_ready_suspended);
@@ -41,30 +21,21 @@ void algoritmo_planificador_largo_plazo() {
 			list_add(LISTA_READY, pcb);
 			pthread_mutex_unlock(&mutex_lista_ready);
 		}
-
 		pthread_mutex_unlock(&mutex_lista_ready_suspended);
 
 		sem_post(&sem_cola_ready);
 	}
-
 }
 
 void algoritmo_planificador_mediano_plazo_ready_suspended() {
-	pthread_mutex_lock(&mutex_lista_ready_suspended);
 	PCB* pcb = (PCB*) list_remove(LISTA_READY_SUSPENDED, 0);
-	pthread_mutex_unlock(&mutex_lista_ready_suspended);
 
 	pthread_mutex_lock(&mutex_lista_ready);
 	list_add(LISTA_READY, pcb);
 	pthread_mutex_unlock(&mutex_lista_ready);
 }
 
-// TODO balancear sems.
-// TODO crear sem_cola_blocked_suspended en planificacion.h.
-// TODO en el algoritmo que pone en cola new hacer un post a este sem. Cuando sale de new hacer un wait.
-
 void algoritmo_planificador_mediano_plazo_blocked_suspended() {
-
 
 	pthread_mutex_lock(&mutex_lista_blocked);
 
@@ -86,9 +57,7 @@ void algoritmo_planificador_mediano_plazo_blocked_suspended() {
 
 		sem_post(&sem_grado_multiprogramacion);
 	}
-
 	pthread_mutex_unlock(&mutex_lista_blocked);
-
 }
 
 
@@ -108,11 +77,8 @@ void algoritmo_planificador_corto_plazo() {
 		} else {
 			log_info(LOGGER, "El algoritmo de planificacion ingresado no existe\n");
 		}
-
 		correr_dispatcher(pcb);
-
 	}
-
 }
 
 void correr_dispatcher(PCB* pcb) {
@@ -198,7 +164,6 @@ PCB* algoritmo_HRRN() {
 	pthread_mutex_unlock(&mutex_lista_ready);
 
 	return pcb;
-
 }
 
 void ejecutar(t_procesador* estructura_procesador) {
@@ -250,7 +215,6 @@ void ejecutar(t_procesador* estructura_procesador) {
 			printf("Operacion desconocida. No quieras meter la pata\n");
 			break;
 		}
-
 	}
 }
 
@@ -277,7 +241,6 @@ void dar_permiso_para_continuar(int conexion){
 	int numero_de_bytes = send(conexion, &handshake, sizeof(uint32_t), 0);
 
 	printf("Ya di permiso %d\n", numero_de_bytes);
-
 }
 
 // TODO manejar error de crear un semaforo con el mismo nombre que uno ya existente
@@ -308,12 +271,7 @@ void init_sem(t_procesador* estructura_procesador) {
 	printf("Nombre semaforo: %s\n", nuevo_semaforo->nombre);
 	printf("Valor semaforo: %d\n", nuevo_semaforo->value);
 
-
-	//fflush(stdout);
-
 	dar_permiso_para_continuar(estructura_procesador->lugar_PCB->conexion);
-
-
 }
 
 
@@ -407,7 +365,30 @@ void post_sem(t_procesador* estructura_procesador) {
 			pthread_mutex_unlock(&mutex_lista_ready);
 
 			sem_post(&sem_cola_ready);
-		} //TODO ACA HACER UN ELSE SI NO ESTA EN BLOCKED (Que significa que esta en blocked suspended)
+		} else {
+			pthread_mutex_lock(&mutex_lista_blocked_suspended);
+			list_remove_by_condition(LISTA_BLOCKED_SUSPENDED, _criterio_remocion_lista);
+			pthread_mutex_unlock(&mutex_lista_blocked_suspended);
+
+			pthread_mutex_lock(&mutex_lista_ready_suspended);
+			list_add(LISTA_READY_SUSPENDED, pcb);
+			pthread_mutex_unlock(&mutex_lista_ready_suspended);
+
+			sem_post(&sem_algoritmo_planificador_largo_plazo);
+
+			//TEST
+			pthread_mutex_lock(&mutex_lista_blocked_suspended);
+			printf("Tamanio blocked suspended: %d\n", list_size(LISTA_BLOCKED_SUSPENDED));
+			pthread_mutex_unlock(&mutex_lista_blocked_suspended);
+			//FIN TEST
+
+			//TEST
+			pthread_mutex_lock(&mutex_lista_ready_suspended);
+			PCB* carpinchoTest = (PCB*) list_get(LISTA_READY_SUSPENDED, 0);
+			printf("PID carpincho en ready suspended: %d\n", carpinchoTest->PID);
+			pthread_mutex_unlock(&mutex_lista_ready_suspended);
+			//FIN TEST
+		}
 
 	} else {
 		semaforo->value += 1;
@@ -421,8 +402,6 @@ void post_sem(t_procesador* estructura_procesador) {
 	printf("Tamanio blocked: %d\n", list_size(LISTA_BLOCKED));
 	pthread_mutex_unlock(&mutex_lista_blocked);
 	//FIN TEST
-	// una vez encontrado, incrementarle en 1 el valor. HECHO, fijarse el comentario de arriba
-	// desbloquear el proceso q tiene en la cola en primer lugar (FIFO). HECHO, fijarse el comentario de arriba
 }
 
 void destroy_sem(t_procesador* estructura_procesador) {
@@ -462,7 +441,17 @@ void destroy_sem(t_procesador* estructura_procesador) {
 				pthread_mutex_unlock(&mutex_lista_ready);
 
 				sem_post(&sem_cola_ready);
-			} //TODO ACA HACER UN ELSE SI NO ESTA EN BLOCKED (Que significa que esta en blocked suspended)
+			} else {
+				pthread_mutex_lock(&mutex_lista_blocked_suspended);
+				list_remove_by_condition(LISTA_BLOCKED_SUSPENDED, _criterio_remocion_lista);
+				pthread_mutex_unlock(&mutex_lista_blocked_suspended);
+
+				pthread_mutex_lock(&mutex_lista_ready_suspended);
+				list_add(LISTA_READY_SUSPENDED, pcb);
+				pthread_mutex_unlock(&mutex_lista_ready_suspended);
+
+				sem_post(&sem_algoritmo_planificador_largo_plazo);
+			}
 		}
 	}
 
@@ -511,6 +500,7 @@ void mate_close(t_procesador* estructura_procesador) {
 	estructura_procesador->bit_de_ocupado = 0;
 	pthread_mutex_unlock(&mutex_lista_procesadores);
 	sem_post(&sem_grado_multiprocesamiento);
+	sem_post(&sem_grado_multiprogramacion);
 
 }
 
