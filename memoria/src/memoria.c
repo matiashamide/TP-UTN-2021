@@ -196,7 +196,7 @@ int memalloc(int pid, int size){
 	int dir_logica = -1;
 
 	//[CASO A]: Llega un proceso nuevo
-	if(list_get(TABLAS_DE_PAGINAS , pid) == NULL){
+	if (tabla_por_pid(pid) == NULL){
 
 		log_info(LOGGER, "el proceso %i no existe, inicializandolo... " , pid);
 
@@ -289,7 +289,7 @@ int memalloc(int pid, int size){
 
 			//Proceso existente con asignacion dinamica
 			int cantidad_paginas;
-			t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+			t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 			int tamanio_total = list_size(paginas_proceso) * CONFIG.tamanio_pagina;
 			int size_necesario_extra = size - tamanio_total - alloc->direc_logica;
 			cantidad_paginas = ceil(size_necesario_extra/CONFIG.tamanio_pagina);
@@ -315,7 +315,7 @@ int memalloc(int pid, int size){
 			//Creamos nuevo header
 			int nro_pagina_nueva, offset_nuevo;
 			nro_pagina_nueva = floor(ultimo_header->next_alloc/CONFIG.tamanio_pagina);
-			offset_nuevo =  (ultimo_header->next_alloc/CONFIG.tamanio_pagina - floor(ultimo_header->next_alloc/CONFIG.tamanio_pagina)) * CONFIG.tamanio_pagina;
+			offset_nuevo = (ultimo_header->next_alloc/CONFIG.tamanio_pagina - floor(ultimo_header->next_alloc/CONFIG.tamanio_pagina)) * CONFIG.tamanio_pagina;
 
 			heap_metadata* nuevo_header = malloc(sizeof(heap_metadata));
 			nuevo_header->is_free = true;
@@ -325,8 +325,10 @@ int memalloc(int pid, int size){
 			for (int i = 1 ; i <= cantidad_paginas ; i++) {
 
 				t_pagina* pagina      = malloc(sizeof(t_pagina));
+
+				lockear(pagina);
 				pagina->pid 		  = pid;
-				pagina->id  		  = ((t_pagina*)list_get( ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas, list_size( ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas)))->id + i;
+				pagina->id  		  = ((t_pagina*)list_get(tabla_por_pid(pid)->paginas, list_size(tabla_por_pid(pid)->paginas)))->id + i;
 				pagina->frame_ppal    = solicitar_frame_en_ppal(pid);
 				pagina->modificado    = 1;
 				pagina->lock          = 1;
@@ -335,7 +337,7 @@ int memalloc(int pid, int size){
 				pagina->uso           = 0;
 
 				list_add(paginas_proceso, pagina);
-				//unlock pagina
+				unlockear(pagina);
 			}
 
 			dir_logica = ultimo_header->next_alloc;
@@ -348,13 +350,13 @@ int memalloc(int pid, int size){
 		}
 
 	}
-	log_info(LOGGER, "se le asignaron %i bytes al proceso %i, correctamente " , size, pid);
+	log_info(LOGGER, "Se le asignaron %i bytes al proceso %i, correctamente " , size, pid);
 	return dir_logica + sizeof(heap_metadata);
 }
 
 int memfree(int pid, int dir_logica){
 
-	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 
 	if (paginas_proceso == NULL || list_size(paginas_proceso) == 0) {
 		return MATE_READ_FAULT;
@@ -362,7 +364,7 @@ int memfree(int pid, int dir_logica){
 
 	int pag_en_donde_empieza_el_alloc = floor((dir_logica - sizeof(heap_metadata)) / CONFIG.tamanio_pagina);
 
-	t_pagina* pagina = (t_pagina*)list_get(paginas_proceso , pag_en_donde_empieza_el_alloc);
+	t_pagina* pagina = pagina_por_id(pid, pag_en_donde_empieza_el_alloc);
 
 	lockear(pagina);
 	// Buscar pagina o paginas en donde esta el alloc
@@ -382,7 +384,7 @@ int memfree(int pid, int dir_logica){
 
 int tentativa_de_memfree(int pid , int dir_logica){
 
-	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 
 		if (paginas_proceso == NULL || list_size(paginas_proceso) == 0) {
 			return MATE_READ_FAULT;
@@ -473,7 +475,7 @@ int tentativa_de_memfree(int pid , int dir_logica){
 
 int memread(int pid, int dir_logica, void* dest, int size) {
 
-	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 
 	if (paginas_proceso == NULL || list_size(paginas_proceso) == 0) {
 		return MATE_READ_FAULT;
@@ -489,15 +491,14 @@ int memread(int pid, int dir_logica, void* dest, int size) {
 	int index_pag_inicial;
 
 	for(int i = 0; i < list_size(paginas_proceso); i++){
-		t_pagina* pagina =  (t_pagina*)list_get(paginas_proceso,i);
+		t_pagina* pagina =  pagina_por_id(pid, i);
 		if(pagina->id == pag_inicial){
 			index_pag_inicial = i;
 		}
 	}
 
-	//TODO: Ver si pasamos bien los index en list_get en todo el TP
 	int offset = dir_logica - CONFIG.tamanio_pagina * pag_inicial;
-	t_pagina* pagina =  (t_pagina*)list_get(paginas_proceso,index_pag_inicial);
+	t_pagina* pagina =  pagina_por_id(pid, index_pag_inicial);
 	lockear(pagina);
 	int frame_pag = buscar_pagina(pid, pagina);
 
@@ -517,7 +518,7 @@ int memread(int pid, int dir_logica, void* dest, int size) {
 		//Entra al for solo si tiene que copiar paginas enteras
 		for(i = 1; i <= pag_final - pag_inicial - 1; i++){
 
-			pagina =  (t_pagina*)list_get(paginas_proceso, index_pag_inicial + i );
+			pagina =  pagina_por_id(pid, index_pag_inicial + i);
 			lockear(pagina);
 			frame_pag = buscar_pagina(pid, pagina);
 
@@ -526,7 +527,7 @@ int memread(int pid, int dir_logica, void* dest, int size) {
 			size -= CONFIG.tamanio_pagina;
 		}
 
-		pagina =  (t_pagina*)list_get(paginas_proceso, index_pag_inicial + i );
+		pagina =  pagina_por_id(pid, index_pag_inicial + i);
 		lockear(pagina);
 		frame_pag = buscar_pagina(pid, pagina);
 		memcpy(dest + CONFIG.tamanio_pagina - offset + (i-1) * CONFIG.tamanio_pagina, MEMORIA_PRINCIPAL + frame_pag * CONFIG.tamanio_pagina , size);
@@ -538,7 +539,7 @@ int memread(int pid, int dir_logica, void* dest, int size) {
 }
 
 int memwrite(int pid, int dir_logica, void* contenido, int size) {
-	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 
 		if (paginas_proceso == NULL || list_size(paginas_proceso) == 0) {
 			return MATE_WRITE_FAULT;
@@ -566,8 +567,8 @@ int memwrite(int pid, int dir_logica, void* contenido, int size) {
 
 int escribir_contenido(int pid, int dir_logica, void* contenido, int pag_en_donde_empieza_el_alloc, int size){
 
-	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
-	t_pagina* pagina =  (t_pagina*)list_get( paginas_proceso , pag_en_donde_empieza_el_alloc);
+	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
+	t_pagina* pagina =  pagina_por_id(pid, pag_en_donde_empieza_el_alloc);
 
 	lockear(pagina);
 	set_modificado(pagina);
@@ -601,7 +602,7 @@ int escribir_contenido(int pid, int dir_logica, void* contenido, int pag_en_dond
 
 		for (int i = 1 ; i <= cant_pags ; i++) {
 
-			pagina =  (t_pagina*)list_get( paginas_proceso , pag_en_donde_empieza_el_alloc + i);
+			pagina = pagina_por_id(pid,pag_en_donde_empieza_el_alloc + i);
 
 			lockear(pagina);
 			set_modificado(pagina);
@@ -628,13 +629,14 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 
 	t_alloc_disponible* alloc = malloc(sizeof(t_alloc_disponible));
 
-	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 	int nro_pagina = 0, offset = 0;
 
 	nro_pagina = ceil(posicion_heap_actual / CONFIG.tamanio_pagina);
 	offset = posicion_heap_actual - CONFIG.tamanio_pagina * nro_pagina;
 
 	t_pagina* pag = malloc(sizeof(t_pagina));
+	//TODO: nro pagina aca esta bien u obtengo por id ??
 	pag = list_get(paginas_proceso, nro_pagina);
 
 	heap_metadata* header = desserializar_header(pid, nro_pagina, offset);
@@ -701,7 +703,7 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 				offset_pagina_nueva = posicion_heap_actual + size + 9 - CONFIG.tamanio_pagina * nro_pagina_nueva;
 
 				t_pagina* pag_nueva = malloc(sizeof(t_pagina));
-				pag_nueva = (t_pagina*)list_get(paginas_proceso, nro_pagina_nueva);
+				pag_nueva = pagina_por_id(pid, nro_pagina_nueva);
 
 				if (!pag_nueva->presencia) { //Si esta en principal == 1
 					traer_pagina_a_mp(pag_nueva);
@@ -714,7 +716,7 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 				offset_pagina_final = header->next_alloc - CONFIG.tamanio_pagina * nro_pagina_nueva;
 
 				t_pagina* pag_final = malloc(sizeof(t_pagina));
-				pag_final = (t_pagina*)list_get(paginas_proceso, nro_pagina_final);
+				pag_final = pagina_por_id(pid, nro_pagina_final);
 
 				heap_metadata* header_final = desserializar_header(pid, nro_pagina_final, offset_pagina_final);
 
@@ -769,7 +771,8 @@ int obtener_pos_ultimo_alloc(int pid) {
 
 void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 
-	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
+	//TODO nro pagina esta bien aca ???
 	t_pagina* pagina        = (t_pagina*)list_get(paginas_proceso, nro_pagina);
 	t_pagina* pagina_sig    = (t_pagina*)list_get(paginas_proceso, nro_pagina+1);
 
@@ -803,7 +806,8 @@ heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
 	heap_metadata* header = malloc(sizeof(heap_metadata));
 	void* buffer = malloc(sizeof(heap_metadata));
 
-	t_list* pags_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+	t_list* pags_proceso = tabla_por_pid(pid)->paginas;
+	//TODO: nro_pagina ta bien aca ?
 	t_pagina* pag = (t_pagina*)list_get(pags_proceso, nro_pag);
 
 	int frame_pagina = buscar_pagina(pid, nro_pag);
@@ -838,7 +842,7 @@ heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
 
 int calcular_pagina_libre( int pid , int posicion_inicial, int posicion_final){
 
-	t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 
 	int nro_pagina_inicial = floor(posicion_inicial / CONFIG.tamanio_pagina);
 	int nro_pagina_final = floor(posicion_final / CONFIG.tamanio_pagina);
@@ -905,8 +909,8 @@ int actualizar_headers_por_liberar_pagina(int pid , int nro_pag_liberada){
 //------------------------------------------------ FUNCIONES SECUNDARIAS -----------------------------------------------//
 
 int buscar_pagina(int pid, int pag) {
-	t_list* pags_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
-	t_pagina* pagina     = (t_pagina*)list_get(pags_proceso, pag);
+	t_list* pags_proceso = tabla_por_pid(pid)->paginas;
+	t_pagina* pagina     = pagina_por_id(pid, pag);
 	//todo deberiamos cambiarlo a que encuentre en base a una lambda mismo_id(), porque si no  al liberar agarramos otra pagina
 
 	log_info(LOGGER, "buscando frame de memoria de la pag %i del proceso %i " , pag, pid);
@@ -942,7 +946,7 @@ int solicitar_frame_en_ppal(int pid){
 	//Caso asignacion FIJA
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
-		t_list* pags_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+		t_list* pags_proceso = tabla_por_pid(pid)->paginas;
 
 		if (list_size(pags_proceso) < CONFIG.marcos_max) {
 
@@ -999,7 +1003,7 @@ int reemplazar_con_LRU(int pid) {
 	t_list* paginas;
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
-		t_list* paginas_proceso = ((t_tabla_pagina*)list_get(TABLAS_DE_PAGINAS, pid))->paginas;
+		t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 		paginas = list_filter(paginas_proceso, (void*)esta_en_mp);
 	}
 
@@ -1103,6 +1107,37 @@ t_list* paginas_en_mp(){
 
 	list_destroy(paginas);
 	return paginas_en_mp;
+}
+
+t_tabla_pagina* tabla_por_pid(int pid){
+
+	t_tabla_pagina* tabla;
+
+	int _mismo_id(t_tabla_pagina* tabla_aux) {
+		return (tabla_aux->PID == pid);
+	}
+
+    pthread_mutex_lock(&mutex_tablas_dp);
+	tabla = list_find(TABLAS_DE_PAGINAS, (void*)_mismo_id);
+	pthread_mutex_unlock(&mutex_tablas_dp);
+
+	return tabla;
+}
+
+t_pagina* pagina_por_id(int pid, int id) {
+
+	t_list* paginas = tabla_por_pid(pid)->paginas;
+	t_pagina* pagina;
+
+	int _mismo_id(t_pagina* pag_aux) {
+		return (pag_aux->id == id);
+	}
+
+    pthread_mutex_lock(&mutex_tablas_dp);
+	pagina = list_find(paginas, (void*)_mismo_id);
+	pthread_mutex_unlock(&mutex_tablas_dp);
+
+	return pagina;
 }
 
 //------------------------------------------------ INTERACCIONES CON SWAMP -----------------------------------------------//
