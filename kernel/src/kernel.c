@@ -94,7 +94,7 @@ void init_kernel(){
 	LISTA_READY_SUSPENDED = list_create();
 	LISTA_PROCESADORES = list_create();
 	LISTA_SEMAFOROS_MATE = list_create();
-
+	LISTA_DISPOSITIVOS_IO = list_create();
 
 	//Mutexes
 	pthread_mutex_init(&mutex_creacion_PID, NULL);
@@ -112,9 +112,29 @@ void init_kernel(){
 	//Variable que asigna PIDs a los nuevos carpinchos
 	PID_PROX_CARPINCHO = 0;
 
+	crear_dispositivos_io();
 	crear_procesadores();
 	iniciar_planificador_largo_plazo();
 	iniciar_planificador_corto_plazo();
+}
+
+void crear_dispositivos_io() {
+	for(int i = 0; i < size_char_array(CONFIG_KERNEL.dispositivos_IO); i++) {
+		t_dispositivo* dispositivo_io = malloc(sizeof(t_dispositivo));
+
+		dispositivo_io->nombre = CONFIG_KERNEL.dispositivos_IO[i];
+		dispositivo_io->rafaga = strtol(CONFIG_KERNEL.duraciones_IO[i], NULL, 10);
+		dispositivo_io->cola_bloqueados = list_create();
+		sem_init(&dispositivo_io->sem_dispositivo, 0, 0);
+
+		list_add(LISTA_DISPOSITIVOS_IO, dispositivo_io);
+
+		//TEST
+		printf("Nombre dispositivo %s\n", dispositivo_io->nombre);
+		printf("Rafaga dispositivo %d\n", dispositivo_io->rafaga);
+		//FIN TEST
+
+	}
 }
 
 void coordinador_multihilo(){

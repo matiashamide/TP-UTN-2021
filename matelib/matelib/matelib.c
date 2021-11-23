@@ -392,14 +392,36 @@ int mate_sem_destroy(mate_instance *lib_ref, mate_sem_name sem) {
 
 int mate_call_io(mate_instance *lib_ref, mate_io_resource io, void *msg)
 {
-  printf("Doing IO %s...\n", io);
-  usleep(10 * 1000);
-  if (!strncmp(io, "PRINTER", 7))
-  {
-    printf("Printing content: %s\n", (char *)msg);
-  }
-  printf("Done with IO %s\n", io);
-  return 0;
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = CALL_IO;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = strlen(io) + 1;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+	int offset = 0;
+	memcpy(paquete->buffer->stream + offset, io, strlen(io) + 1);
+	offset += strlen(io) + 1;
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	send(((mate_inner_structure *)lib_ref->group_info)->socket_conexion, a_enviar, bytes, 0);
+
+	recibir_permiso_para_continuar(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
+
+	free(a_enviar);
+	eliminar_paquete(paquete);
+	return 0;
+
+  //printf("Doing IO %s...\n", io);
+  //usleep(10 * 1000);
+  //if (!strncmp(io, "PRINTER", 7))
+ // {
+ //   printf("Printing content: %s\n", (char *)msg);
+ // }
+ // printf("Done with IO %s\n", io);
+ // return 0;
 }
 
 //--------------Memory Module Functions-------------------/

@@ -63,6 +63,13 @@ typedef struct {
 	t_list* cola_bloqueados;
 }t_semaforo_mate;
 
+typedef struct {
+	char* nombre;
+	uint32_t rafaga;
+	sem_t sem_dispositivo;
+	t_list* cola_bloqueados;
+}t_dispositivo;
+
 //VARIABLES GLOBALES
 t_list_iterator* iterador_lista_ready;
 t_kernel_config CONFIG_KERNEL;
@@ -83,6 +90,7 @@ t_list* LISTA_BLOCKED_SUSPENDED;
 t_list* LISTA_READY_SUSPENDED;
 t_list* LISTA_PROCESADORES;
 t_list* LISTA_SEMAFOROS_MATE;
+t_list* LISTA_DISPOSITIVOS_IO;
 
 //MUTEXES
 pthread_mutex_t mutex_lista_new;
@@ -114,11 +122,11 @@ void init_sem(t_procesador*);
 void wait_sem(t_procesador*);
 void post_sem(t_procesador*);
 void destroy_sem(t_procesador*);
-void call_IO(PCB*);
-void memalloc(PCB*);
-void memread(PCB*);
-void memfree(PCB*);
-void memwrite(PCB*);
+void call_IO(t_procesador*);
+void memalloc(t_procesador*);
+void memread(t_procesador*);
+void memfree(t_procesador*);
+void memwrite(t_procesador*);
 void mate_close(t_procesador*);
 
 #endif /* PLANIFICACION_H_ */

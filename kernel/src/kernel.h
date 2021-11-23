@@ -36,6 +36,7 @@ void pasar_a_new(PCB* pcb_carpincho);
 void iniciar_planificador_largo_plazo();
 void iniciar_planificador_corto_plazo();
 void crear_procesadores();
+void crear_dispositivos_io();
 
 #endif /* KERNEL_H_ */
 

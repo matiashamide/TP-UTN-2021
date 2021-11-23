@@ -190,7 +190,7 @@ void ejecutar(t_procesador* estructura_procesador) {
 			destroy_sem(estructura_procesador);
 			break;
 		case CALL_IO:
-			//TODO DEFINIR
+			call_IO(estructura_procesador);
 			break;
 		case MEMALLOC:
 			//TODO DEFINIR
@@ -466,23 +466,49 @@ void destroy_sem(t_procesador* estructura_procesador) {
 	dar_permiso_para_continuar(estructura_procesador->lugar_PCB->conexion);
 }
 
-void call_IO(PCB* pcb) {
+void call_IO(t_procesador* estructura_procesador) {
+	uint32_t size_nombre_dispositivo;
+
+	recv(estructura_procesador->lugar_PCB->conexion, &size_nombre_dispositivo, sizeof(uint32_t), MSG_WAITALL);
+
+	char* nombre = malloc(size_nombre_dispositivo);
+
+	recv(estructura_procesador->lugar_PCB->conexion, nombre, size_nombre_dispositivo, MSG_WAITALL);
+
+	bool _criterio_busqueda_dispositivo(void* elemento) {
+			return (strcmp(((t_dispositivo*)elemento)->nombre, nombre) == 0);
+		}
+
+	//TODO buscar dispositivo en la lista
+	//agregarle el PCB a la cola
+	//agregarlo a la cola de bloqueados
+	//hacerle signal al semaforo del dispositivo IO
+
 
 }
 
-void memalloc(PCB* pcb) {
+void ejecutar_io(t_dispositivo* dispositivo) {
+	//TODO hacer el sleep
+	//buscar el proceso en la cola de bloqueados
+	//pasarlo a ready (y hacer las cosas correspondientes)
+	//si no esta en bloqueados buscarlo en suspendido bloqueado y pasarlo a suspendido listo (tambien hacer lo correspondiente)
+}
+
+
+
+void memalloc(t_procesador* estructura_procesador) {
 
 }
 
-void memread(PCB* pcb) {
+void memread(t_procesador* estructura_procesador) {
 
 }
 
-void memfree(PCB* pcb) {
+void memfree(t_procesador* estructura_procesador) {
 
 }
 
-void memwrite(PCB* pcb) {
+void memwrite(t_procesador* estructura_procesador) {
 
 }
 
