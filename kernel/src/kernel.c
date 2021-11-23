@@ -102,6 +102,7 @@ void init_kernel(){
 	pthread_mutex_init(&mutex_lista_ready, NULL);
 	pthread_mutex_init(&mutex_lista_procesadores, NULL);
 	pthread_mutex_init(&mutex_lista_semaforos_mate, NULL);
+	pthread_mutex_init(&mutex_lista_dispositivos_io, NULL);
 
 	//Semaforos
 	sem_init(&sem_algoritmo_planificador_largo_plazo, 0, 0);
@@ -124,10 +125,16 @@ void crear_dispositivos_io() {
 
 		dispositivo_io->nombre = CONFIG_KERNEL.dispositivos_IO[i];
 		dispositivo_io->rafaga = strtol(CONFIG_KERNEL.duraciones_IO[i], NULL, 10);
-		dispositivo_io->cola_bloqueados = list_create();
-		sem_init(&dispositivo_io->sem_dispositivo, 0, 0);
+		dispositivo_io->cola_espera = list_create();
+		sem_init(&dispositivo_io->sem, 0, 0);
 
 		list_add(LISTA_DISPOSITIVOS_IO, dispositivo_io);
+
+		pthread_t hilo_dispositivo;
+
+		pthread_create(&hilo_dispositivo, NULL, (void*)ejecutar_io, dispositivo_io);
+		printf("Cree un dispositivo\n");
+		pthread_detach(hilo_dispositivo);
 
 		//TEST
 		printf("Nombre dispositivo %s\n", dispositivo_io->nombre);

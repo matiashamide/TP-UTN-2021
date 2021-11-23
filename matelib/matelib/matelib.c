@@ -408,20 +408,15 @@ int mate_call_io(mate_instance *lib_ref, mate_io_resource io, void *msg)
 
 	send(((mate_inner_structure *)lib_ref->group_info)->socket_conexion, a_enviar, bytes, 0);
 
+	printf("Printing content: %s\n", (char *)msg);
+
 	recibir_permiso_para_continuar(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
+
+	printf("Done with IO %s\n", io);
 
 	free(a_enviar);
 	eliminar_paquete(paquete);
 	return 0;
-
-  //printf("Doing IO %s...\n", io);
-  //usleep(10 * 1000);
-  //if (!strncmp(io, "PRINTER", 7))
- // {
- //   printf("Printing content: %s\n", (char *)msg);
- // }
- // printf("Done with IO %s\n", io);
- // return 0;
 }
 
 //--------------Memory Module Functions-------------------/

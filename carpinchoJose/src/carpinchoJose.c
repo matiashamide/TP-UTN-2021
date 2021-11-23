@@ -22,7 +22,9 @@ int main(void) {
 	//mate_sem_wait(&mate_ref, "SEMA");
 	//mate_sem_post(&mate_ref, "SEM");
 	//mate_sem_destroy(&mate_ref, "SEM");
-	mate_printf();
+	mate_call_io(&mate_ref, "laguna", "Hola, estoy imprimiendo desde un dispositivo");
+	//mate_call_io(&mate_ref, "hierbitas", "Hola, estoy imprimiendo desde un dispositivo");
+	//mate_printf();
 	mate_close(&mate_ref);
 
 	return EXIT_SUCCESS;

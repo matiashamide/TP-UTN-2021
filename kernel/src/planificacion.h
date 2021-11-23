@@ -66,8 +66,8 @@ typedef struct {
 typedef struct {
 	char* nombre;
 	uint32_t rafaga;
-	sem_t sem_dispositivo;
-	t_list* cola_bloqueados;
+	sem_t sem;
+	t_list* cola_espera;
 }t_dispositivo;
 
 //VARIABLES GLOBALES
@@ -101,6 +101,7 @@ pthread_mutex_t mutex_lista_blocked_suspended;
 pthread_mutex_t mutex_lista_ready_suspended;
 pthread_mutex_t mutex_lista_procesadores;
 pthread_mutex_t mutex_lista_semaforos_mate;
+pthread_mutex_t mutex_lista_dispositivos_io;
 
 //HILOS
 pthread_t planificador_largo_plazo;
@@ -123,6 +124,7 @@ void wait_sem(t_procesador*);
 void post_sem(t_procesador*);
 void destroy_sem(t_procesador*);
 void call_IO(t_procesador*);
+void ejecutar_io(t_dispositivo*);
 void memalloc(t_procesador*);
 void memread(t_procesador*);
 void memfree(t_procesador*);

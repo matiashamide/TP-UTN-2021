@@ -479,19 +479,70 @@ void call_IO(t_procesador* estructura_procesador) {
 			return (strcmp(((t_dispositivo*)elemento)->nombre, nombre) == 0);
 		}
 
-	//TODO buscar dispositivo en la lista
-	//agregarle el PCB a la cola
-	//agregarlo a la cola de bloqueados
-	//hacerle signal al semaforo del dispositivo IO
+	pthread_mutex_lock(&mutex_lista_dispositivos_io);
+	t_dispositivo* dispositivo = (t_dispositivo*) list_find(LISTA_DISPOSITIVOS_IO, _criterio_busqueda_dispositivo);
+	list_add(dispositivo->cola_espera, estructura_procesador->lugar_PCB);
+	sem_post(&dispositivo->sem);
+	pthread_mutex_unlock(&mutex_lista_dispositivos_io);
 
-
+	pthread_mutex_lock(&mutex_lista_blocked);
+	list_add(LISTA_BLOCKED, estructura_procesador->lugar_PCB);
+	pthread_mutex_unlock(&mutex_lista_blocked);
+	pthread_mutex_lock(&mutex_lista_procesadores); // TENER CUIDADO (si se bloquea todo ver aqui)
+	sem_wait(&estructura_procesador->sem_exec);
+	estructura_procesador->bit_de_ocupado = 0;
+	pthread_mutex_unlock(&mutex_lista_procesadores);
+	sem_post(&sem_grado_multiprocesamiento);
+	algoritmo_planificador_mediano_plazo_blocked_suspended();
 }
 
 void ejecutar_io(t_dispositivo* dispositivo) {
-	//TODO hacer el sleep
-	//buscar el proceso en la cola de bloqueados
-	//pasarlo a ready (y hacer las cosas correspondientes)
-	//si no esta en bloqueados buscarlo en suspendido bloqueado y pasarlo a suspendido listo (tambien hacer lo correspondiente)
+	while(1) {
+		sem_wait(&dispositivo->sem);
+		PCB* pcb = (PCB*) list_remove(dispositivo->cola_espera, 0);
+		usleep(dispositivo->rafaga);
+
+		bool _criterio_remocion_lista(void* elemento) {
+			return (((PCB*)elemento)->PID == pcb->PID);
+		}
+
+		if(list_any_satisfy(LISTA_BLOCKED, _criterio_remocion_lista)) {
+
+			pthread_mutex_lock(&mutex_lista_blocked);
+			list_remove_by_condition(LISTA_BLOCKED, _criterio_remocion_lista);
+			pthread_mutex_unlock(&mutex_lista_blocked);
+
+			pthread_mutex_lock(&mutex_lista_ready);
+			list_add(LISTA_READY, pcb);
+			printf("Tamanio ready: %d\n", list_size(LISTA_READY));
+			pthread_mutex_unlock(&mutex_lista_ready);
+
+			sem_post(&sem_cola_ready);
+		} else {
+			pthread_mutex_lock(&mutex_lista_blocked_suspended);
+			list_remove_by_condition(LISTA_BLOCKED_SUSPENDED, _criterio_remocion_lista);
+			pthread_mutex_unlock(&mutex_lista_blocked_suspended);
+
+			pthread_mutex_lock(&mutex_lista_ready_suspended);
+			list_add(LISTA_READY_SUSPENDED, pcb);
+			pthread_mutex_unlock(&mutex_lista_ready_suspended);
+
+			sem_post(&sem_algoritmo_planificador_largo_plazo);
+
+			//TEST
+			pthread_mutex_lock(&mutex_lista_blocked_suspended);
+			printf("Tamanio blocked suspended: %d\n", list_size(LISTA_BLOCKED_SUSPENDED));
+			pthread_mutex_unlock(&mutex_lista_blocked_suspended);
+			//FIN TEST
+
+			//TEST
+			pthread_mutex_lock(&mutex_lista_ready_suspended);
+			PCB* carpinchoTest = (PCB*) list_get(LISTA_READY_SUSPENDED, 0);
+			printf("PID carpincho en ready suspended: %d\n", carpinchoTest->PID);
+			pthread_mutex_unlock(&mutex_lista_ready_suspended);
+			//FIN TEST
+		}
+	}
 }
 
 
