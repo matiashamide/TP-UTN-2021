@@ -136,10 +136,9 @@ void atender_carpinchos(int cliente) {
 	case MEMALLOC:;
 		log_info(LOGGER, "el cliente %i solicito alocar memoria" , cliente);
 		int size = recibir_entero(cliente);
-		int pid = recibir_entero(cliente);;
+		int pid = recibir_entero(cliente);
 
 		retorno = memalloc(size , pid);
-
 
 	break;
 
@@ -151,6 +150,10 @@ void atender_carpinchos(int cliente) {
 		recv(cliente , dest , size_paquete - 2* sizeof(int), 0);
 
 		retorno = memread( pid, dir_logica ,  dest , size_paquete - 2* sizeof(uint32_t));
+		if(retorno != -1){
+			send(cliente , dest , size_paquete - 2*sizeof(uint32_t) , 0);
+			return;
+		}
 
 	break;
 
@@ -186,7 +189,7 @@ void atender_carpinchos(int cliente) {
 
 	}
 
-	send(cliente, retorno, sizeof(uint32_t) , 0);
+	send(cliente, &retorno, sizeof(uint32_t) , 0);
 
 }
 
@@ -403,7 +406,6 @@ int tentativa_de_memfree(int pid , int dir_logica){
 	heap_metadata* header_siguiente = desserializar_header(pid , pag_en_donde_empieza_el_header_siguiente , header_a_liberar->next_alloc);
 
 	header_a_liberar->is_free = true;
-	guardar_header(pid, pag_en_donde_empieza_el_header , header_siguiente->prev_alloc ,header_a_liberar);
 
 	//CASO A :: caso en que queremos liberar primer alloc
 
@@ -414,14 +416,20 @@ int tentativa_de_memfree(int pid , int dir_logica){
 		if( !header_siguiente->is_free){
 
 			guardar_header(pid, pag_en_donde_empieza_el_header , dir_logica ,header_a_liberar);
-			return 1;
+			liberar_si_hay_pagina_libre(pid , 9 , header_a_liberar->next_alloc);
 		}
 		//CASO A.2 :: caso en el que el siguiente header este libre
-		if(header_siguiente->is_free){
+		if( header_siguiente->is_free){
 
 			header_a_liberar->next_alloc = header_siguiente->next_alloc;
 			guardar_header(pid, pag_en_donde_empieza_el_header , header_siguiente->prev_alloc ,header_a_liberar);
-			calcular_pagina_libre( pid , sizeof(heap_metadata) , header_a_liberar->next_alloc );
+
+			heap_metadata* header_post_siguiente = desserializar_header(pid , floor(header_siguiente->next_alloc / CONFIG.tamanio_pagina) , header_siguiente->next_alloc);
+			header_post_siguiente->prev_alloc = header_siguiente->prev_alloc;
+			guardar_header(pid , floor(header_siguiente->next_alloc / CONFIG.tamanio_pagina) , header_siguiente->next_alloc ,header_post_siguiente);
+
+			liberar_si_hay_pagina_libre(pid , sizeof(heap_metadata) , header_a_liberar->next_alloc );
+			free(header_post_siguiente);
 		}
 
 	}
@@ -435,24 +443,35 @@ int tentativa_de_memfree(int pid , int dir_logica){
 		if(!header_anterior->is_free && !header_siguiente->is_free){
 
 			guardar_header(pid, pag_en_donde_empieza_el_header , header_siguiente->prev_alloc ,header_a_liberar);
-			calcular_pagina_libre( pid , header_anterior->next_alloc + 9 , header_a_liberar->next_alloc);
+			liberar_si_hay_pagina_libre( pid , header_anterior->next_alloc + 9 , header_a_liberar->next_alloc);
 
 		}
 
 		//CASO B.2 :: caso en el que el header anterior este libre
-		if(!header_anterior->is_free && header_siguiente->is_free){
+		if(header_anterior->is_free && !header_siguiente->is_free){
 
 			header_anterior->next_alloc = header_a_liberar->next_alloc;
 			guardar_header(pid , pag_en_donde_empieza_el_header_anterior , header_a_liberar->prev_alloc , header_anterior);
-			calcular_pagina_libre( pid , header_a_liberar->prev_alloc + 9 , header_a_liberar->next_alloc );
+
+			header_siguiente->prev_alloc = header_a_liberar->prev_alloc;
+			guardar_header(pid , pag_en_donde_empieza_el_header_siguiente , header_anterior->next_alloc , header_siguiente);
+
+			liberar_si_hay_pagina_libre( pid , header_a_liberar->prev_alloc + 9 , header_a_liberar->next_alloc );
+
 		}
 
 		//CASO B.3 :: caso en el que el header siguiente este libre
-		if(header_anterior->is_free && !header_siguiente->is_free){
+		if(!header_anterior->is_free && header_siguiente->is_free){
 
 			header_a_liberar->next_alloc = header_siguiente->next_alloc;
 			guardar_header(pid, pag_en_donde_empieza_el_header , header_anterior->next_alloc , header_a_liberar);
-			calcular_pagina_libre( pid , header_siguiente->prev_alloc + 9 , header_a_liberar->next_alloc );
+
+			heap_metadata* header_post_siguiente = desserializar_header(pid , floor(header_siguiente->next_alloc / CONFIG.tamanio_pagina) , header_siguiente->next_alloc);
+			header_post_siguiente->prev_alloc = header_siguiente->prev_alloc;
+			guardar_header(pid , floor(header_siguiente->next_alloc / CONFIG.tamanio_pagina) , header_siguiente->next_alloc ,header_post_siguiente);
+
+			liberar_si_hay_pagina_libre( pid , header_siguiente->prev_alloc + 9 , header_a_liberar->next_alloc );
+			free(header_post_siguiente);
 		}
 
 		//CASE B.4 :: caso en el que ambos header estan libres
@@ -460,8 +479,13 @@ int tentativa_de_memfree(int pid , int dir_logica){
 
 			header_anterior->next_alloc = header_siguiente->next_alloc;
 			guardar_header(pid , pag_en_donde_empieza_el_header_anterior , header_a_liberar->prev_alloc , header_anterior);
-			calcular_pagina_libre(pid , header_a_liberar->prev_alloc + 9 , header_a_liberar->next_alloc);
 
+			heap_metadata* header_post_siguiente = desserializar_header(pid , floor(header_siguiente->next_alloc / CONFIG.tamanio_pagina) , header_siguiente->next_alloc);
+			header_post_siguiente->prev_alloc = header_a_liberar->prev_alloc;
+			guardar_header(pid , floor(header_siguiente->next_alloc / CONFIG.tamanio_pagina) , header_siguiente->next_alloc ,header_post_siguiente);
+
+			liberar_si_hay_pagina_libre(pid , header_a_liberar->prev_alloc + 9 , header_a_liberar->next_alloc);
+			free(header_post_siguiente);
 		}
 		free(header_anterior);
 	}
@@ -500,7 +524,7 @@ int memread(int pid, int dir_logica, void* dest, int size) {
 	int offset = dir_logica - CONFIG.tamanio_pagina * pag_inicial;
 	t_pagina* pagina =  pagina_por_id(pid, index_pag_inicial);
 	lockear(pagina);
-	int frame_pag = buscar_pagina(pid, pagina);
+	int frame_pag = buscar_pagina(pid, pagina->id);
 
 	//EL memread se hace en una sola pagina
 	if(size <= CONFIG.tamanio_pagina - offset){
@@ -520,7 +544,7 @@ int memread(int pid, int dir_logica, void* dest, int size) {
 
 			pagina =  pagina_por_id(pid, index_pag_inicial + i);
 			lockear(pagina);
-			frame_pag = buscar_pagina(pid, pagina);
+			frame_pag = buscar_pagina(pid, pagina->id);
 
 			memcpy(dest + CONFIG.tamanio_pagina - offset + (i -1) * CONFIG.tamanio_pagina, MEMORIA_PRINCIPAL + frame_pag * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
 			unlockear(pagina);
@@ -529,99 +553,82 @@ int memread(int pid, int dir_logica, void* dest, int size) {
 
 		pagina =  pagina_por_id(pid, index_pag_inicial + i);
 		lockear(pagina);
-		frame_pag = buscar_pagina(pid, pagina);
+		frame_pag = buscar_pagina(pid, pagina->id);
 		memcpy(dest + CONFIG.tamanio_pagina - offset + (i-1) * CONFIG.tamanio_pagina, MEMORIA_PRINCIPAL + frame_pag * CONFIG.tamanio_pagina , size);
 		unlockear(pagina);
 
 	}
-	//TODO: ver si hay que mandar la dest por socket
+
 	return 1;
 }
 
 int memwrite(int pid, int dir_logica, void* contenido, int size) {
+
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 
-		if (paginas_proceso == NULL || list_size(paginas_proceso) == 0) {
-			return MATE_WRITE_FAULT;
+	if (paginas_proceso == NULL || list_size(paginas_proceso) == 0) {
+		return MATE_WRITE_FAULT;
+	}
+
+	int pag_inicial = floor(dir_logica / CONFIG.tamanio_pagina);
+	int pag_final = floor((dir_logica + size)/ CONFIG.tamanio_pagina);
+
+	if(pag_inicial > list_size(paginas_proceso) || dir_logica + size > list_size(paginas_proceso) * CONFIG.tamanio_pagina){
+		return MATE_WRITE_FAULT;
+	}
+
+	int index_pag_inicial;
+
+	for(int i = 0; i < list_size(paginas_proceso); i++){
+		t_pagina* pagina =  pagina_por_id(pid, i);
+		if(pagina->id == pag_inicial){
+			index_pag_inicial = i;
+		}
+	}
+
+	int offset = dir_logica - CONFIG.tamanio_pagina * pag_inicial;
+	t_pagina* pagina =  pagina_por_id(pid, index_pag_inicial);
+	lockear(pagina);
+	int frame_pag = buscar_pagina(pid, pagina->id);
+
+	//EL memread se hace en una sola pagina
+	if(size <= CONFIG.tamanio_pagina - offset){
+		memcpy(MEMORIA_PRINCIPAL + frame_pag * CONFIG.tamanio_pagina + offset, contenido, size);
+		unlockear(pagina);
+		return 1;
+	} else {
+		//El memread se hace en varias paginas
+
+		memcpy(MEMORIA_PRINCIPAL + frame_pag * CONFIG.tamanio_pagina + offset, contenido ,  CONFIG.tamanio_pagina - offset);
+		unlockear(pagina);
+		size -= CONFIG.tamanio_pagina - offset;
+
+		int i;
+		//Entra al for solo si tiene que copiar paginas enteras
+		for(i = 1; i <= pag_final - pag_inicial - 1; i++){
+
+			pagina =  pagina_por_id(pid, index_pag_inicial + i);
+			lockear(pagina);
+			frame_pag = buscar_pagina(pid, pagina->id);
+
+			memcpy(MEMORIA_PRINCIPAL + frame_pag * CONFIG.tamanio_pagina, contenido + CONFIG.tamanio_pagina - offset + (i-1) * CONFIG.tamanio_pagina , CONFIG.tamanio_pagina);
+			unlockear(pagina);
+			size -= CONFIG.tamanio_pagina;
 		}
 
-		int pag_en_donde_empieza_el_alloc = floor((dir_logica - sizeof(heap_metadata)) / CONFIG.tamanio_pagina);
+		pagina =  pagina_por_id(pid, index_pag_inicial + i);
+		lockear(pagina);
+		frame_pag = buscar_pagina(pid, pagina->id);
+		memcpy(MEMORIA_PRINCIPAL + frame_pag * CONFIG.tamanio_pagina , contenido + CONFIG.tamanio_pagina - offset + (i-1) * CONFIG.tamanio_pagina, size);
+		unlockear(pagina);
 
-		if(pag_en_donde_empieza_el_alloc > list_size(paginas_proceso)){
-			return MATE_WRITE_FAULT;
-		}
-
-
-		int retorno = escribir_contenido(pid, dir_logica,  contenido, pag_en_donde_empieza_el_alloc, size);
-
-		if(retorno == -1){
-			return MATE_WRITE_FAULT;
-		}
+	}
 
 	return 1;
 }
 
 
 //------------------------------------------------- FUNCIONES ALLOCs/HEADERs ---------------------------------------------//
-
-
-int escribir_contenido(int pid, int dir_logica, void* contenido, int pag_en_donde_empieza_el_alloc, int size){
-
-	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
-	t_pagina* pagina =  pagina_por_id(pid, pag_en_donde_empieza_el_alloc);
-
-	lockear(pagina);
-	set_modificado(pagina);
-	int frame_en_donde_esta_el_alloc = buscar_pagina(pid, pag_en_donde_empieza_el_alloc);
-
-	int offset = dir_logica - sizeof(heap_metadata) - CONFIG.tamanio_pagina * pag_en_donde_empieza_el_alloc;
-	heap_metadata* header = desserializar_header(pid, pag_en_donde_empieza_el_alloc, offset);
-
-	int tam_alloc = header->next_alloc - 1 - dir_logica;
-
-	if(tam_alloc < size){
-		return -1;
-		log_info(LOGGER, "se intento escribir algo mas grande que el tamanio del alloc");
-	}
-
-	void* alloc_buffer = malloc(tam_alloc);
-
-		//El alloc esta en una sola pagina
-	if (CONFIG.tamanio_pagina - offset - tam_alloc >= 0) {
-		memcpy( MEMORIA_PRINCIPAL + frame_en_donde_esta_el_alloc * CONFIG.tamanio_pagina + offset + sizeof(heap_metadata), contenido , tam_alloc);
-		unlockear(pagina);
-	} else {
-		tam_alloc -= CONFIG.tamanio_pagina - offset;
-		memcpy( MEMORIA_PRINCIPAL + frame_en_donde_esta_el_alloc * CONFIG.tamanio_pagina + offset + sizeof(heap_metadata), contenido, CONFIG.tamanio_pagina - offset);
-		unlockear(pagina);
-
-		int offset_copiado = CONFIG.tamanio_pagina - offset;
-
-		int cant_pags = ceil(tam_alloc / CONFIG.tamanio_pagina);
-		int frame_actual;
-
-		for (int i = 1 ; i <= cant_pags ; i++) {
-
-			pagina = pagina_por_id(pid,pag_en_donde_empieza_el_alloc + i);
-
-			lockear(pagina);
-			set_modificado(pagina);
-			frame_actual = buscar_pagina(pid, pag_en_donde_empieza_el_alloc + i);
-
-			if (tam_alloc > CONFIG.tamanio_pagina) {
-				memcpy(MEMORIA_PRINCIPAL + frame_actual * CONFIG.tamanio_pagina + offset + sizeof(heap_metadata), contenido + offset_copiado , CONFIG.tamanio_pagina);
-				unlockear(pagina);
-				offset_copiado += CONFIG.tamanio_pagina;
-				tam_alloc -= CONFIG.tamanio_pagina;
-			} else {
-				memcpy(MEMORIA_PRINCIPAL + frame_actual * CONFIG.tamanio_pagina + offset + sizeof(heap_metadata), contenido + offset_copiado , tam_alloc);
-				unlockear(pagina);
-			}
-		}
-	}
-
-	return 1;
-}
 
 //TODO: Ver si estamos devolviendo la DL o DF y Poner lock a la pagina para que no me la saque otro proceso mientras la uso
 
@@ -840,8 +847,8 @@ heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
 	return header;
 }
 
-int calcular_pagina_libre( int pid , int posicion_inicial, int posicion_final){
-
+int liberar_si_hay_pagina_libre( int pid , int posicion_inicial, int posicion_final){
+	//todo
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 
 	int nro_pagina_inicial = floor(posicion_inicial / CONFIG.tamanio_pagina);
@@ -852,16 +859,16 @@ int calcular_pagina_libre( int pid , int posicion_inicial, int posicion_final){
 		return 1;
 	}
 	//CASO B :: caso feo en el q hay que liberar
-	else if(nro_pagina_final - nro_pagina_inicial == 2){
+	else if(nro_pagina_final - nro_pagina_inicial > 1){
 		// no contemplo el caso en el que haya dos paginas libre dentro de un alloc, seria un caso un poco borde y recursivo (pueden se 2 o mas)el cual no pienso hacer salu2
 
-
-		//buscar_pagina(pid , nro_pagina_inicial + 1) la puedo liberar sin traerla a memoria
-
-		 list_remove(paginas_proceso , nro_pagina_inicial + 1);
+		t_pagina* pagina_eliminada = (t_pagina*)list_remove(paginas_proceso , nro_pagina_inicial + 1);
+		int nro_pagina_liberada = pagina_eliminada->id;
 
 		actualizar_headers_por_liberar_pagina(pid , nro_pagina_inicial + 1);
 
+		eliminar_pag_swap(pid, nro_pagina_liberada);
+		free(pagina_eliminada);
 		return 1;
 	}
 
@@ -900,7 +907,7 @@ int actualizar_headers_por_liberar_pagina(int pid , int nro_pag_liberada){
 
 		guardar_header(pid , nro_pagina , pos_actual_del_header ,header );
 
-		i += 1;
+		i ++;
  	}
 
 	return 1;
@@ -1133,9 +1140,7 @@ t_pagina* pagina_por_id(int pid, int id) {
 		return (pag_aux->id == id);
 	}
 
-    pthread_mutex_lock(&mutex_tablas_dp);
 	pagina = list_find(paginas, (void*)_mismo_id);
-	pthread_mutex_unlock(&mutex_tablas_dp);
 
 	return pagina;
 }
@@ -1266,6 +1271,33 @@ void tirar_a_swap(t_pagina* pagina) {
 	memcpy(buffer_pag, MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
 	enviar_pagina(TIRAR_A_SWAP, CONFIG.tamanio_pagina, buffer_pag, CONEXION_SWAP, pagina->pid , pagina-> id);
 	free(buffer_pag);
+
+}
+
+void eliminar_pag_swap(int pid , int nro_pagina){
+
+	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+		int offset = 0;
+
+		paquete->cod_op         = LIBERAR_PAGINA;
+		paquete->buffer         = malloc(sizeof(t_buffer));
+		paquete->buffer->size   = sizeof(uint32_t) * 2;
+		paquete->buffer->stream = malloc(paquete->buffer->size);
+
+		memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
+		offset += sizeof(uint32_t);
+		memcpy(paquete->buffer->stream + offset, &nro_pagina, sizeof(uint32_t));
+
+		int bytes;
+
+		void* a_enviar = serializar_paquete_swap(paquete, &bytes);
+
+		pthread_mutex_lock(&mutex_swamp);
+		send(socket, a_enviar, bytes, 0);
+		pthread_mutex_unlock(&mutex_swamp);
+
+		free(a_enviar);
+		eliminar_paquete_swap(paquete);
 
 }
 

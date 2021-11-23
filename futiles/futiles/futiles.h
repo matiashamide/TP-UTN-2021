@@ -82,7 +82,7 @@ int size_char_array(char** array);
 
 
 // Envios MEMORIA - SWAP
-void solicitar_pagina(int socket, int pid, int nro_pagina);
+//void solicitar_pagina(int socket, int pid, int nro_pagina);
 void enviar_pagina(t_peticion_swap sentido_swapeo, int tam_pagina, void* pagina, int socket_cliente, uint32_t pid, uint32_t nro_pagina);
 void* serializar_paquete_swap(t_paquete_swap* paquete, int* bytes);
 void eliminar_paquete_swap(t_paquete_swap*);
