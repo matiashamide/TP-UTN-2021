@@ -627,15 +627,41 @@ void suspender_proceso(int pid){}
 
 void eliminar_proceso(int pid) {
 	t_tabla_pagina* tabla_proceso = tabla_por_pid(pid);
-	/*
-	t_list*
+	t_list* paginas_proceso = tabla_proceso->paginas;
 
 	if (tabla_proceso == NULL) {
 		return;
 	}
 
-	for ()
-	*/
+	for (int i = 0; i < list_size(paginas_proceso); i++) {
+		t_pagina* pagina = list_get(paginas_proceso,i);
+		if(pagina->presencia){
+			t_frame* frame = list_get(FRAMES_MEMORIA,pagina->frame_ppal);
+			frame->ocupado = false;
+		}
+		free(pagina);
+	}
+	bool frames_del_pid(void * elemento){
+		t_frame* frame_aux = (t_frame*) elemento;
+		return frame_aux->pid == pid;
+	}
+	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA" )){
+		t_list* frames_memoria_pid = list_filter(FRAMES_MEMORIA, frames_del_pid);
+		for(int i = 0; i < list_size(frames_memoria_pid); i++) {
+			t_frame* frame = list_get(frames_memoria_pid, i);
+			frame->ocupado = false;
+			frame->pid = -1;
+		}
+	}
+	bool tabla_es_de_pid(void* element){
+		t_tabla_pagina* tabla_aux = (t_tabla_pagina*) element;
+		return tabla_aux->PID == pid;
+	}
+	list_remove_and_destroy_by_condition(TABLAS_DE_PAGINAS,tabla_es_de_pid,free);
+	//free(tabla_proceso);
+
+	eliminar_proceso_swap(pid);
+
 }
 
 //------------------------------------------------- FUNCIONES ALLOCs/HEADERs ---------------------------------------------//
@@ -1293,6 +1319,30 @@ void eliminar_pag_swap(int pid , int nro_pagina){
 		memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
 		offset += sizeof(uint32_t);
 		memcpy(paquete->buffer->stream + offset, &nro_pagina, sizeof(uint32_t));
+
+		int bytes;
+
+		void* a_enviar = serializar_paquete_swap(paquete, &bytes);
+
+		pthread_mutex_lock(&mutex_swamp);
+		send(socket, a_enviar, bytes, 0);
+		pthread_mutex_unlock(&mutex_swamp);
+
+		free(a_enviar);
+		eliminar_paquete_swap(paquete);
+
+}
+
+void eliminar_proceso_swap(int pid){
+
+		t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+
+		paquete->cod_op         = KILL_PROCESO;
+		paquete->buffer         = malloc(sizeof(t_buffer));
+		paquete->buffer->size   = sizeof(uint32_t);
+		paquete->buffer->stream = malloc(paquete->buffer->size);
+
+		memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
 
 		int bytes;
 
