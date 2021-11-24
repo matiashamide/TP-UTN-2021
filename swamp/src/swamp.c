@@ -62,7 +62,7 @@ t_swamp_config crear_archivo_config_swamp(char* ruta) {
     config.tamanio_swamp  = config_get_int_value(swamp_config, "TAMANIO_SWAP");
     config.tamanio_pag    = config_get_int_value(swamp_config, "TAMANIO_PAGINA");
     config.archivos_swamp = config_get_array_value(swamp_config,"ARCHIVOS_SWAP");
-    config.marcos_max     = config_get_int_value(swamp_config, "MARCOS_MAXIMOS");
+    config.marcos_max     = config_get_int_value (swamp_config, "MARCOS_POR_CARPINCHO");
     config.retardo_swap   = config_get_int_value(swamp_config, "RETARDO_SWAP");
 
     return config;
@@ -75,15 +75,15 @@ void crear_frames() {
 	for (int i = 0 ; i < size_char_array(CONFIG.archivos_swamp) ; i++) {
 
 		for (int j= 0 ; j < frames_x_archivo ; j++) {
-			t_pagina* pagina = malloc(sizeof(t_pagina));
+			t_frame* frame = malloc(sizeof(t_frame));
 
-			pagina->aid     = i;
-			pagina->offset  = j * CONFIG.tamanio_pag;
-			pagina->ocupado = false;
-			pagina->id      = -1;
-			pagina->pid     = -1;
+			frame->aid     = i;
+			frame->offset  = j * CONFIG.tamanio_pag;
+			frame->ocupado = false;
+			frame->id_pag  = -1;
+			frame->pid     = -1;
 
-			list_add(FRAMES_SWAP, pagina);
+			list_add(FRAMES_SWAP, frame);
 		}
 
 	}
@@ -138,7 +138,7 @@ void atender_peticiones(int cliente){
 
 	uint32_t pid;
 	uint32_t nro_pagina;
-	t_pagina* pagina = malloc(sizeof(t_pagina));
+	t_frame* frame = malloc(sizeof(t_frame));
 	t_metadata_archivo* archivo = malloc(sizeof(t_metadata_archivo));
 	void* addr;
 	void* buffer_pag = malloc(CONFIG.tamanio_pag);
@@ -165,8 +165,8 @@ void atender_peticiones(int cliente){
 
 		log_info(LOGGER, "[SWAMP]: Guardando la pagina %i del proceso %i en SWAMP", nro_pagina, pid);
 
-		pagina = pagina_x_pid_y_nro(pid, nro_pagina);
-		archivo = (t_metadata_archivo*)list_find(METADATA_ARCHIVOS, pagina->aid);
+		frame = frame_de_pagina(pid, nro_pagina);
+		archivo = obtener_archivo_con_id(frame->aid);
 
 		addr = mmap(NULL, CONFIG.tamanio_pag, PROT_WRITE, MAP_SHARED, archivo->fd, 0);
 
@@ -175,7 +175,7 @@ void atender_peticiones(int cliente){
 			exit(1);
 		}
 
-		memcpy(addr+pagina->offset, buffer_pag, CONFIG.tamanio_pag);
+		memcpy(addr + frame->offset, buffer_pag, CONFIG.tamanio_pag);
 		msync(addr, CONFIG.tamanio_pag, 0);
 
 		munmap(addr, CONFIG.tamanio_swamp);
@@ -190,8 +190,8 @@ void atender_peticiones(int cliente){
 
 		log_info(LOGGER, "[SWAMP]: Mandando pagina %i del proceso %i a MP", nro_pagina, pid);
 
-		pagina = pagina_x_pid_y_nro(pid, nro_pagina);
-		archivo = (t_metadata_archivo*)list_find(METADATA_ARCHIVOS, pagina->aid);
+		frame = frame_de_pagina(pid, nro_pagina);
+		archivo = obtener_archivo_con_id(frame->aid);
 
 		addr = mmap(NULL, CONFIG.tamanio_pag, PROT_WRITE, MAP_SHARED, archivo->fd, 0);
 
@@ -200,7 +200,7 @@ void atender_peticiones(int cliente){
 			exit(1);
 		}
 
-		memcpy(buffer_pag, addr+pagina->offset, CONFIG.tamanio_pag);
+		memcpy(buffer_pag, addr + frame->offset, CONFIG.tamanio_pag);
 		munmap(addr, CONFIG.tamanio_swamp);
 
 		enviar_pagina(TRAER_DE_SWAP, CONFIG.tamanio_pag, buffer_pag, cliente, pid, nro_pagina);
@@ -213,16 +213,18 @@ void atender_peticiones(int cliente){
 		nro_pagina = recibir_entero(cliente);
 		log_info(LOGGER, "[SWAMP]: Liberando pagina %i del proceso %i", nro_pagina, pid);
 
-		pagina  = pagina_x_pid_y_nro(pid, nro_pagina);
-		archivo = (t_metadata_archivo*)list_find(METADATA_ARCHIVOS, pagina->aid);
+		frame   = frame_de_pagina(pid, nro_pagina);
+		archivo = obtener_archivo_con_id(frame->aid);
 
 		archivo->espacio_disponible += CONFIG.tamanio_pag;
 
-		//TODO: si es asignacion fija no desasignarle al proceso la pag
+		//Si la asignacion es fija, no desasignarle el marco al proceso
+		if (CONFIG.marcos_max < 0) {
+			frame->pid = -1;
+		}
 
-		pagina->id      = -1;
-		pagina->pid     = -1;
-		pagina->ocupado = false;
+		frame->id_pag   = -1;
+		frame->ocupado = false;
 
 	break;
 
@@ -238,7 +240,7 @@ void atender_peticiones(int cliente){
 
 	}
 
-	free(pagina);
+	free(frame);
 	free(archivo);
 	free(buffer_pag);
 	free(addr);
@@ -246,43 +248,54 @@ void atender_peticiones(int cliente){
 	return;
 }
 
-int reservar_espacio(int pid, int cant_pag) {
+int reservar_espacio(int pid, int cant_paginas) {
 
 	int nro_archivo = archivo_proceso_existente(pid);
 	t_metadata_archivo* archivo;
-	//TODO: cheuqear asignacion fija para darle marcos max
+
 	//CASO 1: Proceso existente
 	if (nro_archivo != -1) {
 
 		archivo = (t_metadata_archivo*)list_get(METADATA_ARCHIVOS, nro_archivo);
 
-		if (archivo->espacio_disponible >= cant_pag * CONFIG.tamanio_pag) {
+		if (archivo->espacio_disponible >= cant_paginas * CONFIG.tamanio_pag) {
 
-			for (int i = 1; i <= cant_pag; i++) {
+			for (int i = 1; i <= cant_paginas; i++) {
 
-				bool pagina_libre_del_archivo(void * elemento){
-					t_pagina* pag_aux = (t_pagina*) elemento;
-					return !pag_aux->ocupado && pag_aux->aid == nro_archivo;
+				bool frame_libre_del_archivo(void * elemento){
+					t_frame* frame_aux = (t_frame*) elemento;
+					return !frame_aux->ocupado && frame_aux->aid == nro_archivo;
 				}
 
-				bool _ultima_pagina_proceso(void* segmento1, void* segmento2) {
-					t_pagina* seg1 = (t_pagina*) segmento1;
-					t_pagina* seg2 = (t_pagina*) segmento2;
-
-					return seg1->id > seg2->id && seg1->pid == pid && seg2->pid == pid;
+				bool frame_libre_del_proceso(void * elemento){
+					t_frame* frame_aux = (t_frame*) elemento;
+					return frame_aux->pid == pid && !frame_aux->ocupado && frame_aux->aid == nro_archivo;
 				}
 
-				t_pagina* pagina = list_find(FRAMES_SWAP, pagina_libre_del_archivo);
+				bool _ultima_pagina_proceso(void* un_frame, void* otro_frame) {
+					t_frame* f1 = (t_frame*) un_frame;
+					t_frame* f2 = (t_frame*) otro_frame;
 
-				pagina->ocupado = true;
-				pagina->pid     = pid;
-				pagina->id      = ((t_pagina*)list_get_maximum(FRAMES_SWAP,(void*) _ultima_pagina_proceso))->id + i;
+					return f1->id_pag > f2->id_pag && f1->pid == pid && f2->pid == pid;
+				}
+
+				t_frame* frame;
+
+				if (CONFIG.marcos_max > 0) {
+					frame = list_find(FRAMES_SWAP, frame_libre_del_proceso);
+				} else {
+					frame = list_find(FRAMES_SWAP, frame_libre_del_archivo);
+				}
+
+				frame->ocupado = true;
+				frame->pid     = pid;
+				frame->id_pag  = ((t_frame*)list_get_maximum(FRAMES_SWAP,(void*) _ultima_pagina_proceso))->id_pag + i;
 
 			}
 
-			archivo->espacio_disponible -= cant_pag * CONFIG.tamanio_pag;
+			archivo->espacio_disponible -= cant_paginas * CONFIG.tamanio_pag;
 
-			log_info(LOGGER, "Se reservó %i paginas para el proceso %i",cant_pag,pid);
+			log_info(LOGGER, "Se reservó %i paginas para el proceso %i",cant_paginas,pid);
 			return 1;
 		}
 
@@ -294,26 +307,46 @@ int reservar_espacio(int pid, int cant_pag) {
 		//CASO 2: Proceso nuevo
 
 		archivo = obtener_archivo_mayor_espacio_libre();
+		int cant_frames_requeridos = cant_paginas;
 
-		if (archivo->espacio_disponible >= cant_pag * CONFIG.tamanio_pag) {
+		//Si hay asignacion fija, reservo todos los marcos max para el proceso
+		if (CONFIG.marcos_max > 0) {
+			cant_frames_requeridos = CONFIG.marcos_max;
+		}
 
-			for (int i = 0 ; i < cant_pag ; i++) {
+		if (archivo->espacio_disponible >= cant_frames_requeridos * CONFIG.tamanio_pag) {
 
-				bool pagina_libre_del_archivo(void * elemento){
-					t_pagina* pag_aux = (t_pagina*) elemento;
-					return !pag_aux->ocupado && pag_aux->aid == archivo->id;
+			//Reserva de frames del proceso
+			for (int f = 0 ; f < cant_frames_requeridos ; f++) {
+
+				bool frame_libre_del_archivo(void * elemento){
+					t_frame* frame_aux = (t_frame*) elemento;
+					return !frame_aux->ocupado && frame_aux->aid == archivo->id;
 				}
 
-				t_pagina* pagina = list_find(FRAMES_SWAP, pagina_libre_del_archivo);
+				t_frame* frame = list_find(FRAMES_SWAP, frame_libre_del_archivo);
 
-				pagina->ocupado = true;
-				pagina->pid = pid;
-				pagina->id = i;
+				frame->pid = pid;
 			}
 
-			archivo->espacio_disponible -= cant_pag * CONFIG.tamanio_pag;
+			//Ocupar frames con las paginas del proceso
 
-			log_info(LOGGER, "Se reservó %i paginas para el proceso %i",cant_pag,pid);
+			for (int p = 0 ; p < cant_paginas ; p++) {
+
+				bool frame_libre_del_proceso(void * elemento){
+					t_frame* frame_aux = (t_frame*) elemento;
+					return frame_aux->pid == pid && frame_aux->aid == archivo->id;
+				}
+
+				t_frame* frame_a_ocupar = list_find(FRAMES_SWAP, frame_libre_del_proceso);
+
+				frame_a_ocupar->id_pag = p;
+				frame_a_ocupar->ocupado = true;
+			}
+
+			archivo->espacio_disponible -= cant_paginas * CONFIG.tamanio_pag;
+
+			log_info(LOGGER, "Se reservó %i frames y %i paginas para el proceso %i", cant_frames_requeridos, cant_paginas, pid);
 			return 1;
 		}
 
@@ -366,26 +399,36 @@ void rta_reservar_espacio(int socket, int rta) {
 int archivo_proceso_existente(int pid) {
 
 	bool existe_proceso_por_pid(void* elemento) {
-		t_pagina* pag_aux = (t_pagina*) elemento;
-		return pag_aux->pid == pid;
+		t_frame* frame_aux = (t_frame*) elemento;
+		return frame_aux->pid == pid;
 	}
 
-	t_pagina* pag = (t_pagina*)list_find(FRAMES_SWAP, existe_proceso_por_pid);
+	t_frame* frame = (t_frame*)list_find(FRAMES_SWAP, existe_proceso_por_pid);
 
-	if (pag == NULL)
+	if (frame == NULL)
 		return -1;
 
-    return pag->aid;
+    return frame->aid;
 }
 
-t_pagina* pagina_x_pid_y_nro(int pid, int nro_pagina) {
+t_frame* frame_de_pagina(int pid, int nro_pagina) {
 
 	bool _existe_pag_pid_nro(void * elemento) {
-		t_pagina* pagina = (t_pagina*) elemento;
-		return pagina->pid == pid && pagina->id == nro_pagina;
+		t_frame* frame = (t_frame*) elemento;
+		return frame->pid == pid && frame->id_pag == nro_pagina;
 	}
 
-	return (t_pagina*)list_find(FRAMES_SWAP, _existe_pag_pid_nro);
+	return (t_frame*)list_find(FRAMES_SWAP, _existe_pag_pid_nro);
+}
+
+t_metadata_archivo* obtener_archivo_con_id(int aid) {
+
+	bool existe_archivo_con_id(void* elemento) {
+		t_metadata_archivo* archivo_aux = (t_metadata_archivo*) elemento;
+		return archivo_aux->id == aid;
+	}
+
+	return (t_metadata_archivo*) list_find(METADATA_ARCHIVOS, existe_archivo_con_id);
 }
 
 t_metadata_archivo* obtener_archivo_mayor_espacio_libre() {

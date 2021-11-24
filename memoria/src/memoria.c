@@ -98,7 +98,7 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
     config.tipo_asignacion     = config_get_string_value(memoria_config, "TIPO_ASIGNACION");
 
     if (string_equals_ignore_case(config.tipo_asignacion,"FIJA")) {
-    	config.marcos_max      = config_get_int_value   (memoria_config, "MARCOS_MAXIMOS");
+    	config.marcos_max      = config_get_int_value   (memoria_config, "MARCOS_POR_CARPINCHO");
     }
 
     config.cant_entradas_tlb   = config_get_int_value   (memoria_config, "CANTIDAD_ENTRADAS_TLB");
