@@ -188,6 +188,8 @@ void atender_carpinchos(int* cliente) {
 	pcb_carpincho->estimado_anterior = CONFIG_KERNEL.estimacion_inicial;
 	pcb_carpincho->tiempo_espera = 0;
 	pcb_carpincho->conexion = (*cliente);
+	pcb_carpincho->recursos_usados = list_create();
+	//TODO hacerle free a esto
 
 	printf("Conexion %d\n", (*cliente));
 

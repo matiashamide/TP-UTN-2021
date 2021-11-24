@@ -299,9 +299,30 @@ void wait_sem(t_procesador* estructura_procesador) {
 		t_semaforo_mate* semaforo = (t_semaforo_mate*) list_find(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo);
 		if(semaforo->value > 0) {
 			semaforo->value -= 1;
+
+			bool _criterio_busqueda_semaforo_en_carpincho(void* elemento) {
+					return (strcmp(((t_registro_uso_recurso*)elemento)->nombre, nombre) == 0);
+				}
+
+			if(list_any_satisfy(estructura_procesador->lugar_PCB->recursos_usados, _criterio_busqueda_semaforo_en_carpincho)) {
+				t_registro_uso_recurso* recurso = (t_registro_uso_recurso*) list_find(estructura_procesador->lugar_PCB->recursos_usados, _criterio_busqueda_semaforo_en_carpincho);
+				recurso->cantidad += 1;
+			} else {
+				t_registro_uso_recurso* recurso = malloc(sizeof(t_registro_uso_recurso));
+				recurso->nombre = malloc(size_nombre_semaforo);
+				recurso->nombre = nombre;
+				recurso->cantidad = 1;
+				list_add(estructura_procesador->lugar_PCB->recursos_usados, recurso);
+				//TODO hacerle free a esto
+			}
 			//TEST
 			printf("Tamanio cola bloqueados semaforo: %d\n", list_size(semaforo->cola_bloqueados));
+			if(list_size(estructura_procesador->lugar_PCB->recursos_usados) > 0){
+				t_registro_uso_recurso* uso_recurso = list_get(estructura_procesador->lugar_PCB->recursos_usados, 0);
+				printf("El carpincho esta usando el recurso %s %d veces\n", uso_recurso->nombre, uso_recurso->cantidad);
+			}
 			//FIN TEST
+
 			dar_permiso_para_continuar(estructura_procesador->lugar_PCB->conexion);
 		} else {
 			list_add(semaforo->cola_bloqueados, estructura_procesador->lugar_PCB);
@@ -581,4 +602,14 @@ void mate_close(t_procesador* estructura_procesador) {
 
 }
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------- DEADLOCK ------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//TODO
+//Matriz de asignacion (de recursos asignados)
+//Matriz de peticiones (peticiones actuales)
+//Vectores de recursos totales y disponibles
+
+//Finalizar procesos (y corro el algoritmo de deteccion cada vez que mato un proceso, se mata al de mayor PID)
 

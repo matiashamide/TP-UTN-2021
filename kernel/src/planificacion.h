@@ -27,13 +27,19 @@
 
 
 //ESTRUCTURAS
-typedef struct
-{
+
+typedef struct {
+	char* nombre;
+	uint32_t cantidad;
+}t_registro_uso_recurso;
+
+typedef struct {
 	uint32_t PID;
 	uint32_t real_anterior;
 	uint32_t estimado_anterior;
 	uint32_t tiempo_espera;
 	int conexion;
+	t_list* recursos_usados;
 }PCB;
 
 typedef struct {
