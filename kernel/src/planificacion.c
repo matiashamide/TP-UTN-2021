@@ -613,3 +613,22 @@ void mate_close(t_procesador* estructura_procesador) {
 
 //Finalizar procesos (y corro el algoritmo de deteccion cada vez que mato un proceso, se mata al de mayor PID)
 
+//Al matar un carpincho hay que liberar los semaforos que tiene asignados (para eso la lista de recursos usados)
+
+//Las peticiones pendientes para un carpincho va a poder ser solamente una instancia de un semaforo
+
+//Para armar la matriz recorres tus semaforos, y esas son tus columnas de la matriz
+//sabemos que todos los carpinchos que estan bloqueados por ese semaforo es que estan pidiendo una instancia de ese semaforo
+
+//esa es la matriz de peticiones pendientes, por cada fila va a haber un 1 nada mas, en alguno de los semaforos
+//dos carpinchos podrian tener un uno sobre la misma columna pero cada fila (cada carpincho) va a tener un uno en uno de los semaforos y nada mas
+//La cantidad de carpinchos es muy reducida porque solo estas viendo los que estan bloqueados con algun semaforo, el resto no interesan
+//
+
+//Una vez que tenes la de peticiones pendientes, recorres por fila y ves, que cada carpincho este reteniendo un recurso que este pidiendo otro, de los mismos que retengo yo.
+//No importa cuantas instancias retengas, con que retengas una, ya estas cagando al otro (estas en deadlock)
+
+//Hay que ir limpiando los que no interesan
+
+//LOS RECURSOS ASIGNADOS
+
