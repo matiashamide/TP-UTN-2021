@@ -39,6 +39,8 @@ typedef enum {
 	MEMREAD,
 	MEMFREE,
 	MEMWRITE,
+	MEMSUSP,
+	MEMKILL,
 	MENSAJE,
 	CLOSE
 } peticion_carpincho;

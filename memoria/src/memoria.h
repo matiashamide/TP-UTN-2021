@@ -103,6 +103,9 @@ int  memfree(int pid,int pos_alloc);
 int  memread(int pid,int dir_logica , void* destination, int size);
 int  memwrite(int pid,int dir_logica,void* contenido,int size);
 
+void eliminar_proceso(int pid);
+void suspender_proceso(int pid);
+
 //// ---- funciones allocs / headers
 int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual);
 int obtener_pos_ultimo_alloc(int pid);

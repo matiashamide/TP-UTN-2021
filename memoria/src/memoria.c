@@ -158,7 +158,7 @@ void atender_carpinchos(int cliente) {
 	break;
 
 	case MEMFREE:;
-	log_info(LOGGER, "el cliente %i solicito liberar memoria" , cliente);
+		log_info(LOGGER, "el cliente %i solicito liberar memoria" , cliente);
 		pid = recibir_entero(cliente);
 		dir_logica = recibir_entero(cliente);
 
@@ -167,13 +167,26 @@ void atender_carpinchos(int cliente) {
 	break;
 
 	case MEMWRITE:;
-	log_info(LOGGER, "el cliente %i solicito escribir memoria" , cliente);
+		log_info(LOGGER, "el cliente %i solicito escribir memoria" , cliente);
 		pid = recibir_entero(cliente);
 		dir_logica = recibir_entero(cliente);
 		void* contenido = malloc(size_paquete - 2* sizeof(int));
 		recv(cliente , contenido , size_paquete - 2* sizeof(int),0);
 
 		retorno = memwrite(pid , dir_logica , contenido , size_paquete - sizeof(int) * 2 );
+	break;
+
+	case MEMSUSP:;
+		log_info(LOGGER, "el cliente %i solicito suspender el proceso", cliente);
+
+		suspender_proceso(pid);
+	break;
+
+	case MEMKILL:;
+		log_info(LOGGER, "el cliente %i solicito matar el proceso", cliente);
+		pid = recibir_entero(cliente);
+
+		eliminar_proceso(pid);
 	break;
 
 	case MENSAJE:;
@@ -610,6 +623,20 @@ int memwrite(int pid, int dir_logica, void* contenido, int size) {
 	return 1;
 }
 
+void suspender_proceso(int pid){}
+
+void eliminar_proceso(int pid) {
+	t_tabla_pagina* tabla_proceso = tabla_por_pid(pid);
+	/*
+	t_list*
+
+	if (tabla_proceso == NULL) {
+		return;
+	}
+
+	for ()
+	*/
+}
 
 //------------------------------------------------- FUNCIONES ALLOCs/HEADERs ---------------------------------------------//
 
