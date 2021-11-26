@@ -5,12 +5,35 @@ int main(void) {
 	init_memoria();
 	log_info(LOGGER, "inicializa memoria");
 
+	printf("Ya me conecte con swamp y los marcos max son: %i \n", MAX_MARCOS_SWAP);
+
 	//------PRUEBAS--------//
 
-	void* buffer = malloc(CONFIG.tamanio_pagina);
+	 // PRUEBA_ASIGNACION //
 
-	enviar_pagina(TIRAR_A_SWAP, CONFIG.tamanio_pagina, buffer, CONEXION_SWAP, 0, 2);
+	//carpincho 0
+	int alloc00 = memalloc(0, 23);
+	int alloc10 = memalloc(0, 23);
+	int alloc20 = memalloc(0, 23);
+	int alloc30 = memalloc(0, 10);
 
+	char* hola = "Hola";
+	void* contenido = malloc(5);
+
+	memcpy(contenido, hola, 5);
+
+	memwrite(0, contenido, alloc30, 5);
+
+	memwrite(0, contenido, alloc20, 5);
+
+	memwrite(0, contenido, alloc10, 5);
+
+	memwrite(0, contenido, alloc00, 5);
+
+	int alloc40 = memalloc(0, 23);
+	int alloc50 = memalloc(0, 23);
+	int alloc60 = memalloc(0, 23);
+	int alloc70 = memalloc(0, 10);
 	//---------------------//
 
 	return EXIT_SUCCESS;
@@ -216,7 +239,7 @@ void atender_carpinchos(int cliente) {
 
 int memalloc(int pid, int size){
 	int dir_logica = -1;
-	int paginas_necesarias = ceil(size / CONFIG.tamanio_pagina);
+	int paginas_necesarias = ceil((double)size / (double)CONFIG.tamanio_pagina);
 
 	//[CASO A]: Llega un proceso nuevo
 	if (tabla_por_pid(pid) == NULL){
@@ -324,7 +347,7 @@ int memalloc(int pid, int size){
 			t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 			int tamanio_total = list_size(paginas_proceso) * CONFIG.tamanio_pagina;
 			int size_necesario_extra = size - tamanio_total - dir_logica;
-			cantidad_paginas = ceil(size_necesario_extra/CONFIG.tamanio_pagina);
+			cantidad_paginas = ceil((double)size_necesario_extra/(double)CONFIG.tamanio_pagina);
 
 			if ( string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
 				if (reservar_espacio_en_swap(pid, cantidad_paginas) == -1 ){
@@ -347,8 +370,8 @@ int memalloc(int pid, int size){
 
 			//Creamos nuevo header
 			int nro_pagina_nueva, offset_nuevo;
-			nro_pagina_nueva = floor(ultimo_header->next_alloc/CONFIG.tamanio_pagina);
-			offset_nuevo = (ultimo_header->next_alloc/CONFIG.tamanio_pagina - floor(ultimo_header->next_alloc/CONFIG.tamanio_pagina)) * CONFIG.tamanio_pagina;
+			nro_pagina_nueva = floor((double)ultimo_header->next_alloc/(double)CONFIG.tamanio_pagina);
+			offset_nuevo = (ultimo_header->next_alloc/CONFIG.tamanio_pagina - floor((double)ultimo_header->next_alloc/(double)CONFIG.tamanio_pagina)) * CONFIG.tamanio_pagina;
 
 			heap_metadata* nuevo_header = malloc(sizeof(heap_metadata));
 			nuevo_header->is_free = true;
@@ -395,7 +418,7 @@ t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 		return MATE_FREE_FAULT;
 	}
 
-	int pag_en_donde_empieza_el_header = floor((dir_logica - sizeof(heap_metadata)) / CONFIG.tamanio_pagina);
+	int pag_en_donde_empieza_el_header = floor(((double)dir_logica - sizeof(heap_metadata)) / (double)CONFIG.tamanio_pagina);
 	heap_metadata* header_a_liberar = desserializar_header(pid , pag_en_donde_empieza_el_header , dir_logica );
 
 	if(header_a_liberar->next_alloc == NULL){
@@ -404,7 +427,7 @@ t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 			return -1;
 	}
 
-	int pag_en_donde_empieza_el_header_siguiente = floor((header_a_liberar->next_alloc) / CONFIG.tamanio_pagina);
+	int pag_en_donde_empieza_el_header_siguiente = floor((double)(header_a_liberar->next_alloc) / (double)CONFIG.tamanio_pagina);
 	heap_metadata* header_siguiente = desserializar_header(pid , pag_en_donde_empieza_el_header_siguiente , header_a_liberar->next_alloc);
 
 	header_a_liberar->is_free = true;
@@ -426,9 +449,9 @@ t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 			header_a_liberar->next_alloc = header_siguiente->next_alloc;
 			guardar_header(pid, pag_en_donde_empieza_el_header , header_siguiente->prev_alloc ,header_a_liberar);
 
-			heap_metadata* header_post_siguiente = desserializar_header(pid , floor(header_siguiente->next_alloc / CONFIG.tamanio_pagina) , header_siguiente->next_alloc);
+			heap_metadata* header_post_siguiente = desserializar_header(pid , floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina) , header_siguiente->next_alloc);
 			header_post_siguiente->prev_alloc = header_siguiente->prev_alloc;
-			guardar_header(pid , floor(header_siguiente->next_alloc / CONFIG.tamanio_pagina) , header_siguiente->next_alloc ,header_post_siguiente);
+			guardar_header(pid , floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina) , header_siguiente->next_alloc ,header_post_siguiente);
 
 			liberar_si_hay_paginas_libres(pid , sizeof(heap_metadata) , header_a_liberar->next_alloc );
 			free(header_post_siguiente);
@@ -468,9 +491,9 @@ t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 			header_a_liberar->next_alloc = header_siguiente->next_alloc;
 			guardar_header(pid, pag_en_donde_empieza_el_header , header_anterior->next_alloc , header_a_liberar);
 
-			heap_metadata* header_post_siguiente = desserializar_header(pid , floor(header_siguiente->next_alloc / CONFIG.tamanio_pagina) , header_siguiente->next_alloc);
+			heap_metadata* header_post_siguiente = desserializar_header(pid , floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina) , header_siguiente->next_alloc);
 			header_post_siguiente->prev_alloc = header_siguiente->prev_alloc;
-			guardar_header(pid , floor(header_siguiente->next_alloc / CONFIG.tamanio_pagina) , header_siguiente->next_alloc ,header_post_siguiente);
+			guardar_header(pid , floor((double)header_siguiente->next_alloc /(double)CONFIG.tamanio_pagina) , header_siguiente->next_alloc ,header_post_siguiente);
 
 			liberar_si_hay_paginas_libres( pid , header_siguiente->prev_alloc + 9 , header_a_liberar->next_alloc );
 			free(header_post_siguiente);
@@ -482,9 +505,9 @@ t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 			header_anterior->next_alloc = header_siguiente->next_alloc;
 			guardar_header(pid , pag_en_donde_empieza_el_header_anterior , header_a_liberar->prev_alloc , header_anterior);
 
-			heap_metadata* header_post_siguiente = desserializar_header(pid , floor(header_siguiente->next_alloc / CONFIG.tamanio_pagina) , header_siguiente->next_alloc);
+			heap_metadata* header_post_siguiente = desserializar_header(pid , floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina) , header_siguiente->next_alloc);
 			header_post_siguiente->prev_alloc = header_a_liberar->prev_alloc;
-			guardar_header(pid , floor(header_siguiente->next_alloc / CONFIG.tamanio_pagina) , header_siguiente->next_alloc ,header_post_siguiente);
+			guardar_header(pid , floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina) , header_siguiente->next_alloc ,header_post_siguiente);
 
 			liberar_si_hay_paginas_libres(pid , header_a_liberar->prev_alloc + 9 , header_a_liberar->next_alloc);
 			free(header_post_siguiente);
@@ -507,8 +530,8 @@ int memread(int pid, int dir_logica, void* dest, int size) {
 		return MATE_READ_FAULT;
 	}
 
-	int pag_inicial = floor(dir_logica / CONFIG.tamanio_pagina);
-	int pag_final = floor((dir_logica + size)/ CONFIG.tamanio_pagina);
+	int pag_inicial = floor((double)dir_logica / (double)CONFIG.tamanio_pagina);
+	int pag_final = floor(((double)dir_logica + size)/ (double)CONFIG.tamanio_pagina);
 
 	if(pag_inicial > list_size(paginas_proceso) || dir_logica + size > list_size(paginas_proceso) * CONFIG.tamanio_pagina){
 		return MATE_READ_FAULT;
@@ -564,7 +587,7 @@ int memread(int pid, int dir_logica, void* dest, int size) {
 	return 1;
 }
 
-int memwrite(int pid, int dir_logica, void* contenido, int size) {
+int memwrite(int pid, void* contenido, int dir_logica,  int size) {
 
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 
@@ -572,8 +595,8 @@ int memwrite(int pid, int dir_logica, void* contenido, int size) {
 		return MATE_WRITE_FAULT;
 	}
 
-	int pag_inicial = floor(dir_logica / CONFIG.tamanio_pagina);
-	int pag_final = floor((dir_logica + size)/ CONFIG.tamanio_pagina);
+	int pag_inicial = floor((double)dir_logica / (double)CONFIG.tamanio_pagina);
+	int pag_final = floor((double)(dir_logica + size)/ (double)CONFIG.tamanio_pagina);
 
 	if(pag_inicial > list_size(paginas_proceso) || dir_logica + size > list_size(paginas_proceso) * CONFIG.tamanio_pagina){
 		return MATE_WRITE_FAULT;
@@ -723,7 +746,7 @@ int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 	int nro_pagina = 0, offset = 0;
 
-	nro_pagina = ceil(posicion_heap_actual / CONFIG.tamanio_pagina);
+	nro_pagina = ceil((double)posicion_heap_actual / (double)CONFIG.tamanio_pagina);
 	offset = posicion_heap_actual - CONFIG.tamanio_pagina * nro_pagina;
 
 	t_pagina* pag = malloc(sizeof(t_pagina));
@@ -784,7 +807,7 @@ int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 
 				//Pag. en donde vamos a insertar el nuevo header
 				int nro_pagina_nueva = 0, offset_pagina_nueva = 0;
-				nro_pagina_nueva = ceil((posicion_heap_actual + size + 9) / CONFIG.tamanio_pagina);
+				nro_pagina_nueva = ceil(((double)posicion_heap_actual + size + 9) / (double)CONFIG.tamanio_pagina);
 				offset_pagina_nueva = posicion_heap_actual + size + 9 - CONFIG.tamanio_pagina * nro_pagina_nueva;
 
 				t_pagina* pag_nueva = malloc(sizeof(t_pagina));
@@ -796,7 +819,7 @@ int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 
 				//Pag. en donde esta el header siguiente al header final (puede ser la misma pag. que la anterior)
 				int nro_pagina_final = 0, offset_pagina_final = 0;
-				nro_pagina_final = ceil((header->next_alloc) / CONFIG.tamanio_pagina);
+				nro_pagina_final = ceil(((double)header->next_alloc) / (double)CONFIG.tamanio_pagina);
 
 				offset_pagina_final = header->next_alloc - CONFIG.tamanio_pagina * nro_pagina_nueva;
 
@@ -841,7 +864,7 @@ int obtener_pos_ultimo_alloc(int pid) {
 
 	while(header->next_alloc != NULL) {
 
-		header = desserializar_header(pid , floor(pos_ult_alloc / CONFIG.tamanio_pagina ), header->next_alloc);
+		header = desserializar_header(pid , floor((double)pos_ult_alloc / (double)CONFIG.tamanio_pagina ), header->next_alloc);
 		pos_ult_alloc = header->next_alloc;
 
 	}
@@ -925,8 +948,8 @@ int liberar_si_hay_paginas_libres(int pid, int posicion_inicial, int posicion_fi
 
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 
-	int nro_pagina_inicial = floor(posicion_inicial / CONFIG.tamanio_pagina);
-	int nro_pagina_final   = floor(posicion_final / CONFIG.tamanio_pagina);
+	int nro_pagina_inicial = floor((double)posicion_inicial / (double)CONFIG.tamanio_pagina);
+	int nro_pagina_final   = floor((double)posicion_final / (double)CONFIG.tamanio_pagina);
 
 	for (int i = 1 ; i < nro_pagina_final - nro_pagina_inicial ; i++) {
 
@@ -950,7 +973,7 @@ void actualizar_headers_por_liberar_pagina(int pid, int nro_pag_liberada){
 
 	//Iterar hasta llegar al header anterior a la pagina liberada y offset = posicion de ese header
 	while (header->next_alloc / CONFIG.tamanio_pagina < nro_pag_liberada) {
-		header = desserializar_header(pid, floor(header->next_alloc / CONFIG.tamanio_pagina), header->next_alloc);
+		header = desserializar_header(pid, floor((double)header->next_alloc / (double)CONFIG.tamanio_pagina), header->next_alloc);
 	}
 
 	//En este punto tengo el header anterior a la pagina liberada, tengo que actualizar los valores de los proximos
@@ -959,7 +982,7 @@ void actualizar_headers_por_liberar_pagina(int pid, int nro_pag_liberada){
 
 		int pos_actual_del_header = header->next_alloc;
 
-		int nro_pagina = floor(header->next_alloc / CONFIG.tamanio_pagina);
+		int nro_pagina = floor((double)header->next_alloc / (double)CONFIG.tamanio_pagina);
 		header = desserializar_header(pid, nro_pagina, pos_actual_del_header ); // header de la siguiente pagina liberada
 
 		//el header siguiente a la pagina liberada tiene que conservar el prev alloc -> (i > 1 significa todos los otros headers encontrados)
@@ -1441,6 +1464,7 @@ void set_modificado(t_pagina* pag){
 
 void signal_metricas(){
 	log_info(LOGGER, "[MEMORIA]: Recibi la senial de imprimir metricas, imprimiendo\n...");
+	//log_destroy(LOGGER);
 	generar_metricas_tlb();
 }
 void signal_dump(){

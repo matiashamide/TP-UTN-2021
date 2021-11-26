@@ -99,10 +99,6 @@ int iniciar_servidor(char* IP, char* PUERTO)
 
 
 int esperar_cliente(int socket_servidor) {
-  //struct sockaddr_in dir_cliente;
-  //int tam_direccion = sizeof(struct sockaddr_in);
-
-  //int socket_cliente = accept(socket_servidor, (void*) &dir_cliente, &tam_direccion);
   int socket_cliente = accept(socket_servidor, NULL, NULL);
 
   printf("Se conecto un cliente\n");

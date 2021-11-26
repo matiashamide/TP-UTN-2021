@@ -167,6 +167,7 @@ void generar_metricas_tlb(){
 		tlb_event* nodo = (tlb_event*)list_get(TLB_HITS, i);
 		printf("Proceso %i ---> %i HITS", nodo->pid, nodo->contador);
 	}
+	exit(1);
 }
 
 void dumpear_tlb(){

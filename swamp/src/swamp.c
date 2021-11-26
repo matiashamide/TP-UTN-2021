@@ -15,17 +15,10 @@ int main(void) {
 	init_swamp();
 
 	int cliente = esperar_cliente(SERVIDOR_SWAP);
-	atender_peticiones(cliente);
 
-	/*
-	while(1){
-		int cliente = esperar_cliente(SERVIDOR_SWAP);
-		//mutex_lock para que no sea multiplexado
+	while(1) {
 		atender_peticiones(cliente);
-		//mutex_unlock
-		//TODO: vamos a tener que encolar los requests o eso lo hace solo el hilo?
 	}
-	*/
 }
 
 //------------------------------------------------------ INIT SWAMP -----------------------------------------------------//
@@ -33,7 +26,7 @@ int main(void) {
 void init_swamp(){
 
 	//Incializamos logger
-	LOGGER = log_create("swamp.log", "SWAMP", 0, LOG_LEVEL_INFO);
+	LOGGER = log_create("swamp.log", "SWAMP", 1, LOG_LEVEL_INFO);
 
 	//Inicializamos archivo de configuracion
 	CONFIG = crear_archivo_config_swamp("/home/utnso/workspace/tp-2021-2c-DesacatadOS/swamp/src/swamp.config");
@@ -232,7 +225,7 @@ void atender_peticiones(int cliente){
 	case SOLICITAR_MARCOS_MAX:;
 
 		log_info(LOGGER, "[SWAMP->MP]: Mandando los marcos_max a MP...");
-		rta_marcos_max(cliente);
+		send(cliente, &CONFIG.marcos_max, sizeof(uint32_t), 0);
 
 	break;
 
@@ -273,9 +266,9 @@ int reservar_espacio(int pid, int cant_paginas) {
 				t_frame* frame;
 
 				if (CONFIG.marcos_max > 0) {
-					frame = list_get(frames_libres_del_proceso(nro_archivo, pid), 0);
+					frame = list_get(frames_libres_del_proceso(nro_archivo, pid), i);
 				} else {
-					frame = list_get(frames_libres_del_archivo(nro_archivo), 0);
+					frame = list_get(frames_libres_del_archivo(nro_archivo), i);
 				}
 
 				frame->ocupado = true;
@@ -310,7 +303,7 @@ int reservar_espacio(int pid, int cant_paginas) {
 			//Reserva de frames del proceso
 			for (int f = 0 ; f < cant_frames_requeridos ; f++) {
 
-				t_frame* frame = list_get(frames_libres_del_archivo(nro_archivo), 0);
+				t_frame* frame = list_get(frames_libres_del_archivo(archivo->id), f);
 				frame->pid = pid;
 			}
 
@@ -318,13 +311,13 @@ int reservar_espacio(int pid, int cant_paginas) {
 
 			for (int p = 0 ; p < cant_paginas ; p++) {
 
-				t_frame* frame_a_ocupar = list_get(frames_libres_del_proceso(nro_archivo, pid), 0);
+				t_frame* frame_a_ocupar = list_get(frames_libres_del_proceso(archivo->id, pid), p);
 
-				frame_a_ocupar->id_pag = p;
+				frame_a_ocupar->id_pag  = p;
 				frame_a_ocupar->ocupado = true;
 			}
 
-			archivo->espacio_disponible -= cant_paginas * CONFIG.tamanio_pag;
+			archivo->espacio_disponible -= cant_frames_requeridos * CONFIG.tamanio_pag;
 
 			log_info(LOGGER, "Se reservó %i frames y %i paginas para el proceso %i", cant_frames_requeridos, cant_paginas, pid);
 			return 1;
@@ -333,25 +326,6 @@ int reservar_espacio(int pid, int cant_paginas) {
 		log_info(LOGGER, "No hay espacio disponible para el proceso %i",pid);
 		return -1;
 	}
-}
-
-void rta_marcos_max(int socket) {
-	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
-
-	paquete->cod_op         = SOLICITAR_MARCOS_MAX;
-	paquete->buffer         = malloc(sizeof(t_buffer));
-	paquete->buffer->size   = sizeof(uint32_t);
-	paquete->buffer->stream = malloc(paquete->buffer->size);
-
-	memcpy(paquete->buffer->stream, &CONFIG.marcos_max, sizeof(uint32_t));
-
-	int bytes;
-
-	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
-	send(socket, a_enviar, bytes, 0);
-
-	free(a_enviar);
-	eliminar_paquete_swap(paquete);
 }
 
 void rta_reservar_espacio(int socket, int rta) {

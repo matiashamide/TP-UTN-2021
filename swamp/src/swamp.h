@@ -66,7 +66,6 @@ t_metadata_archivo* obtener_archivo_con_id(int aid);
 void eliminar_proceso_swap(int pid);
 
 int reservar_espacio(int pid , int cant_paginas);
-void rta_marcos_max(int socket);
 void rta_reservar_espacio(int socket, int rta);
 
 t_list* frames_libres_del_archivo(int aid);
