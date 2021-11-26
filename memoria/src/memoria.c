@@ -182,6 +182,12 @@ void atender_carpinchos(int cliente) {
 		suspender_proceso(pid);
 	break;
 
+	case MEMDESSUSP:;
+			log_info(LOGGER, "el cliente %i solicito dessuspender el proceso", cliente);
+
+			dessuspender_proceso(pid);
+		break;
+
 	case MEMKILL:;
 		log_info(LOGGER, "el cliente %i solicito matar el proceso", cliente);
 		pid = recibir_entero(cliente);
@@ -623,22 +629,50 @@ int memwrite(int pid, int dir_logica, void* contenido, int size) {
 	return 1;
 }
 
-void suspender_proceso(int pid){
+void suspender_proceso(int pid) {
 	t_list* paginas_proceso =  (tabla_por_pid(pid))->paginas;
-
+	//Sirve para dinamico y fijo
 	for (int i = 0; i < list_size(paginas_proceso); i++) {
 		t_pagina* pagina = list_get(paginas_proceso,i);
 		if(pagina->presencia){
 			t_frame* frame = list_get(FRAMES_MEMORIA,pagina->frame_ppal);
 			frame->ocupado = false;
+			frame->pid = -1;
 
 			if(pagina->modificado){
 				tirar_a_swap(pagina);
 			}
-
+		}
+	 }
+	//Sirve para asignacion fija cuando cant_pags < cant_marcos_max
+	bool frames_del_pid(void * elemento){
+		t_frame* frame_aux = (t_frame*) elemento;
+		return frame_aux->pid == pid;
+	}
+	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA" )){
+		t_list* frames_memoria_pid = list_filter(FRAMES_MEMORIA, frames_del_pid);
+		for(int i = 0; i < list_size(frames_memoria_pid); i++) {
+			t_frame* frame = list_get(frames_memoria_pid, i);
+			frame->ocupado = false;
+			frame->pid = -1;
 		}
 	}
 
+}
+
+void dessuspender_proceso(pid) {
+
+	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA" )){
+
+		for(int i = 0; i < CONFIG.marcos_max; i++) {
+			int frame = solicitar_frame_en_ppal(pid);
+
+			if(frame == -1){
+				log_info(LOGGER, "Fallo la dessuspencion del proceso %i", pid);
+				return;
+			}
+		}
+	}
 }
 
 void eliminar_proceso(int pid) {
