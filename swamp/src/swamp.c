@@ -26,7 +26,7 @@ int main(void) {
 void init_swamp(){
 
 	//Incializamos logger
-	LOGGER = log_create("swamp.log", "SWAMP", 1, LOG_LEVEL_INFO);
+	LOGGER = log_create("swamp.log", "SWAMP", 0, LOG_LEVEL_INFO);
 
 	//Inicializamos archivo de configuracion
 	CONFIG = crear_archivo_config_swamp("/home/utnso/workspace/tp-2021-2c-DesacatadOS/swamp/src/swamp.config");

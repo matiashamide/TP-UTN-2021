@@ -12,3 +12,66 @@
 [INFO] 15:08:43:066 MEMORIA/(19778:19778): Tengo 128 marcos de 32 bytes en memoria principal
 [INFO] 15:10:18:853 MEMORIA/(20320:20320): Tengo 128 marcos de 32 bytes en memoria principal
 [INFO] 15:13:44:240 MEMORIA/(21294:21294): Tengo 128 marcos de 32 bytes en memoria principal
+[INFO] 13:44:38:343 MEMORIA/(4657:4657): TLB inicializada correctamente
+[INFO] 13:44:38:344 MEMORIA/(4657:4657): se inicializo conexion monohilo con swap
+[INFO] 13:44:38:344 MEMORIA/(4657:4657): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 13:44:39:018 MEMORIA/(4657:4657): inicializa memoria
+[INFO] 13:44:43:657 MEMORIA/(4657:4657): el proceso 0 no existe, inicializandolo... 
+[INFO] 13:45:04:317 MEMORIA/(4657:4657): No se puede asginar 23 bytes cantidad de memoria al proceso 0 (cant maxima) 
+[INFO] 13:46:23:987 MEMORIA/(5168:5168): TLB inicializada correctamente
+[INFO] 13:46:23:988 MEMORIA/(5168:5168): se inicializo conexion monohilo con swap
+[INFO] 13:46:23:988 MEMORIA/(5168:5168): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 13:46:24:919 MEMORIA/(5168:5168): inicializa memoria
+[INFO] 13:46:29:352 MEMORIA/(5168:5168): el proceso 0 no existe, inicializandolo... 
+[INFO] 13:47:30:679 MEMORIA/(5433:5433): TLB inicializada correctamente
+[INFO] 13:47:30:680 MEMORIA/(5433:5433): se inicializo conexion monohilo con swap
+[INFO] 13:47:30:680 MEMORIA/(5433:5433): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 13:47:31:422 MEMORIA/(5433:5433): inicializa memoria
+[INFO] 13:47:37:248 MEMORIA/(5433:5433): el proceso 0 no existe, inicializandolo... 
+[INFO] 13:48:56:606 MEMORIA/(5433:5433): el proceso 0 fue inicializado 
+[INFO] 13:50:03:735 MEMORIA/(6007:6007): TLB inicializada correctamente
+[INFO] 13:50:03:738 MEMORIA/(6007:6007): se inicializo conexion monohilo con swap
+[INFO] 13:50:03:738 MEMORIA/(6007:6007): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 13:50:04:400 MEMORIA/(6007:6007): inicializa memoria
+[INFO] 13:50:07:878 MEMORIA/(6007:6007): el proceso 0 no existe, inicializandolo... 
+[INFO] 13:52:51:386 MEMORIA/(6007:6007): El proceso 0 fue inicializado 
+[INFO] 13:54:24:225 MEMORIA/(6768:6768): TLB inicializada correctamente
+[INFO] 13:54:24:228 MEMORIA/(6768:6768): se inicializo conexion monohilo con swap
+[INFO] 13:54:24:228 MEMORIA/(6768:6768): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 13:54:24:877 MEMORIA/(6768:6768): inicializa memoria
+[INFO] 13:54:28:389 MEMORIA/(6768:6768): el proceso 0 no existe, inicializandolo... 
+[INFO] 14:06:21:144 MEMORIA/(9246:9246): TLB inicializada correctamente
+[INFO] 14:06:21:146 MEMORIA/(9246:9246): se inicializo conexion monohilo con swap
+[INFO] 14:06:21:146 MEMORIA/(9246:9246): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 14:06:21:759 MEMORIA/(9246:9246): inicializa memoria
+[INFO] 14:06:24:815 MEMORIA/(9246:9246): el proceso 0 no existe, inicializandolo... 
+[INFO] 14:09:56:167 MEMORIA/(10027:10027): TLB inicializada correctamente
+[INFO] 14:10:17:788 MEMORIA/(10112:10112): TLB inicializada correctamente
+[INFO] 14:10:17:788 MEMORIA/(10112:10112): se inicializo conexion monohilo con swap
+[INFO] 14:10:17:788 MEMORIA/(10112:10112): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 14:10:18:436 MEMORIA/(10112:10112): inicializa memoria
+[INFO] 14:10:21:833 MEMORIA/(10112:10112): el proceso 0 no existe, inicializandolo... 
+[INFO] 14:11:54:670 MEMORIA/(10112:10112): El proceso 0 fue inicializado 
+[INFO] 14:12:42:587 MEMORIA/(10575:10575): TLB inicializada correctamente
+[INFO] 14:12:42:588 MEMORIA/(10575:10575): se inicializo conexion monohilo con swap
+[INFO] 14:12:42:588 MEMORIA/(10575:10575): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 14:12:43:564 MEMORIA/(10575:10575): inicializa memoria
+[INFO] 14:12:46:875 MEMORIA/(10575:10575): el proceso 0 no existe, inicializandolo... 
+[INFO] 14:13:39:190 MEMORIA/(10802:10802): TLB inicializada correctamente
+[INFO] 14:13:39:190 MEMORIA/(10802:10802): se inicializo conexion monohilo con swap
+[INFO] 14:13:39:190 MEMORIA/(10802:10802): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 14:13:39:511 MEMORIA/(10802:10802): inicializa memoria
+[INFO] 14:13:42:213 MEMORIA/(10802:10802): el proceso 0 no existe, inicializandolo... 
+[INFO] 14:14:25:989 MEMORIA/(10802:10802): El proceso 0 fue inicializado 
+[INFO] 14:15:08:928 MEMORIA/(11093:11093): TLB inicializada correctamente
+[INFO] 14:15:08:928 MEMORIA/(11093:11093): se inicializo conexion monohilo con swap
+[INFO] 14:15:08:928 MEMORIA/(11093:11093): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 14:15:09:306 MEMORIA/(11093:11093): inicializa memoria
+[INFO] 14:15:12:386 MEMORIA/(11093:11093): el proceso 0 no existe, inicializandolo... 
+[INFO] 14:15:31:548 MEMORIA/(11093:11093): El proceso 0 fue inicializado 
+[INFO] 14:16:06:460 MEMORIA/(11306:11306): TLB inicializada correctamente
+[INFO] 14:16:06:460 MEMORIA/(11306:11306): se inicializo conexion monohilo con swap
+[INFO] 14:16:06:460 MEMORIA/(11306:11306): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 14:16:06:941 MEMORIA/(11306:11306): inicializa memoria
+[INFO] 14:16:10:393 MEMORIA/(11306:11306): el proceso 0 no existe, inicializandolo... 
+[INFO] 14:16:32:536 MEMORIA/(11306:11306): El proceso 0 fue inicializado 

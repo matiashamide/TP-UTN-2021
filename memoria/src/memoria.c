@@ -264,7 +264,7 @@ int memalloc(int pid, int size){
 				return -1;
 			}
 			//Reservamos los frames al PID
-			t_list* frames_libres_MP = list_filter(FRAMES_MEMORIA, (void*)esta_libre_frame);
+			t_list* frames_libres_MP = list_filter(FRAMES_MEMORIA, esta_libre_frame);
 			for(int i = 0; i < CONFIG.marcos_max; i++){
 				t_frame* frame_libre = list_get(frames_libres_MP,i);
 				frame_libre->pid = pid;
@@ -275,7 +275,7 @@ int memalloc(int pid, int size){
 		//Crea tabla de paginas para el proceso
 		t_tabla_pagina* nueva_tabla = malloc(sizeof(t_tabla_pagina));
 		nueva_tabla->paginas = list_create();
-		nueva_tabla->PID = pid;
+		nueva_tabla->PID     = pid;
 
 		pthread_mutex_lock(&mutex_tablas_dp);
 		list_add(TABLAS_DE_PAGINAS, nueva_tabla);
@@ -287,11 +287,15 @@ int memalloc(int pid, int size){
 		header->next_alloc        = sizeof(heap_metadata) + size;
 		header->prev_alloc        = NULL;
 
+		printf("\n next alloc de header: %i \n", header->next_alloc);
+
 		//Armo el alloc siguiente
 		heap_metadata* header_sig = malloc(sizeof(heap_metadata));
-		header->is_free    		  = true;
-		header->next_alloc 		  = NULL;
-		header->prev_alloc        = 0;
+		header_sig->is_free    		  = true;
+		header_sig->next_alloc 		  = NULL;
+		header_sig->prev_alloc        = 0;
+
+		printf("el header siguiente prev alloc aca es %i \n", header_sig->prev_alloc);
 
 		//Bloque de paginas en donde se meten los headers
 		void* buffer_pags_proceso = malloc(paginas_necesarias * CONFIG.tamanio_pagina);
@@ -314,13 +318,14 @@ int memalloc(int pid, int size){
 
 			list_add(nueva_tabla->paginas, pagina);
 
-			memcpy(MEMORIA_PRINCIPAL + pagina->frame_ppal* CONFIG.tamanio_pagina, buffer_pags_proceso + i * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
+			memcpy(MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina, buffer_pags_proceso + i * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
 			unlockear(pagina);
 		}
 
 		dir_logica = header_sig->prev_alloc;
+		printf("la dir_logica es %i \n", header_sig->prev_alloc);
 		free(header);
-		log_info(LOGGER, "el proceso %i fue inicializado " , pid);
+		log_info(LOGGER, "El proceso %i fue inicializado " , pid);
 
 	} else {
 
@@ -406,7 +411,8 @@ int memalloc(int pid, int size){
 		}
 	}
 
-	log_info(LOGGER, "Se le asignaron %i bytes al proceso %i, correctamente " , size, pid);
+	//FIXME: estalla el logger aca...
+	//log_info(LOGGER, "Se le asignaron %i bytes al proceso %i, correctamente " , size, pid);
 	return dir_logica + sizeof(heap_metadata);
 }
 
@@ -1046,7 +1052,7 @@ int solicitar_frame_en_ppal(int pid){
 
 			if (frame != NULL) {
 				frame->ocupado = true;
-				frame->pid = pid;
+				frame->pid     = pid;
 
 				pthread_mutex_unlock(&mutex_frames);
 				return frame->id;
@@ -1177,7 +1183,7 @@ int reemplazar_con_CLOCK(int pid) {
 //--------------------------------------------- FUNCIONES PARA LAS LISTAS ADMIN. -----------------------------------------//
 
 bool hay_frames_libres_mp(int cant_frames_necesarios) {
-	t_list* frames_libes_MP = list_filter(FRAMES_MEMORIA, (void*)esta_libre_frame);
+	t_list* frames_libes_MP = list_filter(FRAMES_MEMORIA, esta_libre_frame);
 	return list_size(frames_libes_MP) >= cant_frames_necesarios;
 }
 
@@ -1433,7 +1439,7 @@ void eliminar_proceso_swap(int pid){
 //-------------------------------------------- FUNCIONES DE ESTADO - t_frame & t_pagina - ------------------------------//
 
 bool esta_libre_frame(t_frame* frame) {
-	return frame->ocupado;
+	return !frame->ocupado;
 }
 
 int no_lock(t_pagina* pag){
