@@ -623,7 +623,23 @@ int memwrite(int pid, int dir_logica, void* contenido, int size) {
 	return 1;
 }
 
-void suspender_proceso(int pid){}
+void suspender_proceso(int pid){
+	t_list* paginas_proceso =  (tabla_por_pid(pid))->paginas;
+
+	for (int i = 0; i < list_size(paginas_proceso); i++) {
+		t_pagina* pagina = list_get(paginas_proceso,i);
+		if(pagina->presencia){
+			t_frame* frame = list_get(FRAMES_MEMORIA,pagina->frame_ppal);
+			frame->ocupado = false;
+
+			if(pagina->modificado){
+				tirar_a_swap(pagina);
+			}
+
+		}
+	}
+
+}
 
 void eliminar_proceso(int pid) {
 	t_tabla_pagina* tabla_proceso = tabla_por_pid(pid);
