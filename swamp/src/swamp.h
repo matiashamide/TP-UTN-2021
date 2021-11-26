@@ -63,8 +63,15 @@ int archivo_proceso_existente(int pid);
 t_frame* frame_de_pagina(int pid, int nro_pagina);
 t_metadata_archivo* obtener_archivo_con_id(int aid);
 
+void eliminar_proceso_swap(int pid);
+
 int reservar_espacio(int pid , int cant_paginas);
 void rta_marcos_max(int socket);
 void rta_reservar_espacio(int socket, int rta);
+
+t_list* frames_libres_del_archivo(int aid);
+t_list* frames_libres_del_proceso(int aid, int pid);
+t_frame* ultima_pagina_proceso(int pid);
+t_list* frames_del_proceso(int pid);
 
 #endif /* SWAMP_H_ */

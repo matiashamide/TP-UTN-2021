@@ -43,7 +43,8 @@ void init_swamp(){
 
 	//Creamos estructuras correspondientes
 	METADATA_ARCHIVOS = list_create();
-	FRAMES_SWAP = list_create();
+	FRAMES_SWAP       = list_create();
+
 	crear_archivos();
 	crear_frames();
 }
@@ -235,6 +236,13 @@ void atender_peticiones(int cliente){
 
 	break;
 
+	case KILL_PROCESO:;
+
+		pid = recibir_entero(cliente);
+		log_info(LOGGER, "[SWAMP]: No entiendo la peticion, rey.");
+		eliminar_proceso_swap(pid);
+	break;
+
 	default: log_info(LOGGER, "[SWAMP]: No entiendo la peticion, rey.");
 	break;
 
@@ -262,34 +270,17 @@ int reservar_espacio(int pid, int cant_paginas) {
 
 			for (int i = 1; i <= cant_paginas; i++) {
 
-				bool frame_libre_del_archivo(void * elemento){
-					t_frame* frame_aux = (t_frame*) elemento;
-					return !frame_aux->ocupado && frame_aux->aid == nro_archivo;
-				}
-
-				bool frame_libre_del_proceso(void * elemento){
-					t_frame* frame_aux = (t_frame*) elemento;
-					return frame_aux->pid == pid && !frame_aux->ocupado && frame_aux->aid == nro_archivo;
-				}
-
-				bool _ultima_pagina_proceso(void* un_frame, void* otro_frame) {
-					t_frame* f1 = (t_frame*) un_frame;
-					t_frame* f2 = (t_frame*) otro_frame;
-
-					return f1->id_pag > f2->id_pag && f1->pid == pid && f2->pid == pid;
-				}
-
 				t_frame* frame;
 
 				if (CONFIG.marcos_max > 0) {
-					frame = list_find(FRAMES_SWAP, frame_libre_del_proceso);
+					frame = list_get(frames_libres_del_proceso(nro_archivo, pid), 0);
 				} else {
-					frame = list_find(FRAMES_SWAP, frame_libre_del_archivo);
+					frame = list_get(frames_libres_del_archivo(nro_archivo), 0);
 				}
 
 				frame->ocupado = true;
 				frame->pid     = pid;
-				frame->id_pag  = ((t_frame*)list_get_maximum(FRAMES_SWAP,(void*) _ultima_pagina_proceso))->id_pag + i;
+				frame->id_pag  = ultima_pagina_proceso(pid)->id_pag + i;
 
 			}
 
@@ -319,13 +310,7 @@ int reservar_espacio(int pid, int cant_paginas) {
 			//Reserva de frames del proceso
 			for (int f = 0 ; f < cant_frames_requeridos ; f++) {
 
-				bool frame_libre_del_archivo(void * elemento){
-					t_frame* frame_aux = (t_frame*) elemento;
-					return !frame_aux->ocupado && frame_aux->aid == archivo->id;
-				}
-
-				t_frame* frame = list_find(FRAMES_SWAP, frame_libre_del_archivo);
-
+				t_frame* frame = list_get(frames_libres_del_archivo(nro_archivo), 0);
 				frame->pid = pid;
 			}
 
@@ -333,12 +318,7 @@ int reservar_espacio(int pid, int cant_paginas) {
 
 			for (int p = 0 ; p < cant_paginas ; p++) {
 
-				bool frame_libre_del_proceso(void * elemento){
-					t_frame* frame_aux = (t_frame*) elemento;
-					return frame_aux->pid == pid && frame_aux->aid == archivo->id;
-				}
-
-				t_frame* frame_a_ocupar = list_find(FRAMES_SWAP, frame_libre_del_proceso);
+				t_frame* frame_a_ocupar = list_get(frames_libres_del_proceso(nro_archivo, pid), 0);
 
 				frame_a_ocupar->id_pag = p;
 				frame_a_ocupar->ocupado = true;
@@ -393,6 +373,27 @@ void rta_reservar_espacio(int socket, int rta) {
 	eliminar_paquete_swap(paquete);
 }
 
+void eliminar_proceso_swap(int pid) {
+
+	int fd = archivo_proceso_existente(pid);
+
+	if (fd == -1) {
+		return;
+	}
+
+	t_list* frames_proceso = frames_del_proceso(pid);
+	t_frame* frame;
+
+	for (int i = 0 ; i < list_size(frames_proceso) ; i++) {
+
+		frame = list_get(frames_proceso, i);
+
+		frame->pid     = -1;
+		frame->id_pag  = -1;
+		frame->ocupado = false;
+	}
+}
+
 
 //--------------------------------------------------- FUNCIONES UTILES ---------------------------------------------------//
 
@@ -439,4 +440,46 @@ t_metadata_archivo* obtener_archivo_mayor_espacio_libre() {
 
 	list_sort(METADATA_ARCHIVOS, (void*)_de_mayor_espacio);
 	return (t_metadata_archivo*)list_get(METADATA_ARCHIVOS, 0);
+}
+
+t_list* frames_libres_del_archivo(int aid) {
+
+	bool frame_libre_del_archivo(void * elemento) {
+		t_frame* frame_aux = (t_frame*) elemento;
+		return !frame_aux->ocupado && frame_aux->aid == aid && frame_aux->pid == -1;
+	}
+
+	return list_filter(FRAMES_SWAP, frame_libre_del_archivo);
+}
+
+t_list* frames_libres_del_proceso(int aid, int pid) {
+
+	bool frame_libre_del_proceso(void * elemento) {
+		t_frame* frame_aux = (t_frame*) elemento;
+		return frame_aux->pid == pid && !frame_aux->ocupado && frame_aux->aid == aid;
+	}
+
+	return list_filter(FRAMES_SWAP, frame_libre_del_proceso);
+}
+
+t_frame* ultima_pagina_proceso(int pid) {
+
+	bool _ultima_pagina_proceso(void* un_frame, void* otro_frame) {
+		t_frame* f1 = (t_frame*) un_frame;
+		t_frame* f2 = (t_frame*) otro_frame;
+
+		return f1->id_pag > f2->id_pag && f1->pid == pid && f2->pid == pid;
+	}
+
+	return list_get_maximum(FRAMES_SWAP, (void*)_ultima_pagina_proceso);
+}
+
+t_list* frames_del_proceso(int pid) {
+
+	bool _frame_del_pid(void * elemento) {
+		t_frame* frame = (t_frame*) elemento;
+		return frame->pid == pid;
+	}
+
+	return list_filter(FRAMES_SWAP, _frame_del_pid);
 }
