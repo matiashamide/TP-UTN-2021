@@ -536,3 +536,509 @@
 [INFO] 11:39:14:265 MEMORIA/(30192:30192): TLB HIT: 
 [INFO] 11:39:20:681 MEMORIA/(30192:30192): TLB HIT: 
 [INFO] 11:39:52:817 MEMORIA/(30192:30192): TLB HIT: 
+[INFO] 11:51:16:776 MEMORIA/(14477:14477): TLB inicializada correctamente
+[INFO] 11:57:06:910 MEMORIA/(14870:14870): TLB inicializada correctamente
+[INFO] 11:57:06:924 MEMORIA/(14870:14870): se inicializo conexion monohilo con swap
+[INFO] 11:57:06:924 MEMORIA/(14870:14870): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 11:57:08:286 MEMORIA/(14870:14870): inicializa memoria
+[INFO] 11:57:28:235 MEMORIA/(14870:14870): el proceso 0 no existe, inicializandolo... 
+[INFO] 11:57:28:235 MEMORIA/(14870:14870): El proceso 0 fue inicializado 
+[INFO] 11:57:56:473 MEMORIA/(14870:14870): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 11:57:56:473 MEMORIA/(14870:14870): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 11:57:56:473 MEMORIA/(14870:14870):  entrada victima por LRU : pag 134554320
+[INFO] 11:57:56:473 MEMORIA/(14870:14870): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 11:57:56:474 MEMORIA/(14870:14870):  entrada victima por LRU : pag 134554320
+[INFO] 11:57:56:474 MEMORIA/(14870:14870): TLB HIT: 
+[INFO] 11:57:56:474 MEMORIA/(14870:14870): TLB HIT: 
+[INFO] 11:57:56:474 MEMORIA/(14870:14870): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 11:57:56:474 MEMORIA/(14870:14870):  entrada victima por LRU : pag 134554320
+[INFO] 12:02:26:458 MEMORIA/(14870:14870): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:10:04:214 MEMORIA/(15052:15052): TLB inicializada correctamente
+[INFO] 12:10:34:341 MEMORIA/(15088:15088): TLB inicializada correctamente
+[INFO] 12:10:34:353 MEMORIA/(15088:15088): se inicializo conexion monohilo con swap
+[INFO] 12:10:34:353 MEMORIA/(15088:15088): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:10:35:107 MEMORIA/(15088:15088): inicializa memoria
+[INFO] 12:10:36:420 MEMORIA/(15088:15088): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:10:36:420 MEMORIA/(15088:15088): El proceso 0 fue inicializado 
+[INFO] 12:10:37:503 MEMORIA/(15088:15088): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:10:37:503 MEMORIA/(15088:15088): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:10:37:503 MEMORIA/(15088:15088):  entrada victima por LRU : pag 134554320
+[INFO] 12:10:37:503 MEMORIA/(15088:15088): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:10:37:503 MEMORIA/(15088:15088):  entrada victima por LRU : pag 134554320
+[INFO] 12:10:37:503 MEMORIA/(15088:15088): TLB HIT: 
+[INFO] 12:10:37:503 MEMORIA/(15088:15088): TLB HIT: 
+[INFO] 12:10:37:503 MEMORIA/(15088:15088): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:10:37:503 MEMORIA/(15088:15088):  entrada victima por LRU : pag 134554320
+[INFO] 12:10:38:655 MEMORIA/(15088:15088): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:10:38:655 MEMORIA/(15088:15088): TLB HIT: 
+[INFO] 12:10:38:655 MEMORIA/(15088:15088): TLB HIT: 
+[INFO] 12:10:38:655 MEMORIA/(15088:15088): TLB HIT: 
+[INFO] 12:10:38:655 MEMORIA/(15088:15088): TLB HIT: 
+[INFO] 12:10:38:655 MEMORIA/(15088:15088): TLB HIT: 
+[INFO] 12:11:36:209 MEMORIA/(15146:15146): TLB inicializada correctamente
+[INFO] 12:11:36:222 MEMORIA/(15146:15146): se inicializo conexion monohilo con swap
+[INFO] 12:11:36:222 MEMORIA/(15146:15146): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:11:36:731 MEMORIA/(15146:15146): inicializa memoria
+[INFO] 12:11:37:444 MEMORIA/(15146:15146): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:11:37:444 MEMORIA/(15146:15146): El proceso 0 fue inicializado 
+[INFO] 12:11:39:221 MEMORIA/(15146:15146): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:11:39:221 MEMORIA/(15146:15146): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:11:39:222 MEMORIA/(15146:15146):  entrada victima por LRU : pag 134554320
+[INFO] 12:11:39:222 MEMORIA/(15146:15146): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:11:39:222 MEMORIA/(15146:15146):  entrada victima por LRU : pag 134554320
+[INFO] 12:11:39:222 MEMORIA/(15146:15146): TLB HIT: 
+[INFO] 12:11:39:222 MEMORIA/(15146:15146): TLB HIT: 
+[INFO] 12:11:39:222 MEMORIA/(15146:15146): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:11:39:222 MEMORIA/(15146:15146):  entrada victima por LRU : pag 134554320
+[INFO] 12:12:05:019 MEMORIA/(15146:15146): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:12:06:262 MEMORIA/(15146:15146): TLB HIT: 
+[INFO] 12:12:06:262 MEMORIA/(15146:15146): TLB HIT: 
+[INFO] 12:12:06:262 MEMORIA/(15146:15146): TLB HIT: 
+[INFO] 12:12:06:262 MEMORIA/(15146:15146): TLB HIT: 
+[INFO] 12:12:06:262 MEMORIA/(15146:15146): TLB HIT: 
+[INFO] 12:12:50:532 MEMORIA/(15202:15202): TLB inicializada correctamente
+[INFO] 12:12:50:532 MEMORIA/(15202:15202): se inicializo conexion monohilo con swap
+[INFO] 12:12:50:532 MEMORIA/(15202:15202): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:12:51:629 MEMORIA/(15202:15202): inicializa memoria
+[INFO] 12:12:52:523 MEMORIA/(15202:15202): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:12:52:523 MEMORIA/(15202:15202): El proceso 0 fue inicializado 
+[INFO] 12:12:53:694 MEMORIA/(15202:15202): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:12:53:694 MEMORIA/(15202:15202): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:12:53:694 MEMORIA/(15202:15202):  entrada victima por LRU : pag 134554320
+[INFO] 12:12:53:694 MEMORIA/(15202:15202): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:12:53:694 MEMORIA/(15202:15202):  entrada victima por LRU : pag 134554320
+[INFO] 12:12:53:694 MEMORIA/(15202:15202): TLB HIT: 
+[INFO] 12:12:53:694 MEMORIA/(15202:15202): TLB HIT: 
+[INFO] 12:12:53:694 MEMORIA/(15202:15202): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:12:53:694 MEMORIA/(15202:15202):  entrada victima por LRU : pag 134554320
+[INFO] 12:12:59:696 MEMORIA/(15202:15202): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:13:31:920 MEMORIA/(15202:15202): TLB HIT: 
+[INFO] 12:14:09:334 MEMORIA/(15202:15202): TLB HIT: 
+[INFO] 12:14:35:410 MEMORIA/(15202:15202): TLB HIT: 
+[INFO] 12:17:40:055 MEMORIA/(15202:15202): TLB HIT: 
+[INFO] 12:17:41:043 MEMORIA/(15202:15202): TLB HIT: 
+[INFO] 12:20:01:868 MEMORIA/(15432:15432): TLB inicializada correctamente
+[INFO] 12:20:01:870 MEMORIA/(15432:15432): se inicializo conexion monohilo con swap
+[INFO] 12:20:01:870 MEMORIA/(15432:15432): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:20:03:289 MEMORIA/(15432:15432): inicializa memoria
+[INFO] 12:20:04:296 MEMORIA/(15432:15432): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:20:04:296 MEMORIA/(15432:15432): El proceso 0 fue inicializado 
+[INFO] 12:20:04:704 MEMORIA/(15432:15432): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:20:04:704 MEMORIA/(15432:15432): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:20:04:704 MEMORIA/(15432:15432):  entrada victima por LRU : pag 134554320
+[INFO] 12:20:04:704 MEMORIA/(15432:15432): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:20:04:704 MEMORIA/(15432:15432):  entrada victima por LRU : pag 134554320
+[INFO] 12:20:04:704 MEMORIA/(15432:15432): TLB HIT: 
+[INFO] 12:20:04:704 MEMORIA/(15432:15432): TLB HIT: 
+[INFO] 12:20:04:704 MEMORIA/(15432:15432): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:20:04:704 MEMORIA/(15432:15432):  entrada victima por LRU : pag 134554320
+[INFO] 12:20:05:973 MEMORIA/(15432:15432): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:20:05:973 MEMORIA/(15432:15432): TLB HIT: 
+[INFO] 12:20:05:973 MEMORIA/(15432:15432): TLB HIT: 
+[INFO] 12:20:05:973 MEMORIA/(15432:15432): TLB HIT: 
+[INFO] 12:20:05:973 MEMORIA/(15432:15432): TLB HIT: 
+[INFO] 12:20:05:973 MEMORIA/(15432:15432): TLB HIT: 
+[INFO] 12:20:42:010 MEMORIA/(15485:15485): TLB inicializada correctamente
+[INFO] 12:20:42:011 MEMORIA/(15485:15485): se inicializo conexion monohilo con swap
+[INFO] 12:20:42:011 MEMORIA/(15485:15485): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:20:42:616 MEMORIA/(15485:15485): inicializa memoria
+[INFO] 12:20:43:171 MEMORIA/(15485:15485): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:20:43:172 MEMORIA/(15485:15485): El proceso 0 fue inicializado 
+[INFO] 12:20:43:930 MEMORIA/(15485:15485): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:20:43:930 MEMORIA/(15485:15485): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:20:43:930 MEMORIA/(15485:15485):  entrada victima por LRU : pag 134554320
+[INFO] 12:20:43:930 MEMORIA/(15485:15485): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:20:43:930 MEMORIA/(15485:15485):  entrada victima por LRU : pag 134554320
+[INFO] 12:20:43:930 MEMORIA/(15485:15485): TLB HIT: 
+[INFO] 12:20:43:930 MEMORIA/(15485:15485): TLB HIT: 
+[INFO] 12:20:43:930 MEMORIA/(15485:15485): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:20:43:930 MEMORIA/(15485:15485):  entrada victima por LRU : pag 134554320
+[INFO] 12:20:53:681 MEMORIA/(15485:15485): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:20:53:681 MEMORIA/(15485:15485): TLB HIT: 
+[INFO] 12:20:53:681 MEMORIA/(15485:15485): TLB HIT: 
+[INFO] 12:20:53:681 MEMORIA/(15485:15485): TLB HIT: 
+[INFO] 12:20:53:681 MEMORIA/(15485:15485): TLB HIT: 
+[INFO] 12:20:53:681 MEMORIA/(15485:15485): TLB HIT: 
+[INFO] 12:21:09:058 MEMORIA/(15536:15536): TLB inicializada correctamente
+[INFO] 12:21:09:059 MEMORIA/(15536:15536): se inicializo conexion monohilo con swap
+[INFO] 12:21:09:059 MEMORIA/(15536:15536): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:21:09:451 MEMORIA/(15536:15536): inicializa memoria
+[INFO] 12:21:10:667 MEMORIA/(15536:15536): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:21:10:668 MEMORIA/(15536:15536): El proceso 0 fue inicializado 
+[INFO] 12:21:11:277 MEMORIA/(15536:15536): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:21:11:278 MEMORIA/(15536:15536): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:21:11:278 MEMORIA/(15536:15536):  entrada victima por LRU : pag 134554320
+[INFO] 12:21:11:278 MEMORIA/(15536:15536): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:21:11:278 MEMORIA/(15536:15536):  entrada victima por LRU : pag 134554320
+[INFO] 12:21:11:278 MEMORIA/(15536:15536): TLB HIT: 
+[INFO] 12:21:11:278 MEMORIA/(15536:15536): TLB HIT: 
+[INFO] 12:21:11:278 MEMORIA/(15536:15536): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:21:11:278 MEMORIA/(15536:15536):  entrada victima por LRU : pag 134554320
+[INFO] 12:21:17:246 MEMORIA/(15536:15536): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:21:18:961 MEMORIA/(15536:15536): TLB HIT: 
+[INFO] 12:21:18:961 MEMORIA/(15536:15536): TLB HIT: 
+[INFO] 12:21:18:961 MEMORIA/(15536:15536): TLB HIT: 
+[INFO] 12:21:18:961 MEMORIA/(15536:15536): TLB HIT: 
+[INFO] 12:21:18:961 MEMORIA/(15536:15536): TLB HIT: 
+[INFO] 12:21:39:710 MEMORIA/(15597:15597): TLB inicializada correctamente
+[INFO] 12:21:39:711 MEMORIA/(15597:15597): se inicializo conexion monohilo con swap
+[INFO] 12:21:39:711 MEMORIA/(15597:15597): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:21:40:355 MEMORIA/(15597:15597): inicializa memoria
+[INFO] 12:21:42:491 MEMORIA/(15597:15597): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:21:42:491 MEMORIA/(15597:15597): El proceso 0 fue inicializado 
+[INFO] 12:21:42:926 MEMORIA/(15597:15597): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:21:42:927 MEMORIA/(15597:15597): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:21:42:927 MEMORIA/(15597:15597):  entrada victima por LRU : pag 134554320
+[INFO] 12:21:42:927 MEMORIA/(15597:15597): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:21:42:927 MEMORIA/(15597:15597):  entrada victima por LRU : pag 134554320
+[INFO] 12:21:42:927 MEMORIA/(15597:15597): TLB HIT: 
+[INFO] 12:21:42:927 MEMORIA/(15597:15597): TLB HIT: 
+[INFO] 12:21:42:927 MEMORIA/(15597:15597): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:21:42:927 MEMORIA/(15597:15597):  entrada victima por LRU : pag 134554320
+[INFO] 12:21:51:443 MEMORIA/(15597:15597): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:21:59:064 MEMORIA/(15597:15597): TLB HIT: 
+[INFO] 12:22:04:073 MEMORIA/(15597:15597): TLB HIT: 
+[INFO] 12:22:10:601 MEMORIA/(15597:15597): TLB HIT: 
+[INFO] 12:23:35:487 MEMORIA/(15597:15597): TLB HIT: 
+[INFO] 12:27:32:588 MEMORIA/(15882:15882): TLB inicializada correctamente
+[INFO] 12:27:32:625 MEMORIA/(15882:15882): se inicializo conexion monohilo con swap
+[INFO] 12:27:32:625 MEMORIA/(15882:15882): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:27:33:071 MEMORIA/(15882:15882): inicializa memoria
+[INFO] 12:27:33:512 MEMORIA/(15882:15882): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:27:33:512 MEMORIA/(15882:15882): El proceso 0 fue inicializado 
+[INFO] 12:27:34:134 MEMORIA/(15882:15882): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:27:34:134 MEMORIA/(15882:15882): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:27:34:134 MEMORIA/(15882:15882):  entrada victima por LRU : pag 134554320
+[INFO] 12:27:34:134 MEMORIA/(15882:15882): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:27:34:134 MEMORIA/(15882:15882):  entrada victima por LRU : pag 134554320
+[INFO] 12:27:34:134 MEMORIA/(15882:15882): TLB HIT: 
+[INFO] 12:27:34:134 MEMORIA/(15882:15882): TLB HIT: 
+[INFO] 12:27:34:134 MEMORIA/(15882:15882): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:27:34:134 MEMORIA/(15882:15882):  entrada victima por LRU : pag 134554320
+[INFO] 12:27:34:758 MEMORIA/(15882:15882): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:27:34:758 MEMORIA/(15882:15882): TLB HIT: 
+[INFO] 12:27:34:758 MEMORIA/(15882:15882): TLB HIT: 
+[INFO] 12:27:34:758 MEMORIA/(15882:15882): TLB HIT: 
+[INFO] 12:27:34:758 MEMORIA/(15882:15882): TLB HIT: 
+[INFO] 12:27:34:758 MEMORIA/(15882:15882): TLB HIT: 
+[INFO] 12:28:10:111 MEMORIA/(15882:15882): TLB HIT: 
+[INFO] 12:28:45:627 MEMORIA/(16005:16005): TLB inicializada correctamente
+[INFO] 12:28:45:628 MEMORIA/(16005:16005): se inicializo conexion monohilo con swap
+[INFO] 12:28:45:628 MEMORIA/(16005:16005): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:28:45:836 MEMORIA/(16005:16005): inicializa memoria
+[INFO] 12:28:46:156 MEMORIA/(16005:16005): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:28:46:156 MEMORIA/(16005:16005): El proceso 0 fue inicializado 
+[INFO] 12:28:46:313 MEMORIA/(16005:16005): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:28:46:313 MEMORIA/(16005:16005): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:28:46:313 MEMORIA/(16005:16005):  entrada victima por LRU : pag 134554320
+[INFO] 12:28:46:313 MEMORIA/(16005:16005): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:28:46:313 MEMORIA/(16005:16005):  entrada victima por LRU : pag 134554320
+[INFO] 12:28:46:313 MEMORIA/(16005:16005): TLB HIT: 
+[INFO] 12:28:46:313 MEMORIA/(16005:16005): TLB HIT: 
+[INFO] 12:28:46:313 MEMORIA/(16005:16005): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:28:46:313 MEMORIA/(16005:16005):  entrada victima por LRU : pag 134554320
+[INFO] 12:28:46:461 MEMORIA/(16005:16005): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:28:46:461 MEMORIA/(16005:16005): TLB HIT: 
+[INFO] 12:28:46:461 MEMORIA/(16005:16005): TLB HIT: 
+[INFO] 12:28:46:461 MEMORIA/(16005:16005): TLB HIT: 
+[INFO] 12:28:46:461 MEMORIA/(16005:16005): TLB HIT: 
+[INFO] 12:28:46:461 MEMORIA/(16005:16005): TLB HIT: 
+[INFO] 12:28:48:958 MEMORIA/(16005:16005): TLB HIT: 
+[INFO] 12:29:27:638 MEMORIA/(16058:16058): TLB inicializada correctamente
+[INFO] 12:29:27:639 MEMORIA/(16058:16058): se inicializo conexion monohilo con swap
+[INFO] 12:29:27:639 MEMORIA/(16058:16058): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:29:29:367 MEMORIA/(16058:16058): inicializa memoria
+[INFO] 12:29:30:258 MEMORIA/(16058:16058): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:29:30:258 MEMORIA/(16058:16058): El proceso 0 fue inicializado 
+[INFO] 12:29:30:947 MEMORIA/(16058:16058): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:29:30:947 MEMORIA/(16058:16058): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:29:30:947 MEMORIA/(16058:16058):  entrada victima por LRU : pag 134554320
+[INFO] 12:29:30:947 MEMORIA/(16058:16058): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:29:30:947 MEMORIA/(16058:16058):  entrada victima por LRU : pag 134554320
+[INFO] 12:29:30:947 MEMORIA/(16058:16058): TLB HIT: 
+[INFO] 12:29:30:947 MEMORIA/(16058:16058): TLB HIT: 
+[INFO] 12:29:30:947 MEMORIA/(16058:16058): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:29:30:947 MEMORIA/(16058:16058):  entrada victima por LRU : pag 134554320
+[INFO] 12:29:31:369 MEMORIA/(16058:16058): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:29:31:369 MEMORIA/(16058:16058): TLB HIT: 
+[INFO] 12:29:31:369 MEMORIA/(16058:16058): TLB HIT: 
+[INFO] 12:29:31:369 MEMORIA/(16058:16058): TLB HIT: 
+[INFO] 12:29:31:369 MEMORIA/(16058:16058): TLB HIT: 
+[INFO] 12:29:31:369 MEMORIA/(16058:16058): TLB HIT: 
+[INFO] 12:35:08:250 MEMORIA/(16058:16058): TLB HIT: 
+[INFO] 12:41:46:176 MEMORIA/(16424:16424): TLB inicializada correctamente
+[INFO] 12:41:46:189 MEMORIA/(16424:16424): se inicializo conexion monohilo con swap
+[INFO] 12:41:46:189 MEMORIA/(16424:16424): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:41:46:737 MEMORIA/(16424:16424): inicializa memoria
+[INFO] 12:41:48:494 MEMORIA/(16424:16424): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:41:48:494 MEMORIA/(16424:16424): El proceso 0 fue inicializado 
+[INFO] 12:41:49:665 MEMORIA/(16424:16424): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:41:49:665 MEMORIA/(16424:16424): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:41:49:665 MEMORIA/(16424:16424):  entrada victima por LRU : pag 134554320
+[INFO] 12:41:49:665 MEMORIA/(16424:16424): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:41:49:665 MEMORIA/(16424:16424):  entrada victima por LRU : pag 134554320
+[INFO] 12:41:49:665 MEMORIA/(16424:16424): TLB HIT: 
+[INFO] 12:41:49:665 MEMORIA/(16424:16424): TLB HIT: 
+[INFO] 12:41:49:665 MEMORIA/(16424:16424): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:41:49:665 MEMORIA/(16424:16424):  entrada victima por LRU : pag 134554320
+[INFO] 12:41:50:174 MEMORIA/(16424:16424): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:41:50:174 MEMORIA/(16424:16424): TLB HIT: 
+[INFO] 12:41:50:174 MEMORIA/(16424:16424): TLB HIT: 
+[INFO] 12:41:50:174 MEMORIA/(16424:16424): TLB HIT: 
+[INFO] 12:41:50:174 MEMORIA/(16424:16424): TLB HIT: 
+[INFO] 12:42:47:618 MEMORIA/(16732:16732): TLB inicializada correctamente
+[INFO] 12:42:47:619 MEMORIA/(16732:16732): se inicializo conexion monohilo con swap
+[INFO] 12:42:47:619 MEMORIA/(16732:16732): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:42:48:120 MEMORIA/(16732:16732): inicializa memoria
+[INFO] 12:42:48:820 MEMORIA/(16732:16732): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:42:48:820 MEMORIA/(16732:16732): El proceso 0 fue inicializado 
+[INFO] 12:42:51:852 MEMORIA/(16732:16732): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:42:51:852 MEMORIA/(16732:16732): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:42:51:852 MEMORIA/(16732:16732):  entrada victima por LRU : pag 134554320
+[INFO] 12:42:51:852 MEMORIA/(16732:16732): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:42:51:852 MEMORIA/(16732:16732):  entrada victima por LRU : pag 134554320
+[INFO] 12:42:51:852 MEMORIA/(16732:16732): TLB HIT: 
+[INFO] 12:42:51:852 MEMORIA/(16732:16732): TLB HIT: 
+[INFO] 12:42:51:852 MEMORIA/(16732:16732): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:42:51:852 MEMORIA/(16732:16732):  entrada victima por LRU : pag 134554320
+[INFO] 12:43:09:118 MEMORIA/(16732:16732): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:43:16:606 MEMORIA/(16732:16732): TLB HIT: 
+[INFO] 12:43:16:606 MEMORIA/(16732:16732): TLB HIT: 
+[INFO] 12:43:16:606 MEMORIA/(16732:16732): TLB HIT: 
+[INFO] 12:48:06:818 MEMORIA/(16933:16933): TLB inicializada correctamente
+[INFO] 12:48:06:819 MEMORIA/(16933:16933): se inicializo conexion monohilo con swap
+[INFO] 12:48:06:819 MEMORIA/(16933:16933): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:48:07:087 MEMORIA/(16933:16933): inicializa memoria
+[INFO] 12:48:07:686 MEMORIA/(16933:16933): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:48:07:687 MEMORIA/(16933:16933): El proceso 0 fue inicializado 
+[INFO] 12:48:08:463 MEMORIA/(16933:16933): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:48:08:463 MEMORIA/(16933:16933): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:48:08:463 MEMORIA/(16933:16933):  entrada victima por LRU : pag 134554320
+[INFO] 12:48:08:463 MEMORIA/(16933:16933): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:48:08:463 MEMORIA/(16933:16933):  entrada victima por LRU : pag 134554320
+[INFO] 12:48:08:463 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:48:08:463 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:48:08:463 MEMORIA/(16933:16933): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:48:08:463 MEMORIA/(16933:16933):  entrada victima por LRU : pag 134554320
+[INFO] 12:48:08:959 MEMORIA/(16933:16933): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:48:08:959 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:48:08:959 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:48:08:959 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:48:08:959 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:48:08:959 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:48:08:959 MEMORIA/(16933:16933): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:48:08:959 MEMORIA/(16933:16933):  entrada victima por LRU : pag 134554320
+[INFO] 12:48:09:588 MEMORIA/(16933:16933): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:48:09:588 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:48:09:588 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:48:09:588 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:48:09:588 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:48:09:588 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:48:09:588 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:50:46:076 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:50:46:665 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:50:48:307 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:50:58:951 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:51:09:310 MEMORIA/(16933:16933): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:51:09:310 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:51:09:310 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:51:09:310 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:51:09:310 MEMORIA/(16933:16933): TLB HIT: 
+[INFO] 12:51:53:582 MEMORIA/(17026:17026): TLB inicializada correctamente
+[INFO] 12:52:12:333 MEMORIA/(17093:17093): TLB inicializada correctamente
+[INFO] 12:52:12:333 MEMORIA/(17093:17093): se inicializo conexion monohilo con swap
+[INFO] 12:52:12:334 MEMORIA/(17093:17093): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:52:13:065 MEMORIA/(17093:17093): inicializa memoria
+[INFO] 12:52:15:412 MEMORIA/(17093:17093): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:52:15:412 MEMORIA/(17093:17093): El proceso 0 fue inicializado 
+[INFO] 12:52:15:869 MEMORIA/(17093:17093): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:52:15:869 MEMORIA/(17093:17093): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:52:15:869 MEMORIA/(17093:17093):  entrada victima por LRU : pag 134554320
+[INFO] 12:52:15:869 MEMORIA/(17093:17093): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:52:15:869 MEMORIA/(17093:17093):  entrada victima por LRU : pag 134554320
+[INFO] 12:52:15:869 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:15:869 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:15:869 MEMORIA/(17093:17093): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:52:15:869 MEMORIA/(17093:17093):  entrada victima por LRU : pag 134554320
+[INFO] 12:52:16:155 MEMORIA/(17093:17093): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:52:16:155 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:16:155 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:16:155 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:16:155 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:16:155 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:16:155 MEMORIA/(17093:17093): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:52:16:155 MEMORIA/(17093:17093):  entrada victima por LRU : pag 134554320
+[INFO] 12:52:16:335 MEMORIA/(17093:17093): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:52:16:335 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:16:335 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:16:335 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:16:335 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:16:335 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:16:335 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:17:780 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:18:032 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:18:442 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:19:345 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:40:383 MEMORIA/(17093:17093): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:52:40:383 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:40:383 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:40:383 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:40:383 MEMORIA/(17093:17093): TLB HIT: 
+[INFO] 12:52:54:417 MEMORIA/(17152:17152): TLB inicializada correctamente
+[INFO] 12:52:54:418 MEMORIA/(17152:17152): se inicializo conexion monohilo con swap
+[INFO] 12:52:54:418 MEMORIA/(17152:17152): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:52:54:607 MEMORIA/(17152:17152): inicializa memoria
+[INFO] 12:52:54:945 MEMORIA/(17152:17152): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:52:54:945 MEMORIA/(17152:17152): El proceso 0 fue inicializado 
+[INFO] 12:52:55:113 MEMORIA/(17152:17152): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:52:55:113 MEMORIA/(17152:17152): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:52:55:113 MEMORIA/(17152:17152):  entrada victima por LRU : pag 134554320
+[INFO] 12:52:55:113 MEMORIA/(17152:17152): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:52:55:113 MEMORIA/(17152:17152):  entrada victima por LRU : pag 134554320
+[INFO] 12:52:55:113 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:52:55:113 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:52:55:113 MEMORIA/(17152:17152): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:52:55:113 MEMORIA/(17152:17152):  entrada victima por LRU : pag 134554320
+[INFO] 12:52:55:266 MEMORIA/(17152:17152): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:52:55:266 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:52:55:266 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:52:55:266 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:52:55:266 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:52:55:266 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:52:55:266 MEMORIA/(17152:17152): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:52:55:266 MEMORIA/(17152:17152):  entrada victima por LRU : pag 134554320
+[INFO] 12:52:55:538 MEMORIA/(17152:17152): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:52:55:538 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:52:55:538 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:52:55:538 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:52:55:538 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:52:55:538 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:52:55:538 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:52:58:004 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:52:58:208 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:52:58:485 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:52:59:356 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:53:16:114 MEMORIA/(17152:17152): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:53:25:264 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:53:25:264 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:53:25:264 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:53:25:264 MEMORIA/(17152:17152): TLB HIT: 
+[INFO] 12:53:40:203 MEMORIA/(17225:17225): TLB inicializada correctamente
+[INFO] 12:53:53:646 MEMORIA/(17259:17259): TLB inicializada correctamente
+[INFO] 12:53:53:647 MEMORIA/(17259:17259): se inicializo conexion monohilo con swap
+[INFO] 12:53:53:647 MEMORIA/(17259:17259): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:53:55:493 MEMORIA/(17259:17259): inicializa memoria
+[INFO] 12:54:00:477 MEMORIA/(17259:17259): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:54:00:477 MEMORIA/(17259:17259): El proceso 0 fue inicializado 
+[INFO] 12:54:01:245 MEMORIA/(17259:17259): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:54:01:245 MEMORIA/(17259:17259): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:54:01:245 MEMORIA/(17259:17259):  entrada victima por LRU : pag 134554320
+[INFO] 12:54:01:245 MEMORIA/(17259:17259): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:54:01:245 MEMORIA/(17259:17259):  entrada victima por LRU : pag 134554320
+[INFO] 12:54:01:245 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:01:245 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:01:245 MEMORIA/(17259:17259): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:54:01:245 MEMORIA/(17259:17259):  entrada victima por LRU : pag 134554320
+[INFO] 12:54:01:452 MEMORIA/(17259:17259): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:54:01:452 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:01:452 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:01:452 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:01:452 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:01:452 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:01:452 MEMORIA/(17259:17259): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:54:01:452 MEMORIA/(17259:17259):  entrada victima por LRU : pag 134554320
+[INFO] 12:54:01:661 MEMORIA/(17259:17259): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:54:01:661 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:01:661 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:01:661 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:01:661 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:01:661 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:01:661 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:03:258 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:03:505 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:04:265 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:11:130 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:16:348 MEMORIA/(17259:17259): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:54:50:421 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:54:58:479 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:55:04:417 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:55:11:591 MEMORIA/(17259:17259): TLB HIT: 
+[INFO] 12:55:49:679 MEMORIA/(17414:17414): TLB inicializada correctamente
+[INFO] 12:55:49:724 MEMORIA/(17414:17414): se inicializo conexion monohilo con swap
+[INFO] 12:55:49:724 MEMORIA/(17414:17414): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 12:55:49:813 MEMORIA/(17414:17414): inicializa memoria
+[INFO] 12:55:50:168 MEMORIA/(17414:17414): el proceso 0 no existe, inicializandolo... 
+[INFO] 12:55:50:169 MEMORIA/(17414:17414): El proceso 0 fue inicializado 
+[INFO] 12:55:50:320 MEMORIA/(17414:17414): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:55:50:320 MEMORIA/(17414:17414): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:55:50:320 MEMORIA/(17414:17414):  entrada victima por LRU : pag 134554320
+[INFO] 12:55:50:320 MEMORIA/(17414:17414): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:55:50:320 MEMORIA/(17414:17414):  entrada victima por LRU : pag 134554320
+[INFO] 12:55:50:320 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:55:50:320 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:55:50:320 MEMORIA/(17414:17414): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:55:50:320 MEMORIA/(17414:17414):  entrada victima por LRU : pag 134554320
+[INFO] 12:55:50:462 MEMORIA/(17414:17414): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:55:50:462 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:55:50:462 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:55:50:462 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:55:50:462 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:55:50:462 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:55:50:462 MEMORIA/(17414:17414): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 12:55:50:462 MEMORIA/(17414:17414):  entrada victima por LRU : pag 134554320
+[INFO] 12:55:50:615 MEMORIA/(17414:17414): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:55:50:615 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:55:50:615 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:55:50:615 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:55:50:615 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:55:50:615 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:55:50:615 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:55:51:211 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:55:52:087 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:55:53:381 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:55:54:153 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:56:01:468 MEMORIA/(17414:17414): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 12:56:06:266 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:56:09:534 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:56:13:786 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 12:57:04:434 MEMORIA/(17414:17414): TLB HIT: 
+[INFO] 13:05:57:917 MEMORIA/(17685:17685): TLB inicializada correctamente
+[INFO] 13:05:57:918 MEMORIA/(17685:17685): se inicializo conexion monohilo con swap
+[INFO] 13:05:57:918 MEMORIA/(17685:17685): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 13:05:58:531 MEMORIA/(17685:17685): inicializa memoria
+[INFO] 13:06:00:541 MEMORIA/(17685:17685): el proceso 0 no existe, inicializandolo... 
+[INFO] 13:06:00:541 MEMORIA/(17685:17685): El proceso 0 fue inicializado 
+[INFO] 13:06:00:745 MEMORIA/(17685:17685): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 13:06:00:745 MEMORIA/(17685:17685): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 13:06:00:745 MEMORIA/(17685:17685):  entrada victima por LRU : pag 134554320
+[INFO] 13:06:00:745 MEMORIA/(17685:17685): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 13:06:00:745 MEMORIA/(17685:17685):  entrada victima por LRU : pag 134554320
+[INFO] 13:06:00:745 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:00:745 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:00:745 MEMORIA/(17685:17685): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 13:06:00:745 MEMORIA/(17685:17685):  entrada victima por LRU : pag 134554320
+[INFO] 13:06:00:925 MEMORIA/(17685:17685): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 13:06:00:925 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:00:925 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:00:925 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:00:925 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:00:926 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:00:926 MEMORIA/(17685:17685): TLB miss : reemplazamos por la nueva entrada: 
+[INFO] 13:06:00:926 MEMORIA/(17685:17685):  entrada victima por LRU : pag 134554320
+[INFO] 13:06:01:435 MEMORIA/(17685:17685): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 13:06:01:435 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:01:435 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:01:435 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:01:435 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:01:435 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:01:435 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:03:412 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:03:815 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:04:207 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:05:045 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:11:059 MEMORIA/(17685:17685): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 13:06:11:059 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:11:059 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:11:059 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:11:059 MEMORIA/(17685:17685): TLB HIT: 
+[INFO] 13:06:11:059 MEMORIA/(17685:17685): TLB HIT: 

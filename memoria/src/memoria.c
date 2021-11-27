@@ -14,7 +14,7 @@ int main(void) {
 	//carpincho 0
 	int alloc00 = memalloc(0, 23);
 	int alloc10 = memalloc(0, 23);
-	//int alloc20 = memalloc(0, 23);
+	int alloc20 = memalloc(0, 23);
 	int alloc30 = memalloc(0, 10);
 
 	char* hola = "Hola";
@@ -22,13 +22,13 @@ int main(void) {
 
 	memcpy(contenido, hola, 5);
 
-	memwrite(0, contenido, alloc30, 5);
+	int retorno = memwrite(0, contenido, alloc30, 5);
 
-	//memwrite(0, contenido, alloc20, 5);
+	int ret2 = memwrite(0, contenido, alloc20, 5);
 
-	//memwrite(0, contenido, alloc10, 5);
+	int ret3 = memwrite(0, contenido, alloc10, 5);
 
-	//memwrite(0, contenido, alloc00, 5);
+	int ret4 = memwrite(0, contenido, alloc00, 5);
 
 	int alloc40 = memalloc(0, 23);
 	int alloc50 = memalloc(0, 23);
@@ -363,7 +363,7 @@ int memalloc(int pid, int size){
 
 			int nro_pagina,offset;
 			nro_pagina = list_size(paginas_proceso) - 1;
-			offset = alloc->direc_logica - CONFIG.tamanio_pagina;
+			offset = alloc->direc_logica - CONFIG.tamanio_pagina * nro_pagina;
 
 			//Actualizamos el ultimo header
 			heap_metadata* ultimo_header = desserializar_header(pid,nro_pagina, offset);
@@ -623,15 +623,17 @@ int memwrite(int pid, void* contenido, int dir_logica,  int size) {
 	lockear(pagina);
 	int frame_pag = buscar_pagina(pid, pagina->id);
 
-	//EL memread se hace en una sola pagina
+	//EL memwrite se hace en una sola pagina
 	if(size <= CONFIG.tamanio_pagina - offset){
 		memcpy(MEMORIA_PRINCIPAL + frame_pag * CONFIG.tamanio_pagina + offset, contenido, size);
+		set_modificado(pagina);
 		unlockear(pagina);
 		return 1;
 	} else {
-		//El memread se hace en varias paginas
+		//El memwrite se hace en varias paginas
 
 		memcpy(MEMORIA_PRINCIPAL + frame_pag * CONFIG.tamanio_pagina + offset, contenido ,  CONFIG.tamanio_pagina - offset);
+		set_modificado(pagina);
 		unlockear(pagina);
 		size -= CONFIG.tamanio_pagina - offset;
 
@@ -644,6 +646,7 @@ int memwrite(int pid, void* contenido, int dir_logica,  int size) {
 			frame_pag = buscar_pagina(pid, pagina->id);
 
 			memcpy(MEMORIA_PRINCIPAL + frame_pag * CONFIG.tamanio_pagina, contenido + CONFIG.tamanio_pagina - offset + (i-1) * CONFIG.tamanio_pagina , CONFIG.tamanio_pagina);
+			set_modificado(pagina);
 			unlockear(pagina);
 			size -= CONFIG.tamanio_pagina;
 		}
@@ -652,6 +655,7 @@ int memwrite(int pid, void* contenido, int dir_logica,  int size) {
 		lockear(pagina);
 		frame_pag = buscar_pagina(pid, pagina->id);
 		memcpy(MEMORIA_PRINCIPAL + frame_pag * CONFIG.tamanio_pagina , contenido + CONFIG.tamanio_pagina - offset + (i-1) * CONFIG.tamanio_pagina, size);
+		set_modificado(pagina);
 		unlockear(pagina);
 
 	}
@@ -751,7 +755,7 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 	int nro_pagina = 0, offset = 0;
 
-	nro_pagina = ceil((double)posicion_heap_actual / (double)CONFIG.tamanio_pagina);
+	nro_pagina = floor((double)posicion_heap_actual / (double)CONFIG.tamanio_pagina);
 	offset = posicion_heap_actual - CONFIG.tamanio_pagina * nro_pagina;
 
 	t_alloc_disponible* alloc = malloc(sizeof(t_alloc_disponible));
@@ -784,10 +788,11 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 				guardar_header(pid, nro_pagina, offset, header);
 				guardar_header(pid, nro_pagina, offset + size, header_nuevo);
 
-				free(header_nuevo);
 
-				alloc->direc_logica      = header->next_alloc;
+				alloc->direc_logica      = header_nuevo->prev_alloc;
 				alloc->flag_ultimo_alloc = 0;
+				free(header_nuevo);
+				free(header);
 				return alloc;
 			}
 
