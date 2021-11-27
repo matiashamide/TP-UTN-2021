@@ -3,9 +3,8 @@
 int main(void) {
 
 	init_memoria();
-	log_info(LOGGER, "inicializa memoria");
-
-	printf("Ya me conecte con swamp y los marcos max son: %i \n", MAX_MARCOS_SWAP);
+	log_info(LOGGER, "Inicializa memoria");
+	log_info(LOGGER, "Ya me conecte con swamp y los marcos max son: %i \n", MAX_MARCOS_SWAP);
 
 	//------PRUEBAS--------//
 
@@ -14,10 +13,10 @@ int main(void) {
 	//carpincho 0
 	int alloc00 = memalloc(0, 23);
 
-	char* hola = "Hola";
-	void* contenido = malloc(5);
+	char* hola = "MORE<3";
+	void* contenido = malloc(7);
 
-	memcpy(contenido, hola, 5);
+	memcpy(contenido, hola, 7);
 
 	printf("memwriteando un Hola... \n");
 	int ret4 = memwrite(0, contenido, alloc00, 5);
@@ -165,13 +164,13 @@ void atender_carpinchos(int cliente) {
 	peticion_carpincho operacion = recibir_operacion(cliente);
 
 	int size_paquete = recibir_entero(cliente);
-	int retorno, pid, dir_logica;
+	int pid, retorno, dir_logica;
 	switch (operacion) {
 
 	case MEMALLOC:;
 		log_info(LOGGER, "el cliente %i solicito alocar memoria" , cliente);
 		int size = recibir_entero(cliente);
-		int pid = recibir_entero(cliente);
+		pid = recibir_entero(cliente);
 
 		retorno = memalloc(size , pid);
 
@@ -205,21 +204,21 @@ void atender_carpinchos(int cliente) {
 		log_info(LOGGER, "el cliente %i solicito escribir memoria" , cliente);
 		pid = recibir_entero(cliente);
 		dir_logica = recibir_entero(cliente);
-		void* contenido = malloc(size_paquete - 2* sizeof(int));
+		void* contenido = malloc(size_paquete - 2 * sizeof(int));
 		recv(cliente , contenido , size_paquete - 2* sizeof(int),0);
 
-		retorno = memwrite(pid , dir_logica , contenido , size_paquete - sizeof(int) * 2 );
+		retorno = memwrite(pid , dir_logica , contenido , size_paquete - sizeof(int) * 2);
 	break;
 
 	case MEMSUSP:;
 		log_info(LOGGER, "el cliente %i solicito suspender el proceso", cliente);
-
+		pid = recibir_entero(cliente);
 		suspender_proceso(pid);
 	break;
 
 	case MEMDESSUSP:;
 			log_info(LOGGER, "el cliente %i solicito dessuspender el proceso", cliente);
-
+			pid = recibir_entero(cliente);
 			dessuspender_proceso(pid);
 		break;
 
@@ -251,7 +250,6 @@ void atender_carpinchos(int cliente) {
 
 int memalloc(int pid, int size){
 	int dir_logica = -1;
-	//FIXME: explicar por que tuve que agregar heap_metadata * 2
 	int paginas_necesarias = ceil(((double)size + sizeof(heap_metadata)*2)/ (double)CONFIG.tamanio_pagina);
 
 	//[CASO A]: Llega un proceso nuevo
@@ -424,8 +422,7 @@ int memalloc(int pid, int size){
 		dir_logica = alloc->direc_logica;
 	}
 
-	//FIXME: estalla el logger aca...
-	//log_info(LOGGER, "Se le asignaron %i bytes al proceso %i, correctamente " , size, pid);
+	log_info(LOGGER, "Se le asignaron %i bytes al proceso %i, correctamente ", size, pid);
 	return dir_logica + sizeof(heap_metadata);
 }
 
@@ -941,7 +938,6 @@ heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
 	void* buffer = malloc(sizeof(heap_metadata));
 
 	t_list* pags_proceso = tabla_por_pid(pid)->paginas;
-	//TODO: nro_pagina ta bien aca ?
 	t_pagina* pag = (t_pagina*)list_get(pags_proceso, nro_pag);
 
 	int frame_pagina = buscar_pagina(pid, nro_pag);
@@ -1032,9 +1028,8 @@ void actualizar_headers_por_liberar_pagina(int pid, int nro_pag_liberada){
 int buscar_pagina(int pid, int pag) {
 	t_list* pags_proceso = tabla_por_pid(pid)->paginas;
 	t_pagina* pagina     = pagina_por_id(pid, pag);
-	//todo deberiamos cambiarlo a que encuentre en base a una lambda mismo_id(), porque si no  al liberar agarramos otra pagina
 
-	//log_info(LOGGER, "buscando frame de memoria de la pag %i del proceso %i " , pag, pid);
+	log_info(LOGGER, "buscando frame de memoria de la pag %i del proceso %i ", pag, pid);
 	int frame = -1;
 
 	if (pags_proceso == NULL || pagina == NULL) {
@@ -1044,18 +1039,18 @@ int buscar_pagina(int pid, int pag) {
 	pagina->uso = obtener_tiempo();
 
 	if (!pagina->presencia) {
-		//log_info(LOGGER, "la pag %i del proceso %i no se encuentra en memoria, PAGE FAULT " , pag, pid);
+		log_info(LOGGER, "la pag %i del proceso %i no se encuentra en memoria, PAGE FAULT " , pag, pid);
 		frame = traer_pagina_a_mp(pagina);
 		actualizar_tlb(pid, pag, frame);
 	} else {
 		frame = buscar_pag_tlb(pid, pag);
 
 		if (frame == -1) {
-			//log_info(LOGGER, "la pag %i del proceso %i se encuentra en memoria, PAGE FAULT " , pag, pid);
+			log_info(LOGGER, "la pag %i del proceso %i se encuentra en memoria, PAGE FAULT " , pag, pid);
 			frame = pagina->frame_ppal;
 			actualizar_tlb(pid, pag,frame);
 		}else {
-			//log_info(LOGGER, "la pag %i del proceso %i se encuentra en la tlb " , pag, pid);
+			log_info(LOGGER, "la pag %i del proceso %i se encuentra en la tlb" , pag, pid);
 		}
 	}
 
@@ -1109,7 +1104,7 @@ int ejecutar_algoritmo_reemplazo(int pid) {
 
 	int retorno = -1;
 
-	if (string_equals_ignore_case(CONFIG.alg_remp_mmu, "LRU" ))
+	if (string_equals_ignore_case(CONFIG.alg_remp_mmu, "LRU"))
 		retorno = reemplazar_con_LRU(pid);
 
 	if(string_equals_ignore_case(CONFIG.alg_remp_mmu, "CLOCK-M"))
@@ -1338,12 +1333,12 @@ int traer_pagina_a_mp(t_pagina* pagina) {
 	//Busco frame en donde voy a alojar la pagina que me traigo de SWAP: ya sea un frame libre o bien un frame de pag q reempl.
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
-		t_frame* frame = list_get(frames_libres_del_proceso(pagina->pid),0);
 
-		if(frame == NULL){
-			pos_frame = ejecutar_algoritmo_reemplazo(pagina->pid);
+		if (list_size(frames_libres_del_proceso(pagina->pid)) > 0) {
+			t_frame* frame = list_get(frames_libres_del_proceso(pagina->pid),0);
+			pos_frame = frame->id;
 		} else {
-			pos_frame = frame;
+			pos_frame = ejecutar_algoritmo_reemplazo(pagina->pid);
 		}
 	}
 
@@ -1358,8 +1353,6 @@ int traer_pagina_a_mp(t_pagina* pagina) {
 			pos_frame = ejecutar_algoritmo_reemplazo(pagina->pid);
 		}
 		pthread_mutex_unlock(&mutex_frames);
-	} else {
-		pos_frame = ejecutar_algoritmo_reemplazo(pagina->pid);
 	}
 
 	memcpy(MEMORIA_PRINCIPAL + pos_frame * CONFIG.tamanio_pagina, pag_serializada, CONFIG.tamanio_pagina);

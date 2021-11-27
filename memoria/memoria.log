@@ -252,3 +252,772 @@
 [INFO] 16:40:48:983 MEMORIA/(29919:29919): TLB miss : reemplazamos por la nueva entrada: 
 [INFO] 16:40:48:983 MEMORIA/(29919:29919):  entrada victima por LRU : pag 0
 [INFO] 16:40:55:287 MEMORIA/(29919:29919): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:07:00:441 MEMORIA/(9677:9677): TLB inicializada correctamente
+[INFO] 19:07:00:444 MEMORIA/(9677:9677): se inicializo conexion monohilo con swap
+[INFO] 19:07:00:444 MEMORIA/(9677:9677): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 19:07:01:269 MEMORIA/(9677:9677): inicializa memoria
+[INFO] 19:07:02:747 MEMORIA/(9677:9677): el proceso 0 no existe, inicializandolo... 
+[INFO] 19:07:02:748 MEMORIA/(9677:9677): El proceso 0 fue inicializado 
+[INFO] 19:07:05:683 MEMORIA/(9677:9677): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 0  NRO_PAG: 0  FRAME: -1254215
+[INFO] 19:07:07:034 MEMORIA/(9677:9677): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:07:09:903 MEMORIA/(9677:9677): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:07:09:903 MEMORIA/(9677:9677): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:07:09:903 MEMORIA/(9677:9677): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 1  NRO_PAG: 1  FRAME: -1360711
+[INFO] 19:07:09:903 MEMORIA/(9677:9677): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:07:09:903 MEMORIA/(9677:9677): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:07:09:903 MEMORIA/(9677:9677): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 2  NRO_PAG: 2  FRAME: -1291079
+[INFO] 19:07:10:440 MEMORIA/(9677:9677): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:07:10:440 MEMORIA/(9677:9677): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:07:10:440 MEMORIA/(9677:9677): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:07:10:440 MEMORIA/(9677:9677): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:07:10:440 MEMORIA/(9677:9677): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:07:10:440 MEMORIA/(9677:9677): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:07:10:440 MEMORIA/(9677:9677): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 3  NRO_PAG: 3  FRAME: -1291079
+[INFO] 19:07:10:958 MEMORIA/(9677:9677): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:07:10:958 MEMORIA/(9677:9677): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:07:10:958 MEMORIA/(9677:9677): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:07:10:958 MEMORIA/(9677:9677): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:07:10:958 MEMORIA/(9677:9677): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:07:10:958 MEMORIA/(9677:9677): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:07:10:958 MEMORIA/(9677:9677): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:07:11:742 MEMORIA/(9677:9677): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:07:12:389 MEMORIA/(9677:9677): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:07:13:094 MEMORIA/(9677:9677): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:07:14:503 MEMORIA/(9677:9677): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:07:14:503 MEMORIA/(9677:9677): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:07:14:503 MEMORIA/(9677:9677): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:07:14:503 MEMORIA/(9677:9677): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:07:14:503 MEMORIA/(9677:9677): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:07:14:503 MEMORIA/(9677:9677): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:07:14:503 MEMORIA/(9677:9677): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:07:16:526 MEMORIA/(9677:9677): Voy a reemplazar la pagina 0 del proceso 0 que estaba en el frame 0
+[INFO] 19:07:16:526 MEMORIA/(9677:9677): tirando la pagina modificada 0 en swap, del proceso 
+[INFO] 19:07:17:938 MEMORIA/(9677:9677): se ejecuto el algoritmo de reemplazo, para el frame victima 0 
+[INFO] 19:07:20:800 MEMORIA/(9677:9677): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:07:20:800 MEMORIA/(9677:9677): TLB FIFO || VICTIMA: -1 PID: 134558312  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 4  NRO_PAG: 0  FRAME: -1291079
+[INFO] 19:07:29:037 MEMORIA/(9677:9677): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:15:48:373 MEMORIA/(10853:10853): TLB inicializada correctamente
+[INFO] 19:15:48:376 MEMORIA/(10853:10853): se inicializo conexion monohilo con swap
+[INFO] 19:15:48:376 MEMORIA/(10853:10853): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 19:15:49:297 MEMORIA/(10853:10853): inicializa memoria
+[INFO] 19:15:51:168 MEMORIA/(10853:10853): el proceso 0 no existe, inicializandolo... 
+[INFO] 19:15:51:169 MEMORIA/(10853:10853): El proceso 0 fue inicializado 
+[INFO] 19:15:54:529 MEMORIA/(10853:10853): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 0  NRO_PAG: 0  FRAME: -1254215
+[INFO] 19:15:56:099 MEMORIA/(10853:10853): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:15:58:633 MEMORIA/(10853:10853): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:15:58:633 MEMORIA/(10853:10853): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:15:58:633 MEMORIA/(10853:10853): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 1  NRO_PAG: 1  FRAME: -1360711
+[INFO] 19:15:58:633 MEMORIA/(10853:10853): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:15:58:633 MEMORIA/(10853:10853): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:15:58:634 MEMORIA/(10853:10853): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 2  NRO_PAG: 2  FRAME: -1291079
+[INFO] 19:15:59:217 MEMORIA/(10853:10853): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:15:59:217 MEMORIA/(10853:10853): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:15:59:217 MEMORIA/(10853:10853): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:15:59:217 MEMORIA/(10853:10853): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:15:59:217 MEMORIA/(10853:10853): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:15:59:217 MEMORIA/(10853:10853): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:15:59:217 MEMORIA/(10853:10853): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 3  NRO_PAG: 3  FRAME: -1291079
+[INFO] 19:15:59:826 MEMORIA/(10853:10853): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:15:59:826 MEMORIA/(10853:10853): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:15:59:826 MEMORIA/(10853:10853): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:15:59:826 MEMORIA/(10853:10853): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:15:59:826 MEMORIA/(10853:10853): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:15:59:826 MEMORIA/(10853:10853): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:15:59:826 MEMORIA/(10853:10853): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:16:00:438 MEMORIA/(10853:10853): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:16:01:155 MEMORIA/(10853:10853): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:16:01:660 MEMORIA/(10853:10853): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:16:02:368 MEMORIA/(10853:10853): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:16:02:368 MEMORIA/(10853:10853): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:16:02:368 MEMORIA/(10853:10853): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:16:02:368 MEMORIA/(10853:10853): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:16:02:368 MEMORIA/(10853:10853): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:16:02:368 MEMORIA/(10853:10853): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:16:02:368 MEMORIA/(10853:10853): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:16:02:368 MEMORIA/(10853:10853): Voy a reemplazar la pagina 0 del proceso 0 que estaba en el frame 0
+[INFO] 19:16:02:368 MEMORIA/(10853:10853): tirando la pagina modificada 0 en swap, del proceso 
+[INFO] 19:16:02:368 MEMORIA/(10853:10853): se ejecuto el algoritmo de reemplazo, para el frame victima 0 
+[INFO] 19:16:02:368 MEMORIA/(10853:10853): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:16:02:368 MEMORIA/(10853:10853): TLB FIFO || VICTIMA: -1 PID: 134558312  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 4  NRO_PAG: 0  FRAME: -1291079
+[INFO] 19:16:06:159 MEMORIA/(10853:10853): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:16:07:689 MEMORIA/(10853:10853): Voy a reemplazar la pagina 1 del proceso 0 que estaba en el frame 1
+[INFO] 19:16:07:689 MEMORIA/(10853:10853): tirando la pagina modificada 1 en swap, del proceso 
+[INFO] 19:16:07:689 MEMORIA/(10853:10853): se ejecuto el algoritmo de reemplazo, para el frame victima 1 
+[INFO] 19:16:07:689 MEMORIA/(10853:10853): Voy a reemplazar la pagina 2 del proceso 0 que estaba en el frame 2
+[INFO] 19:16:07:689 MEMORIA/(10853:10853): tirando la pagina modificada 2 en swap, del proceso 
+[INFO] 19:16:07:689 MEMORIA/(10853:10853): se ejecuto el algoritmo de reemplazo, para el frame victima 2 
+[INFO] 19:16:43:673 MEMORIA/(10922:10922): TLB inicializada correctamente
+[INFO] 19:16:43:674 MEMORIA/(10922:10922): se inicializo conexion monohilo con swap
+[INFO] 19:16:43:674 MEMORIA/(10922:10922): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 19:16:44:119 MEMORIA/(10922:10922): inicializa memoria
+[INFO] 19:16:45:345 MEMORIA/(10922:10922): el proceso 0 no existe, inicializandolo... 
+[INFO] 19:16:45:345 MEMORIA/(10922:10922): El proceso 0 fue inicializado 
+[INFO] 19:16:49:524 MEMORIA/(10922:10922): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 0  NRO_PAG: 0  FRAME: -1254215
+[INFO] 19:16:51:104 MEMORIA/(10922:10922): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:16:53:982 MEMORIA/(10922:10922): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:16:53:982 MEMORIA/(10922:10922): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:16:53:982 MEMORIA/(10922:10922): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 1  NRO_PAG: 1  FRAME: -1360711
+[INFO] 19:16:53:982 MEMORIA/(10922:10922): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:16:53:982 MEMORIA/(10922:10922): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:16:53:982 MEMORIA/(10922:10922): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 2  NRO_PAG: 2  FRAME: -1291079
+[INFO] 19:16:54:637 MEMORIA/(10922:10922): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:16:54:637 MEMORIA/(10922:10922): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:16:54:638 MEMORIA/(10922:10922): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:16:54:638 MEMORIA/(10922:10922): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:16:54:638 MEMORIA/(10922:10922): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:16:54:638 MEMORIA/(10922:10922): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:16:54:638 MEMORIA/(10922:10922): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 3  NRO_PAG: 3  FRAME: -1291079
+[INFO] 19:16:55:119 MEMORIA/(10922:10922): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:16:55:119 MEMORIA/(10922:10922): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:16:55:119 MEMORIA/(10922:10922): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:16:55:119 MEMORIA/(10922:10922): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:16:55:119 MEMORIA/(10922:10922): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:16:55:119 MEMORIA/(10922:10922): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:16:55:119 MEMORIA/(10922:10922): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:16:55:757 MEMORIA/(10922:10922): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:16:56:425 MEMORIA/(10922:10922): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:16:56:910 MEMORIA/(10922:10922): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:16:57:493 MEMORIA/(10922:10922): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:16:57:493 MEMORIA/(10922:10922): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:16:57:493 MEMORIA/(10922:10922): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:16:57:493 MEMORIA/(10922:10922): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:16:57:493 MEMORIA/(10922:10922): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:16:57:493 MEMORIA/(10922:10922): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:16:57:493 MEMORIA/(10922:10922): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:16:57:493 MEMORIA/(10922:10922): Voy a reemplazar la pagina 0 del proceso 0 que estaba en el frame 0
+[INFO] 19:16:57:493 MEMORIA/(10922:10922): tirando la pagina modificada 0 en swap, del proceso 
+[INFO] 19:16:57:493 MEMORIA/(10922:10922): se ejecuto el algoritmo de reemplazo, para el frame victima 0 
+[INFO] 19:16:57:493 MEMORIA/(10922:10922): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:16:57:493 MEMORIA/(10922:10922): TLB FIFO || VICTIMA: -1 PID: 134558312  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 4  NRO_PAG: 0  FRAME: -1291079
+[INFO] 19:17:01:397 MEMORIA/(10922:10922): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:17:33:887 MEMORIA/(10922:10922): Voy a reemplazar la pagina 1 del proceso 0 que estaba en el frame 1
+[INFO] 19:17:33:887 MEMORIA/(10922:10922): tirando la pagina modificada 1 en swap, del proceso 
+[INFO] 19:17:33:887 MEMORIA/(10922:10922): se ejecuto el algoritmo de reemplazo, para el frame victima 1 
+[INFO] 19:18:58:257 MEMORIA/(11065:11065): TLB inicializada correctamente
+[INFO] 19:18:58:275 MEMORIA/(11065:11065): se inicializo conexion monohilo con swap
+[INFO] 19:18:58:275 MEMORIA/(11065:11065): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 19:18:59:386 MEMORIA/(11065:11065): inicializa memoria
+[INFO] 19:19:09:487 MEMORIA/(11065:11065): el proceso 0 no existe, inicializandolo... 
+[INFO] 19:19:09:488 MEMORIA/(11065:11065): El proceso 0 fue inicializado 
+[INFO] 19:19:13:344 MEMORIA/(11065:11065): TLB FIFO || VICTIMA: -1 PID: 0  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 0  NRO_PAG: 0  FRAME: -1254215
+[INFO] 19:19:14:411 MEMORIA/(11065:11065): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:19:16:175 MEMORIA/(11065:11065): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:19:16:175 MEMORIA/(11065:11065): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:19:16:175 MEMORIA/(11065:11065): TLB FIFO || VICTIMA: -1 PID: 0  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 1  NRO_PAG: 1  FRAME: -1360711
+[INFO] 19:19:16:175 MEMORIA/(11065:11065): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:19:16:175 MEMORIA/(11065:11065): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:19:16:175 MEMORIA/(11065:11065): TLB FIFO || VICTIMA: -1 PID: 0  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 2  NRO_PAG: 2  FRAME: -1291079
+[INFO] 19:19:16:736 MEMORIA/(11065:11065): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:19:16:736 MEMORIA/(11065:11065): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:19:16:736 MEMORIA/(11065:11065): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:19:16:736 MEMORIA/(11065:11065): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:19:16:736 MEMORIA/(11065:11065): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:19:16:736 MEMORIA/(11065:11065): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:19:16:736 MEMORIA/(11065:11065): TLB FIFO || VICTIMA: -1 PID: 0  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 3  NRO_PAG: 3  FRAME: -1291079
+[INFO] 19:19:17:254 MEMORIA/(11065:11065): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:19:17:254 MEMORIA/(11065:11065): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:19:17:254 MEMORIA/(11065:11065): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:19:17:254 MEMORIA/(11065:11065): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:19:17:254 MEMORIA/(11065:11065): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:19:17:254 MEMORIA/(11065:11065): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:19:17:254 MEMORIA/(11065:11065): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:19:17:715 MEMORIA/(11065:11065): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:19:18:176 MEMORIA/(11065:11065): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:19:18:716 MEMORIA/(11065:11065): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:19:19:579 MEMORIA/(11065:11065): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:19:19:579 MEMORIA/(11065:11065): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:19:19:579 MEMORIA/(11065:11065): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:19:19:579 MEMORIA/(11065:11065): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:19:19:579 MEMORIA/(11065:11065): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:19:19:579 MEMORIA/(11065:11065): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:19:19:579 MEMORIA/(11065:11065): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:19:19:579 MEMORIA/(11065:11065): Voy a reemplazar la pagina 0 del proceso 0 que estaba en el frame 0
+[INFO] 19:19:19:579 MEMORIA/(11065:11065): tirando la pagina modificada 0 en swap, del proceso 
+[INFO] 19:19:19:579 MEMORIA/(11065:11065): se ejecuto el algoritmo de reemplazo, para el frame victima 0 
+[INFO] 19:19:19:579 MEMORIA/(11065:11065): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:19:19:579 MEMORIA/(11065:11065): TLB FIFO || VICTIMA: -1 PID: 0  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 4  NRO_PAG: 0  FRAME: -1291079
+[INFO] 19:19:22:944 MEMORIA/(11065:11065): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:20:00:398 MEMORIA/(11065:11065): Voy a reemplazar la pagina 1 del proceso 0 que estaba en el frame 1
+[INFO] 19:20:08:835 MEMORIA/(11065:11065): tirando la pagina modificada 1 en swap, del proceso 
+[INFO] 19:20:26:746 MEMORIA/(11065:11065): se ejecuto el algoritmo de reemplazo, para el frame victima 1 
+[INFO] 19:21:01:799 MEMORIA/(11065:11065): TLB FIFO || VICTIMA: -1 PID: 134560456  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 0  NRO_PAG: 1  FRAME: 134553608
+[INFO] 19:23:35:930 MEMORIA/(11303:11303): TLB inicializada correctamente
+[INFO] 19:23:35:934 MEMORIA/(11303:11303): se inicializo conexion monohilo con swap
+[INFO] 19:23:35:934 MEMORIA/(11303:11303): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 19:23:36:414 MEMORIA/(11303:11303): Inicializa memoria
+[INFO] 19:23:37:143 MEMORIA/(11303:11303): Ya me conecte con swamp y los marcos max son: 10 
+
+[INFO] 19:23:55:242 MEMORIA/(11367:11367): TLB inicializada correctamente
+[INFO] 19:23:55:242 MEMORIA/(11367:11367): se inicializo conexion monohilo con swap
+[INFO] 19:23:55:242 MEMORIA/(11367:11367): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 19:23:55:695 MEMORIA/(11367:11367): Inicializa memoria
+[INFO] 19:23:56:225 MEMORIA/(11367:11367): Ya me conecte con swamp y los marcos max son: 10 
+
+[INFO] 19:23:56:798 MEMORIA/(11367:11367): el proceso 0 no existe, inicializandolo... 
+[INFO] 19:23:56:799 MEMORIA/(11367:11367): El proceso 0 fue inicializado 
+[INFO] 19:23:56:799 MEMORIA/(11367:11367): Se le asignaron 23 bytes al proceso 0, correctamente 
+[INFO] 19:23:59:444 MEMORIA/(11367:11367): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 0  NRO_PAG: 0  FRAME: -1254215
+[INFO] 19:24:00:432 MEMORIA/(11367:11367): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:24:02:535 MEMORIA/(11367:11367): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:24:02:535 MEMORIA/(11367:11367): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:24:02:535 MEMORIA/(11367:11367): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 1  NRO_PAG: 1  FRAME: -1360711
+[INFO] 19:24:02:535 MEMORIA/(11367:11367): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:24:02:535 MEMORIA/(11367:11367): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:24:02:535 MEMORIA/(11367:11367): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 2  NRO_PAG: 2  FRAME: -1291079
+[INFO] 19:24:02:535 MEMORIA/(11367:11367): Se le asignaron 23 bytes al proceso 0, correctamente 
+[INFO] 19:24:03:031 MEMORIA/(11367:11367): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:24:03:031 MEMORIA/(11367:11367): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:24:03:031 MEMORIA/(11367:11367): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:24:03:031 MEMORIA/(11367:11367): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:24:03:031 MEMORIA/(11367:11367): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:24:03:031 MEMORIA/(11367:11367): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:24:03:031 MEMORIA/(11367:11367): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 3  NRO_PAG: 3  FRAME: -1291079
+[INFO] 19:24:03:031 MEMORIA/(11367:11367): Se le asignaron 23 bytes al proceso 0, correctamente 
+[INFO] 19:24:03:570 MEMORIA/(11367:11367): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:24:03:570 MEMORIA/(11367:11367): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:24:03:570 MEMORIA/(11367:11367): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:24:03:570 MEMORIA/(11367:11367): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:24:03:570 MEMORIA/(11367:11367): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:24:03:570 MEMORIA/(11367:11367): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:24:03:570 MEMORIA/(11367:11367): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:24:03:570 MEMORIA/(11367:11367): Se le asignaron 10 bytes al proceso 0, correctamente 
+[INFO] 19:24:04:098 MEMORIA/(11367:11367): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:24:04:690 MEMORIA/(11367:11367): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:24:05:350 MEMORIA/(11367:11367): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:25:48:130 MEMORIA/(11499:11499): TLB inicializada correctamente
+[INFO] 19:25:48:132 MEMORIA/(11499:11499): se inicializo conexion monohilo con swap
+[INFO] 19:25:48:132 MEMORIA/(11499:11499): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 19:25:48:989 MEMORIA/(11499:11499): Inicializa memoria
+[INFO] 19:25:49:729 MEMORIA/(11499:11499): Ya me conecte con swamp y los marcos max son: 10 
+
+[INFO] 19:25:50:609 MEMORIA/(11499:11499): el proceso 0 no existe, inicializandolo... 
+[INFO] 19:25:50:610 MEMORIA/(11499:11499): El proceso 0 fue inicializado 
+[INFO] 19:25:50:610 MEMORIA/(11499:11499): Se le asignaron 23 bytes al proceso 0, correctamente 
+[INFO] 19:25:55:130 MEMORIA/(11499:11499): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:25:55:130 MEMORIA/(11499:11499): la pag 0 del proceso 0 se encuentra en memoria, PAGE FAULT 
+[INFO] 19:25:55:131 MEMORIA/(11499:11499): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 0  NRO_PAG: 0  FRAME: -1254215
+[INFO] 19:25:56:638 MEMORIA/(11499:11499): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:25:56:638 MEMORIA/(11499:11499): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:25:56:638 MEMORIA/(11499:11499): la pag 0 del proceso 0 se encuentra en la tlb
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): la pag 0 del proceso 0 se encuentra en la tlb
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): la pag 1 del proceso 0 se encuentra en memoria, PAGE FAULT 
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 1  NRO_PAG: 1  FRAME: -1360711
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): la pag 2 del proceso 0 se encuentra en memoria, PAGE FAULT 
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 2  NRO_PAG: 2  FRAME: -1291079
+[INFO] 19:25:59:629 MEMORIA/(11499:11499): Se le asignaron 23 bytes al proceso 0, correctamente 
+[INFO] 19:26:00:212 MEMORIA/(11499:11499): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:26:00:212 MEMORIA/(11499:11499): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:26:00:212 MEMORIA/(11499:11499): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:26:00:212 MEMORIA/(11499:11499): la pag 0 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:00:212 MEMORIA/(11499:11499): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:26:00:213 MEMORIA/(11499:11499): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:26:00:213 MEMORIA/(11499:11499): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:00:213 MEMORIA/(11499:11499): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:26:00:213 MEMORIA/(11499:11499): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:26:00:213 MEMORIA/(11499:11499): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:00:213 MEMORIA/(11499:11499): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:26:00:213 MEMORIA/(11499:11499): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:26:00:213 MEMORIA/(11499:11499): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:00:213 MEMORIA/(11499:11499): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:26:00:213 MEMORIA/(11499:11499): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:26:00:213 MEMORIA/(11499:11499): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:00:213 MEMORIA/(11499:11499): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:26:00:213 MEMORIA/(11499:11499): la pag 3 del proceso 0 se encuentra en memoria, PAGE FAULT 
+[INFO] 19:26:00:213 MEMORIA/(11499:11499): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 3  NRO_PAG: 3  FRAME: -1291079
+[INFO] 19:26:00:213 MEMORIA/(11499:11499): Se le asignaron 23 bytes al proceso 0, correctamente 
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): la pag 0 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:00:864 MEMORIA/(11499:11499): Se le asignaron 10 bytes al proceso 0, correctamente 
+[INFO] 19:26:01:827 MEMORIA/(11499:11499): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:26:01:827 MEMORIA/(11499:11499): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:26:01:827 MEMORIA/(11499:11499): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:02:621 MEMORIA/(11499:11499): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:26:02:621 MEMORIA/(11499:11499): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:26:02:621 MEMORIA/(11499:11499): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:03:193 MEMORIA/(11499:11499): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:26:03:193 MEMORIA/(11499:11499): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:26:03:193 MEMORIA/(11499:11499): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): la pag 0 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): Voy a reemplazar la pagina 0 del proceso 0 que estaba en el frame 0
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): tirando la pagina modificada 0 en swap, del proceso 
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): se ejecuto el algoritmo de reemplazo, para el frame victima 0 
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): buscando frame de memoria de la pag 4 del proceso 0 
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): la pag 4 del proceso 0 se encuentra en memoria, PAGE FAULT 
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 4  NRO_PAG: 0  FRAME: -1291079
+[INFO] 19:26:03:780 MEMORIA/(11499:11499): Se le asignaron 23 bytes al proceso 0, correctamente 
+[INFO] 19:37:18:924 MEMORIA/(12027:12027): TLB inicializada correctamente
+[INFO] 19:37:18:926 MEMORIA/(12027:12027): se inicializo conexion monohilo con swap
+[INFO] 19:37:18:926 MEMORIA/(12027:12027): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 19:37:20:925 MEMORIA/(12027:12027): Inicializa memoria
+[INFO] 19:37:21:499 MEMORIA/(12027:12027): Ya me conecte con swamp y los marcos max son: 10 
+
+[INFO] 19:37:22:088 MEMORIA/(12027:12027): el proceso 0 no existe, inicializandolo... 
+[INFO] 19:37:22:089 MEMORIA/(12027:12027): El proceso 0 fue inicializado 
+[INFO] 19:37:22:089 MEMORIA/(12027:12027): Se le asignaron 23 bytes al proceso 0, correctamente 
+[INFO] 19:37:24:788 MEMORIA/(12027:12027): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:37:24:788 MEMORIA/(12027:12027): la pag 0 del proceso 0 se encuentra en memoria, PAGE FAULT 
+[INFO] 19:37:24:788 MEMORIA/(12027:12027): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 0  NRO_PAG: 0  FRAME: -1254215
+[INFO] 19:37:25:743 MEMORIA/(12027:12027): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:37:25:743 MEMORIA/(12027:12027): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:37:25:743 MEMORIA/(12027:12027): la pag 0 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:28:417 MEMORIA/(12027:12027): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:37:28:417 MEMORIA/(12027:12027): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:37:28:417 MEMORIA/(12027:12027): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:37:28:417 MEMORIA/(12027:12027): la pag 0 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:28:417 MEMORIA/(12027:12027): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:37:28:417 MEMORIA/(12027:12027): la pag 1 del proceso 0 se encuentra en memoria, PAGE FAULT 
+[INFO] 19:37:28:417 MEMORIA/(12027:12027): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 1  NRO_PAG: 1  FRAME: -1360711
+[INFO] 19:37:28:417 MEMORIA/(12027:12027): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:37:28:417 MEMORIA/(12027:12027): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:37:28:417 MEMORIA/(12027:12027): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:28:418 MEMORIA/(12027:12027): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:37:28:418 MEMORIA/(12027:12027): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:37:28:418 MEMORIA/(12027:12027): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:28:418 MEMORIA/(12027:12027): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:37:28:418 MEMORIA/(12027:12027): la pag 2 del proceso 0 se encuentra en memoria, PAGE FAULT 
+[INFO] 19:37:28:418 MEMORIA/(12027:12027): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 2  NRO_PAG: 2  FRAME: -1291079
+[INFO] 19:37:28:418 MEMORIA/(12027:12027): Se le asignaron 23 bytes al proceso 0, correctamente 
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): la pag 0 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): la pag 3 del proceso 0 se encuentra en memoria, PAGE FAULT 
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 3  NRO_PAG: 3  FRAME: -1291079
+[INFO] 19:37:28:890 MEMORIA/(12027:12027): Se le asignaron 23 bytes al proceso 0, correctamente 
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): la pag 0 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:29:440 MEMORIA/(12027:12027): Se le asignaron 10 bytes al proceso 0, correctamente 
+[INFO] 19:37:29:959 MEMORIA/(12027:12027): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:37:29:959 MEMORIA/(12027:12027): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:37:29:959 MEMORIA/(12027:12027): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:30:436 MEMORIA/(12027:12027): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:37:30:436 MEMORIA/(12027:12027): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:37:30:436 MEMORIA/(12027:12027): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:31:240 MEMORIA/(12027:12027): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:37:31:240 MEMORIA/(12027:12027): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:37:31:240 MEMORIA/(12027:12027): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): la pag 0 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): Voy a reemplazar la pagina 0 del proceso 0 que estaba en el frame 0
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): tirando la pagina modificada 0 en swap, del proceso 
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): se ejecuto el algoritmo de reemplazo, para el frame victima 0 
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): buscando frame de memoria de la pag 4 del proceso 0 
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): la pag 4 del proceso 0 se encuentra en memoria, PAGE FAULT 
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 4  NRO_PAG: 0  FRAME: -1291079
+[INFO] 19:37:32:185 MEMORIA/(12027:12027): Se le asignaron 23 bytes al proceso 0, correctamente 
+[INFO] 19:37:35:739 MEMORIA/(12027:12027): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:37:35:740 MEMORIA/(12027:12027): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:37:35:740 MEMORIA/(12027:12027): la pag 0 del proceso 0 no se encuentra en memoria, PAGE FAULT 
+[INFO] 19:37:35:740 MEMORIA/(12027:12027): Voy a reemplazar la pagina 1 del proceso 0 que estaba en el frame 1
+[INFO] 19:37:35:740 MEMORIA/(12027:12027): tirando la pagina modificada 1 en swap, del proceso 
+[INFO] 19:37:35:740 MEMORIA/(12027:12027): se ejecuto el algoritmo de reemplazo, para el frame victima 1 
+[INFO] 19:37:40:377 MEMORIA/(12027:12027): TLB FIFO || VICTIMA: -1 PID: 134560456  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 0  NRO_PAG: 1  FRAME: 134553608
+[INFO] 19:39:26:853 MEMORIA/(12121:12121): TLB inicializada correctamente
+[INFO] 19:39:26:855 MEMORIA/(12121:12121): se inicializo conexion monohilo con swap
+[INFO] 19:39:26:855 MEMORIA/(12121:12121): Tengo 12 marcos de 32 bytes en memoria principal
+[INFO] 19:39:27:657 MEMORIA/(12121:12121): Inicializa memoria
+[INFO] 19:39:28:275 MEMORIA/(12121:12121): Ya me conecte con swamp y los marcos max son: 10 
+
+[INFO] 19:39:28:760 MEMORIA/(12121:12121): el proceso 0 no existe, inicializandolo... 
+[INFO] 19:39:28:760 MEMORIA/(12121:12121): El proceso 0 fue inicializado 
+[INFO] 19:39:28:760 MEMORIA/(12121:12121): Se le asignaron 23 bytes al proceso 0, correctamente 
+[INFO] 19:39:32:623 MEMORIA/(12121:12121): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:39:32:623 MEMORIA/(12121:12121): la pag 0 del proceso 0 se encuentra en memoria, PAGE FAULT 
+[INFO] 19:39:32:623 MEMORIA/(12121:12121): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 0  NRO_PAG: 0  FRAME: -1254215
+[INFO] 19:39:33:789 MEMORIA/(12121:12121): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:39:33:789 MEMORIA/(12121:12121): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:39:33:789 MEMORIA/(12121:12121): la pag 0 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): la pag 0 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): la pag 1 del proceso 0 se encuentra en memoria, PAGE FAULT 
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 1  NRO_PAG: 1  FRAME: -1360711
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): la pag 2 del proceso 0 se encuentra en memoria, PAGE FAULT 
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 2  NRO_PAG: 2  FRAME: -1291079
+[INFO] 19:39:36:488 MEMORIA/(12121:12121): Se le asignaron 23 bytes al proceso 0, correctamente 
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): la pag 0 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): la pag 3 del proceso 0 se encuentra en memoria, PAGE FAULT 
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 3  NRO_PAG: 3  FRAME: -1291079
+[INFO] 19:39:36:960 MEMORIA/(12121:12121): Se le asignaron 23 bytes al proceso 0, correctamente 
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): la pag 0 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:37:377 MEMORIA/(12121:12121): Se le asignaron 10 bytes al proceso 0, correctamente 
+[INFO] 19:39:37:828 MEMORIA/(12121:12121): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:39:37:828 MEMORIA/(12121:12121): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:39:37:828 MEMORIA/(12121:12121): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:38:443 MEMORIA/(12121:12121): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:39:38:443 MEMORIA/(12121:12121): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:39:38:443 MEMORIA/(12121:12121): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:38:924 MEMORIA/(12121:12121): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:39:38:924 MEMORIA/(12121:12121): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:39:38:924 MEMORIA/(12121:12121): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): TLB HIT: PAG: 0   PID: 0   FRAME: 0 
+
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): la pag 0 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): buscando frame de memoria de la pag 1 del proceso 0 
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): TLB HIT: PAG: 1   PID: 0   FRAME: 1 
+
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): la pag 1 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): buscando frame de memoria de la pag 2 del proceso 0 
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): TLB HIT: PAG: 2   PID: 0   FRAME: 2 
+
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): la pag 2 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): Voy a reemplazar la pagina 0 del proceso 0 que estaba en el frame 0
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): tirando la pagina modificada 0 en swap, del proceso 
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): se ejecuto el algoritmo de reemplazo, para el frame victima 0 
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): buscando frame de memoria de la pag 3 del proceso 0 
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): TLB HIT: PAG: 3   PID: 0   FRAME: 3 
+
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): la pag 3 del proceso 0 se encuentra en la tlb
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): buscando frame de memoria de la pag 4 del proceso 0 
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): la pag 4 del proceso 0 se encuentra en memoria, PAGE FAULT 
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): TLB FIFO || VICTIMA: -1 PID: 134554320  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 4  NRO_PAG: 0  FRAME: -1291079
+[INFO] 19:39:39:424 MEMORIA/(12121:12121): Se le asignaron 23 bytes al proceso 0, correctamente 
+[INFO] 19:39:40:683 MEMORIA/(12121:12121): el proceso 0 ya existe en memoria, alocando memoria para el mismo 
+[INFO] 19:39:40:683 MEMORIA/(12121:12121): buscando frame de memoria de la pag 0 del proceso 0 
+[INFO] 19:39:40:683 MEMORIA/(12121:12121): la pag 0 del proceso 0 no se encuentra en memoria, PAGE FAULT 
+[INFO] 19:39:40:684 MEMORIA/(12121:12121): Voy a reemplazar la pagina 1 del proceso 0 que estaba en el frame 1
+[INFO] 19:39:40:684 MEMORIA/(12121:12121): tirando la pagina modificada 1 en swap, del proceso 
+[INFO] 19:39:40:684 MEMORIA/(12121:12121): se ejecuto el algoritmo de reemplazo, para el frame victima 1 
+[INFO] 19:39:41:897 MEMORIA/(12121:12121): TLB FIFO || VICTIMA: -1 PID: 134560456  NRO_PAG: -1  FRAME: 0 - NUEVA ENTRADA: PID: 0  NRO_PAG: 1  FRAME: 134553608

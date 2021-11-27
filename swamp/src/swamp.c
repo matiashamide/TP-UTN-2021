@@ -162,7 +162,7 @@ void atender_peticiones(int cliente){
 		frame = frame_de_pagina(pid, nro_pagina);
 		archivo = obtener_archivo_con_id(frame->aid);
 
-		addr = mmap(NULL, CONFIG.tamanio_pag, PROT_WRITE, MAP_SHARED, archivo->fd, 0);
+		addr = mmap(NULL, CONFIG.tamanio_swamp, PROT_READ | PROT_WRITE, MAP_SHARED, archivo->fd, 0);
 
 		if (addr == MAP_FAILED) {
 			perror("Error mapping \n");
@@ -183,11 +183,10 @@ void atender_peticiones(int cliente){
 
 		log_info(LOGGER, "[SWAMP]: Mandando pagina %i del proceso %i a MP", nro_pagina, pid);
 
-		//FIXME!!!
 		frame   = frame_de_pagina(pid, nro_pagina);
 		archivo = obtener_archivo_con_id(frame->aid);
 
-		addr = mmap(NULL, CONFIG.tamanio_pag, PROT_WRITE, MAP_SHARED, archivo->fd, 0);
+		addr = mmap(NULL, CONFIG.tamanio_swamp, PROT_READ | PROT_WRITE, MAP_SHARED, archivo->fd, 0);
 
 		if (addr == MAP_FAILED) {
 			perror("Error mapping \n");
@@ -240,11 +239,6 @@ void atender_peticiones(int cliente){
 	break;
 
 	}
-
-	free(frame);
-	free(archivo);
-	free(buffer_pag);
-
 	return;
 }
 
@@ -400,7 +394,7 @@ t_frame* frame_de_pagina(int pid, int nro_pagina) {
 		return frame->pid == pid && frame->id_pag == nro_pagina;
 	}
 
-	return (t_frame*)list_find(FRAMES_SWAP, _existe_pag_pid_nro);
+	return (t_frame*)list_find(FRAMES_SWAP,_existe_pag_pid_nro);
 }
 
 t_metadata_archivo* obtener_archivo_con_id(int aid) {
