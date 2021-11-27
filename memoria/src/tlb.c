@@ -41,7 +41,7 @@ int buscar_pag_tlb(int pid, int pag) {
 	if (entrada != NULL) {
 		//TLB HIT
 		registrar_evento(pid, 1);
-		log_info(LOGGER , "TLB HIT: " , "pag %i" ,  entrada->pag ,"pid %i" ,  entrada->pid);
+		log_info(LOGGER , "TLB HIT: PAG: %i   PID: %i   FRAME: %i \n", entrada->pag, entrada->pid, entrada->frame);
 		entrada->ultimo_uso = obtener_tiempo();
 		return entrada->frame;
 	}
@@ -60,26 +60,6 @@ int obtener_tiempo(){
 	return t;
 }
 
-void reemplazar_FIFO(int pid, int pag, int frame){
-
-	t_entrada_tlb* entrada_nueva = malloc(sizeof(t_entrada_tlb));
-	entrada_nueva->pag        = pag;
-	entrada_nueva->pid        = pid;
-	entrada_nueva->frame      = frame;
-	entrada_nueva->ultimo_uso = -1;
-
-	log_info(LOGGER , "TLB miss : reemplazamos por la nueva entrada: " , "pag %i" ,  entrada_nueva->pag ,"pid %i \n" ,  entrada_nueva->pid);
-
-	pthread_mutex_lock(&mutexTLB);
-	t_entrada_tlb* victima = (t_entrada_tlb*)list_get(TLB , 0);
-	list_remove_and_destroy_element(TLB , 0  , free);
-	list_add_in_index(TLB , CONFIG.cant_entradas_tlb -1, entrada_nueva);
-	pthread_mutex_unlock(&mutexTLB);
-
-	log_info(LOGGER ," entrada victima por LRU : pag %i" , victima->pag ," pid %i \n" , victima->pid);
-
-}
-
 void actualizar_tlb(int pid, int pag, int frame){
 	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb,"LRU")) {
 		reemplazar_LRU(pid, pag, frame);
@@ -89,6 +69,24 @@ void actualizar_tlb(int pid, int pag, int frame){
 	}
 }
 
+void reemplazar_FIFO(int pid, int pag, int frame){
+
+	t_entrada_tlb* entrada_nueva = malloc(sizeof(t_entrada_tlb));
+	entrada_nueva->pag        = pag;
+	entrada_nueva->pid        = pid;
+	entrada_nueva->frame      = frame;
+	entrada_nueva->ultimo_uso = -1;
+
+	pthread_mutex_lock(&mutexTLB);
+	t_entrada_tlb* victima = (t_entrada_tlb*)list_get(TLB , 0);
+	list_remove_and_destroy_element(TLB , 0  , free);
+	list_add_in_index(TLB , CONFIG.cant_entradas_tlb -1, entrada_nueva);
+	pthread_mutex_unlock(&mutexTLB);
+
+	log_info(LOGGER, "TLB FIFO || VICTIMA: %i PID: %i  NRO_PAG: %i  FRAME: %i - NUEVA ENTRADA: PID: %i  NRO_PAG: %i  FRAME: %i", victima->pid, victima->pag, victima->frame, entrada_nueva->pid, entrada_nueva->pag, entrada_nueva->frame);
+
+}
+
 void reemplazar_LRU(int pid, int pag, int frame){
 
 	t_entrada_tlb* entrada_nueva = malloc(sizeof(t_entrada_tlb));
@@ -96,8 +94,6 @@ void reemplazar_LRU(int pid, int pag, int frame){
 	entrada_nueva->pag        = pag;
 	entrada_nueva->frame      = frame;
 	entrada_nueva->ultimo_uso = obtener_tiempo();
-
-	log_info(LOGGER , "TLB miss: reemplazamos por la nueva entrada: " , "pag %i" ,  entrada_nueva->pag ,"pid %i" ,  entrada_nueva->pid , " ultimo uso %i \n", entrada_nueva ->ultimo_uso);
 
 	int masVieja(t_entrada_tlb* una_entrada, t_entrada_tlb* otra_entrada){
 		return (otra_entrada->ultimo_uso > una_entrada->ultimo_uso);
@@ -111,7 +107,7 @@ void reemplazar_LRU(int pid, int pag, int frame){
 
 	pthread_mutex_unlock(&mutexTLB);
 
-	log_info(LOGGER ," Entrada victima por LRU: pag %i" , victima->pag ," pid %i " , victima->pid , " ultimo uso %i \n", victima ->ultimo_uso);
+	log_info(LOGGER, "TLB LRU || VICTIMA: %i PID: %i  NRO_PAG: %i  FRAME: %i - NUEVA ENTRADA: PID: %i  NRO_PAG: %i  FRAME: %i", victima->pid, victima->pag, victima->frame, entrada_nueva->pid, entrada_nueva->pag, entrada_nueva->frame);
 
 }
 

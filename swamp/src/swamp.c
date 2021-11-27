@@ -173,7 +173,6 @@ void atender_peticiones(int cliente){
 		msync(addr, CONFIG.tamanio_pag, 0);
 
 		munmap(addr, CONFIG.tamanio_swamp);
-		free(buffer_pag);
 
 		break;
 
@@ -184,7 +183,8 @@ void atender_peticiones(int cliente){
 
 		log_info(LOGGER, "[SWAMP]: Mandando pagina %i del proceso %i a MP", nro_pagina, pid);
 
-		frame = frame_de_pagina(pid, nro_pagina);
+		//FIXME!!!
+		frame   = frame_de_pagina(pid, nro_pagina);
 		archivo = obtener_archivo_con_id(frame->aid);
 
 		addr = mmap(NULL, CONFIG.tamanio_pag, PROT_WRITE, MAP_SHARED, archivo->fd, 0);
@@ -244,7 +244,6 @@ void atender_peticiones(int cliente){
 	free(frame);
 	free(archivo);
 	free(buffer_pag);
-	free(addr);
 
 	return;
 }
@@ -279,7 +278,7 @@ int reservar_espacio(int pid, int cant_paginas) {
 
 			archivo->espacio_disponible -= cant_paginas * CONFIG.tamanio_pag;
 
-			log_info(LOGGER, "Se reservó %i paginas para el proceso %i",cant_paginas,pid);
+			log_info(LOGGER, "Se reservaron %i paginas para el proceso %i",cant_paginas,pid);
 			return 1;
 		}
 
@@ -315,6 +314,14 @@ int reservar_espacio(int pid, int cant_paginas) {
 
 				frame_a_ocupar->id_pag  = p;
 				frame_a_ocupar->ocupado = true;
+
+				fflush(stdout);
+				printf("%i",frame_a_ocupar->aid);
+				printf("%i",frame_a_ocupar->pid);
+				printf("%i",frame_a_ocupar->id_pag);
+				printf("%i",frame_a_ocupar->offset);
+				fflush(stdout);
+
 			}
 
 			archivo->espacio_disponible -= cant_frames_requeridos * CONFIG.tamanio_pag;

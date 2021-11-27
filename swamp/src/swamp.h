@@ -31,7 +31,7 @@ typedef struct {
 typedef struct {
 	int  aid;      // Archivo en el que se encuentra
 	int  pid;      // ID del proceso
-	int  id_pag;	// Numero de pagina de memoria
+	int  id_pag;   // Numero de pagina de memoria
 	int  offset;   // Byte en donde arranca la pagina
 	bool ocupado;
 }t_frame;

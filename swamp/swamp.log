@@ -1,10 +1,27 @@
-[INFO] 14:18:35:947 SWAMP/(11616:11616): [SWAMP->MP]: Mandando los marcos_max a MP...
-[INFO] 14:18:37:511 SWAMP/(11616:11616): [SWAMP]: Reservando 1 paginas para el proceso 0
-[INFO] 14:19:11:661 SWAMP/(11616:11616): Se reservó 10 frames y 1 paginas para el proceso 0
-[INFO] 14:19:29:060 SWAMP/(11616:11616): [SWAMP]: No entiendo la peticion, rey.
-[INFO] 14:24:39:697 SWAMP/(12662:12662): [SWAMP->MP]: Mandando los marcos_max a MP...
-[INFO] 14:24:41:380 SWAMP/(12662:12662): [SWAMP]: Reservando 1 paginas para el proceso 0
-[INFO] 14:24:47:221 SWAMP/(12662:12662): Se reservó 10 frames y 1 paginas para el proceso 0
-[INFO] 14:26:12:739 SWAMP/(12915:12915): [SWAMP->MP]: Mandando los marcos_max a MP...
-[INFO] 14:26:28:073 SWAMP/(12915:12915): [SWAMP]: Reservando 1 paginas para el proceso 0
-[INFO] 14:26:33:733 SWAMP/(12915:12915): Se reservó 10 frames y 1 paginas para el proceso 0
+
+[INFO] 17:00:25:838 SWAMP/(558:558): [SWAMP->MP]: Mandando los marcos_max a MP...
+[INFO] 17:00:34:860 SWAMP/(558:558): [SWAMP]: Reservando 2 paginas para el proceso 0
+[INFO] 17:00:34:860 SWAMP/(558:558): Se reservó 10 frames y 2 paginas para el proceso 0
+[INFO] 17:00:54:287 SWAMP/(558:558): [SWAMP]: Guardando la pagina 0 del proceso 0 en SWAMP
+[INFO] 17:01:43:457 SWAMP/(558:558): [SWAMP]: Mandando pagina 0 del proceso 0 a MP
+[INFO] 17:05:59:890 SWAMP/(1672:1672): [SWAMP->MP]: Mandando los marcos_max a MP...
+[INFO] 17:06:12:003 SWAMP/(1672:1672): [SWAMP]: Reservando 2 paginas para el proceso 0
+[INFO] 17:07:20:813 SWAMP/(1672:1672): Se reservó 10 frames y 2 paginas para el proceso 0
+[INFO] 17:07:50:228 SWAMP/(1672:1672): [SWAMP]: Guardando la pagina 0 del proceso 0 en SWAMP
+[INFO] 17:08:42:744 SWAMP/(1672:1672): [SWAMP]: Mandando pagina 0 del proceso 0 a MP
+[INFO] 17:12:34:414 SWAMP/(2850:2850): [SWAMP->MP]: Mandando los marcos_max a MP...
+[INFO] 17:12:43:181 SWAMP/(2850:2850): [SWAMP]: Reservando 2 paginas para el proceso 0
+[INFO] 17:14:05:622 SWAMP/(2850:2850): Se reservó 10 frames y 2 paginas para el proceso 0
+[INFO] 17:16:09:148 SWAMP/(2850:2850): [SWAMP]: Guardando la pagina 0 del proceso 0 en SWAMP
+[INFO] 17:24:59:486 SWAMP/(4909:4909): [SWAMP->MP]: Mandando los marcos_max a MP...
+[INFO] 17:25:05:022 SWAMP/(4909:4909): [SWAMP]: Reservando 2 paginas para el proceso 0
+[INFO] 17:26:57:317 SWAMP/(5422:5422): [SWAMP->MP]: Mandando los marcos_max a MP...
+[INFO] 17:26:57:318 SWAMP/(5422:5422): [SWAMP]: Reservando 2 paginas para el proceso 0
+[INFO] 17:26:57:318 SWAMP/(5422:5422): Se reservó 10 frames y 2 paginas para el proceso 0
+[INFO] 17:26:57:320 SWAMP/(5422:5422): [SWAMP]: Guardando la pagina 0 del proceso 0 en SWAMP
+[INFO] 17:26:57:360 SWAMP/(5422:5422): [SWAMP]: Mandando pagina 0 del proceso 0 a MP
+[INFO] 17:28:08:405 SWAMP/(5602:5602): [SWAMP->MP]: Mandando los marcos_max a MP...
+[INFO] 17:28:08:405 SWAMP/(5602:5602): [SWAMP]: Reservando 2 paginas para el proceso 0
+[INFO] 17:28:08:405 SWAMP/(5602:5602): Se reservó 10 frames y 2 paginas para el proceso 0
+[INFO] 17:28:08:406 SWAMP/(5602:5602): [SWAMP]: Guardando la pagina 0 del proceso 0 en SWAMP
+[INFO] 17:28:08:444 SWAMP/(5602:5602): [SWAMP]: Mandando pagina 0 del proceso 0 a MP

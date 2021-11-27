@@ -13,14 +13,26 @@ int main(void) {
 
 	//carpincho 0
 	int alloc00 = memalloc(0, 23);
-	int alloc10 = memalloc(0, 23);
-	int alloc20 = memalloc(0, 23);
-	int alloc30 = memalloc(0, 10);
 
 	char* hola = "Hola";
 	void* contenido = malloc(5);
 
 	memcpy(contenido, hola, 5);
+
+	printf("memwriteando un Hola... \n");
+	int ret4 = memwrite(0, contenido, alloc00, 5);
+
+	void* leido = malloc(5);
+	memread(0, alloc00, leido, 5);
+
+	printf("toy por imprimir lo leido... \n");
+	printf((char*)leido);
+	printf("\n ya tuve que haberlo impreso ndea \n");
+
+	int alloc10 = memalloc(0, 23);
+	int alloc20 = memalloc(0, 23);
+	int alloc30 = memalloc(0, 10);
+
 
 	int retorno = memwrite(0, contenido, alloc30, 5);
 
@@ -28,7 +40,7 @@ int main(void) {
 
 	int ret3 = memwrite(0, contenido, alloc10, 5);
 
-	int ret4 = memwrite(0, contenido, alloc00, 5);
+
 
 	int alloc40 = memalloc(0, 23);
 	int alloc50 = memalloc(0, 23);
@@ -771,8 +783,9 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 		if(header->next_alloc == NULL) {
 
 			int tamanio_total = list_size(paginas_proceso) * CONFIG.tamanio_pagina;
+			int tamanio_disponible = tamanio_total - (int)posicion_heap_actual - sizeof(heap_metadata) * 2;
 
-			if (tamanio_total - posicion_heap_actual - sizeof(heap_metadata) * 2 > size) {
+			if (tamanio_disponible > size) {
 
 				//Creo header nuevo
 				heap_metadata* header_nuevo = malloc(sizeof(heap_metadata));
@@ -786,7 +799,7 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 
 				//Copio 1ero el header viejo actualizado y despues el header nuevo
 				guardar_header(pid, nro_pagina, offset, header);
-				guardar_header(pid, nro_pagina, offset + size, header_nuevo);
+				guardar_header(pid, nro_pagina, offset + size + sizeof(heap_metadata), header_nuevo);
 
 
 				alloc->direc_logica      = header_nuevo->prev_alloc;
@@ -1096,10 +1109,10 @@ int ejecutar_algoritmo_reemplazo(int pid) {
 
 	int retorno = -1;
 
-	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb, "LRU" ))
+	if (string_equals_ignore_case(CONFIG.alg_remp_mmu, "LRU" ))
 		retorno = reemplazar_con_LRU(pid);
 
-	if(string_equals_ignore_case(CONFIG.alg_reemplazo_tlb, "CLOCK-M"))
+	if(string_equals_ignore_case(CONFIG.alg_remp_mmu, "CLOCK-M"))
 		retorno = reemplazar_con_CLOCK(pid);
 
 	log_info(LOGGER, "se ejecuto el algoritmo de reemplazo, para el frame victima %i " , retorno);
@@ -1134,10 +1147,11 @@ int reemplazar_con_LRU(int pid) {
 	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
 	if(pag_reemplazo->modificado) {
 		tirar_a_swap(pag_reemplazo);
-	} else {
-		pag_reemplazo->presencia = 0;
-		unlockear(pag_reemplazo);
+		pag_reemplazo->modificado = false;
 	}
+
+	pag_reemplazo->presencia  = 0;
+	unlockear(pag_reemplazo);
 
 	return pag_reemplazo->frame_ppal;
 }
@@ -1182,10 +1196,11 @@ int reemplazar_con_CLOCK(int pid) {
 	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
 	if(victima->modificado) {
 		tirar_a_swap(victima);
-	} else {
-		victima->presencia = 0;
-		unlockear(victima);
+		victima->modificado = false;
 	}
+
+	victima->presencia = 0;
+	unlockear(victima);
 
 	return victima->frame_ppal;
 }
@@ -1387,11 +1402,13 @@ void* traer_de_swap(uint32_t pid, uint32_t nro_pagina) {
 
 void tirar_a_swap(t_pagina* pagina) {
 
-	log_info(LOGGER, "tirando la pagina modificada %i en swap, del proceso " , pagina->id , pagina->pid);
+	log_info(LOGGER, "tirando la pagina modificada %i en swap, del proceso ", pagina->id , pagina->pid);
 
 	void* buffer_pag = malloc(CONFIG.tamanio_pagina);
 	memcpy(buffer_pag, MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
+	pthread_mutex_lock(&mutex_swamp);
 	enviar_pagina(TIRAR_A_SWAP, CONFIG.tamanio_pagina, buffer_pag, CONEXION_SWAP, pagina->pid , pagina-> id);
+	pthread_mutex_unlock(&mutex_swamp);
 	free(buffer_pag);
 
 }
@@ -1399,27 +1416,27 @@ void tirar_a_swap(t_pagina* pagina) {
 void eliminar_pag_swap(int pid , int nro_pagina){
 
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
-		int offset = 0;
+	int offset = 0;
 
-		paquete->cod_op         = LIBERAR_PAGINA;
-		paquete->buffer         = malloc(sizeof(t_buffer));
-		paquete->buffer->size   = sizeof(uint32_t) * 2;
-		paquete->buffer->stream = malloc(paquete->buffer->size);
+	paquete->cod_op         = LIBERAR_PAGINA;
+	paquete->buffer         = malloc(sizeof(t_buffer));
+	paquete->buffer->size   = sizeof(uint32_t) * 2;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
 
-		memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
-		offset += sizeof(uint32_t);
-		memcpy(paquete->buffer->stream + offset, &nro_pagina, sizeof(uint32_t));
+	memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
+	offset += sizeof(uint32_t);
+	memcpy(paquete->buffer->stream + offset, &nro_pagina, sizeof(uint32_t));
 
-		int bytes;
+	int bytes;
 
-		void* a_enviar = serializar_paquete_swap(paquete, &bytes);
+	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
 
-		pthread_mutex_lock(&mutex_swamp);
-		send(socket, a_enviar, bytes, 0);
-		pthread_mutex_unlock(&mutex_swamp);
+	pthread_mutex_lock(&mutex_swamp);
+	send(socket, a_enviar, bytes, 0);
+	pthread_mutex_unlock(&mutex_swamp);
 
-		free(a_enviar);
-		eliminar_paquete_swap(paquete);
+	free(a_enviar);
+	eliminar_paquete_swap(paquete);
 
 }
 
