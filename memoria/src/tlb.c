@@ -48,7 +48,7 @@ int buscar_pag_tlb(int pid, int pag) {
 
 	//TLB MISS
 	registrar_evento(pid, 0);
-	log_info(LOGGER , "TLB MISS: ", "pag %i" , pag ,"pid %i", pid);
+	//log_info(LOGGER, "TLB MISS: ", "pag %i" , pag ,"pid %i", pid);
 	return -1;
 }
 

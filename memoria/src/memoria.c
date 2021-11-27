@@ -13,8 +13,8 @@ int main(void) {
 
 	//carpincho 0
 	int alloc00 = memalloc(0, 23);
-	int alloc10 = memalloc(0, 23);
-	int alloc20 = memalloc(0, 23);
+	//int alloc10 = memalloc(0, 23);
+	//int alloc20 = memalloc(0, 23);
 	int alloc30 = memalloc(0, 10);
 
 	char* hola = "Hola";
@@ -24,11 +24,11 @@ int main(void) {
 
 	memwrite(0, contenido, alloc30, 5);
 
-	memwrite(0, contenido, alloc20, 5);
+	//memwrite(0, contenido, alloc20, 5);
 
-	memwrite(0, contenido, alloc10, 5);
+	//memwrite(0, contenido, alloc10, 5);
 
-	memwrite(0, contenido, alloc00, 5);
+	//memwrite(0, contenido, alloc00, 5);
 
 	int alloc40 = memalloc(0, 23);
 	int alloc50 = memalloc(0, 23);
@@ -45,7 +45,7 @@ int main(void) {
 void init_memoria() {
 
 	//Inicializamos logger
-	LOGGER = log_create("memoria.log", "MEMORIA", 0, LOG_LEVEL_INFO);
+	LOGGER = log_create("memoria.log", "MEMORIA", 0, LOG_LEVEL_DEBUG);
 
 	//Levantamos archivo de configuracion
 	CONFIG = crear_archivo_config_memoria("/home/utnso/workspace/tp-2021-2c-DesacatadOS/memoria/src/memoria.config");
@@ -239,7 +239,8 @@ void atender_carpinchos(int cliente) {
 
 int memalloc(int pid, int size){
 	int dir_logica = -1;
-	int paginas_necesarias = ceil((double)size / (double)CONFIG.tamanio_pagina);
+	//FIXME: explicar por que tuve que agregar heap_metadata * 2
+	int paginas_necesarias = ceil(((double)size + sizeof(heap_metadata)*2)/ (double)CONFIG.tamanio_pagina);
 
 	//[CASO A]: Llega un proceso nuevo
 	if (tabla_por_pid(pid) == NULL){
@@ -689,7 +690,7 @@ void suspender_proceso(int pid) {
 
 }
 
-void dessuspender_proceso(pid) {
+void dessuspender_proceso(int pid) {
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA" )){
 
@@ -745,9 +746,8 @@ void eliminar_proceso(int pid) {
 
 //------------------------------------------------- FUNCIONES ALLOCs/HEADERs ---------------------------------------------//
 
-//TODO: Ver si estamos devolviendo la DL o DF y Poner lock a la pagina para que no me la saque otro proceso mientras la uso
-
 int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
+	int dir_alloc = 0;
 
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 	int nro_pagina = 0, offset = 0;
@@ -789,9 +789,10 @@ int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 
 				free(header_nuevo);
 
-				return  header->next_alloc;
+				dir_alloc = header->next_alloc;
+				return header->next_alloc;
 			}
-
+			dir_alloc = -1;
 			return -1;
 
 		//-------------------------------------//
@@ -805,6 +806,7 @@ int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 				header->is_free = false;
 				guardar_header(pid, nro_pagina, offset, header);
 
+				dir_alloc = posicion_heap_actual;
 				return posicion_heap_actual;
 
 
@@ -813,7 +815,7 @@ int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 
 				//Pag. en donde vamos a insertar el nuevo header
 				int nro_pagina_nueva = 0, offset_pagina_nueva = 0;
-				nro_pagina_nueva = ceil(((double)posicion_heap_actual + size + 9) / (double)CONFIG.tamanio_pagina);
+				nro_pagina_nueva = floor(((double)posicion_heap_actual + size + 9) / (double)CONFIG.tamanio_pagina);
 				offset_pagina_nueva = posicion_heap_actual + size + 9 - CONFIG.tamanio_pagina * nro_pagina_nueva;
 
 				t_pagina* pag_nueva = malloc(sizeof(t_pagina));
@@ -852,13 +854,15 @@ int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
 				free(header_nuevo);
 				free(header_final);
 
+				dir_alloc = header->next_alloc;
 				return header->next_alloc;
 			}
-			obtener_alloc_disponible(pid,size,header->next_alloc);
-		}
-	}
 
-	return posicion_heap_actual;
+		}
+
+	}
+	obtener_alloc_disponible(pid,size,header->next_alloc);
+	return dir_alloc;
 }
 
 int obtener_pos_ultimo_alloc(int pid) {
@@ -882,9 +886,9 @@ int obtener_pos_ultimo_alloc(int pid) {
 void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
-	//TODO nro pagina esta bien aca ???
 	t_pagina* pagina        = (t_pagina*)list_get(paginas_proceso, nro_pagina);
-	t_pagina* pagina_sig    = (t_pagina*)list_get(paginas_proceso, nro_pagina+1);
+	//FIXME era obvio q esto iba a romper jajant lo muevo a la linea 901
+	//t_pagina* pagina_sig    = (t_pagina*)list_get(paginas_proceso, nro_pagina+1);
 
 	int diferencia = CONFIG.tamanio_pagina - offset - sizeof(heap_metadata);
 
@@ -896,6 +900,7 @@ void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * frame + offset, header, sizeof(heap_metadata));
 
 	} else {
+		t_pagina* pagina_sig    = (t_pagina*)list_get(paginas_proceso, nro_pagina+1);
 
 		diferencia = abs(diferencia);
 		lockear(pagina_sig);
@@ -923,7 +928,7 @@ heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
 	int frame_pagina = buscar_pagina(pid, nro_pag);
 
 	lockear(pag);
-
+	//FIXME aca con primero 23 y dsps 10 me da -9 pero en verdadd entra entero en la pag
 	int diferencia = CONFIG.tamanio_pagina - offset_header - sizeof(heap_metadata);
 	if (diferencia >= 0) {
 		memcpy(buffer, MEMORIA_PRINCIPAL + frame_pagina * CONFIG.tamanio_pagina + offset_header, sizeof(heap_metadata));
@@ -1010,7 +1015,7 @@ int buscar_pagina(int pid, int pag) {
 	t_pagina* pagina     = pagina_por_id(pid, pag);
 	//todo deberiamos cambiarlo a que encuentre en base a una lambda mismo_id(), porque si no  al liberar agarramos otra pagina
 
-	log_info(LOGGER, "buscando frame de memoria de la pag %i del proceso %i " , pag, pid);
+	//log_info(LOGGER, "buscando frame de memoria de la pag %i del proceso %i " , pag, pid);
 	int frame = -1;
 
 	if (pags_proceso == NULL || pagina == NULL) {
@@ -1020,18 +1025,18 @@ int buscar_pagina(int pid, int pag) {
 	pagina->uso = obtener_tiempo();
 
 	if (!pagina->presencia) {
-		log_info(LOGGER, "la pag %i del proceso %i no se encuentra en memoria, PAGE FAULT " , pag, pid);
+		//log_info(LOGGER, "la pag %i del proceso %i no se encuentra en memoria, PAGE FAULT " , pag, pid);
 		frame = traer_pagina_a_mp(pagina);
 		actualizar_tlb(pid, pag, frame);
 	} else {
 		frame = buscar_pag_tlb(pid, pag);
 
 		if (frame == -1) {
-			log_info(LOGGER, "la pag %i del proceso %i se encuentra en memoria, PAGE FAULT " , pag, pid);
+			//log_info(LOGGER, "la pag %i del proceso %i se encuentra en memoria, PAGE FAULT " , pag, pid);
 			frame = pagina->frame_ppal;
-			actualizar_tlb(pid, pag ,frame);
+			actualizar_tlb(pid, pag,frame);
 		}else {
-			log_info(LOGGER, "la pag %i del proceso %i se encuentra en la tlb " , pag, pid);
+			//log_info(LOGGER, "la pag %i del proceso %i se encuentra en la tlb " , pag, pid);
 		}
 	}
 
