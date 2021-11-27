@@ -97,7 +97,7 @@ void reemplazar_LRU(int pid, int pag, int frame){
 	entrada_nueva->frame      = frame;
 	entrada_nueva->ultimo_uso = obtener_tiempo();
 
-	log_info(LOGGER , "TLB miss : reemplazamos por la nueva entrada: " , "pag %i" ,  entrada_nueva->pag ,"pid %i" ,  entrada_nueva->pid , " ultimo uso %i \n", entrada_nueva ->ultimo_uso);
+	log_info(LOGGER , "TLB miss: reemplazamos por la nueva entrada: " , "pag %i" ,  entrada_nueva->pag ,"pid %i" ,  entrada_nueva->pid , " ultimo uso %i \n", entrada_nueva ->ultimo_uso);
 
 	int masVieja(t_entrada_tlb* una_entrada, t_entrada_tlb* otra_entrada){
 		return (otra_entrada->ultimo_uso > una_entrada->ultimo_uso);
@@ -111,7 +111,7 @@ void reemplazar_LRU(int pid, int pag, int frame){
 
 	pthread_mutex_unlock(&mutexTLB);
 
-	log_info(LOGGER ," entrada victima por LRU : pag %i" , victima->pag ," pid %i " , victima->pid , " ultimo uso %i \n", victima ->ultimo_uso);
+	log_info(LOGGER ," Entrada victima por LRU: pag %i" , victima->pag ," pid %i " , victima->pid , " ultimo uso %i \n", victima ->ultimo_uso);
 
 }
 

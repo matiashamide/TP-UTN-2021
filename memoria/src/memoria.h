@@ -57,6 +57,11 @@ typedef struct{
 	uint8_t  is_free;
 }__attribute__((packed))heap_metadata;
 
+typedef struct{
+	int direc_logica;
+	bool flag_ultimo_alloc;
+}t_alloc_disponible;
+
 typedef enum {
 	MATE_FREE_FAULT  = -5,
 	MATE_READ_FAULT  = -6,
@@ -108,7 +113,7 @@ void suspender_proceso(int pid);
 void dessuspender_proceso(int pid);
 
 //// ---- funciones allocs / headers
-int obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual);
+t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual);
 int obtener_pos_ultimo_alloc(int pid);
 void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header);
 heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header);
