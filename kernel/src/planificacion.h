@@ -52,7 +52,7 @@ typedef struct {
     int alfa;
     char** dispositivos_IO;
     char** duraciones_IO;
-    int retardo_cpu;
+    int tiempo_deadlock;
     int grado_multiprogramacion;
 	int grado_multiprocesamiento;
 }t_kernel_config;

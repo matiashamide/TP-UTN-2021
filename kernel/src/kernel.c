@@ -53,18 +53,18 @@ t_kernel_config crear_archivo_config_kernel(char* ruta) {
 
     config.alg_plani = config_get_string_value(kernel_config, "ALGORITMO_PLANIFICACION");
 
-    if(!strcmp(config.alg_plani,"SJF")){
-    	config.estimacion_inicial = 0;
-    	config.alfa = 0;
-
-    }else{
+    //if(!strcmp(config.alg_plani,"SJF")){
+  //  	config.estimacion_inicial = 0;
+  //  	config.alfa = 0;
+//
+  //  }else{
     	config.estimacion_inicial = config_get_int_value(kernel_config, "ESTIMACION_INICIAL");
     	config.alfa = config_get_int_value(kernel_config, "ALFA");
 
-    }
+  //  }
     config.dispositivos_IO = config_get_array_value(kernel_config,"DISPOSITIVOS_IO");
     config.duraciones_IO = config_get_array_value(kernel_config,"DURACIONES_IO");
-    config.retardo_cpu = config_get_int_value(kernel_config, "RETARDO_CPU");
+    config.tiempo_deadlock = config_get_int_value(kernel_config, "TIEMPO_DEADLOCK");
     config.grado_multiprogramacion = config_get_int_value(kernel_config, "GRADO_MULTIPROGRAMACION");
     config.grado_multiprocesamiento = config_get_int_value(kernel_config, "GRADO_MULTIPROCESAMIENTO");
 

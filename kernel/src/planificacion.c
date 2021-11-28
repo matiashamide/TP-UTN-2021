@@ -632,3 +632,9 @@ void mate_close(t_procesador* estructura_procesador) {
 
 //LOS RECURSOS ASIGNADOS
 
+void algoritmo_deadlock() {
+	while(1) {
+		usleep(CONFIG_KERNEL.tiempo_deadlock);
+		//aca va el algoritmo.
+	}
+}
