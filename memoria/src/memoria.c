@@ -13,7 +13,7 @@ int main(void) {
 	//carpincho 0
 	int alloc00 = memalloc(0, 23);
 
-	char* hola = "MORE<3";
+	char* hola = "Hola";
 	void* contenido = malloc(7);
 
 	memcpy(contenido, hola, 7);
@@ -1380,7 +1380,7 @@ void* traer_de_swap(uint32_t pid, uint32_t nro_pagina) {
 	int bytes;
 
 	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
-	void* buffer_pag = malloc;
+	void* buffer_pag = malloc(CONFIG.tamanio_pagina);
 
 	pthread_mutex_lock(&mutex_swamp);
 	send(CONEXION_SWAP, a_enviar, bytes, 0);
@@ -1400,10 +1400,34 @@ void tirar_a_swap(t_pagina* pagina) {
 	void* buffer_pag = malloc(CONFIG.tamanio_pagina);
 	memcpy(buffer_pag, MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
 	pthread_mutex_lock(&mutex_swamp);
-	enviar_pagina(TIRAR_A_SWAP, CONFIG.tamanio_pagina, buffer_pag, CONEXION_SWAP, pagina->pid , pagina-> id);
+	enviar_pagina(buffer_pag, CONEXION_SWAP, pagina->pid, pagina-> id);
 	pthread_mutex_unlock(&mutex_swamp);
 	free(buffer_pag);
 
+}
+
+void enviar_pagina(void* pagina, int socket_cliente, uint32_t pid, uint32_t nro_pagina) {
+	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+
+	paquete->cod_op = TIRAR_A_SWAP;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = CONFIG.tamanio_pagina + sizeof(uint32_t) * 2;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
+	int offset = sizeof(uint32_t);
+	memcpy(paquete->buffer->stream + offset, &nro_pagina, sizeof(uint32_t));
+	offset 	  += sizeof(uint32_t);
+	memcpy(paquete->buffer->stream + offset, pagina, CONFIG.tamanio_pagina);
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
+
+	send(socket_cliente, a_enviar, bytes, 0);
+
+	free(a_enviar);
+	eliminar_paquete_swap(paquete);
 }
 
 void eliminar_pag_swap(int pid , int nro_pagina){

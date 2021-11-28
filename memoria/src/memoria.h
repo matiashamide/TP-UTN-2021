@@ -142,6 +142,7 @@ int   reservar_espacio_en_swap(int pid, int cant_pags);
 int   traer_pagina_a_mp(t_pagina* pag);
 void  tirar_a_swap(t_pagina* pagina);
 void* traer_de_swap(uint32_t pid, uint32_t nro_pagina);
+void enviar_pagina(void* pagina, int socket_cliente, uint32_t pid, uint32_t nro_pagina);
 void  eliminar_pag_swap(int pid , int nro_pagina);
 void eliminar_proceso_swap(int pid);
 

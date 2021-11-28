@@ -196,7 +196,7 @@ void atender_peticiones(int cliente){
 		memcpy(buffer_pag, addr + frame->offset, CONFIG.tamanio_pag);
 		munmap(addr, CONFIG.tamanio_swamp);
 
-		enviar_pagina(TRAER_DE_SWAP, CONFIG.tamanio_pag, buffer_pag, cliente, pid, nro_pagina);
+		enviar_pagina_a_principal(buffer_pag, cliente);
 
 		break;
 
@@ -309,13 +309,6 @@ int reservar_espacio(int pid, int cant_paginas) {
 				frame_a_ocupar->id_pag  = p;
 				frame_a_ocupar->ocupado = true;
 
-				fflush(stdout);
-				printf("%i",frame_a_ocupar->aid);
-				printf("%i",frame_a_ocupar->pid);
-				printf("%i",frame_a_ocupar->id_pag);
-				printf("%i",frame_a_ocupar->offset);
-				fflush(stdout);
-
 			}
 
 			archivo->espacio_disponible -= cant_frames_requeridos * CONFIG.tamanio_pag;
@@ -343,6 +336,26 @@ void rta_reservar_espacio(int socket, int rta) {
 
 	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
 	send(socket, a_enviar, bytes, 0);
+
+	free(a_enviar);
+	eliminar_paquete_swap(paquete);
+}
+
+void enviar_pagina_a_principal(void* pagina, int socket_cliente) {
+	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+
+	paquete->cod_op = TRAER_DE_SWAP;
+	paquete->buffer = malloc(sizeof(uint32_t) + CONFIG.tamanio_pag);
+	paquete->buffer->size   = CONFIG.tamanio_pag;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	memcpy(paquete->buffer->stream, pagina, CONFIG.tamanio_pag);
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
+
+	send(socket_cliente, a_enviar, bytes, 0);
 
 	free(a_enviar);
 	eliminar_paquete_swap(paquete);

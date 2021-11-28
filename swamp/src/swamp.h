@@ -67,6 +67,7 @@ void eliminar_proceso_swap(int pid);
 
 int reservar_espacio(int pid , int cant_paginas);
 void rta_reservar_espacio(int socket, int rta);
+void enviar_pagina_a_principal(void* pagina, int socket_cliente);
 
 t_list* frames_libres_del_archivo(int aid);
 t_list* frames_libres_del_proceso(int aid, int pid);
