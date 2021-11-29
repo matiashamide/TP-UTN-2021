@@ -12,15 +12,21 @@ int main(void) {
 
 	//carpincho 0
 	int alloc00 = memalloc(0, 23);
+	int alloc10 = memalloc(0, 23);
+	int alloc110 = memalloc(1, 23);
+	int alloc20 = memalloc(0, 23);
+	int alloc111 = memalloc(1, 23);
+	int alloc30 = memalloc(0, 10);
 
-	char* hola = "Hola";
-	void* contenido = malloc(5);
+	/*
+	char* hola = "patopatom";
+	void* contenido = malloc(10);
 
-	memcpy(contenido, hola, 5);
+	memcpy(contenido, hola, 10);
 
 	printf("memwriteando un Hola... \n");
-	int ret4 = memwrite(0, contenido, alloc00, 5);
-
+	int ret4 = memwrite(0, contenido, alloc00, 10);
+    */
 	/*void* leido = malloc(5);
 	memread(0, alloc00, leido, 5);
 
@@ -28,18 +34,33 @@ int main(void) {
 	printf((char*)leido);
 	printf("\n ya tuve que haberlo impreso ndea \n");*/
 
-	int alloc10 = memalloc(0, 23);
-	int alloc20 = memalloc(0, 23);
-	int alloc30 = memalloc(0, 10);
+	/*
+	char* letras = "abcdefghi";
+	void* contenido2 = malloc(10);
 
-	int retorno = memwrite(0, contenido, alloc30, 5);
-	int ret2 = memwrite(0, contenido, alloc20, 5);
-	int ret3 = memwrite(0, contenido, alloc10, 5);
+	memcpy(contenido, letras, 10);
+	memwrite(1, contenido2, alloc110, 10);
+
+	void* leido2 = malloc(5);
+		memread(1, alloc110, leido2, 10);
+		printf((char*)leido2);
+
+	//int retorno = memwrite(0, contenido, alloc30, 5);
+	//int ret2 = memwrite(0, contenido, alloc20, 5);
+	//int ret3 = memwrite(0, contenido, alloc10, 5);
 
 	int alloc40 = memalloc(0, 23);
 	int alloc50 = memalloc(0, 23);
 	int alloc60 = memalloc(0, 23);
 	int alloc70 = memalloc(0, 10);
+
+	void* leido = malloc(5);
+	memread(0, alloc00, leido, 10);
+
+	printf("toy por imprimir lo leido... \n");
+	printf((char*)leido);
+	printf("\n ya tuve que haberlo impreso ndea \n");
+	*/
 
 	return EXIT_SUCCESS;
 }
@@ -99,6 +120,7 @@ void iniciar_paginacion() {
 		t_frame* frame = malloc(sizeof(t_frame));
 		frame->ocupado = false;
 		frame->id      = i;
+		frame->pid     = -1;
 
 		list_add(FRAMES_MEMORIA, frame);
 	}
@@ -269,8 +291,9 @@ int memalloc(int pid, int size){
 				return -1;
 			}
 			//Reservamos los frames al PID
-			t_list* frames_libres_MP = list_filter(FRAMES_MEMORIA, (void*)esta_libre_frame);
-			for(int i = 0; i < CONFIG.marcos_max; i++){
+			t_list* frames_libres_MP = list_filter(FRAMES_MEMORIA, (void*)esta_libre_y_desasignado);
+
+			for (int i = 0; i < CONFIG.marcos_max; i++){
 				t_frame* frame_libre = list_get(frames_libres_MP,i);
 				frame_libre->pid = pid;
 			}
@@ -292,15 +315,11 @@ int memalloc(int pid, int size){
 		header->next_alloc        = sizeof(heap_metadata) + size;
 		header->prev_alloc        = NULL;
 
-		printf("\n next alloc de header: %i \n", header->next_alloc);
-
 		//Armo el alloc siguiente
 		heap_metadata* header_sig = malloc(sizeof(heap_metadata));
 		header_sig->is_free       = true;
 		header_sig->next_alloc 	  = NULL;
 		header_sig->prev_alloc    = 0;
-
-		printf("el header siguiente prev alloc aca es %i \n", header_sig->prev_alloc);
 
 		//Bloque de paginas en donde se meten los headers
 		void* buffer_pags_proceso = malloc(paginas_necesarias * CONFIG.tamanio_pagina);
@@ -328,14 +347,13 @@ int memalloc(int pid, int size){
 		}
 
 		dir_logica = header_sig->prev_alloc;
-		printf("la dir_logica es %i \n", header_sig->prev_alloc);
 		free(header);
 		log_info(LOGGER, "El proceso %i fue inicializado " , pid);
 
 	} else {
 
 	//[CASO B]: El proceso existe en memoria
-		log_info(LOGGER, "el proceso %i ya existe en memoria, alocando memoria para el mismo ", pid);
+		log_info(LOGGER, "El proceso %i ya existe en memoria, alocando memoria para el mismo ", pid);
 		t_alloc_disponible* alloc = obtener_alloc_disponible(pid, size, 0);
 
 		if(alloc->flag_ultimo_alloc){
@@ -353,12 +371,18 @@ int memalloc(int pid, int size){
 					log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 
 					return -1;
+
+				} else {
+
+					reservar_espacio_en_swap(pid, cantidad_paginas);
 				}
 			}
 
 			if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
-				if (reservar_espacio_en_swap(pid, cantidad_paginas) == -1 ){
-					printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+
+				if (reservar_espacio_en_swap(pid, cantidad_paginas) == -1 ) {
+
+					printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima)", size, pid);
 					log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
 
 					return -1;
@@ -1319,10 +1343,6 @@ int reservar_espacio_en_swap(int pid, int cant_pags) {
 	return retorno;
 }
 
-void reservar_pag_swap(int pid, int pag_id) {
-	send(CONE)
-}
-
 int traer_pagina_a_mp(t_pagina* pagina) {
 
 	int pos_frame = -1;
@@ -1483,6 +1503,10 @@ void eliminar_proceso_swap(int pid){
 
 bool esta_libre_frame(t_frame* frame) {
 	return !frame->ocupado;
+}
+
+bool esta_libre_y_desasignado(t_frame* frame) {
+	return !frame->ocupado && frame->pid == -1;
 }
 
 int no_lock(t_pagina* pag){

@@ -1,9 +1,17 @@
-[INFO] 13:17:09:836 SWAMP/(12444:12444): [SWAMP->MP]: Mandando los marcos_max a MP...
-[INFO] 13:17:36:762 SWAMP/(12444:12444): [SWAMP]: Reservando 2 paginas para el proceso 0
-[INFO] 13:17:36:763 SWAMP/(12444:12444): Se reservó 10 frames y 2 paginas para el proceso 0
-[INFO] 13:17:44:407 SWAMP/(12444:12444): [SWAMP]: Guardando la pagina 0 del proceso 0 en SWAMP
-[INFO] 13:17:50:273 SWAMP/(12444:12444): [SWAMP]: Mandando pagina 0 del proceso 0 a MP
-[INFO] 13:17:58:090 SWAMP/(12444:12444): [SWAMP]: Guardando la pagina 1 del proceso 0 en SWAMP
-[INFO] 13:18:07:584 SWAMP/(12444:12444): [SWAMP]: Mandando pagina 1 del proceso 0 a MP
-[INFO] 13:18:18:842 SWAMP/(12444:12444): [SWAMP]: Mandando pagina 0 del proceso 0 a MP
-[INFO] 13:18:28:517 SWAMP/(12444:12444): [SWAMP]: Guardando la pagina 2 del proceso 0 en SWAMP
+[INFO] 16:26:35:479 SWAMP/(9615:9615): [SWAMP->MP]: Mandando los marcos_max a MP...
+[INFO] 16:26:59:990 SWAMP/(9615:9615): [SWAMP]: Reservando 2 paginas para el proceso 0
+[INFO] 16:30:38:825 SWAMP/(9889:9889): [SWAMP->MP]: Mandando los marcos_max a MP...
+[INFO] 16:30:51:705 SWAMP/(9889:9889): [SWAMP]: Reservando 2 paginas para el proceso 0
+[INFO] 16:41:27:585 SWAMP/(10339:10339): [SWAMP->MP]: Mandando los marcos_max a MP...
+[INFO] 16:41:37:907 SWAMP/(10339:10339): [SWAMP]: Reservando 2 paginas para el proceso 0
+[INFO] 16:43:09:571 SWAMP/(10339:10339): Se reservó 2 frames y 2 paginas para el proceso 0
+[INFO] 16:43:23:601 SWAMP/(10339:10339): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 16:43:24:298 SWAMP/(10339:10339): Se reservaron 1 paginas para el proceso 0
+[INFO] 16:43:36:674 SWAMP/(10339:10339): [SWAMP]: Reservando 2 paginas para el proceso 1
+[INFO] 16:43:37:326 SWAMP/(10339:10339): Se reservó 2 frames y 2 paginas para el proceso 1
+[INFO] 16:43:47:564 SWAMP/(10339:10339): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 16:45:10:260 SWAMP/(10339:10339): Se reservaron 1 paginas para el proceso 0
+[INFO] 16:45:29:298 SWAMP/(10339:10339): [SWAMP]: Reservando 1 paginas para el proceso 1
+[INFO] 16:45:44:722 SWAMP/(10339:10339): Se reservaron 1 paginas para el proceso 1
+[INFO] 16:45:54:349 SWAMP/(10339:10339): [SWAMP]: No entiendo la peticion, rey.
+[INFO] 16:46:01:936 SWAMP/(10339:10339): [SWAMP]: No entiendo la peticion, rey.

@@ -147,7 +147,8 @@ void  eliminar_pag_swap(int pid , int nro_pagina);
 void eliminar_proceso_swap(int pid);
 
 //// ---- funciones de estado
-bool esta_libre_frame(t_frame* marco);
+bool esta_libre_frame(t_frame* frame);
+bool esta_libre_y_desasignado(t_frame* frame);
 void lockear(t_pagina* pag);
 void unlockear(t_pagina* pag);
 void set_modificado(t_pagina* pag);
