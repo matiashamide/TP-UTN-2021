@@ -98,6 +98,5 @@ void* serializar_paquete_swap(t_paquete_swap* paquete, int* bytes);
 void eliminar_paquete_swap(t_paquete_swap*);
 int recibir_operacion_swap(int socket_cliente);
 uint32_t recibir_entero(int cliente);
-void* recibir_pagina(int cliente, int tam_pagina);
 
 #endif /* FUTILES_H_ */

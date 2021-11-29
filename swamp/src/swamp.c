@@ -128,7 +128,8 @@ void atender_peticiones(int cliente){
 
 	t_peticion_swap operacion = recibir_operacion_swap(cliente);
 
-	recibir_entero(cliente); //Size de lo que manda
+	//Size de lo que manda
+	recibir_entero(cliente);
 
 	uint32_t pid;
 	uint32_t nro_pagina;
@@ -147,7 +148,7 @@ void atender_peticiones(int cliente){
 		log_info(LOGGER, "[SWAMP]: Reservando %i paginas para el proceso %i", cant_paginas, pid);
 
 		int rta = reservar_espacio(pid, cant_paginas);
-		rta_reservar_espacio(cliente, rta);
+		send(cliente, &rta, sizeof(uint32_t), 0);
 
 		break;
 
@@ -155,11 +156,11 @@ void atender_peticiones(int cliente){
 
 		pid         = recibir_entero(cliente);
 		nro_pagina  = recibir_entero(cliente);
-		buffer_pag  = recibir_pagina(cliente, CONFIG.tamanio_pag);
+		recv(cliente, buffer_pag, CONFIG.tamanio_pag, 0);
 
 		log_info(LOGGER, "[SWAMP]: Guardando la pagina %i del proceso %i en SWAMP", nro_pagina, pid);
 
-		frame = frame_de_pagina(pid, nro_pagina);
+		frame   = frame_de_pagina(pid, nro_pagina);
 		archivo = obtener_archivo_con_id(frame->aid);
 
 		addr = mmap(NULL, CONFIG.tamanio_swamp, PROT_READ | PROT_WRITE, MAP_SHARED, archivo->fd, 0);
@@ -212,7 +213,6 @@ void atender_peticiones(int cliente){
 		printf("%i\n",heap->is_free);
 		printf("%s",(char*)leido);
 
-		//enviar_pagina_a_principal(buffer_pag, cliente);
 		send(cliente, buffer_pag, CONFIG.tamanio_pag, 0);
 
 		break;
@@ -234,7 +234,7 @@ void atender_peticiones(int cliente){
 		}
 
 		frame->id_pag   = -1;
-		frame->ocupado = false;
+		frame->ocupado  = false;
 
 	break;
 
@@ -337,45 +337,6 @@ int reservar_espacio(int pid, int cant_paginas) {
 		log_info(LOGGER, "No hay espacio disponible para el proceso %i",pid);
 		return -1;
 	}
-}
-
-void rta_reservar_espacio(int socket, int rta) {
-	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
-
-	paquete->cod_op         = RESERVAR_ESPACIO;
-	paquete->buffer         = malloc(sizeof(t_buffer));
-	paquete->buffer->size   = sizeof(uint32_t);
-	paquete->buffer->stream = malloc(paquete->buffer->size);
-
-	memcpy(paquete->buffer->stream, &rta, sizeof(uint32_t));
-
-	int bytes;
-
-	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
-	send(socket, a_enviar, bytes, 0);
-
-	free(a_enviar);
-	eliminar_paquete_swap(paquete);
-}
-
-void enviar_pagina_a_principal(void* pagina, int socket_cliente) {
-	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
-
-	paquete->cod_op = TRAER_DE_SWAP;
-	paquete->buffer = malloc(sizeof(t_buffer));
-	paquete->buffer->size   = CONFIG.tamanio_pag;
-	paquete->buffer->stream = malloc(paquete->buffer->size);
-
-	memcpy(paquete->buffer->stream, pagina, CONFIG.tamanio_pag);
-
-	int bytes;
-
-	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
-
-	send(socket_cliente, a_enviar, bytes, 0);
-
-	free(a_enviar);
-	eliminar_paquete_swap(paquete);
 }
 
 void eliminar_proceso_swap(int pid) {

@@ -296,13 +296,6 @@ int recibir_operacion_swap(int socket_cliente) {
     return -1;
 }
 
-void* recibir_pagina(int cliente, int tam_pagina){
-	void* buffer = malloc(tam_pagina);
-
-	recv(cliente, buffer, tam_pagina, MSG_WAITALL);
-	return buffer;
-}
-
 void eliminar_paquete_swap(t_paquete_swap* paquete) {
    free(paquete->buffer->stream);
    free(paquete->buffer);
