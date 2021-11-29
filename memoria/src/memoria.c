@@ -378,7 +378,9 @@ int memalloc(int pid, int size){
 			//Creamos nuevo header
 			int nro_pagina_nueva, offset_nuevo;
 			nro_pagina_nueva = floor((double)ultimo_header->next_alloc/(double)CONFIG.tamanio_pagina);
-			offset_nuevo = (ultimo_header->next_alloc/CONFIG.tamanio_pagina - floor((double)ultimo_header->next_alloc/(double)CONFIG.tamanio_pagina)) * CONFIG.tamanio_pagina;
+
+			double dir_fisica = (double)ultimo_header->next_alloc / (double)CONFIG.tamanio_pagina;
+			offset_nuevo      = (int)((dir_fisica - nro_pagina_nueva) * CONFIG.tamanio_pagina);
 
 			heap_metadata* nuevo_header = malloc(sizeof(heap_metadata));
 			nuevo_header->is_free       = true;
@@ -897,8 +899,6 @@ void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 	t_pagina* pagina        = (t_pagina*)list_get(paginas_proceso, nro_pagina);
-	//FIXME era obvio q esto iba a romper jajant lo muevo a la linea 901
-	//t_pagina* pagina_sig    = (t_pagina*)list_get(paginas_proceso, nro_pagina+1);
 
 	int diferencia = CONFIG.tamanio_pagina - offset - sizeof(heap_metadata);
 
