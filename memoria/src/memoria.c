@@ -1319,6 +1319,10 @@ int reservar_espacio_en_swap(int pid, int cant_pags) {
 	return retorno;
 }
 
+void reservar_pag_swap(int pid, int pag_id) {
+	send(CONE)
+}
+
 int traer_pagina_a_mp(t_pagina* pagina) {
 
 	int pos_frame = -1;
