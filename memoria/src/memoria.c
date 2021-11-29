@@ -14,21 +14,47 @@ int main(void) {
 	int alloc00 = memalloc(0, 23);
 
 	char* hola = "Hola";
-	void* contenido = malloc(7);
+	void* contenido = malloc(5);
 
-	memcpy(contenido, hola, 7);
+	memcpy(contenido, hola, 5);
 
 	printf("memwriteando un Hola... \n");
 	int ret4 = memwrite(0, contenido, alloc00, 5);
 
-	void* leido = malloc(5);
+	/*void* leido = malloc(5);
 	memread(0, alloc00, leido, 5);
 
 	printf("toy por imprimir lo leido... \n");
 	printf((char*)leido);
-	printf("\n ya tuve que haberlo impreso ndea \n");
+	printf("\n ya tuve que haberlo impreso ndea \n");*/
 
-	int alloc10 = memalloc(0, 23);
+	t_list* paginas_proceso =  (tabla_por_pid(0))->paginas;
+	t_pagina* pagina = list_get(paginas_proceso,0);
+	tirar_a_swap(pagina);
+
+	void* pagina_traida = malloc(sizeof(t_pagina));
+	pagina_traida = traer_de_swap(0,0);
+
+	int offset = 0;
+
+	heap_metadata* heap = malloc(sizeof(heap_metadata));
+	memcpy(&heap->prev_alloc, pagina_traida, sizeof(uint32_t));
+	offset += sizeof(uint32_t);
+	memcpy(&heap->next_alloc, pagina_traida + offset, sizeof(uint32_t));
+	offset += sizeof(uint32_t);
+	memcpy(&heap->is_free, pagina_traida + offset, sizeof(uint8_t));
+	offset +=  sizeof(uint8_t);
+
+	void* leido = malloc(5);
+	memcpy(leido, pagina_traida + offset, 5);
+	printf("%i\n",heap->prev_alloc);
+	printf("%i\n",heap->next_alloc);
+	printf("%i\n",heap->is_free);
+	char* leido2 = (char*) leido;
+	fflush(stdout);
+	printf("%s",leido2);
+
+	/*int alloc10 = memalloc(0, 23);
 	int alloc20 = memalloc(0, 23);
 	int alloc30 = memalloc(0, 10);
 
@@ -44,8 +70,10 @@ int main(void) {
 	int alloc40 = memalloc(0, 23);
 	int alloc50 = memalloc(0, 23);
 	int alloc60 = memalloc(0, 23);
-	int alloc70 = memalloc(0, 10);
+	int alloc70 = memalloc(0, 10);*/
 	//---------------------//
+
+
 
 	return EXIT_SUCCESS;
 }
@@ -1384,7 +1412,14 @@ void* traer_de_swap(uint32_t pid, uint32_t nro_pagina) {
 
 	pthread_mutex_lock(&mutex_swamp);
 	send(CONEXION_SWAP, a_enviar, bytes, 0);
-	buffer_pag = recibir_pagina(CONEXION_SWAP, CONFIG.tamanio_pagina);
+	//buffer_pag = recibir_pagina(CONEXION_SWAP, CONFIG.tamanio_pagina);
+	int entero1 = recibir_entero(CONEXION_SWAP);
+	int entero2 = recibir_entero(CONEXION_SWAP);
+	int entero3 = recibir_entero(CONEXION_SWAP);
+	printf("%i", entero1);
+	printf("%i", entero2);
+	printf("%i", entero3);
+	recv(CONEXION_SWAP,buffer_pag, CONFIG.tamanio_pagina,0);
 	pthread_mutex_unlock(&mutex_swamp);
 
 	free(a_enviar);

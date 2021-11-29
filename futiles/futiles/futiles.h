@@ -46,6 +46,14 @@ typedef enum {
 	CLOSE
 } peticion_carpincho;
 
+typedef struct{
+	uint32_t prev_alloc;
+	uint32_t next_alloc;
+	uint8_t  is_free;
+}__attribute__((packed))heap_metadata;
+
+
+
 typedef struct {
 	uint32_t size;
 	void* stream;

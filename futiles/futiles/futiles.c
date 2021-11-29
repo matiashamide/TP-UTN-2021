@@ -298,6 +298,7 @@ int recibir_operacion_swap(int socket_cliente) {
 
 void* recibir_pagina(int cliente, int tam_pagina){
 	void* buffer = malloc(tam_pagina);
+
 	recv(cliente, buffer, tam_pagina, MSG_WAITALL);
 	return buffer;
 }

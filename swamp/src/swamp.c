@@ -196,7 +196,24 @@ void atender_peticiones(int cliente){
 		memcpy(buffer_pag, addr + frame->offset, CONFIG.tamanio_pag);
 		munmap(addr, CONFIG.tamanio_swamp);
 
-		enviar_pagina_a_principal(buffer_pag, cliente);
+		int offset = 0;
+		heap_metadata* heap = malloc(sizeof(heap_metadata));
+		memcpy(&heap->prev_alloc, buffer_pag, sizeof(uint32_t));
+		offset += sizeof(uint32_t);
+		memcpy(&heap->next_alloc, buffer_pag + offset, sizeof(uint32_t));
+		offset += sizeof(uint32_t);
+		memcpy(&heap->is_free, buffer_pag + offset, sizeof(uint8_t));
+		offset +=  sizeof(uint8_t);
+
+		void* leido = malloc(5);
+		memcpy(leido, buffer_pag + offset, 5);
+		printf("%i\n",heap->prev_alloc);
+		printf("%i\n",heap->next_alloc);
+		printf("%i\n",heap->is_free);
+		printf("%s",(char*)leido);
+
+		//enviar_pagina_a_principal(buffer_pag, cliente);
+		send(cliente, buffer_pag, CONFIG.tamanio_pag, 0);
 
 		break;
 
@@ -345,7 +362,7 @@ void enviar_pagina_a_principal(void* pagina, int socket_cliente) {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
 
 	paquete->cod_op = TRAER_DE_SWAP;
-	paquete->buffer = malloc(sizeof(uint32_t) + CONFIG.tamanio_pag);
+	paquete->buffer = malloc(sizeof(t_buffer));
 	paquete->buffer->size   = CONFIG.tamanio_pag;
 	paquete->buffer->stream = malloc(paquete->buffer->size);
 

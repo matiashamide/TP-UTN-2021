@@ -51,11 +51,11 @@ typedef struct {
 	bool ocupado;
 }t_frame;
 
-typedef struct{
+/*typedef struct{
 	uint32_t prev_alloc;
 	uint32_t next_alloc;
 	uint8_t  is_free;
-}__attribute__((packed))heap_metadata;
+}__attribute__((packed))heap_metadata;*/
 
 typedef struct{
 	int direc_logica;
