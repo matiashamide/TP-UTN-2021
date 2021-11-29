@@ -454,8 +454,10 @@ t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 		return MATE_FREE_FAULT;
 	}
 
+
 	int pag_en_donde_empieza_el_header = floor(((double)dir_logica - sizeof(heap_metadata)) / (double)CONFIG.tamanio_pagina);
-	heap_metadata* header_a_liberar = desserializar_header(pid , pag_en_donde_empieza_el_header , dir_logica );
+	int offset_header = ((dir_logica -sizeof(heap_metadata)) /CONFIG.tamanio_pagina - pag_en_donde_empieza_el_header) * CONFIG.tamanio_pagina;
+	heap_metadata* header_a_liberar = desserializar_header(pid , pag_en_donde_empieza_el_header , offset_header );
 
 	if(header_a_liberar->next_alloc == NULL){
 			log_info(LOGGER,"no se puede liberar esta posicion, ultimo header del proceso siempre esta libre");
@@ -464,7 +466,8 @@ t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 	}
 
 	int pag_en_donde_empieza_el_header_siguiente = floor((double)(header_a_liberar->next_alloc) / (double)CONFIG.tamanio_pagina);
-	heap_metadata* header_siguiente = desserializar_header(pid , pag_en_donde_empieza_el_header_siguiente , header_a_liberar->next_alloc);
+	int offset_header_siguiente = (header_a_liberar->next_alloc/CONFIG.tamanio_pagina - pag_en_donde_empieza_el_header_siguiente) * CONFIG.tamanio_pagina;
+	heap_metadata* header_siguiente = desserializar_header(pid , pag_en_donde_empieza_el_header_siguiente , offset_header_siguiente);
 
 	header_a_liberar->is_free = true;
 
@@ -476,18 +479,19 @@ t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 		//CASO A.1 :: caso en el que el siguiente header este ocupado
 		if( !header_siguiente->is_free){
 
-			guardar_header(pid, pag_en_donde_empieza_el_header , dir_logica ,header_a_liberar);
+			guardar_header(pid, pag_en_donde_empieza_el_header , offset_header ,header_a_liberar);
 			liberar_si_hay_paginas_libres(pid , 9 , header_a_liberar->next_alloc);
 		}
 		//CASO A.2 :: caso en el que el siguiente header este libre
 		if( header_siguiente->is_free){
 
 			header_a_liberar->next_alloc = header_siguiente->next_alloc;
-			guardar_header(pid, pag_en_donde_empieza_el_header , header_siguiente->prev_alloc ,header_a_liberar);
+			guardar_header(pid, pag_en_donde_empieza_el_header , offset_header ,header_a_liberar);
 
-			heap_metadata* header_post_siguiente = desserializar_header(pid , floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina) , header_siguiente->next_alloc);
+			int offset_header_post_siguiente = (header_siguiente->next_alloc/CONFIG.tamanio_pagina - floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina)) * CONFIG.tamanio_pagina;
+			heap_metadata* header_post_siguiente = desserializar_header(pid , floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina) , offset_header_post_siguiente);
 			header_post_siguiente->prev_alloc = header_siguiente->prev_alloc;
-			guardar_header(pid , floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina) , header_siguiente->next_alloc ,header_post_siguiente);
+			guardar_header(pid , floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina) , offset_header_post_siguiente ,header_post_siguiente);
 
 			liberar_si_hay_paginas_libres(pid , sizeof(heap_metadata) , header_a_liberar->next_alloc );
 			free(header_post_siguiente);
@@ -498,12 +502,13 @@ t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 	else {
 
 		int pag_en_donde_empieza_el_header_anterior = floor((header_a_liberar->prev_alloc) / CONFIG.tamanio_pagina);
-		heap_metadata* header_anterior = desserializar_header(pid , pag_en_donde_empieza_el_header_anterior , header_a_liberar->prev_alloc);
+		int offset_header_anterior = (header_a_liberar->prev_alloc/CONFIG.tamanio_pagina - pag_en_donde_empieza_el_header_anterior) * CONFIG.tamanio_pagina;
+		heap_metadata* header_anterior = desserializar_header(pid , pag_en_donde_empieza_el_header_anterior , offset_header_anterior);
 
 		//CASO B.1 :: caso en el que los headers  esten ocupados
 		if(!header_anterior->is_free && !header_siguiente->is_free){
 
-			guardar_header(pid, pag_en_donde_empieza_el_header , header_siguiente->prev_alloc ,header_a_liberar);
+			guardar_header(pid, pag_en_donde_empieza_el_header , offset_header ,header_a_liberar);
 			liberar_si_hay_paginas_libres( pid , header_anterior->next_alloc + 9 , header_a_liberar->next_alloc);
 
 		}
@@ -512,10 +517,10 @@ t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 		if(header_anterior->is_free && !header_siguiente->is_free){
 
 			header_anterior->next_alloc = header_a_liberar->next_alloc;
-			guardar_header(pid , pag_en_donde_empieza_el_header_anterior , header_a_liberar->prev_alloc , header_anterior);
+			guardar_header(pid , pag_en_donde_empieza_el_header_anterior , offset_header_anterior , header_anterior);
 
 			header_siguiente->prev_alloc = header_a_liberar->prev_alloc;
-			guardar_header(pid , pag_en_donde_empieza_el_header_siguiente , header_anterior->next_alloc , header_siguiente);
+			guardar_header(pid , pag_en_donde_empieza_el_header_siguiente , offset_header_siguiente , header_siguiente);
 
 			liberar_si_hay_paginas_libres( pid , header_a_liberar->prev_alloc + 9 , header_a_liberar->next_alloc );
 
@@ -525,11 +530,12 @@ t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 		if(!header_anterior->is_free && header_siguiente->is_free){
 
 			header_a_liberar->next_alloc = header_siguiente->next_alloc;
-			guardar_header(pid, pag_en_donde_empieza_el_header , header_anterior->next_alloc , header_a_liberar);
+			guardar_header(pid, pag_en_donde_empieza_el_header , offset_header , header_a_liberar);
 
-			heap_metadata* header_post_siguiente = desserializar_header(pid , floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina) , header_siguiente->next_alloc);
+			int offset_header_post_siguiente = (header_siguiente->next_alloc/CONFIG.tamanio_pagina - floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina)) * CONFIG.tamanio_pagina;
+			heap_metadata* header_post_siguiente = desserializar_header(pid , floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina) , offset_header_post_siguiente);
 			header_post_siguiente->prev_alloc = header_siguiente->prev_alloc;
-			guardar_header(pid , floor((double)header_siguiente->next_alloc /(double)CONFIG.tamanio_pagina) , header_siguiente->next_alloc ,header_post_siguiente);
+			guardar_header(pid , floor((double)header_siguiente->next_alloc /(double)CONFIG.tamanio_pagina) , offset_header_post_siguiente ,header_post_siguiente);
 
 			liberar_si_hay_paginas_libres( pid , header_siguiente->prev_alloc + 9 , header_a_liberar->next_alloc );
 			free(header_post_siguiente);
@@ -539,11 +545,12 @@ t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 		if(header_anterior->is_free && header_siguiente->is_free){
 
 			header_anterior->next_alloc = header_siguiente->next_alloc;
-			guardar_header(pid , pag_en_donde_empieza_el_header_anterior , header_a_liberar->prev_alloc , header_anterior);
+			guardar_header(pid , pag_en_donde_empieza_el_header_anterior , offset_header_anterior , header_anterior);
 
-			heap_metadata* header_post_siguiente = desserializar_header(pid , floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina) , header_siguiente->next_alloc);
+			int offset_header_post_siguiente = (header_siguiente->next_alloc/CONFIG.tamanio_pagina - floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina)) * CONFIG.tamanio_pagina;
+			heap_metadata* header_post_siguiente = desserializar_header(pid , floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina) , offset_header_post_siguiente);
 			header_post_siguiente->prev_alloc = header_a_liberar->prev_alloc;
-			guardar_header(pid , floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina) , header_siguiente->next_alloc ,header_post_siguiente);
+			guardar_header(pid , floor((double)header_siguiente->next_alloc / (double)CONFIG.tamanio_pagina) , offset_header_post_siguiente ,header_post_siguiente);
 
 			liberar_si_hay_paginas_libres(pid , header_a_liberar->prev_alloc + 9 , header_a_liberar->next_alloc);
 			free(header_post_siguiente);
@@ -1015,19 +1022,23 @@ void actualizar_headers_por_liberar_pagina(int pid, int nro_pag_liberada){
 
 	heap_metadata* header = desserializar_header(pid, 0, 0);
 
-	//Iterar hasta llegar al header anterior a la pagina liberada y offset = posicion de ese header
+	//Iterar hasta llegar al header anterior a la pagina liberada
+	int offset;
 	while (header->next_alloc / CONFIG.tamanio_pagina < nro_pag_liberada) {
-		header = desserializar_header(pid, floor((double)header->next_alloc / (double)CONFIG.tamanio_pagina), header->next_alloc);
+		offset = ((header->next_alloc / CONFIG.tamanio_pagina) - floor((double)header->next_alloc / (double)CONFIG.tamanio_pagina)) * CONFIG.tamanio_pagina;
+		header = desserializar_header(pid, floor((double)header->next_alloc / (double)CONFIG.tamanio_pagina), offset);
 	}
 
 	//En este punto tengo el header anterior a la pagina liberada, tengo que actualizar los valores de los proximos
 	int i = 1;
+	int nro_pagina;
 	while(header->next_alloc != NULL){
 
-		int pos_actual_del_header = header->next_alloc;
+		nro_pagina = floor((double)header->next_alloc / (double)CONFIG.tamanio_pagina);
 
-		int nro_pagina = floor((double)header->next_alloc / (double)CONFIG.tamanio_pagina);
-		header = desserializar_header(pid, nro_pagina, pos_actual_del_header ); // header de la siguiente pagina liberada
+		offset = ((header->next_alloc / CONFIG.tamanio_pagina) - nro_pagina) * CONFIG.tamanio_pagina;
+
+		header = desserializar_header(pid, nro_pagina, offset ); // header de la siguiente pagina liberada
 
 		//el header siguiente a la pagina liberada tiene que conservar el prev alloc -> (i > 1 significa todos los otros headers encontrados)
 		if(i > 1){
@@ -1035,7 +1046,7 @@ void actualizar_headers_por_liberar_pagina(int pid, int nro_pag_liberada){
 		}
 
 		header->next_alloc -= CONFIG.tamanio_pagina;
-		guardar_header(pid, nro_pagina, pos_actual_del_header, header);
+		guardar_header(pid, nro_pagina, offset, header);
 		i++;
  	}
 	free(header);
