@@ -197,6 +197,8 @@ void atender_peticiones(int cliente){
 		memcpy(buffer_pag, addr + frame->offset, CONFIG.tamanio_pag);
 		munmap(addr, CONFIG.tamanio_swamp);
 
+		//retardo swaps
+		sleep((CONFIG.retardo_swap)/1000);
 		send(cliente, buffer_pag, CONFIG.tamanio_pag, 0);
 
 		break;

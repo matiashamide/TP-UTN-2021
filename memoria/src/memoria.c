@@ -1056,18 +1056,29 @@ int buscar_pagina(int pid, int pag) {
 
 	pagina->uso = obtener_tiempo();
 
+	//NO esta en memoria
 	if (!pagina->presencia) {
+
 		log_info(LOGGER, "la pag %i del proceso %i no se encuentra en memoria, PAGE FAULT " , pag, pid);
 		frame = traer_pagina_a_mp(pagina);
 		actualizar_tlb(pid, pag, frame);
+
+	//Esta en memoria
 	} else {
 		frame = buscar_pag_tlb(pid, pag);
 
+		//TLB miss
 		if (frame == -1) {
+
 			log_info(LOGGER, "la pag %i del proceso %i se encuentra en memoria, PAGE FAULT " , pag, pid);
 			frame = pagina->frame_ppal;
 			actualizar_tlb(pid, pag,frame);
+			sleep((CONFIG.retardo_fallo_tlb)/1000);
+
+		//TLB hit
 		}else {
+
+			sleep((CONFIG.retardo_acierto_tlb)/1000);
 			log_info(LOGGER, "la pag %i del proceso %i se encuentra en la tlb" , pag, pid);
 		}
 	}
