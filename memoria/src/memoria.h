@@ -27,6 +27,7 @@ typedef struct {
 	char* alg_reemplazo_tlb;
 	int   retardo_acierto_tlb;
 	int   retardo_fallo_tlb;
+	int   kernel_existe;
 }t_memoria_config;
 
 typedef struct {

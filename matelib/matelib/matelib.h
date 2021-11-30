@@ -79,6 +79,13 @@ typedef struct
 	t_buffer* buffer;
 } t_paquete;
 
+typedef enum{
+	MATE_SUCCESS = 1,
+	MATE_FREE_FAULT = -5,
+	MATE_READ_FAULT = -6,
+	MATE_WRITE_FAULT = -7
+}MATE_RETURNS;
+
 typedef char *mate_io_resource;
 
 typedef char *mate_sem_name;
@@ -130,7 +137,7 @@ int mate_call_io(mate_instance *lib_ref, mate_io_resource io, void *msg);
 mate_pointer mate_memalloc(mate_instance *lib_ref, int size);
 
 int mate_memfree(mate_instance *lib_ref, mate_pointer addr);
-
+										//desde donde lees 	  //donde lo escribis lo leido
 int mate_memread(mate_instance *lib_ref, mate_pointer origin, void *dest, int size);
 
 int mate_memwrite(mate_instance *lib_ref, void *origin, mate_pointer dest, int size);
