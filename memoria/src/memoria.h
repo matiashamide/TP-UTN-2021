@@ -52,12 +52,6 @@ typedef struct {
 	bool ocupado;
 }t_frame;
 
-/*typedef struct{
-	uint32_t prev_alloc;
-	uint32_t next_alloc;
-	uint8_t  is_free;
-}__attribute__((packed))heap_metadata;*/
-
 typedef struct{
 	int direc_logica;
 	bool flag_ultimo_alloc;
@@ -68,6 +62,7 @@ typedef enum {
 	MATE_READ_FAULT  = -6,
 	MATE_WRITE_FAULT = -7
 }MATE_ERRORS;
+
 
 // VARIABLES GLOBALES
 

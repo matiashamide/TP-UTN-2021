@@ -129,7 +129,7 @@ void init_memoria() {
 	MEMORIA_PRINCIPAL = malloc(CONFIG.tamanio_memoria);
 
 	//Inicializamos tlb
-	init_tlb(CONFIG.cant_entradas_tlb , CONFIG.alg_reemplazo_tlb);
+	init_tlb();
 
 	if (MEMORIA_PRINCIPAL == NULL) {
 	   	perror("MALLOC FAIL!\n");
@@ -385,11 +385,12 @@ int memalloc(int pid, int size){
 		if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
 
 			pthread_mutex_lock(&mutex_frames);
+
 			if (!hay_frames_libres_mp(CONFIG.marcos_max)) {
 				log_info(LOGGER, "Error: se supero el nivel de multiprogramacion, no hay frames libes en MP.", size, pid);
-
 				return -1;
 			}
+
 			//Reservamos los frames al PID
 			t_list* frames_libres_MP = list_filter(FRAMES_MEMORIA, (void*)esta_libre_y_desasignado);
 
@@ -397,6 +398,7 @@ int memalloc(int pid, int size){
 				t_frame* frame_libre = list_get(frames_libres_MP,i);
 				frame_libre->pid = pid;
 			}
+
 			pthread_mutex_unlock(&mutex_frames);
 		}
 
@@ -453,7 +455,7 @@ int memalloc(int pid, int size){
 	} else {
 
 	//[CASO B]: El proceso existe en memoria
-		log_info(LOGGER, "Alocando memoria para el proceso %i.", pid);
+		log_info(LOGGER, "Alocando %i bytes de memoria para el proceso %i.", size, pid);
 		t_alloc_disponible* alloc = obtener_alloc_disponible(pid, size, 0);
 
 		if(alloc->flag_ultimo_alloc){

@@ -1,31 +1,14 @@
 #include "tlb.h"
 
-void init_tlb(int cant_entradas, char* algoritmo) {
+void init_tlb() {
 
-	crear_entradas_tlb(cant_entradas);
-	TIEMPO_TLB = 0;
-
+	TLB      = list_create();
 	TLB_HITS = list_create();
 	TLB_MISS = list_create();
 
+	TIEMPO_TLB = 0;
+
 	log_info(LOGGER , "TLB inicializada correctamente");
-}
-
-void crear_entradas_tlb(int cant_entradas){
-
-	TLB = list_create();
-
-	for(int i = 0; i < cant_entradas ; i++){
-
-		t_entrada_tlb* entrada = malloc(sizeof(t_entrada_tlb));
-
-		entrada->pag        = -1;
-		entrada->pid        = -1;
-		entrada->frame      = -1;
-		entrada->ultimo_uso = -1;
-
-		list_add(TLB, entrada);
-	}
 }
 
 int buscar_pag_tlb(int pid, int pag) {
@@ -61,12 +44,30 @@ int obtener_tiempo(){
 }
 
 void actualizar_tlb(int pid, int pag, int frame){
-	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb,"LRU")) {
+
+	if (list_size(TLB) < CONFIG.cant_entradas_tlb) {
+		crear_entrada(pid, pag, frame);
+		return;
+	}
+
+	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb,"LRU"))
 		reemplazar_LRU(pid, pag, frame);
-	}
-	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb, "FIFO")) {
+
+	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb, "FIFO"))
 		reemplazar_FIFO(pid, pag, frame);
-	}
+
+}
+
+void crear_entrada(int pid, int pag, int frame) {
+
+	t_entrada_tlb* entrada = malloc(sizeof(t_entrada_tlb));
+
+	entrada->pag        = pag;
+	entrada->pid        = pid;
+	entrada->frame      = frame;
+	entrada->ultimo_uso = obtener_tiempo();
+
+	list_add(TLB, entrada);
 }
 
 void reemplazar_FIFO(int pid, int pag, int frame){

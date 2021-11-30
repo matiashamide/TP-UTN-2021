@@ -33,8 +33,8 @@ pthread_mutex_t mutexTLB;
 // FUNCIONES
 
 //// ---- funciones de inicializacion
-void init_tlb(int cant_entradas,  char* algoritmo_reemplazo);
-void crear_entradas_tlb(int cant_entradas);
+void init_tlb();
+void crear_entrada(int pid, int pag, int frame);
 
 //// ---- funciones de reemplazo
 void reemplazar_FIFO(int pid, int pag, int frame);
