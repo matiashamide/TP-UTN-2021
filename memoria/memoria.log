@@ -1,0 +1,8 @@
+[INFO] 15:27:41:199 MEMORIA/(7041:7041): TLB inicializada correctamente
+[INFO] 15:29:48:039 MEMORIA/(7211:7211): TLB inicializada correctamente
+[INFO] 15:29:48:044 MEMORIA/(7211:7211): Tengo 12 frames de 32 bytes en memoria principal
+[INFO] 15:29:48:044 MEMORIA/(7211:7211): Inicializa memoria
+[INFO] 15:29:48:044 MEMORIA/(7211:7211): Ya me conecte con swamp y los marcos max son: 0 
+
+[INFO] 15:42:42:577 MEMORIA/(7546:7546): TLB inicializada correctamente
+[INFO] 15:53:25:191 MEMORIA/(8068:8068): TLB inicializada correctamente

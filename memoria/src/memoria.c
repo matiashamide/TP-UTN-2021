@@ -6,107 +6,7 @@ int main(void) {
 	log_info(LOGGER, "Inicializa memoria");
 	log_info(LOGGER, "Ya me conecte con swamp y los marcos max son: %i \n", MAX_FRAMES_SWAP);
 
-	//------PRUEBAS--------//
-
-	 // PRUEBA_ASIGNACION //
-
-	//carpincho 0
-	/*
-	char* carpincho = "CARPINCHO";
-	void* c1 = malloc(23);
-	memcpy(c1, carpincho, 23);
-	void* leido = malloc(23);
-
-	//char* chau = "CHAU";
-	//void* c2 = malloc(5);
-	//memcpy(c2, chau, 5);
-
-	int a1 = memalloc(0, 10);
-	//int a2 = memalloc(0, 12);
-	int rta = memwrite(0,c1,a1,23);
-	int b1 = memalloc(1,10);
-    */
-
-	int a3 = memalloc(0, 10);
-	int a4 = memalloc(0, 12);
-	int a5 = memalloc(0, 10);
-	int a6 = memalloc(0, 12);
-	int a7 = memalloc(0, 12);
-	int a8 = memalloc(0, 40);
-
-	/*
-	memwrite(0,c1,a1,10);
-	memwrite(0,c1,a2,10);
-	memwrite(0,c1,a3,10);
-	memwrite(0,c1,a4,10);
-	memwrite(0,c1,a5,10);
-	memwrite(0,c1,a6,10);
-	memwrite(0,c1,a7,10);
-	memwrite(0,c1,a8,10);
-
-	int rtamemread = memread(0,a1,leido,23);
-	fflush(stdout);
-	printf((char*) leido, rtamemread);
-	fflush(stdout);
-
-	memread(0,a2,leido,10);
-	fflush(stdout);
-	printf((char*) leido);
-	fflush(stdout);
-
-	memread(0,a5,leido,10);
-	fflush(stdout);
-	printf((char*) leido);
-	fflush(stdout);
-
-	memread(0,a6,leido,10);
-	fflush(stdout);
-	printf((char*) leido);
-	fflush(stdout);
-*/
-	/*
-	char* hola = "patopatom";
-	void* contenido = malloc(10);
-
-	memcpy(contenido, hola, 10);
-
-	printf("memwriteando un Hola... \n");
-	int ret4 = memwrite(0, contenido, alloc00, 10);
-    */
-	/*void* leido = malloc(5);
-	memread(0, alloc00, leido, 5);
-
-	printf("toy por imprimir lo leido... \n");
-	printf((char*)leido);
-	printf("\n ya tuve que haberlo impreso ndea \n");*/
-
-	/*
-	char* letras = "abcdefghi";
-	void* contenido2 = malloc(10);
-
-	memcpy(contenido, letras, 10);
-	memwrite(1, contenido2, alloc110, 10);
-
-	void* leido2 = malloc(5);
-		memread(1, alloc110, leido2, 10);
-		printf((char*)leido2);
-
-	//int retorno = memwrite(0, contenido, alloc30, 5);
-	//int ret2 = memwrite(0, contenido, alloc20, 5);
-	//int ret3 = memwrite(0, contenido, alloc10, 5);
-
-	int alloc40 = memalloc(0, 23);
-	int alloc50 = memalloc(0, 23);
-	int alloc60 = memalloc(0, 23);
-	int alloc70 = memalloc(0, 10);
-
-	void* leido = malloc(5);
-	memread(0, alloc00, leido, 10);
-
-	printf("toy por imprimir lo leido... \n");
-	printf((char*)leido);
-	printf("\n ya tuve que haberlo impreso ndea \n");
-	*/
+	coordinador_multihilo();
 
 	return EXIT_SUCCESS;
 }
@@ -131,6 +31,9 @@ void init_memoria() {
 	//Inicializamos tlb
 	init_tlb();
 
+	//Inicializamos PIDS_CONEXION
+	PIDS_CLIENTE = list_create();
+
 	if (MEMORIA_PRINCIPAL == NULL) {
 	   	perror("MALLOC FAIL!\n");
 	   	log_info(LOGGER,"No se pudo alocar correctamente la memoria principal.");
@@ -139,6 +42,9 @@ void init_memoria() {
 
 	CONEXION_SWAP = crear_conexion(CONFIG.ip_swap, CONFIG.puerto_swap);
 	MAX_FRAMES_SWAP = solicitar_marcos_max_swap();
+
+	//Inicializamos PID_GLOBAL
+	PID_GLOBAL = 0;
 
 	//Senales
 	signal(SIGINT,  &signal_metricas);
@@ -212,15 +118,16 @@ void coordinador_multihilo(){
 
 	while(1) {
 
-		int socket = esperar_cliente(SERVIDOR_MEMORIA);
+		pthread_t hilo_atender_carpincho;
 
-		log_info(LOGGER, "Se conecto un cliente %i\n", socket);
+		int *socket_cliente = malloc(sizeof(int));
 
-		//crear lista por cada cliente si el kernel no existe yq ue guarde la conexion
+		(*socket_cliente) = accept(SERVIDOR_MEMORIA, NULL, NULL);
 
-		pthread_t* hilo_atender_carpincho = malloc(sizeof(pthread_t));
-		pthread_create(hilo_atender_carpincho, NULL, (void*)atender_carpinchos, (void*)socket);
-		pthread_detach(*hilo_atender_carpincho);
+		log_info(LOGGER, "Se conecto un cliente %i\n", *socket_cliente);
+
+		pthread_create(&hilo_atender_carpincho, NULL , (void*)atender_carpinchos, socket_cliente);
+		pthread_detach(hilo_atender_carpincho);
 	}
 }
 
@@ -237,19 +144,17 @@ void atender_carpinchos(int cliente) {
 
 	case MEMALLOC:;
 
+		if( existe_kernel){
+			pid = recibir_entero(cliente);
+		}else {
+			pid = pid_por_conexion(cliente);
+		}
 
-	if( existe_kernel){
+		int size = recibir_entero(cliente);
+		log_info(LOGGER, " MEMALLOC: el cliente %i solicito alocar memoria de %i bytes" , cliente , size );
 
-		pid = recibir_entero(cliente);
-	}else {
-		//crear pid a mano y memalloquear
-	}
-
-	int size = recibir_entero(cliente);
-	log_info(LOGGER, " MEMALLOC: el cliente %i solicito alocar memoria de %i bytes" , cliente , size );
-
-	retorno = memalloc(size , pid);
-	send(cliente , &retorno , sizeof(uint32_t) , 0);
+		retorno = memalloc(size, pid, cliente);
+		send(cliente , &retorno , sizeof(uint32_t) , 0);
 
 	break;
 
@@ -259,7 +164,7 @@ void atender_carpinchos(int cliente) {
 		if(existe_kernel){
 			pid = recibir_entero(cliente);
 		}else {
-			//crear pid a mano
+			pid = pid_por_conexion(cliente);
 		}
 
 
@@ -288,7 +193,7 @@ void atender_carpinchos(int cliente) {
 		if(existe_kernel){
 			pid = recibir_entero(cliente);
 		}else {
-			//crear pid a mano
+			pid = pid_por_conexion(cliente);
 		}
 
 		log_info(LOGGER, "MEMFREE: El cliente %i solicito liberar memoria." , cliente);
@@ -310,6 +215,8 @@ void atender_carpinchos(int cliente) {
 
 		if(existe_kernel){
 			pid = recibir_entero(cliente);
+		} else {
+			pid = pid_por_conexion(cliente);
 		}
 
 		log_info(LOGGER, "MEMWRITE: El cliente %i solicito escribir memoria." , cliente);
@@ -338,9 +245,9 @@ void atender_carpinchos(int cliente) {
 	break;
 
 	case MEMDESSUSP:;
-			log_info(LOGGER, "MEMDESSUSP: El cliente %i solicito dessuspender el proceso.", cliente);
-			pid = recibir_entero(cliente);
-			dessuspender_proceso(pid);
+		log_info(LOGGER, "MEMDESSUSP: El cliente %i solicito dessuspender el proceso.", cliente);
+		pid = recibir_entero(cliente);
+		dessuspender_proceso(pid);
 		break;
 
 	case MEMKILL:;
@@ -356,7 +263,6 @@ void atender_carpinchos(int cliente) {
 		fflush(stdout);
 	break;
 
-	//Faltan algunos cases;
 	default:;
 	log_info(LOGGER, "No se entendio la solicitud del cliente %i." , cliente);
 	break;
@@ -367,12 +273,24 @@ void atender_carpinchos(int cliente) {
 
 //--------------------------------------------------- FUNCIONES PRINCIPALES ----------------------------------------------//
 
-int memalloc(int pid, int size){
+int memalloc(int pid, int size, int cliente){
 	int dir_logica = -1;
 	int paginas_necesarias = ceil(((double)size + sizeof(heap_metadata)*2)/ (double)CONFIG.tamanio_pagina);
 
 	//[CASO A]: Llega un proceso nuevo
 	if (tabla_por_pid(pid) == NULL){
+
+		if(pid == -1){
+			pthread_mutex_lock(&mutex_PID);
+			pid = PID_GLOBAL;
+			PID_GLOBAL++;
+			pthread_mutex_unlock(&mutex_PID);
+
+			t_pid_cliente* pid_cliente = malloc(sizeof(t_pid_cliente));
+			pid_cliente->cliente = cliente;
+			pid_cliente->pid = pid;
+			list_add(PIDS_CLIENTE, pid_cliente);
+		}
 
 		log_info(LOGGER, "Inicializando el proceso %i..." , pid);
 
@@ -873,9 +791,14 @@ void eliminar_proceso(int pid) {
 		return tabla_aux->PID == pid;
 	}
 	list_remove_and_destroy_by_condition(TABLAS_DE_PAGINAS,tabla_es_de_pid,free);
-	//free(tabla_proceso);
 
 	eliminar_proceso_swap(pid);
+
+	bool tabla_es_de_pid2(void* element){
+		t_pid_cliente* tabla_aux = (t_pid_cliente*) element;
+		return tabla_aux->pid == pid;
+	}
+	list_remove_and_destroy_by_condition(PIDS_CLIENTE,tabla_es_de_pid2,free);
 
 }
 
@@ -1420,6 +1343,21 @@ t_list* frames_libres_del_proceso(int pid){
 
 }
 
+int pid_por_conexion(int cliente) {
+
+	int _mismo_pid(t_pid_cliente* pid_conexion) {
+		return pid_conexion->cliente == cliente;
+	}
+
+	t_pid_cliente* pid_cliente = list_find(PIDS_CLIENTE, (void*)_mismo_pid);
+
+	if(pid_cliente == NULL){
+		return -1;
+	}
+
+	return pid_cliente->pid;
+}
+
 //------------------------------------------------ INTERACCIONES CON SWAMP -----------------------------------------------//
 
 int solicitar_marcos_max_swap() {
@@ -1601,7 +1539,7 @@ void eliminar_pag_swap(int pid , int nro_pagina){
 	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
 
 	pthread_mutex_lock(&mutex_swamp);
-	send(socket, a_enviar, bytes, 0);
+	send(CONEXION_SWAP, a_enviar, bytes, 0);
 	pthread_mutex_unlock(&mutex_swamp);
 
 	free(a_enviar);
@@ -1625,7 +1563,7 @@ void eliminar_proceso_swap(int pid){
 		void* a_enviar = serializar_paquete_swap(paquete, &bytes);
 
 		pthread_mutex_lock(&mutex_swamp);
-		send(socket, a_enviar, bytes, 0);
+		send(CONEXION_SWAP, a_enviar, bytes, 0);
 		pthread_mutex_unlock(&mutex_swamp);
 
 		free(a_enviar);

@@ -57,22 +57,28 @@ typedef struct{
 	bool flag_ultimo_alloc;
 }t_alloc_disponible;
 
+typedef struct {
+	int cliente;
+	int pid;
+}t_pid_cliente;
+
 typedef enum {
 	MATE_FREE_FAULT  = -5,
 	MATE_READ_FAULT  = -6,
 	MATE_WRITE_FAULT = -7
 }MATE_ERRORS;
 
-
 // VARIABLES GLOBALES
 
 int SERVIDOR_MEMORIA;
+int PID_GLOBAL;
 t_memoria_config CONFIG;
 t_log* LOGGER;
 
 //// ---- estructuras administrativas
 t_list* TABLAS_DE_PAGINAS;  // Lista de t_tabla_pagina's
 t_list* FRAMES_MEMORIA;     // Lista de t_frame's
+t_list* PIDS_CLIENTE; 		// Lista de t_pid_conexion
 
 int CONEXION_SWAP;
 int MAX_FRAMES_SWAP;
@@ -85,6 +91,7 @@ void* MEMORIA_PRINCIPAL;
 pthread_mutex_t mutex_frames;
 pthread_mutex_t mutex_tablas_dp;
 pthread_mutex_t mutex_swamp;
+pthread_mutex_t mutex_PID;
 
 
 // FUNCIONES
@@ -99,7 +106,7 @@ void atender_carpinchos(int cliente);
 void coordinador_multihilo();
 
 //// ---- funciones principales
-int  memalloc(int pid,int size);
+int  memalloc(int pid,int size, int conexion);
 int  memfree(int pid,int pos_alloc);
 int  memread(int pid,int dir_logica , void* destination, int size);
 int  memwrite(int pid, void* contenido, int dir_logica, int size);
@@ -130,6 +137,7 @@ t_list*         paginas_en_mp();
 t_tabla_pagina* tabla_por_pid(int pid);
 t_pagina*       pagina_por_id(int pid, int id);
 t_list*         frames_libres_del_proceso(int pid);
+int				pid_por_conexion(int cliente);
 
 //// ---- funciones de interaccion con SWAMP
 int   solicitar_marcos_max_swap();
