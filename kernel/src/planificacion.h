@@ -125,6 +125,7 @@ bool criterio_remocion_lista(void* pcb);
 void ejecutar(t_procesador*);
 void recibir_peticion_para_continuar(int conexion);
 void dar_permiso_para_continuar(int conexion);
+void avisar_finalizacion_por_deadlock(int conexion);
 void init_sem(t_procesador*);
 void wait_sem(t_procesador*);
 void post_sem(t_procesador*);

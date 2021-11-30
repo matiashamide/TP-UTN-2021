@@ -243,6 +243,14 @@ void dar_permiso_para_continuar(int conexion){
 	printf("Ya di permiso %d\n", numero_de_bytes);
 }
 
+void avisar_finalizacion_por_deadlock(int conexion) {
+	uint32_t handshake = 2;
+
+	int numero_de_bytes = send(conexion, &handshake, sizeof(uint32_t), 0);
+
+	printf("Finalice un carpincho por deadlock %d\n", numero_de_bytes);
+}
+
 // TODO manejar error de crear un semaforo con el mismo nombre que uno ya existente
 void init_sem(t_procesador* estructura_procesador) {
 
@@ -599,6 +607,7 @@ void mate_close(t_procesador* estructura_procesador) {
 	pthread_mutex_unlock(&mutex_lista_procesadores);
 	sem_post(&sem_grado_multiprocesamiento);
 	sem_post(&sem_grado_multiprogramacion);
+	//TODO liberar los semaforos que le correspondan y mas cosas
 
 }
 
@@ -632,31 +641,11 @@ void mate_close(t_procesador* estructura_procesador) {
 
 //LOS RECURSOS ASIGNADOS
 
-int valor_matriz (int i, int j, t_list* lista_bloqueados_por_semaforo) {
-
-	t_semaforo_mate* semaforo = list_get(LISTA_SEMAFOROS_MATE, j);
-
-	PCB* pcb = list_get(lista_bloqueados_por_semaforo, i);
-
-	bool _criterio_remocion_lista(void* elemento) {
-		return (((PCB*)elemento)->PID == pcb->PID);
-	}
-
-
-	if (list_any_satisfy(semaforo->cola_bloqueados, _criterio_remocion_lista))
-		return 1;
-
-
-	return 0;
-}
-
-
 //ver el tema de que el deadlock no siga corriendo cada ese tiempo de config mientras estamos recuperandonos de un deadlock
 
 void algoritmo_deteccion_deadlock() {
 	//aca va el algoritmo.
 
-	int **matriz;
 	int i;
 	int j;
 	t_list* lista_bloqueados_por_semaforo = list_create();
@@ -664,43 +653,268 @@ void algoritmo_deteccion_deadlock() {
 
 	pthread_mutex_lock(&mutex_lista_semaforos_mate);
 	//Ver tema mutex lista de bloqueados
-	int nfilas;
-	int ncols = list_size(LISTA_SEMAFOROS_MATE);
 
-	for(int a = 0; a < list_size(LISTA_SEMAFOROS_MATE); i++) {
-		t_semaforo_mate* sem = list_get(LISTA_SEMAFOROS_MATE, a);
-		nfilas += list_size(sem->cola_bloqueados);
-		for (int b = 0; b < list_size(sem->cola_bloqueados); b++) {
-			PCB* proceso = list_get(sem->cola_bloqueados, b);
+	for(i = 0; i < list_size(LISTA_SEMAFOROS_MATE); i++) {
+		t_semaforo_mate* sem = list_get(LISTA_SEMAFOROS_MATE, i);
+		for (j = 0; j < list_size(sem->cola_bloqueados); j++) {
+			PCB* proceso = list_get(sem->cola_bloqueados, j);
 			list_add(lista_bloqueados_por_semaforo, proceso);
 		}
 	}
 
-	matriz = (int **) calloc(nfilas, sizeof(int));
-
-	for(i = 0; i < nfilas; i++) {
-		matriz[i] = (int *) calloc(ncols, sizeof(int));
-	}
-
-	for(i = 0; i< nfilas; i++) {
-		for(j = 0; j < ncols; j++) {
-			matriz[i][j] = valor_matriz(i, j, lista_bloqueados_por_semaforo);
-		}
-	}
-
-
-	for(int h = 0; h < nfilas; h++) {
+	for(int h = 0; h < list_size(lista_bloqueados_por_semaforo); h++) {
 		PCB* pcb = list_get(lista_bloqueados_por_semaforo, h);
 		if(list_size(pcb->recursos_usados) > 0) {
 			for(int g = 0; g < list_size(pcb->recursos_usados); g++) {
-				t_semaforo_mate* recurso_usado = list_get(pcb->recursos_usados, g);
-				//TODO aca hay que fijarse si este recurso que acabo de agarrar lo esta pidiendo otro semaforo
-				//y si es asi ponerlo en la lista de procesos en deadlock
+				t_registro_uso_recurso* recurso_usado = list_get(pcb->recursos_usados, g);
+
+				bool _criterio_busqueda_semaforo(void* elemento) {
+					return (strcmp(((t_semaforo_mate*)elemento)->nombre, recurso_usado->nombre) == 0);
+				}
+				t_semaforo_mate* semaforo = (t_semaforo_mate*) list_find(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo);
+
+				bool _criterio_procesos_distintos(void* elemento) {
+					return (((PCB*)elemento)->PID != pcb->PID);
+				}
+
+				bool _criterio_remocion_lista(void* elemento) {
+					return (((PCB*)elemento)->PID == pcb->PID);
+				}
+
+				int procesos_que_lo_piden = list_count_satisfying(semaforo->cola_bloqueados, _criterio_procesos_distintos);
+
+				if(procesos_que_lo_piden > 0 && !list_any_satisfy(lista_procesos_en_deadlock, _criterio_remocion_lista)) {
+					list_add(lista_procesos_en_deadlock, pcb);
+					//TEST
+					printf("El carpincho %d esta en deadlock\n", pcb->PID);
+					//FIN TEST
+				}
 			}
 		}
+	}
+
+	while(list_size(lista_procesos_en_deadlock) > 0) {
+
+		void* _eleccion_mayor_PID(void* elemento1, void* elemento2) {
+			if(((PCB*)elemento1)->PID > ((PCB*)elemento2)->PID) {
+				return ((PCB*)elemento1);
+			} else {
+				return ((PCB*)elemento2);
+			}
+		}
+
+		PCB* proceso_de_mayor_pid = (PCB*) list_get_maximum(lista_procesos_en_deadlock, _eleccion_mayor_PID);
+
+		bool _criterio_igual_pid(void* elemento) {
+			return (((PCB*)elemento)->PID == proceso_de_mayor_pid->PID);
+		}
+
+
+		if(list_any_satisfy(LISTA_BLOCKED, _criterio_igual_pid)) {
+
+			pthread_mutex_lock(&mutex_lista_blocked);
+			list_remove_by_condition(LISTA_BLOCKED, _criterio_igual_pid);
+			pthread_mutex_unlock(&mutex_lista_blocked);
+
+		} else {
+
+			pthread_mutex_lock(&mutex_lista_blocked_suspended);
+			list_remove_by_condition(LISTA_BLOCKED_SUSPENDED, _criterio_igual_pid);
+			pthread_mutex_unlock(&mutex_lista_blocked_suspended);
+
+
+		}
+
+		for(int k = 0; k < list_size(proceso_de_mayor_pid->recursos_usados); k++) {
+
+			t_registro_uso_recurso* recurso_usado = list_get(proceso_de_mayor_pid->recursos_usados, k);
+
+			bool _criterio_busqueda_semaforo(void* elemento) {
+				return (strcmp(((t_semaforo_mate*)elemento)->nombre, recurso_usado->nombre) == 0);
+			}
+
+			t_semaforo_mate* recurso = (t_semaforo_mate*) list_find(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo);
+
+			for (int y = 0; y < recurso_usado->cantidad; y++) {
+
+				if(recurso->value == 0 && list_size(recurso->cola_bloqueados) > 0) {
+					PCB* pcb = (PCB*) list_remove(recurso->cola_bloqueados, 0);
+
+					bool _criterio_remocion_lista(void* elemento) {
+						return (((PCB*)elemento)->PID == pcb->PID);
+					}
+
+					if(list_any_satisfy(LISTA_BLOCKED, _criterio_remocion_lista)) {
+
+						pthread_mutex_lock(&mutex_lista_blocked);
+						list_remove_by_condition(LISTA_BLOCKED, _criterio_remocion_lista);
+						pthread_mutex_unlock(&mutex_lista_blocked);
+
+						pthread_mutex_lock(&mutex_lista_ready);
+						list_add(LISTA_READY, pcb);
+						pthread_mutex_unlock(&mutex_lista_ready);
+
+						sem_post(&sem_cola_ready);
+					} else {
+						pthread_mutex_lock(&mutex_lista_blocked_suspended);
+						list_remove_by_condition(LISTA_BLOCKED_SUSPENDED, _criterio_remocion_lista);
+						pthread_mutex_unlock(&mutex_lista_blocked_suspended);
+
+						pthread_mutex_lock(&mutex_lista_ready_suspended);
+						list_add(LISTA_READY_SUSPENDED, pcb);
+						pthread_mutex_unlock(&mutex_lista_ready_suspended);
+
+						sem_post(&sem_algoritmo_planificador_largo_plazo);
+					}
+
+				} else {
+					recurso->value += 1;
+				}
+
+			}
+
+		}
+
+		//TODO aca aumentar el grado de multiprogramacion, cerrar conexiones, y liquidar al carpincho
+		avisar_finalizacion_por_deadlock(proceso_de_mayor_pid->conexion);
+		close(proceso_de_mayor_pid->conexion);
+
+		list_remove_by_condition(lista_procesos_en_deadlock, _criterio_igual_pid);
+		list_remove_by_condition(lista_bloqueados_por_semaforo, _criterio_igual_pid);
+
+		for(int f = 0; f < list_size(LISTA_SEMAFOROS_MATE); f++) {
+			t_semaforo_mate* sema = list_get(LISTA_SEMAFOROS_MATE, f);
+			list_remove_by_condition(sema->cola_bloqueados, _criterio_igual_pid);
+		}
+
+		void _element_destroyer(void* elemento) {
+			free(((t_registro_uso_recurso*)elemento)->nombre);
+			free(((t_registro_uso_recurso*)elemento));
+		}
+
+		list_destroy_and_destroy_elements(proceso_de_mayor_pid->recursos_usados, _element_destroyer);
+		free(proceso_de_mayor_pid);
+
+		sem_post(&sem_grado_multiprogramacion);
+
 	}
 
 
 		pthread_mutex_unlock(&mutex_lista_semaforos_mate);
 }
 
+/*printf("Cierro conexion con carpincho: %d\n", estructura_procesador->lugar_PCB->PID);
+
+
+dar_permiso_para_continuar(estructura_procesador->lugar_PCB->conexion);
+
+close(estructura_procesador->lugar_PCB->conexion);
+
+pthread_mutex_lock(&mutex_lista_procesadores); // TENER CUIDADO (si se bloquea todo ver aqui)
+sem_wait(&estructura_procesador->sem_exec);
+estructura_procesador->bit_de_ocupado = 0;
+pthread_mutex_unlock(&mutex_lista_procesadores);
+sem_post(&sem_grado_multiprocesamiento);
+sem_post(&sem_grado_multiprogramacion);
+//TODO liberar los semaforos que le correspondan y mas cosas
+ *
+ *
+ *
+ *
+ *
+ */
+
+/*if(list_any_satisfy(LISTA_BLOCKED, _criterio_remocion_lista)) {
+
+	pthread_mutex_lock(&mutex_lista_blocked);
+	list_remove_by_condition(LISTA_BLOCKED, _criterio_remocion_lista);
+	pthread_mutex_unlock(&mutex_lista_blocked);
+
+	pthread_mutex_lock(&mutex_lista_ready);
+	list_add(LISTA_READY, pcb);
+	pthread_mutex_unlock(&mutex_lista_ready);
+
+	sem_post(&sem_cola_ready);
+} else {
+	pthread_mutex_lock(&mutex_lista_blocked_suspended);
+	list_remove_by_condition(LISTA_BLOCKED_SUSPENDED, _criterio_remocion_lista);
+	pthread_mutex_unlock(&mutex_lista_blocked_suspended);
+
+	pthread_mutex_lock(&mutex_lista_ready_suspended);
+	list_add(LISTA_READY_SUSPENDED, pcb);
+	pthread_mutex_unlock(&mutex_lista_ready_suspended);
+
+	sem_post(&sem_algoritmo_planificador_largo_plazo);
+
+	//TEST
+	pthread_mutex_lock(&mutex_lista_blocked_suspended);
+	printf("Tamanio blocked suspended: %d\n", list_size(LISTA_BLOCKED_SUSPENDED));
+	pthread_mutex_unlock(&mutex_lista_blocked_suspended);
+	//FIN TEST
+
+	//TEST
+	pthread_mutex_lock(&mutex_lista_ready_suspended);
+	PCB* carpinchoTest = (PCB*) list_get(LISTA_READY_SUSPENDED, 0);
+	printf("PID carpincho en ready suspended: %d\n", carpinchoTest->PID);
+	pthread_mutex_unlock(&mutex_lista_ready_suspended);
+	//FIN TEST
+}
+*/
+
+/*
+
+bool _criterio_busqueda_semaforo(void* elemento) {
+		return (strcmp(((t_semaforo_mate*)elemento)->nombre, nombre) == 0);
+	}
+
+	pthread_mutex_lock(&mutex_lista_semaforos_mate);
+	t_semaforo_mate* semaforo = (t_semaforo_mate*) list_find(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo);
+
+	if(semaforo->value == 0 && list_size(semaforo->cola_bloqueados) > 0) {
+		PCB* pcb = (PCB*) list_remove(semaforo->cola_bloqueados, 0);
+
+		bool _criterio_remocion_lista(void* elemento) {
+				return (((PCB*)elemento)->PID == pcb->PID);
+			}
+
+		if(list_any_satisfy(LISTA_BLOCKED, _criterio_remocion_lista)) {
+
+			pthread_mutex_lock(&mutex_lista_blocked);
+			list_remove_by_condition(LISTA_BLOCKED, _criterio_remocion_lista);
+			pthread_mutex_unlock(&mutex_lista_blocked);
+
+			pthread_mutex_lock(&mutex_lista_ready);
+			list_add(LISTA_READY, pcb);
+			pthread_mutex_unlock(&mutex_lista_ready);
+
+			sem_post(&sem_cola_ready);
+		} else {
+			pthread_mutex_lock(&mutex_lista_blocked_suspended);
+			list_remove_by_condition(LISTA_BLOCKED_SUSPENDED, _criterio_remocion_lista);
+			pthread_mutex_unlock(&mutex_lista_blocked_suspended);
+
+			pthread_mutex_lock(&mutex_lista_ready_suspended);
+			list_add(LISTA_READY_SUSPENDED, pcb);
+			pthread_mutex_unlock(&mutex_lista_ready_suspended);
+
+			sem_post(&sem_algoritmo_planificador_largo_plazo);
+
+			//TEST
+			pthread_mutex_lock(&mutex_lista_blocked_suspended);
+			printf("Tamanio blocked suspended: %d\n", list_size(LISTA_BLOCKED_SUSPENDED));
+			pthread_mutex_unlock(&mutex_lista_blocked_suspended);
+			//FIN TEST
+
+			//TEST
+			pthread_mutex_lock(&mutex_lista_ready_suspended);
+			PCB* carpinchoTest = (PCB*) list_get(LISTA_READY_SUSPENDED, 0);
+			printf("PID carpincho en ready suspended: %d\n", carpinchoTest->PID);
+			pthread_mutex_unlock(&mutex_lista_ready_suspended);
+			//FIN TEST
+		}
+
+	} else {
+		semaforo->value += 1;
+	}
+	pthread_mutex_unlock(&mutex_lista_semaforos_mate);
+*/
