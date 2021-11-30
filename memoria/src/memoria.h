@@ -27,6 +27,7 @@ typedef struct {
 	char* alg_reemplazo_tlb;
 	int   retardo_acierto_tlb;
 	int   retardo_fallo_tlb;
+	int   kernel_existe;
 }t_memoria_config;
 
 typedef struct {
@@ -51,16 +52,15 @@ typedef struct {
 	bool ocupado;
 }t_frame;
 
-/*typedef struct{
-	uint32_t prev_alloc;
-	uint32_t next_alloc;
-	uint8_t  is_free;
-}__attribute__((packed))heap_metadata;*/
-
 typedef struct{
 	int direc_logica;
 	bool flag_ultimo_alloc;
 }t_alloc_disponible;
+
+typedef struct {
+	int cliente;
+	int pid;
+}t_pid_cliente;
 
 typedef enum {
 	MATE_FREE_FAULT  = -5,
@@ -71,12 +71,14 @@ typedef enum {
 // VARIABLES GLOBALES
 
 int SERVIDOR_MEMORIA;
+int PID_GLOBAL;
 t_memoria_config CONFIG;
 t_log* LOGGER;
 
 //// ---- estructuras administrativas
 t_list* TABLAS_DE_PAGINAS;  // Lista de t_tabla_pagina's
 t_list* FRAMES_MEMORIA;     // Lista de t_frame's
+t_list* PIDS_CLIENTE; 		// Lista de t_pid_conexion
 
 int CONEXION_SWAP;
 int MAX_FRAMES_SWAP;
@@ -89,6 +91,7 @@ void* MEMORIA_PRINCIPAL;
 pthread_mutex_t mutex_frames;
 pthread_mutex_t mutex_tablas_dp;
 pthread_mutex_t mutex_swamp;
+pthread_mutex_t mutex_PID;
 
 
 // FUNCIONES
@@ -103,7 +106,7 @@ void atender_carpinchos(int cliente);
 void coordinador_multihilo();
 
 //// ---- funciones principales
-int  memalloc(int pid,int size);
+int  memalloc(int pid,int size, int conexion);
 int  memfree(int pid,int pos_alloc);
 int  memread(int pid,int dir_logica , void* destination, int size);
 int  memwrite(int pid, void* contenido, int dir_logica, int size);
@@ -126,7 +129,7 @@ int solicitar_frame_en_ppal(int pid);
 //// ---- funciones algoritmos de reemplazo
 int ejecutar_algoritmo_reemplazo(int pid);
 int reemplazar_con_LRU(int pid);
-int reemplazar_con_CLOCK(int pid);
+int reemplazar_con_CLOCK_M(int pid);
 
 //// ---- funciones para listas administrativas
 bool            hay_frames_libres_mp(int frames_necesarios);
@@ -134,6 +137,7 @@ t_list*         paginas_en_mp();
 t_tabla_pagina* tabla_por_pid(int pid);
 t_pagina*       pagina_por_id(int pid, int id);
 t_list*         frames_libres_del_proceso(int pid);
+int				pid_por_conexion(int cliente);
 
 //// ---- funciones de interaccion con SWAMP
 int   solicitar_marcos_max_swap();
@@ -148,12 +152,12 @@ void eliminar_proceso_swap(int pid);
 //// ---- funciones de estado
 bool esta_libre_frame(t_frame* frame);
 bool esta_libre_y_desasignado(t_frame* frame);
+int  no_esta_lockeada(t_pagina* pag);
 void lockear(t_pagina* pag);
 void unlockear(t_pagina* pag);
 void set_modificado(t_pagina* pag);
 int  esta_en_mp(t_pagina* pag);
 int  esta_en_swap(t_pagina* pag);
-int  no_lock(t_pagina* pag);
 
 //// ---- funciones signal
 void signal_metricas();

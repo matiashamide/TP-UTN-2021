@@ -52,8 +52,6 @@ typedef struct{
 	uint8_t  is_free;
 }__attribute__((packed))heap_metadata;
 
-
-
 typedef struct {
 	uint32_t size;
 	void* stream;

@@ -423,36 +423,114 @@ int mate_call_io(mate_instance *lib_ref, mate_io_resource io, void *msg)
 
 mate_pointer mate_memalloc(mate_instance *lib_ref, int size)
 {
-  ((mate_inner_structure *)lib_ref->group_info)->memory = malloc(size);
-  return 0;
+  	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+  	paquete->codigo_operacion = MEMALLOC;
+  	paquete->buffer = malloc(sizeof(t_buffer));
+  	paquete->buffer->size = sizeof(uint32_t);
+  	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+  	memcpy(paquete->buffer->stream, &size, sizeof(unsigned int));
+
+  	int bytes;
+
+  	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+  	int dir_logica;
+
+  	send(((mate_inner_structure *)lib_ref->group_info)->socket_conexion, a_enviar, bytes, 0);
+  	recv(((mate_inner_structure *)lib_ref->group_info)->socket_conexion , &dir_logica , sizeof(uint32_t) , 0);
+
+  	free(a_enviar);
+  	eliminar_paquete(paquete);
+
+  	if(dir_logica < 0){
+  		return NULL;
+  	}
+
+  return dir_logica;
 }
 
 int mate_memfree(mate_instance *lib_ref, mate_pointer addr)
 {
-  if (addr != 0)
-  {
-    return -1;
-  }
-  free(((mate_inner_structure *)lib_ref->group_info)->memory);
-  return 0;
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = MEMFREE;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = sizeof(int32_t);
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	memcpy(paquete->buffer->stream, &addr, sizeof(uint32_t));
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	MATE_RETURNS retorno;
+
+	send(((mate_inner_structure *)lib_ref->group_info)->socket_conexion, a_enviar, bytes, 0);
+	recv(((mate_inner_structure *)lib_ref->group_info)->socket_conexion , &retorno , sizeof(uint32_t) , 0);
+
+	free(a_enviar);
+	eliminar_paquete(paquete);
+
+	return retorno;
 }
 
 int mate_memread(mate_instance *lib_ref, mate_pointer origin, void *dest, int size)
 {
-  if (origin != 0)
-  {
-    return -1;
-  }
-  memcpy(dest, ((mate_inner_structure *)lib_ref->group_info)->memory, size);
-  return 0;
+
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = MEMREAD;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = sizeof(int32_t) * 2;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	memcpy(paquete->buffer->stream, &origin, sizeof(uint32_t));
+	memcpy(paquete->buffer->stream + sizeof(uint32_t), &size, sizeof(uint32_t));
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	MATE_RETURNS retorno;
+
+	send(((mate_inner_structure *)lib_ref->group_info)->socket_conexion, a_enviar, bytes, 0);
+	recv(((mate_inner_structure *)lib_ref->group_info)->socket_conexion , &retorno , sizeof(uint32_t) , 0);
+	recv(((mate_inner_structure *)lib_ref->group_info)->socket_conexion , dest , size , 0);
+
+	free(a_enviar);
+	eliminar_paquete(paquete);
+
+  return retorno;
 }
 
 int mate_memwrite(mate_instance *lib_ref, void *origin, mate_pointer dest, int size)
 {
-  if (dest != 0)
-  {
-    return -1;
-  }
-  memcpy(((mate_inner_structure *)lib_ref->group_info)->memory, origin, size);
-  return 0;
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = MEMWRITE;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = sizeof(int32_t) * 2 + size;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+
+	memcpy(paquete->buffer->stream, &dest, sizeof(uint32_t));
+	memcpy(paquete->buffer->stream + sizeof(uint32_t), &size, sizeof(uint32_t));
+	memcpy(paquete->buffer->stream + sizeof(uint32_t)*2, origin, size);
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	MATE_RETURNS retorno;
+
+	send(((mate_inner_structure *)lib_ref->group_info)->socket_conexion, a_enviar, bytes, 0);
+	recv(((mate_inner_structure *)lib_ref->group_info)->socket_conexion , &retorno , sizeof(uint32_t) , 0);
+
+	free(a_enviar);
+	eliminar_paquete(paquete);
+
+	return retorno;
 }
