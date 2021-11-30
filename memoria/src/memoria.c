@@ -6,7 +6,22 @@ int main(void) {
 	log_info(LOGGER, "Inicializa memoria");
 	log_info(LOGGER, "Ya me conecte con swamp y los marcos max son: %i \n", MAX_FRAMES_SWAP);
 
-	coordinador_multihilo();
+	//coordinador_multihilo();
+
+
+	int a3 = memalloc(0, 10,1);
+	int a4 = memalloc(0, 12,1);
+	int a5 = memalloc(0, 10,1);
+	int a6 = memalloc(0, 12,1);
+	int a7 = memalloc(0, 12,1);
+	int a8 = memalloc(0, 40,1);
+
+
+	memfree(0,a3);
+	memfree(0,a4);
+
+
+
 
 	return EXIT_SUCCESS;
 }
@@ -469,17 +484,17 @@ t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 
 
 	int pag_en_donde_empieza_el_header = floor(((double)dir_logica - sizeof(heap_metadata)) / (double)CONFIG.tamanio_pagina);
-	int offset_header = ((dir_logica -sizeof(heap_metadata)) /CONFIG.tamanio_pagina - pag_en_donde_empieza_el_header) * CONFIG.tamanio_pagina;
+	int offset_header = (double) ((dir_logica -sizeof(heap_metadata)) / (double)CONFIG.tamanio_pagina) * CONFIG.tamanio_pagina;
 	heap_metadata* header_a_liberar = desserializar_header(pid , pag_en_donde_empieza_el_header , offset_header );
 
 	if(header_a_liberar->next_alloc == NULL){
 			log_info(LOGGER,"Error: no se puede liberar esta posicion.");
 			free(header_a_liberar);
-			return -1;
+			return MATE_FREE_FAULT;
 	}
 
 	int pag_en_donde_empieza_el_header_siguiente = floor((double)(header_a_liberar->next_alloc) / (double)CONFIG.tamanio_pagina);
-	int offset_header_siguiente = (header_a_liberar->next_alloc/CONFIG.tamanio_pagina - pag_en_donde_empieza_el_header_siguiente) * CONFIG.tamanio_pagina;
+	int offset_header_siguiente = (double) ((header_a_liberar->next_alloc) / (double)CONFIG.tamanio_pagina) * CONFIG.tamanio_pagina;
 	heap_metadata* header_siguiente = desserializar_header(pid , pag_en_donde_empieza_el_header_siguiente , offset_header_siguiente);
 
 	header_a_liberar->is_free = true;
