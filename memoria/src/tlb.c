@@ -41,14 +41,14 @@ int buscar_pag_tlb(int pid, int pag) {
 	if (entrada != NULL) {
 		//TLB HIT
 		registrar_evento(pid, 1);
-		log_info(LOGGER , "TLB HIT: PAG: %i   PID: %i   FRAME: %i \n", entrada->pag, entrada->pid, entrada->frame);
+		log_info(LOGGER , "[TLB HIT] PID: %i  NRO_PAG: %i  FRAME: %i \n", entrada->pid, entrada->pag, entrada->frame);
 		entrada->ultimo_uso = obtener_tiempo();
 		return entrada->frame;
 	}
 
 	//TLB MISS
 	registrar_evento(pid, 0);
-	//log_info(LOGGER, "TLB MISS: ", "pag %i" , pag ,"pid %i", pid);
+	log_info(LOGGER, "[TLB MISS] PID: %i NRO_PAG: %i", pid, pag);
 	return -1;
 }
 
@@ -78,13 +78,11 @@ void reemplazar_FIFO(int pid, int pag, int frame){
 	entrada_nueva->ultimo_uso = -1;
 
 	pthread_mutex_lock(&mutexTLB);
-	t_entrada_tlb* victima = (t_entrada_tlb*)list_get(TLB , 0);
-	list_remove_and_destroy_element(TLB , 0  , free);
+	t_entrada_tlb* victima = (t_entrada_tlb*)list_get(TLB, 0);
+	log_info(LOGGER, "|| TLB FIFO || [VICTIMA] PID: %i | NRO_PAG: %i | FRAME: %i ||| [NUEVA ENTRADA] PID: %i | NRO_PAG: %i | FRAME: %i | \n", victima->pid, victima->pag, victima->frame, entrada_nueva->pid, entrada_nueva->pag, entrada_nueva->frame);
+	list_remove_and_destroy_element(TLB, 0, free);
 	list_add_in_index(TLB , CONFIG.cant_entradas_tlb -1, entrada_nueva);
 	pthread_mutex_unlock(&mutexTLB);
-
-	log_info(LOGGER, "TLB FIFO || VICTIMA: %i PID: %i  NRO_PAG: %i  FRAME: %i - NUEVA ENTRADA: PID: %i  NRO_PAG: %i  FRAME: %i", victima->pid, victima->pag, victima->frame, entrada_nueva->pid, entrada_nueva->pag, entrada_nueva->frame);
-
 }
 
 void reemplazar_LRU(int pid, int pag, int frame){
@@ -102,13 +100,10 @@ void reemplazar_LRU(int pid, int pag, int frame){
 	pthread_mutex_lock(&mutexTLB);
 
 	list_sort(TLB, (void*) masVieja);
-	t_entrada_tlb* victima = (t_entrada_tlb*)list_get(TLB , 0);
+	t_entrada_tlb* victima = (t_entrada_tlb*)list_get(TLB, 0);
+	log_info(LOGGER, "|| TLB LRU || [VICTIMA] PID: %i | NRO_PAG: %i | FRAME: %i ||| [NUEVA ENTRADA] PID: %i | NRO_PAG: %i | FRAME: %i | \n", victima->pid, victima->pag, victima->frame, entrada_nueva->pid, entrada_nueva->pag, entrada_nueva->frame);
 	list_replace_and_destroy_element(TLB, 0, entrada_nueva, free);
-
 	pthread_mutex_unlock(&mutexTLB);
-
-	log_info(LOGGER, "TLB LRU || VICTIMA: %i PID: %i  NRO_PAG: %i  FRAME: %i - NUEVA ENTRADA: PID: %i  NRO_PAG: %i  FRAME: %i", victima->pid, victima->pag, victima->frame, entrada_nueva->pid, entrada_nueva->pag, entrada_nueva->frame);
-
 }
 
 
