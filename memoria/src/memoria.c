@@ -201,6 +201,7 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
     config.alg_reemplazo_tlb   = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_TLB");
     config.retardo_acierto_tlb = config_get_int_value   (memoria_config, "RETARDO_ACIERTO_TLB");
     config.retardo_fallo_tlb   = config_get_int_value   (memoria_config, "RETARDO_FALLO_TLB");
+    config.kernel_existe	   = config_get_int_value   (memoria_config, "KERNEL_EXISTE");
 
     return config;
 }
@@ -215,6 +216,8 @@ void coordinador_multihilo(){
 
 		log_info(LOGGER, "Se conecto un cliente %i\n", socket);
 
+		//crear lista por cada cliente si el kernel no existe yq ue guarde la conexion
+
 		pthread_t* hilo_atender_carpincho = malloc(sizeof(pthread_t));
 		pthread_create(hilo_atender_carpincho, NULL, (void*)atender_carpinchos, (void*)socket);
 		pthread_detach(*hilo_atender_carpincho);
@@ -224,52 +227,98 @@ void coordinador_multihilo(){
 void atender_carpinchos(int cliente) {
 
 	peticion_carpincho operacion = recibir_operacion(cliente);
+	int existe_kernel = CONFIG.kernel_existe;
 
 	int size_paquete = recibir_entero(cliente);
 	int pid, retorno, dir_logica;
+	int size_contenido;
+
 	switch (operacion) {
 
 	case MEMALLOC:;
-		log_info(LOGGER, "el cliente %i solicito alocar memoria" , cliente);
-		int size = recibir_entero(cliente);
-		pid = recibir_entero(cliente);
 
-		retorno = memalloc(size , pid);
+	if( existe_kernel){
+		pid = recibir_entero(cliente);
+	}else {
+		//crear pid a mano y memalloquear
+	}
+
+	int size = recibir_entero(cliente);
+	log_info(LOGGER, "el cliente %i solicito alocar memoria de %i bytes" , cliente , size );
+
+	retorno = memalloc(size , pid);
+	send(cliente , &retorno , sizeof(uint32_t) , 0);
 
 	break;
 
 	case MEMREAD:;
-		log_info(LOGGER, "el cliente %i solicito leer memoria" , cliente);
-		pid = recibir_entero(cliente);
-		dir_logica = recibir_entero(cliente);
-		void* dest = malloc(size_paquete - 2* sizeof(int));
-		recv(cliente , dest , size_paquete - 2* sizeof(int), 0);
 
-		retorno = memread( pid, dir_logica ,  dest , size_paquete - 2* sizeof(uint32_t));
-		if(retorno != -1){
-			send(cliente , dest , size_paquete - 2*sizeof(uint32_t) , 0);
-			return;
+		if(existe_kernel){
+			pid = recibir_entero(cliente);
+		}else {
+			//crear pid a mano
 		}
+
+		log_info(LOGGER, "el cliente %i solicito leer memoria" , cliente);
+
+		dir_logica = recibir_entero(cliente);
+		size_contenido = recibir_entero(cliente);
+		void* dest = malloc(size_contenido);
+
+		retorno = memread( pid, dir_logica ,  dest , size_contenido);
+
+		if(retorno == -1){
+			retorno = -6;
+		}
+
+		send(cliente , &retorno , sizeof(uint32_t) , 0);
+		send(cliente , dest , size_contenido , 0);
+		free(dest);
 
 	break;
 
 	case MEMFREE:;
 		log_info(LOGGER, "el cliente %i solicito liberar memoria" , cliente);
-		pid = recibir_entero(cliente);
+
+		if(existe_kernel){
+			pid = recibir_entero(cliente);
+		}else {
+			//crear pid a mano
+		}
+
 		dir_logica = recibir_entero(cliente);
 
 		retorno = memfree(pid , dir_logica);
+
+		if(retorno == -1){
+			retorno = -5;
+		}
+
+		send(cliente , &retorno , sizeof(uint32_t) , 0);
 
 	break;
 
 	case MEMWRITE:;
 		log_info(LOGGER, "el cliente %i solicito escribir memoria" , cliente);
-		pid = recibir_entero(cliente);
-		dir_logica = recibir_entero(cliente);
-		void* contenido = malloc(size_paquete - 2 * sizeof(int));
-		recv(cliente , contenido , size_paquete - 2* sizeof(int),0);
 
-		retorno = memwrite(pid , dir_logica , contenido , size_paquete - sizeof(int) * 2);
+		if(existe_kernel){
+			pid = recibir_entero(cliente);
+		}
+
+		dir_logica = recibir_entero(cliente);
+		size_contenido = recibir_entero(cliente);
+		void* contenido = malloc(size_contenido);
+		recv(cliente , contenido , size_contenido,0);
+
+		retorno = memwrite(pid , contenido ,dir_logica , size_paquete - sizeof(int) * 2);
+
+		if(retorno == -1){
+			retorno = -7;
+		}
+
+		send(cliente , &retorno , sizeof(uint32_t) , 0);
+		free (contenido);
+
 	break;
 
 	case MEMSUSP:;
@@ -303,8 +352,6 @@ void atender_carpinchos(int cliente) {
 	break;
 
 	}
-
-	send(cliente, &retorno, sizeof(uint32_t) , 0);
 
 }
 
