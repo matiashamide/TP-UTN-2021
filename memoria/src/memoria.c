@@ -11,13 +11,59 @@ int main(void) {
 	 // PRUEBA_ASIGNACION //
 
 	//carpincho 0
-	int alloc00 = memalloc(0, 23);
-	int alloc10 = memalloc(0, 23);
-	int alloc110 = memalloc(1, 23);
-	int alloc20 = memalloc(0, 23);
-	int alloc111 = memalloc(1, 23);
-	int alloc30 = memalloc(0, 10);
+	/*
+	char* carpincho = "CARPINCHO";
+	void* c1 = malloc(23);
+	memcpy(c1, carpincho, 23);
+	void* leido = malloc(23);
 
+	//char* chau = "CHAU";
+	//void* c2 = malloc(5);
+	//memcpy(c2, chau, 5);
+
+	int a1 = memalloc(0, 10);
+	//int a2 = memalloc(0, 12);
+	int rta = memwrite(0,c1,a1,23);
+	int b1 = memalloc(1,10);
+    */
+
+	int a3 = memalloc(0, 10);
+	int a4 = memalloc(0, 12);
+	int a5 = memalloc(0, 10);
+	int a6 = memalloc(0, 12);
+	int a7 = memalloc(0, 12);
+	int a8 = memalloc(0, 40);
+
+	/*
+	memwrite(0,c1,a1,10);
+	memwrite(0,c1,a2,10);
+	memwrite(0,c1,a3,10);
+	memwrite(0,c1,a4,10);
+	memwrite(0,c1,a5,10);
+	memwrite(0,c1,a6,10);
+	memwrite(0,c1,a7,10);
+	memwrite(0,c1,a8,10);
+
+	int rtamemread = memread(0,a1,leido,23);
+	fflush(stdout);
+	printf((char*) leido, rtamemread);
+	fflush(stdout);
+
+	memread(0,a2,leido,10);
+	fflush(stdout);
+	printf((char*) leido);
+	fflush(stdout);
+
+	memread(0,a5,leido,10);
+	fflush(stdout);
+	printf((char*) leido);
+	fflush(stdout);
+
+	memread(0,a6,leido,10);
+	fflush(stdout);
+	printf((char*) leido);
+	fflush(stdout);
+*/
 	/*
 	char* hola = "patopatom";
 	void* contenido = malloc(10);
@@ -397,7 +443,6 @@ int memalloc(int pid, int size){
 			heap_metadata* ultimo_header = desserializar_header(pid,nro_pagina, offset);
 			ultimo_header->is_free       = false;
 			ultimo_header->next_alloc    = alloc->direc_logica + sizeof(heap_metadata) + size;
-
 
 			//Creamos nuevo header
 			int nro_pagina_nueva, offset_nuevo;
@@ -792,7 +837,7 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 	int nro_pagina = 0, offset = 0;
 
 	nro_pagina = floor((double)posicion_heap_actual / (double)CONFIG.tamanio_pagina);
-	offset = posicion_heap_actual - CONFIG.tamanio_pagina * nro_pagina;
+	offset     = posicion_heap_actual - CONFIG.tamanio_pagina * nro_pagina;
 
 	t_alloc_disponible* alloc = malloc(sizeof(t_alloc_disponible));
 
@@ -806,7 +851,7 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 
 		if(header->next_alloc == NULL) {
 
-			int tamanio_total = list_size(paginas_proceso) * CONFIG.tamanio_pagina;
+			int tamanio_total      = list_size(paginas_proceso) * CONFIG.tamanio_pagina;
 			int tamanio_disponible = tamanio_total - (int)posicion_heap_actual - sizeof(heap_metadata) * 2;
 
 			if (tamanio_disponible > size) {
@@ -825,9 +870,9 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 				guardar_header(pid, nro_pagina, offset, header);
 				guardar_header(pid, nro_pagina, offset + size + sizeof(heap_metadata), header_nuevo);
 
-
 				alloc->direc_logica      = header_nuevo->prev_alloc;
 				alloc->flag_ultimo_alloc = 0;
+
 				free(header_nuevo);
 				free(header);
 				return alloc;
@@ -931,7 +976,12 @@ void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 	t_pagina* pagina        = (t_pagina*)list_get(paginas_proceso, nro_pagina);
 
-	int diferencia = CONFIG.tamanio_pagina - offset - sizeof(heap_metadata);
+	int diferencia;
+	if (offset > CONFIG.tamanio_pagina) {
+		diferencia = offset - CONFIG.tamanio_pagina;
+	} else {
+		diferencia = CONFIG.tamanio_pagina - offset - sizeof(heap_metadata);
+	}
 
 	lockear(pagina);
 	int frame = buscar_pagina(pid, nro_pagina);
@@ -941,16 +991,21 @@ void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * frame + offset, header, sizeof(heap_metadata));
 
 	} else {
-		t_pagina* pagina_sig    = (t_pagina*)list_get(paginas_proceso, nro_pagina+1);
+		t_pagina* pagina_sig = (t_pagina*)list_get(paginas_proceso, nro_pagina + 1);
+		void* header_buffer = malloc(sizeof(heap_metadata));
+		memcpy(header_buffer, header, sizeof(heap_metadata));
 
 		diferencia = abs(diferencia);
+
 		lockear(pagina_sig);
-		int frame_sig = buscar_pagina(pid, nro_pagina +1);
-		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * frame + offset, header, sizeof(heap_metadata) - diferencia);
-		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * frame_sig , header + sizeof(heap_metadata) - diferencia, diferencia);
+		int frame_sig = buscar_pagina(pid, nro_pagina + 1);
+
+		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * frame + offset, header_buffer, sizeof(heap_metadata) - diferencia);
+		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * frame_sig , header_buffer + (sizeof(heap_metadata) - diferencia), diferencia);
+
 		set_modificado(pagina_sig);
 		unlockear(pagina_sig);
-
+		free(header_buffer);
 	}
 
 	set_modificado(pagina);
@@ -958,27 +1013,35 @@ void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 }
 
 heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
+
+	int frame_pagina;
 	int offset = 0;
+
 	heap_metadata* header = malloc(sizeof(heap_metadata));
-	void* buffer = malloc(sizeof(heap_metadata));
+	void* buffer          = malloc(sizeof(heap_metadata));
 
 	t_list* pags_proceso = tabla_por_pid(pid)->paginas;
 	t_pagina* pag = (t_pagina*)list_get(pags_proceso, nro_pag);
 
-	int frame_pagina = buscar_pagina(pid, nro_pag);
+	frame_pagina = buscar_pagina(pid, nro_pag);
 
 	lockear(pag);
-	//FIXME aca con primero 23 y dsps 10 me da -9 pero en verdadd entra entero en la pag
+
 	int diferencia = CONFIG.tamanio_pagina - offset_header - sizeof(heap_metadata);
 	if (diferencia >= 0) {
 		memcpy(buffer, MEMORIA_PRINCIPAL + frame_pagina * CONFIG.tamanio_pagina + offset_header, sizeof(heap_metadata));
 	} else {
+
 		int frame_pag_siguiente = buscar_pagina(pid, nro_pag + 1);
 		t_pagina* pag_sig = (t_pagina*)list_get(pags_proceso, nro_pag + 1);
+
 		lockear(pag_sig);
+
 		diferencia = abs(diferencia);
+
 		memcpy(buffer, MEMORIA_PRINCIPAL + frame_pagina * CONFIG.tamanio_pagina + offset_header, sizeof(heap_metadata) - diferencia);
-		memcpy(buffer+sizeof(heap_metadata) - diferencia, MEMORIA_PRINCIPAL + frame_pag_siguiente * CONFIG.tamanio_pagina, diferencia);
+		memcpy(buffer + (sizeof(heap_metadata) - diferencia), MEMORIA_PRINCIPAL + frame_pag_siguiente * CONFIG.tamanio_pagina, diferencia);
+
 		unlockear(pag_sig);
 	}
 
@@ -991,7 +1054,6 @@ heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
 	unlockear(pag);
 
 	free(buffer);
-
 	return header;
 }
 

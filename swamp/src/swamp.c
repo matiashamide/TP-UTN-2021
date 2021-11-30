@@ -163,7 +163,7 @@ void atender_peticiones(int cliente){
 		frame   = frame_de_pagina(pid, nro_pagina);
 		archivo = obtener_archivo_con_id(frame->aid);
 
-		addr = mmap(NULL, CONFIG.tamanio_swamp, PROT_READ | PROT_WRITE, MAP_SHARED, archivo->fd, 0);
+		addr = mmap(NULL, CONFIG.tamanio_pag, PROT_READ | PROT_WRITE, MAP_SHARED, archivo->fd, 0);
 
 		if (addr == MAP_FAILED) {
 			perror("Error mapping \n");
@@ -187,7 +187,7 @@ void atender_peticiones(int cliente){
 		frame   = frame_de_pagina(pid, nro_pagina);
 		archivo = obtener_archivo_con_id(frame->aid);
 
-		addr = mmap(NULL, CONFIG.tamanio_swamp, PROT_READ | PROT_WRITE, MAP_SHARED, archivo->fd, 0);
+		addr = mmap(NULL, CONFIG.tamanio_pag, PROT_READ | PROT_WRITE, MAP_SHARED, archivo->fd, 0);
 
 		if (addr == MAP_FAILED) {
 			perror("Error mapping \n");
