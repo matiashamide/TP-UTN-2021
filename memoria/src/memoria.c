@@ -4,7 +4,7 @@ int main(void) {
 
 	init_memoria();
 	log_info(LOGGER, "Inicializa memoria");
-	log_info(LOGGER, "Ya me conecte con swamp y los marcos max son: %i \n", MAX_MARCOS_SWAP);
+	log_info(LOGGER, "Ya me conecte con swamp y los marcos max son: %i \n", MAX_FRAMES_SWAP);
 
 	//------PRUEBAS--------//
 
@@ -138,7 +138,7 @@ void init_memoria() {
 	}
 
 	CONEXION_SWAP = crear_conexion(CONFIG.ip_swap, CONFIG.puerto_swap);
-	MAX_MARCOS_SWAP = solicitar_marcos_max_swap();
+	MAX_FRAMES_SWAP = solicitar_marcos_max_swap();
 
 	//Senales
 	signal(SIGINT,  &signal_metricas);
@@ -153,7 +153,7 @@ void iniciar_paginacion() {
 
 	int cant_frames_ppal = CONFIG.tamanio_memoria / CONFIG.tamanio_pagina;
 
-	log_info(LOGGER, "Tengo %d marcos de %d bytes en memoria principal", cant_frames_ppal, CONFIG.tamanio_pagina);
+	log_info(LOGGER, "Tengo %d frames de %d bytes en memoria principal", cant_frames_ppal, CONFIG.tamanio_pagina);
 
 	//Creamos lista de tablas de paginas
 	TABLAS_DE_PAGINAS = list_create();
@@ -230,7 +230,7 @@ void atender_carpinchos(int cliente) {
 	switch (operacion) {
 
 	case MEMALLOC:;
-		log_info(LOGGER, "el cliente %i solicito alocar memoria" , cliente);
+		log_info(LOGGER, "MEMALLOC: El cliente %i solicito alocar memoria." , cliente);
 		int size = recibir_entero(cliente);
 		pid = recibir_entero(cliente);
 
@@ -239,7 +239,7 @@ void atender_carpinchos(int cliente) {
 	break;
 
 	case MEMREAD:;
-		log_info(LOGGER, "el cliente %i solicito leer memoria" , cliente);
+		log_info(LOGGER, "MEMREAD: El cliente %i solicito leer memoria." , cliente);
 		pid = recibir_entero(cliente);
 		dir_logica = recibir_entero(cliente);
 		void* dest = malloc(size_paquete - 2* sizeof(int));
@@ -254,7 +254,7 @@ void atender_carpinchos(int cliente) {
 	break;
 
 	case MEMFREE:;
-		log_info(LOGGER, "el cliente %i solicito liberar memoria" , cliente);
+		log_info(LOGGER, "MEMFREE: El cliente %i solicito liberar memoria." , cliente);
 		pid = recibir_entero(cliente);
 		dir_logica = recibir_entero(cliente);
 
@@ -263,7 +263,7 @@ void atender_carpinchos(int cliente) {
 	break;
 
 	case MEMWRITE:;
-		log_info(LOGGER, "el cliente %i solicito escribir memoria" , cliente);
+		log_info(LOGGER, "MEMWRITE: El cliente %i solicito escribir memoria." , cliente);
 		pid = recibir_entero(cliente);
 		dir_logica = recibir_entero(cliente);
 		void* contenido = malloc(size_paquete - 2 * sizeof(int));
@@ -273,19 +273,19 @@ void atender_carpinchos(int cliente) {
 	break;
 
 	case MEMSUSP:;
-		log_info(LOGGER, "el cliente %i solicito suspender el proceso", cliente);
+		log_info(LOGGER, "MEMSUSP: El cliente %i solicito suspender el proceso.", cliente);
 		pid = recibir_entero(cliente);
 		suspender_proceso(pid);
 	break;
 
 	case MEMDESSUSP:;
-			log_info(LOGGER, "el cliente %i solicito dessuspender el proceso", cliente);
+			log_info(LOGGER, "MEMDESSUSP: El cliente %i solicito dessuspender el proceso.", cliente);
 			pid = recibir_entero(cliente);
 			dessuspender_proceso(pid);
 		break;
 
 	case MEMKILL:;
-		log_info(LOGGER, "el cliente %i solicito matar el proceso", cliente);
+		log_info(LOGGER, "MEMKILL: El cliente %i solicito matar el proceso.", cliente);
 		pid = recibir_entero(cliente);
 
 		eliminar_proceso(pid);
@@ -299,7 +299,7 @@ void atender_carpinchos(int cliente) {
 
 	//Faltan algunos cases;
 	default:;
-	log_info(LOGGER, "el cliente %i solicito algo no reconocido como solicitud" , cliente);
+	log_info(LOGGER, "No se entendio la solicitud del cliente %i." , cliente);
 	break;
 
 	}
@@ -317,13 +317,11 @@ int memalloc(int pid, int size){
 	//[CASO A]: Llega un proceso nuevo
 	if (tabla_por_pid(pid) == NULL){
 
-		log_info(LOGGER, "el proceso %i no existe, inicializandolo... " , pid);
+		log_info(LOGGER, "Inicializando el proceso %i..." , pid);
 
 
 		if (reservar_espacio_en_swap(pid, paginas_necesarias) == -1) {
-			printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
-			log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
-
+			log_info(LOGGER, "Error: no se pudo asginar %i bytes al proceso %i.", size, pid);
 			return -1;
 		}
 
@@ -331,8 +329,7 @@ int memalloc(int pid, int size){
 
 			pthread_mutex_lock(&mutex_frames);
 			if (!hay_frames_libres_mp(CONFIG.marcos_max)) {
-				printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
-				log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
+				log_info(LOGGER, "Error: se supero el nivel de multiprogramacion, no hay frames libes en MP.", size, pid);
 
 				return -1;
 			}
@@ -394,12 +391,12 @@ int memalloc(int pid, int size){
 
 		dir_logica = header_sig->prev_alloc;
 		free(header);
-		log_info(LOGGER, "El proceso %i fue inicializado " , pid);
+		log_info(LOGGER, "El proceso %i fue inicializado correctamente." , pid);
 
 	} else {
 
 	//[CASO B]: El proceso existe en memoria
-		log_info(LOGGER, "El proceso %i ya existe en memoria, alocando memoria para el mismo ", pid);
+		log_info(LOGGER, "Alocando memoria para el proceso %i.", pid);
 		t_alloc_disponible* alloc = obtener_alloc_disponible(pid, size, 0);
 
 		if(alloc->flag_ultimo_alloc){
@@ -411,11 +408,8 @@ int memalloc(int pid, int size){
 
 			if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
 
-				if (list_size(tabla_por_pid(pid)->paginas) + cantidad_paginas >= MAX_MARCOS_SWAP){
-
-					printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
-					log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
-
+				if (list_size(tabla_por_pid(pid)->paginas) + cantidad_paginas >= MAX_FRAMES_SWAP){
+					log_info(LOGGER, "Error: el proceso alcanzo su cantidad maxima de frames.", size, pid);
 					return -1;
 
 				} else {
@@ -427,10 +421,7 @@ int memalloc(int pid, int size){
 			if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
 
 				if (reservar_espacio_en_swap(pid, cantidad_paginas) == -1 ) {
-
-					printf("No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima)", size, pid);
-					log_info(LOGGER, "No se puede asginar %i bytes cantidad de memoria al proceso %i (cant maxima) ", size, pid);
-
+					log_info(LOGGER, "Error: no se pueden alocar %i bytes de memoria al proceso %i ya que no hay espacio suficiente en swap.", size, pid);
 					return -1;
 				}
 			}
@@ -487,7 +478,7 @@ int memalloc(int pid, int size){
 		dir_logica = alloc->direc_logica;
 	}
 
-	log_info(LOGGER, "Se le asignaron %i bytes al proceso %i, correctamente ", size, pid);
+	log_info(LOGGER, "Se le asignaron correctamente %i bytes al proceso %i.", size, pid);
 	return dir_logica + sizeof(heap_metadata);
 }
 
@@ -505,7 +496,7 @@ t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 	heap_metadata* header_a_liberar = desserializar_header(pid , pag_en_donde_empieza_el_header , offset_header );
 
 	if(header_a_liberar->next_alloc == NULL){
-			log_info(LOGGER,"no se puede liberar esta posicion, ultimo header del proceso siempre esta libre");
+			log_info(LOGGER,"Error: no se puede liberar esta posicion.");
 			free(header_a_liberar);
 			return -1;
 	}
@@ -783,7 +774,7 @@ void dessuspender_proceso(int pid) {
 			int frame = solicitar_frame_en_ppal(pid);
 
 			if(frame == -1){
-				log_info(LOGGER, "Fallo la dessuspencion del proceso %i", pid);
+				log_info(LOGGER, "Error: fallo la dessuspension del proceso %i", pid);
 				return;
 			}
 		}
@@ -953,24 +944,6 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 	return obtener_alloc_disponible(pid, size, header->next_alloc);
 }
 
-int obtener_pos_ultimo_alloc(int pid) {
-
-	int pos_ult_alloc = 0;
-
-	heap_metadata* header = malloc(sizeof(heap_metadata));
-	header->next_alloc = 0;
-
-	while(header->next_alloc != NULL) {
-
-		header = desserializar_header(pid , floor((double)pos_ult_alloc / (double)CONFIG.tamanio_pagina ), header->next_alloc);
-		pos_ult_alloc = header->next_alloc;
-
-	}
-
-	free(header);
-	return pos_ult_alloc;
-}
-
 void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
@@ -1120,7 +1093,6 @@ int buscar_pagina(int pid, int pag) {
 	t_list* pags_proceso = tabla_por_pid(pid)->paginas;
 	t_pagina* pagina     = pagina_por_id(pid, pag);
 
-	log_info(LOGGER, "buscando frame de memoria de la pag %i del proceso %i ", pag, pid);
 	int frame = -1;
 
 	if (pags_proceso == NULL || pagina == NULL) {
@@ -1132,7 +1104,7 @@ int buscar_pagina(int pid, int pag) {
 	//NO esta en memoria
 	if (!pagina->presencia) {
 
-		log_info(LOGGER, "la pag %i del proceso %i no se encuentra en memoria, PAGE FAULT " , pag, pid);
+		log_info(LOGGER, "PAGE FAULT! La pag %i del proceso %i no se encuentra en memoria.", pag, pid);
 		frame = traer_pagina_a_mp(pagina);
 		actualizar_tlb(pid, pag, frame);
 
@@ -1142,18 +1114,11 @@ int buscar_pagina(int pid, int pag) {
 
 		//TLB miss
 		if (frame == -1) {
-
-			log_info(LOGGER, "la pag %i del proceso %i se encuentra en memoria, PAGE FAULT " , pag, pid);
 			frame = pagina->frame_ppal;
 			actualizar_tlb(pid, pag,frame);
-			sleep((CONFIG.retardo_fallo_tlb)/1000);
-
-		//TLB hit
-		}else {
-
-			sleep((CONFIG.retardo_acierto_tlb)/1000);
-			log_info(LOGGER, "la pag %i del proceso %i se encuentra en la tlb" , pag, pid);
 		}
+
+		sleep((CONFIG.retardo_acierto_tlb)/1000);
 	}
 
 	return frame;
@@ -1212,8 +1177,6 @@ int ejecutar_algoritmo_reemplazo(int pid) {
 	if(string_equals_ignore_case(CONFIG.alg_remp_mmu, "CLOCK-M"))
 		retorno = reemplazar_con_CLOCK(pid);
 
-	log_info(LOGGER, "se ejecuto el algoritmo de reemplazo, para el frame victima %i " , retorno);
-
 	return retorno;
 }
 
@@ -1238,7 +1201,9 @@ int reemplazar_con_LRU(int pid) {
 
 	//COMO REEMPLAZO SEGUN LRU, ELIJO LA PRIMERA QUE ES LA MAS VIEJA
 	t_pagina* pag_reemplazo = list_get(paginas, 0);
-	log_info(LOGGER, "Voy a reemplazar la pagina %d del proceso %d que estaba en el frame %d", pag_reemplazo->id, pag_reemplazo->pid, pag_reemplazo->frame_ppal);
+
+	log_info(LOGGER, "[REEMPLAZO LRU] Saco NRO_PAG %i del PID %i en FRAME %i", pag_reemplazo->id, pag_reemplazo->pid, pag_reemplazo->frame_ppal);
+
 	lockear(pag_reemplazo);
 
 	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
@@ -1287,7 +1252,7 @@ int reemplazar_con_CLOCK(int pid) {
 
 	victima = list_get(paginas_mp, pag_seleccionada);
 
-	log_info(LOGGER, "Voy a reemplazar la pagina %d del proceso %d que estaba en el frame %d", victima->id, victima->pid, victima->frame_ppal);
+	log_info(LOGGER, "[REEMPLAZO CLOCK-M] Saco NRO_PAG %i del PID %i en FRAME %i", victima->id, victima->pid, victima->frame_ppal);
 	lockear(victima);
 
 	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
@@ -1393,7 +1358,7 @@ int solicitar_marcos_max_swap() {
 	eliminar_paquete_swap(paquete);
 
 	if(retorno > 0){
-		log_info(LOGGER, "se inicializo conexion monohilo con swap");
+		log_info(LOGGER, "Se inicializo conexion monohilo con swap");
 	}
 
 	return retorno;
@@ -1497,7 +1462,7 @@ void* traer_de_swap(uint32_t pid, uint32_t nro_pagina) {
 
 void tirar_a_swap(t_pagina* pagina) {
 
-	log_info(LOGGER, "tirando la pagina modificada %i en swap, del proceso ", pagina->id , pagina->pid);
+	log_info(LOGGER, "[MP->SWAMP] Tirando la pagina modificada %i en swap, del proceso ", pagina->id , pagina->pid);
 
 	void* buffer_pag = malloc(CONFIG.tamanio_pagina);
 	memcpy(buffer_pag, MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
@@ -1620,15 +1585,15 @@ void set_modificado(t_pagina* pag){
 //--------------------------------------------------- FUNCIONES SIGNAL ----------------------------------------------------//
 
 void signal_metricas(){
-	log_info(LOGGER, "[MEMORIA]: Recibi la senial de imprimir metricas, imprimiendo\n...");
+	log_info(LOGGER, "[SIGNAL METRICAS]: Recibi la senial de imprimir metricas, imprimiendo\n...");
 	//log_destroy(LOGGER);
 	generar_metricas_tlb();
 }
 void signal_dump(){
-	log_info(LOGGER, "[MEMORIA]: Recibi la senial de generar el dump, generando\n...");
+	log_info(LOGGER, "[SIGNAL DUMP]: Recibi la senial de generar el dump, generando\n...");
 	dumpear_tlb();
 }
 void signal_clean_tlb(){
-	log_info(LOGGER, "[MEMORIA]: Recibi la senial para limpiar TLB, limpiando\n...");
+	log_info(LOGGER, "[SIGNAL CLEAN TLB]: Recibi la senial para limpiar TLB, limpiando\n...");
 	limpiar_tlb();
 }

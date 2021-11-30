@@ -79,7 +79,7 @@ t_list* TABLAS_DE_PAGINAS;  // Lista de t_tabla_pagina's
 t_list* FRAMES_MEMORIA;     // Lista de t_frame's
 
 int CONEXION_SWAP;
-int MAX_MARCOS_SWAP;
+int MAX_FRAMES_SWAP;
 int POSICION_CLOCK;
 
 //// ---- memoria principal
@@ -114,7 +114,6 @@ void dessuspender_proceso(int pid);
 
 //// ---- funciones allocs / headers
 t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual);
-int obtener_pos_ultimo_alloc(int pid);
 void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header);
 heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header);
 int liberar_si_hay_paginas_libres( int pid , int pos_inicial, int pos_final);
