@@ -482,7 +482,7 @@ t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 
 	int pag_en_donde_empieza_el_header = floor(((double)dir_logica - sizeof(heap_metadata)) / (double)CONFIG.tamanio_pagina);
 	int offset_header = (double)(((dir_logica - sizeof(heap_metadata)) / (double)CONFIG.tamanio_pagina) - pag_en_donde_empieza_el_header) * CONFIG.tamanio_pagina;
-	heap_metadata* header_a_liberar = desserializar_header(pid, pag_en_donde_empieza_el_header , offset_header);
+	heap_metadata* header_a_liberar = desserializar_header(pid, pag_en_donde_empieza_el_header, offset_header);
 
 	if (header_a_liberar->next_alloc == NULL){
 		log_info(LOGGER,"Error: no se puede liberar esta posicion.");
@@ -1038,14 +1038,16 @@ int liberar_si_hay_paginas_libres(int pid, int posicion_inicial, int posicion_fi
 	for (int i = 1 ; i < nro_pagina_final - nro_pagina_inicial ; i++) {
 
 		int nro_pagina = nro_pagina_inicial + i;
+		int nro_frame  = buscar_pagina(pid, nro_pagina);
 
-		int nro_frame = buscar_pagina(pid, nro_pagina);
 		t_frame* frame = list_get(FRAMES_MEMORIA, nro_frame);
+
 		frame->ocupado = false;
 
 		t_pagina* pagina_eliminada = (t_pagina*)list_remove(paginas_proceso , nro_pagina);
 		eliminar_pag_swap(pid, pagina_eliminada->id);
 		free(pagina_eliminada);
+
 		actualizar_headers_por_liberar_pagina(pid, nro_pagina);
 	}
 	return 1;
@@ -1071,7 +1073,7 @@ void actualizar_headers_por_liberar_pagina(int pid, int nro_pag_liberada){
 		offset     = (((double)header->next_alloc / CONFIG.tamanio_pagina) - nro_pagina) * CONFIG.tamanio_pagina;
 
 		//Header de la siguiente pagina a la liberada
-		header     = desserializar_header(pid, nro_pagina, offset );
+		header     = desserializar_header(pid, nro_pagina, offset);
 
 		//el header siguiente a la pagina liberada tiene que conservar el prev alloc -> (i > 1 significa todos los otros headers encontrados)
 		if(i > 1){
@@ -1082,6 +1084,7 @@ void actualizar_headers_por_liberar_pagina(int pid, int nro_pag_liberada){
 		guardar_header(pid, nro_pagina, offset, header);
 		i++;
  	}
+
 	free(header);
 }
 
