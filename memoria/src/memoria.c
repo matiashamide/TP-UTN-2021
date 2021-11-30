@@ -148,106 +148,103 @@ void atender_carpinchos(int cliente) {
 
 	peticion_carpincho operacion = recibir_operacion(cliente);
 	int existe_kernel = CONFIG.kernel_existe;
-
 	int size_paquete = recibir_entero(cliente);
-	int pid, retorno, dir_logica;
-	int size_contenido;
+	int pid, retorno, dir_logica, size_contenido;
 
 	switch (operacion) {
 
 	case MEMALLOC:;
 
-		if( existe_kernel){
+		if (existe_kernel) {
 			pid = recibir_entero(cliente);
-		}else {
+		} else {
 			pid = pid_por_conexion(cliente);
 		}
 
 		int size = recibir_entero(cliente);
-		log_info(LOGGER, " MEMALLOC: el cliente %i solicito alocar memoria de %i bytes" , cliente , size );
+		log_info(LOGGER, "MEMALLOC: el cliente %i solicito alocar memoria de %i bytes", cliente, size);
 
 		retorno = memalloc(size, pid, cliente);
-		send(cliente , &retorno , sizeof(uint32_t) , 0);
+		send(cliente, &retorno, sizeof(uint32_t), 0);
 
 	break;
 
 	case MEMREAD:;
 
-
-		if(existe_kernel){
+		if (existe_kernel) {
 			pid = recibir_entero(cliente);
-		}else {
+		} else {
 			pid = pid_por_conexion(cliente);
 		}
 
+		log_info(LOGGER, "MEMREAD: El cliente %i solicito leer memoria.", cliente);
 
-
-		log_info(LOGGER, "MEMREAD: El cliente %i solicito leer memoria." , cliente);
-		pid = recibir_entero(cliente);
-
-		dir_logica = recibir_entero(cliente);
+		pid            = recibir_entero(cliente);
+		dir_logica     = recibir_entero(cliente);
 		size_contenido = recibir_entero(cliente);
+
 		void* dest = malloc(size_contenido);
 
-		retorno = memread( pid, dir_logica ,  dest , size_contenido);
+		retorno = memread(pid, dir_logica, dest, size_contenido);
 
-		if(retorno == -1){
-			retorno = -6;
+		if (retorno == -1) {
+			retorno = MATE_READ_FAULT;
 		}
 
-		send(cliente , &retorno , sizeof(uint32_t) , 0);
-		send(cliente , dest , size_contenido , 0);
+		send(cliente, &retorno, sizeof(uint32_t), 0);
+		send(cliente, dest, size_contenido, 0);
 		free(dest);
 
 	break;
 
 	case MEMFREE:;
 
-		if(existe_kernel){
+		if (existe_kernel) {
 			pid = recibir_entero(cliente);
-		}else {
+		} else {
 			pid = pid_por_conexion(cliente);
 		}
 
-		log_info(LOGGER, "MEMFREE: El cliente %i solicito liberar memoria." , cliente);
-		pid = recibir_entero(cliente);
+		log_info(LOGGER, "MEMFREE: El cliente %i solicito liberar memoria.", cliente);
 
+		pid        = recibir_entero(cliente);
 		dir_logica = recibir_entero(cliente);
 
-		retorno = memfree(pid , dir_logica);
+		retorno    = memfree(pid, dir_logica);
 
-		if(retorno == -1){
-			retorno = -5;
+		if (retorno == -1) {
+			retorno = MATE_FREE_FAULT;
 		}
 
-		send(cliente , &retorno , sizeof(uint32_t) , 0);
+		send(cliente, &retorno, sizeof(uint32_t), 0);
 
 	break;
 
 	case MEMWRITE:;
 
-		if(existe_kernel){
+		if (existe_kernel) {
 			pid = recibir_entero(cliente);
 		} else {
 			pid = pid_por_conexion(cliente);
 		}
 
 		log_info(LOGGER, "MEMWRITE: El cliente %i solicito escribir memoria." , cliente);
-		pid = recibir_entero(cliente);
 
-		dir_logica = recibir_entero(cliente);
+		pid            = recibir_entero(cliente);
+		dir_logica     = recibir_entero(cliente);
 		size_contenido = recibir_entero(cliente);
-		void* contenido = malloc(size_contenido);
-		recv(cliente , contenido , size_contenido,0);
 
-		retorno = memwrite(pid , contenido ,dir_logica , size_paquete - sizeof(int) * 2);
+		void* contenido = malloc(size_contenido);
+		recv(cliente, contenido, size_contenido, 0);
+
+		retorno = memwrite(pid, contenido, dir_logica, size_paquete - sizeof(int)*2);
 
 		if(retorno == -1){
-			retorno = -7;
+			retorno = MATE_WRITE_FAULT;
 		}
 
-		send(cliente , &retorno , sizeof(uint32_t) , 0);
-		free (contenido);
+		send(cliente, &retorno, sizeof(uint32_t), 0);
+		free(contenido);
 
 	break;
 
@@ -261,12 +258,11 @@ void atender_carpinchos(int cliente) {
 		log_info(LOGGER, "MEMDESSUSP: El cliente %i solicito dessuspender el proceso.", cliente);
 		pid = recibir_entero(cliente);
 		dessuspender_proceso(pid);
-		break;
+	break;
 
 	case MEMKILL:;
 		log_info(LOGGER, "MEMKILL: El cliente %i solicito matar el proceso.", cliente);
 		pid = recibir_entero(cliente);
-
 		eliminar_proceso(pid);
 	break;
 
@@ -277,11 +273,10 @@ void atender_carpinchos(int cliente) {
 	break;
 
 	default:;
-	log_info(LOGGER, "No se entendio la solicitud del cliente %i." , cliente);
+		log_info(LOGGER, "No se entendio la solicitud del cliente %i." , cliente);
 	break;
 
 	}
-
 }
 
 //--------------------------------------------------- FUNCIONES PRINCIPALES ----------------------------------------------//
