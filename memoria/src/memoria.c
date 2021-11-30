@@ -1175,7 +1175,7 @@ int ejecutar_algoritmo_reemplazo(int pid) {
 		retorno = reemplazar_con_LRU(pid);
 
 	if(string_equals_ignore_case(CONFIG.alg_remp_mmu, "CLOCK-M"))
-		retorno = reemplazar_con_CLOCK(pid);
+		retorno = reemplazar_con_CLOCK_M(pid);
 
 	return retorno;
 }
@@ -1186,11 +1186,12 @@ int reemplazar_con_LRU(int pid) {
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
 		t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
-		paginas = list_filter(paginas_proceso, (void*)esta_en_mp);
+		paginas_proceso = list_filter(paginas_proceso, (void*)esta_en_mp);
+		paginas = list_filter(paginas_proceso, (void*)no_esta_lockeada);
 	}
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
-		paginas = list_filter(paginas_en_mp(), (void*)no_lock);
+		paginas = list_filter(paginas_en_mp(), (void*)no_esta_lockeada);
 	}
 
 	int masVieja(t_pagina* unaPag, t_pagina* otraPag) {
@@ -1218,45 +1219,70 @@ int reemplazar_con_LRU(int pid) {
 	return pag_reemplazo->frame_ppal;
 }
 
-int reemplazar_con_CLOCK(int pid) {
+int reemplazar_con_CLOCK_M(int pid) {
 
 	int pag_seleccionada;
-	int no_encontre = 1;
+	int encontre = 0;
+	int busco_modificado = 0;
 	int i = POSICION_CLOCK;
+	int primera_vuelta = 1;
 
-	t_list* paginas_mp = paginas_mp;
+	t_list* paginas = list_filter(paginas_en_mp(), (void*)no_esta_lockeada);
 	t_pagina* victima;
 
-	while(no_encontre) {
+	while(!encontre) {
 
-		if (i >= list_size(paginas_mp)) {
+		t_pagina* pagina = list_get(paginas, i);
+
+		if (i >= list_size(paginas)) {
 			i = 0;
 		}
 
-		t_pagina* pagina = list_get(paginas_mp, i);
+		if (i == POSICION_CLOCK && !encontre && !primera_vuelta) {
+			busco_modificado = 1;
+		}
 
-		if (pagina->uso == 0) {
+		primera_vuelta = 0;
 
-			pag_seleccionada = i;
-			POSICION_CLOCK   = i;
-			no_encontre      = 0;
+		if (!busco_modificado) {
+
+			if (pagina->uso == 0 && pagina->modificado == 0) {
+
+				pag_seleccionada = i;
+				POSICION_CLOCK   = i;
+				encontre         = 1;
+
+			} else {
+
+				i++;
+
+			}
 
 		} else {
 
-			pagina->uso      = 0;
-			i++;
+			if(pagina->uso == 0) {
+
+				pag_seleccionada = i;
+				POSICION_CLOCK   = i;
+				encontre         = 1;
+
+			} else {
+				i++;
+				pagina->uso = 0;
+			}
 
 		}
 
 	}
 
-	victima = list_get(paginas_mp, pag_seleccionada);
+	victima = list_get(paginas, pag_seleccionada);
 
 	log_info(LOGGER, "[REEMPLAZO CLOCK-M] Saco NRO_PAG %i del PID %i en FRAME %i", victima->id, victima->pid, victima->frame_ppal);
+
 	lockear(victima);
 
 	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
-	if(victima->modificado) {
+	if (victima->modificado) {
 		tirar_a_swap(victima);
 		victima->modificado = false;
 	}
@@ -1558,7 +1584,7 @@ bool esta_libre_y_desasignado(t_frame* frame) {
 	return !frame->ocupado && frame->pid == -1;
 }
 
-int no_lock(t_pagina* pag){
+int no_esta_lockeada(t_pagina* pag){
 	return !pag->lock;
 }
 
