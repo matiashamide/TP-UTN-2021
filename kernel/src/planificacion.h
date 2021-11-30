@@ -136,5 +136,8 @@ void memread(t_procesador*);
 void memfree(t_procesador*);
 void memwrite(t_procesador*);
 void mate_close(t_procesador*);
+int valor_matriz (int, int, t_list*);
+int cantidad_de_columnas_matriz();
+void algoritmo_deadlock();
 
 #endif /* PLANIFICACION_H_ */

@@ -632,9 +632,75 @@ void mate_close(t_procesador* estructura_procesador) {
 
 //LOS RECURSOS ASIGNADOS
 
-void algoritmo_deadlock() {
-	while(1) {
-		usleep(CONFIG_KERNEL.tiempo_deadlock);
-		//aca va el algoritmo.
+int valor_matriz (int i, int j, t_list* lista_bloqueados_por_semaforo) {
+
+	t_semaforo_mate* semaforo = list_get(LISTA_SEMAFOROS_MATE, j);
+
+	PCB* pcb = list_get(lista_bloqueados_por_semaforo, i);
+
+	bool _criterio_remocion_lista(void* elemento) {
+		return (((PCB*)elemento)->PID == pcb->PID);
 	}
+
+
+	if (list_any_satisfy(semaforo->cola_bloqueados, _criterio_remocion_lista))
+		return 1;
+
+
+	return 0;
 }
+
+
+//ver el tema de que el deadlock no siga corriendo cada ese tiempo de config mientras estamos recuperandonos de un deadlock
+
+void algoritmo_deteccion_deadlock() {
+	//aca va el algoritmo.
+
+	int **matriz;
+	int i;
+	int j;
+	t_list* lista_bloqueados_por_semaforo = list_create();
+	t_list* lista_procesos_en_deadlock = list_create();
+
+	pthread_mutex_lock(&mutex_lista_semaforos_mate);
+	//Ver tema mutex lista de bloqueados
+	int nfilas;
+	int ncols = list_size(LISTA_SEMAFOROS_MATE);
+
+	for(int a = 0; a < list_size(LISTA_SEMAFOROS_MATE); i++) {
+		t_semaforo_mate* sem = list_get(LISTA_SEMAFOROS_MATE, a);
+		nfilas += list_size(sem->cola_bloqueados);
+		for (int b = 0; b < list_size(sem->cola_bloqueados); b++) {
+			PCB* proceso = list_get(sem->cola_bloqueados, b);
+			list_add(lista_bloqueados_por_semaforo, proceso);
+		}
+	}
+
+	matriz = (int **) calloc(nfilas, sizeof(int));
+
+	for(i = 0; i < nfilas; i++) {
+		matriz[i] = (int *) calloc(ncols, sizeof(int));
+	}
+
+	for(i = 0; i< nfilas; i++) {
+		for(j = 0; j < ncols; j++) {
+			matriz[i][j] = valor_matriz(i, j, lista_bloqueados_por_semaforo);
+		}
+	}
+
+
+	for(int h = 0; h < nfilas; h++) {
+		PCB* pcb = list_get(lista_bloqueados_por_semaforo, h);
+		if(list_size(pcb->recursos_usados) > 0) {
+			for(int g = 0; g < list_size(pcb->recursos_usados); g++) {
+				t_semaforo_mate* recurso_usado = list_get(pcb->recursos_usados, g);
+				//TODO aca hay que fijarse si este recurso que acabo de agarrar lo esta pidiendo otro semaforo
+				//y si es asi ponerlo en la lista de procesos en deadlock
+			}
+		}
+	}
+
+
+		pthread_mutex_unlock(&mutex_lista_semaforos_mate);
+}
+
