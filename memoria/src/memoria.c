@@ -1062,10 +1062,11 @@ void actualizar_headers_por_liberar_pagina(int pid, int nro_pag_liberada){
 	//En este punto tengo el header anterior a la pagina liberada, tengo que actualizar los valores de los proximos
 	int i = 1;
 	int nro_pagina;
+	double next_header = header->next_alloc;
 	while(header->next_alloc != NULL){
 
-		nro_pagina = floor((double)header->next_alloc / (double)CONFIG.tamanio_pagina);
-		offset     = (((double)header->next_alloc / CONFIG.tamanio_pagina) - nro_pagina) * CONFIG.tamanio_pagina;
+		nro_pagina = floor(next_header / (double)CONFIG.tamanio_pagina);
+		offset     = ((next_header / CONFIG.tamanio_pagina) - nro_pagina) * CONFIG.tamanio_pagina;
 
 		//Header de la siguiente pagina a la liberada
 		header     = desserializar_header(pid, nro_pagina, offset);
@@ -1075,10 +1076,12 @@ void actualizar_headers_por_liberar_pagina(int pid, int nro_pag_liberada){
 			header->prev_alloc -= CONFIG.tamanio_pagina;
 		}
 
+		next_header = header->next_alloc;
+
 		header->next_alloc -= CONFIG.tamanio_pagina;
 		guardar_header(pid, nro_pagina, offset, header);
 		i++;
- 	}
+	}
 
 	free(header);
 }
