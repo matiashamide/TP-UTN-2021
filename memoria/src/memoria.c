@@ -6,9 +6,9 @@ int main(void) {
 	log_info(LOGGER, "Inicializa memoria");
 	log_info(LOGGER, "Ya me conecte con swamp y los marcos max son: %i \n", MAX_FRAMES_SWAP);
 
-	//coordinador_multihilo();
+	coordinador_multihilo();
 
-	int a0 = memalloc(0, 10,1);
+	/*int a0 = memalloc(0, 10,1);
 	int a1 = memalloc(0, 12,1);
 	int a2 = memalloc(0, 10,1);
 	int a3 = memalloc(0, 12,1);
@@ -19,7 +19,7 @@ int main(void) {
 	memfree(0,a3);
 	memfree(0,a2);
 
-	memalloc(0,31,1);
+	memalloc(0,31,1);*/
 
 	return EXIT_SUCCESS;
 }
@@ -144,137 +144,174 @@ void coordinador_multihilo(){
 	}
 }
 
-void atender_carpinchos(int cliente) {
+void recibir_peticion_para_continuar(int conexion) {
 
-	peticion_carpincho operacion = recibir_operacion(cliente);
+
+	uint32_t result;
+	int bytes_recibidos = recv(conexion, &result, sizeof(uint32_t), MSG_WAITALL);
+
+	printf("Ya recibi peticion %d\n", bytes_recibidos);
+
+
+}
+
+void dar_permiso_para_continuar(int conexion){
+
+	uint32_t handshake = 1;
+
+	int numero_de_bytes = send(conexion, &handshake, sizeof(uint32_t), 0);
+
+	printf("Ya di permiso %d\n", numero_de_bytes);
+}
+
+void atender_carpinchos(int* cliente) {
+
 	int existe_kernel = CONFIG.kernel_existe;
-	int size_paquete = recibir_entero(cliente);
-	int pid, retorno, dir_logica, size_contenido;
 
-	switch (operacion) {
+	if (!existe_kernel) {
+		recibir_peticion_para_continuar((*cliente));
+		dar_permiso_para_continuar((*cliente));
+	}
 
-	case MEMALLOC:;
+	while(1) {
 
-		if (existe_kernel) {
-			pid = recibir_entero(cliente);
-		} else {
-			pid = pid_por_conexion(cliente);
+		peticion_carpincho operacion = recibir_operacion(*cliente);
+		int size_paquete = recibir_entero(*cliente);
+		int pid, retorno, dir_logica, size_contenido;
+
+		switch (operacion) {
+
+		case MEMALLOC:;
+
+			if (existe_kernel) {
+				pid = recibir_entero(*cliente);
+			} else {
+				pid = pid_por_conexion(*cliente);
+			}
+
+			int size = recibir_entero(*cliente);
+			log_info(LOGGER, "MEMALLOC: el cliente %i solicito alocar memoria de %i bytes", *cliente, size);
+
+			retorno = memalloc(size, pid, *cliente);
+			send(*cliente, &retorno, sizeof(uint32_t), 0);
+
+		break;
+
+		case MEMREAD:;
+
+			if (existe_kernel) {
+				pid = recibir_entero(*cliente);
+			} else {
+				pid = pid_por_conexion(*cliente);
+			}
+
+			log_info(LOGGER, "MEMREAD: El cliente %i solicito leer memoria.", *cliente);
+
+			pid            = recibir_entero(*cliente);
+			dir_logica     = recibir_entero(*cliente);
+			size_contenido = recibir_entero(*cliente);
+
+			void* dest = malloc(size_contenido);
+
+			retorno = memread(pid, dir_logica, dest, size_contenido);
+
+			if (retorno == -1) {
+				retorno = MATE_READ_FAULT;
+			}
+
+			send(*cliente, &retorno, sizeof(uint32_t), 0);
+			send(*cliente, dest, size_contenido, 0);
+			free(dest);
+
+		break;
+
+		case MEMFREE:;
+
+			if (existe_kernel) {
+				pid = recibir_entero(*cliente);
+			} else {
+				pid = pid_por_conexion(*cliente);
+			}
+
+			log_info(LOGGER, "MEMFREE: El cliente %i solicito liberar memoria.", *cliente);
+
+			pid        = recibir_entero(*cliente);
+			dir_logica = recibir_entero(*cliente);
+
+			retorno    = memfree(pid, dir_logica);
+
+			if (retorno == -1) {
+				retorno = MATE_FREE_FAULT;
+			}
+
+			send(*cliente, &retorno, sizeof(uint32_t), 0);
+
+		break;
+
+		case MEMWRITE:;
+
+			if (existe_kernel) {
+				pid = recibir_entero(*cliente);
+			} else {
+				pid = pid_por_conexion(*cliente);
+			}
+
+			log_info(LOGGER, "MEMWRITE: El cliente %i solicito escribir memoria." , *cliente);
+
+			pid            = recibir_entero(*cliente);
+			dir_logica     = recibir_entero(*cliente);
+			size_contenido = recibir_entero(*cliente);
+
+			void* contenido = malloc(size_contenido);
+			recv(*cliente, contenido, size_contenido, 0);
+
+			retorno = memwrite(pid, contenido, dir_logica, size_paquete - sizeof(int)*2);
+
+			if(retorno == -1){
+				retorno = MATE_WRITE_FAULT;
+			}
+
+			send(*cliente, &retorno, sizeof(uint32_t), 0);
+			free(contenido);
+
+		break;
+
+		case MEMSUSP:;
+			log_info(LOGGER, "MEMSUSP: El cliente %i solicito suspender el proceso.", *cliente);
+			pid = recibir_entero(*cliente);
+			suspender_proceso(pid);
+		break;
+
+		case MEMDESSUSP:;
+			log_info(LOGGER, "MEMDESSUSP: El cliente %i solicito dessuspender el proceso.", *cliente);
+			pid = recibir_entero(*cliente);
+			dessuspender_proceso(pid);
+		break;
+
+		case CLOSE:;
+			log_info(LOGGER, "MEMKILL: El cliente %i solicito matar el proceso.", *cliente);
+			if (existe_kernel) {
+				pid = recibir_entero(*cliente);
+			} else {
+				pid = pid_por_conexion(*cliente);
+			}
+			eliminar_proceso(pid);
+			if (!existe_kernel) {
+				dar_permiso_para_continuar((*cliente));
+			}
+		break;
+
+		case MENSAJE:;
+			char* mensaje = recibir_mensaje(*cliente);
+			printf("%s",mensaje);
+			fflush(stdout);
+		break;
+
+		default:;
+			log_info(LOGGER, "No se entendio la solicitud del cliente %i." , *cliente);
+		break;
+
 		}
-
-		int size = recibir_entero(cliente);
-		log_info(LOGGER, "MEMALLOC: el cliente %i solicito alocar memoria de %i bytes", cliente, size);
-
-		retorno = memalloc(size, pid, cliente);
-		send(cliente, &retorno, sizeof(uint32_t), 0);
-
-	break;
-
-	case MEMREAD:;
-
-		if (existe_kernel) {
-			pid = recibir_entero(cliente);
-		} else {
-			pid = pid_por_conexion(cliente);
-		}
-
-		log_info(LOGGER, "MEMREAD: El cliente %i solicito leer memoria.", cliente);
-
-		pid            = recibir_entero(cliente);
-		dir_logica     = recibir_entero(cliente);
-		size_contenido = recibir_entero(cliente);
-
-		void* dest = malloc(size_contenido);
-
-		retorno = memread(pid, dir_logica, dest, size_contenido);
-
-		if (retorno == -1) {
-			retorno = MATE_READ_FAULT;
-		}
-
-		send(cliente, &retorno, sizeof(uint32_t), 0);
-		send(cliente, dest, size_contenido, 0);
-		free(dest);
-
-	break;
-
-	case MEMFREE:;
-
-		if (existe_kernel) {
-			pid = recibir_entero(cliente);
-		} else {
-			pid = pid_por_conexion(cliente);
-		}
-
-		log_info(LOGGER, "MEMFREE: El cliente %i solicito liberar memoria.", cliente);
-
-		pid        = recibir_entero(cliente);
-		dir_logica = recibir_entero(cliente);
-
-		retorno    = memfree(pid, dir_logica);
-
-		if (retorno == -1) {
-			retorno = MATE_FREE_FAULT;
-		}
-
-		send(cliente, &retorno, sizeof(uint32_t), 0);
-
-	break;
-
-	case MEMWRITE:;
-
-		if (existe_kernel) {
-			pid = recibir_entero(cliente);
-		} else {
-			pid = pid_por_conexion(cliente);
-		}
-
-		log_info(LOGGER, "MEMWRITE: El cliente %i solicito escribir memoria." , cliente);
-
-		pid            = recibir_entero(cliente);
-		dir_logica     = recibir_entero(cliente);
-		size_contenido = recibir_entero(cliente);
-
-		void* contenido = malloc(size_contenido);
-		recv(cliente, contenido, size_contenido, 0);
-
-		retorno = memwrite(pid, contenido, dir_logica, size_paquete - sizeof(int)*2);
-
-		if(retorno == -1){
-			retorno = MATE_WRITE_FAULT;
-		}
-
-		send(cliente, &retorno, sizeof(uint32_t), 0);
-		free(contenido);
-
-	break;
-
-	case MEMSUSP:;
-		log_info(LOGGER, "MEMSUSP: El cliente %i solicito suspender el proceso.", cliente);
-		pid = recibir_entero(cliente);
-		suspender_proceso(pid);
-	break;
-
-	case MEMDESSUSP:;
-		log_info(LOGGER, "MEMDESSUSP: El cliente %i solicito dessuspender el proceso.", cliente);
-		pid = recibir_entero(cliente);
-		dessuspender_proceso(pid);
-	break;
-
-	case MEMKILL:;
-		log_info(LOGGER, "MEMKILL: El cliente %i solicito matar el proceso.", cliente);
-		pid = recibir_entero(cliente);
-		eliminar_proceso(pid);
-	break;
-
-	case MENSAJE:;
-		char* mensaje = recibir_mensaje(cliente);
-		printf("%s",mensaje);
-		fflush(stdout);
-	break;
-
-	default:;
-		log_info(LOGGER, "No se entendio la solicitud del cliente %i." , cliente);
-	break;
 
 	}
 }

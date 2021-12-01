@@ -102,7 +102,9 @@ void iniciar_paginacion();
 t_memoria_config crear_archivo_config_memoria(char* ruta);
 
 //// ---- funciones de coordinacion de carpinchos
-void atender_carpinchos(int cliente);
+void recibir_peticion_para_continuar(int conexion);
+void dar_permiso_para_continuar(int conexion);
+void atender_carpinchos(int* cliente);
 void coordinador_multihilo();
 
 //// ---- funciones principales
