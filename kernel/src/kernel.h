@@ -35,6 +35,7 @@ void coordinador_multihilo();
 void pasar_a_new(PCB* pcb_carpincho);
 void iniciar_planificador_largo_plazo();
 void iniciar_planificador_corto_plazo();
+void iniciar_algoritmo_deadlock();
 void crear_procesadores();
 void crear_dispositivos_io();
 

@@ -117,6 +117,8 @@ void init_kernel(){
 	crear_procesadores();
 	iniciar_planificador_largo_plazo();
 	iniciar_planificador_corto_plazo();
+	iniciar_algoritmo_deadlock();
+
 }
 
 void crear_dispositivos_io() {
@@ -173,6 +175,13 @@ void iniciar_planificador_corto_plazo() {
 	pthread_create(&planificador_corto_plazo, NULL, (void*)algoritmo_planificador_corto_plazo, NULL);
 	printf("Ya cree el planificador de corto plazo\n");
 	pthread_detach(planificador_largo_plazo);
+}
+
+void iniciar_algoritmo_deadlock() {
+
+	pthread_create(&administrador_deadlock, NULL, (void*)correr_algoritmo_deadlock, NULL);
+	printf("Ya cree el algoritmo para correr deadlock\n");
+	pthread_detach(administrador_deadlock);
 }
 
 void atender_carpinchos(int* cliente) {

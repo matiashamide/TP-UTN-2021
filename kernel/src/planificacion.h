@@ -112,12 +112,14 @@ pthread_mutex_t mutex_lista_dispositivos_io;
 //HILOS
 pthread_t planificador_largo_plazo;
 pthread_t planificador_corto_plazo;
+pthread_t administrador_deadlock;
 
 void algoritmo_planificador_largo_plazo();
 void algoritmo_planificador_mediano_plazo_ready_suspended();
 void algoritmo_planificador_mediano_plazo_blocked_suspended();
 void algoritmo_planificador_corto_plazo();
 void correr_dispatcher(PCB* pcb);
+void correr_algoritmo_deadlock();
 PCB* algoritmo_SJF();
 PCB* algoritmo_HRRN();
 void* minimum(PCB*, PCB*);
@@ -139,6 +141,6 @@ void memwrite(t_procesador*);
 void mate_close(t_procesador*);
 int valor_matriz (int, int, t_list*);
 int cantidad_de_columnas_matriz();
-void algoritmo_deadlock();
+void algoritmo_deteccion_deadlock();
 
 #endif /* PLANIFICACION_H_ */
