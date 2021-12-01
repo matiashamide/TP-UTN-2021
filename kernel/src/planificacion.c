@@ -605,6 +605,76 @@ void mate_close(t_procesador* estructura_procesador) {
 	sem_wait(&estructura_procesador->sem_exec);
 	estructura_procesador->bit_de_ocupado = 0;
 	pthread_mutex_unlock(&mutex_lista_procesadores);
+
+/*	for(int k = 0; k < list_size(estructura_procesador->lugar_PCB->recursos_usados); k++) {
+
+		t_registro_uso_recurso* recurso_usado = list_get(estructura_procesador->lugar_PCB->recursos_usados, k);
+
+		bool _criterio_busqueda_semaforo(void* elemento) {
+			return (strcmp(((t_semaforo_mate*)elemento)->nombre, recurso_usado->nombre) == 0);
+		}
+
+		t_semaforo_mate* recurso = (t_semaforo_mate*) list_find(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo);
+
+		for (int y = 0; y < recurso_usado->cantidad; y++) {
+
+			if(recurso->value == 0 && list_size(recurso->cola_bloqueados) > 0) {
+				PCB* pcb = (PCB*) list_remove(recurso->cola_bloqueados, 0);
+
+				bool _criterio_remocion_lista(void* elemento) {
+					return (((PCB*)elemento)->PID == pcb->PID);
+				}
+
+				if(list_any_satisfy(LISTA_BLOCKED, _criterio_remocion_lista)) {
+
+					pthread_mutex_lock(&mutex_lista_blocked);
+					list_remove_by_condition(LISTA_BLOCKED, _criterio_remocion_lista);
+					pthread_mutex_unlock(&mutex_lista_blocked);
+
+					pthread_mutex_lock(&mutex_lista_ready);
+					list_add(LISTA_READY, pcb);
+					pthread_mutex_unlock(&mutex_lista_ready);
+
+					sem_post(&sem_cola_ready);
+				} else {
+					pthread_mutex_lock(&mutex_lista_blocked_suspended);
+					list_remove_by_condition(LISTA_BLOCKED_SUSPENDED, _criterio_remocion_lista);
+					pthread_mutex_unlock(&mutex_lista_blocked_suspended);
+
+					pthread_mutex_lock(&mutex_lista_ready_suspended);
+					list_add(LISTA_READY_SUSPENDED, pcb);
+					pthread_mutex_unlock(&mutex_lista_ready_suspended);
+
+					sem_post(&sem_algoritmo_planificador_largo_plazo);
+				}
+
+			} else {
+				recurso->value += 1;
+			}
+
+		}
+
+	}
+
+	bool _criterio_igual_pid(void* elemento) {
+		return (((PCB*)elemento)->PID == estructura_procesador->lugar_PCB->PID);
+	}
+
+	for(int f = 0; f < list_size(LISTA_SEMAFOROS_MATE); f++) {
+		t_semaforo_mate* sema = list_get(LISTA_SEMAFOROS_MATE, f);
+		if(list_any_satisfy(sema->cola_bloqueados, _criterio_igual_pid)) {
+			list_remove_by_condition(sema->cola_bloqueados, _criterio_igual_pid);
+		}
+	}
+
+	void _element_destroyer(void* elemento) {
+		free(((t_registro_uso_recurso*)elemento)->nombre);
+		free(((t_registro_uso_recurso*)elemento));
+	}
+
+	list_destroy_and_destroy_elements(estructura_procesador->lugar_PCB->recursos_usados, _element_destroyer);
+	free(estructura_procesador->lugar_PCB);
+*/
 	sem_post(&sem_grado_multiprocesamiento);
 	sem_post(&sem_grado_multiprogramacion);
 	//TODO liberar los semaforos que le correspondan y mas cosas
