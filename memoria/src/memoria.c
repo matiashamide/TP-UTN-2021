@@ -939,8 +939,8 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 
 void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 
-	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
-	t_pagina* pagina        = (t_pagina*)list_get(paginas_proceso, nro_pagina);
+	t_list* pags_proceso = tabla_por_pid(pid)->paginas;
+	t_pagina* pag        = pagina_por_id(pid, nro_pagina);
 
 	int diferencia;
 	if (offset > CONFIG.tamanio_pagina) {
@@ -949,7 +949,8 @@ void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 		diferencia = CONFIG.tamanio_pagina - offset - sizeof(heap_metadata);
 	}
 
-	lockear(pagina);
+	lockear(pag);
+
 	int frame = buscar_pagina(pid, nro_pagina);
 
 	//El header entra completo en la pagina
@@ -957,25 +958,30 @@ void guardar_header(int pid, int nro_pagina, int offset, heap_metadata* header){
 		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * frame + offset, header, sizeof(heap_metadata));
 
 	} else {
-		t_pagina* pagina_sig = (t_pagina*)list_get(paginas_proceso, nro_pagina + 1);
-		void* header_buffer = malloc(sizeof(heap_metadata));
+		int index_pag           = index_de_pag(pags_proceso, pag->id);
+		t_pagina* pag_sig       = (t_pagina*)list_get(pags_proceso, index_pag + 1);
+		int frame_pag_siguiente = buscar_pagina(pid, pag_sig->id);
+
+		void* header_buffer  = malloc(sizeof(heap_metadata));
+
 		memcpy(header_buffer, header, sizeof(heap_metadata));
 
 		diferencia = abs(diferencia);
 
-		lockear(pagina_sig);
+		lockear(pag_sig);
+
 		int frame_sig = buscar_pagina(pid, nro_pagina + 1);
 
 		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * frame + offset, header_buffer, sizeof(heap_metadata) - diferencia);
 		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * frame_sig , header_buffer + (sizeof(heap_metadata) - diferencia), diferencia);
 
-		set_modificado(pagina_sig);
-		unlockear(pagina_sig);
+		set_modificado(pag_sig);
+		unlockear(pag_sig);
 		free(header_buffer);
 	}
 
-	set_modificado(pagina);
-	unlockear(pagina);
+	set_modificado(pag);
+	unlockear(pag);
 }
 
 heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
@@ -986,8 +992,8 @@ heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
 	heap_metadata* header = malloc(sizeof(heap_metadata));
 	void* buffer          = malloc(sizeof(heap_metadata));
 
-	t_list* pags_proceso = tabla_por_pid(pid)->paginas;
-	t_pagina* pag = (t_pagina*)list_get(pags_proceso, nro_pag);
+	t_list* pags_proceso  = tabla_por_pid(pid)->paginas;
+	t_pagina* pag         = pagina_por_id(pid, nro_pag);
 
 	frame_pagina = buscar_pagina(pid, nro_pag);
 
@@ -998,8 +1004,9 @@ heap_metadata* desserializar_header(int pid, int nro_pag, int offset_header) {
 		memcpy(buffer, MEMORIA_PRINCIPAL + frame_pagina * CONFIG.tamanio_pagina + offset_header, sizeof(heap_metadata));
 	} else {
 
-		int frame_pag_siguiente = buscar_pagina(pid, nro_pag + 1);
-		t_pagina* pag_sig = (t_pagina*)list_get(pags_proceso, nro_pag + 1);
+		int index_pag           = index_de_pag(pags_proceso, pag->id);
+		t_pagina* pag_sig       = (t_pagina*)list_get(pags_proceso, index_pag + 1);
+		int frame_pag_siguiente = buscar_pagina(pid, pag_sig->id);
 
 		lockear(pag_sig);
 
@@ -1039,7 +1046,7 @@ int liberar_si_hay_paginas_libres(int pid, int posicion_inicial, int posicion_fi
 
 		frame->ocupado = false;
 
-		t_pagina* pagina_eliminada = (t_pagina*)list_remove(paginas_proceso , nro_pagina);
+		t_pagina* pagina_eliminada = (t_pagina*)list_remove(paginas_proceso, nro_pagina);
 		eliminar_pag_swap(pid, pagina_eliminada->id);
 		free(pagina_eliminada);
 
@@ -1049,7 +1056,8 @@ int liberar_si_hay_paginas_libres(int pid, int posicion_inicial, int posicion_fi
 }
 
 void actualizar_headers_por_liberar_pagina(int pid, int nro_pag_liberada){
-
+	int i = 1;
+	int nro_pagina;
 	heap_metadata* header = desserializar_header(pid, 0, 0);
 
 	//Iterar hasta llegar al header anterior a la pagina liberada
@@ -1059,10 +1067,14 @@ void actualizar_headers_por_liberar_pagina(int pid, int nro_pag_liberada){
 		header = desserializar_header(pid, floor((double)header->next_alloc / (double)CONFIG.tamanio_pagina), offset);
 	}
 
-	//En este punto tengo el header anterior a la pagina liberada, tengo que actualizar los valores de los proximos
-	int i = 1;
-	int nro_pagina;
+	//TODO: Actualizo el header anterior a la pagina liberada
 	double next_header = header->next_alloc;
+	nro_pagina = floor(next_header / (double)CONFIG.tamanio_pagina);
+	header->next_alloc -= CONFIG.tamanio_pagina;
+	guardar_header(pid, nro_pag_liberada, header, offset);
+
+	//En este punto tengo el header anterior a la pagina liberada, tengo que actualizar los valores de los proximos
+
 	while(header->next_alloc != NULL){
 
 		nro_pagina = floor(next_header / (double)CONFIG.tamanio_pagina);
@@ -1078,7 +1090,10 @@ void actualizar_headers_por_liberar_pagina(int pid, int nro_pag_liberada){
 
 		next_header = header->next_alloc;
 
-		header->next_alloc -= CONFIG.tamanio_pagina;
+		if (header->next_alloc != NULL) {
+			header->next_alloc -= CONFIG.tamanio_pagina;
+		}
+
 		guardar_header(pid, nro_pagina, offset, header);
 		i++;
 	}
@@ -1350,6 +1365,21 @@ t_pagina* pagina_por_id(int pid, int id) {
 	return pagina;
 }
 
+int index_de_pag(t_list* paginas, int id_pag) {
+
+	t_pagina* pag_aux;
+
+	for (int i = 0 ; i < list_size(paginas); i++) {
+
+		pag_aux = list_get(paginas, i);
+
+		if (pag_aux->id == id_pag) {
+			return i;
+		}
+	}
+	return -1;
+}
+
 t_list* frames_libres_del_proceso(int pid){
 
 	int _mismo_pid_y_libre(t_frame* frame_aux) {
@@ -1368,7 +1398,7 @@ int pid_por_conexion(int cliente) {
 
 	t_pid_cliente* pid_cliente = list_find(PIDS_CLIENTE, (void*)_mismo_pid);
 
-	if(pid_cliente == NULL){
+	if (pid_cliente == NULL){
 		return -1;
 	}
 

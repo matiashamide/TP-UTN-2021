@@ -138,6 +138,7 @@ t_tabla_pagina* tabla_por_pid(int pid);
 t_pagina*       pagina_por_id(int pid, int id);
 t_list*         frames_libres_del_proceso(int pid);
 int				pid_por_conexion(int cliente);
+int             index_de_pag(t_list* paginas, int id_pag);
 
 //// ---- funciones de interaccion con SWAMP
 int   solicitar_marcos_max_swap();
