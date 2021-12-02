@@ -145,33 +145,36 @@ void generar_metricas_tlb(){
 	printf("METRICAS TLB:\n");
 
 	printf("[HITS TOTALES]: %i \n", list_size(TLB_HITS));
-	printf("[HITS POR PROCESO]");
+	printf("[HITS POR PROCESO] \n");
 
 	for (int i = 0 ; i < list_size(TLB_HITS) ; i++) {
 		tlb_event* nodo = (tlb_event*)list_get(TLB_HITS, i);
-		printf("Proceso %i ---> %i HITS", nodo->pid, nodo->contador);
+		printf("Proceso %i ---> %i HITS \n", nodo->pid, nodo->contador);
 	}
 
 	printf("[MISS TOTALES]: %i \n", list_size(TLB_MISS));
-	printf("[MISS POR PROCESO]");
+	printf("[MISS POR PROCESO] \n");
 
-	for (int i=0 ; i < list_size(TLB_HITS) ; i++) {
-		tlb_event* nodo = (tlb_event*)list_get(TLB_HITS, i);
-		printf("Proceso %i ---> %i HITS", nodo->pid, nodo->contador);
+	for (int i=0 ; i < list_size(TLB_MISS) ; i++) {
+		tlb_event* nodo = (tlb_event*)list_get(TLB_MISS, i);
+		printf("Proceso %i ---> %i MISS \n", nodo->pid, nodo->contador);
 	}
-	exit(1);
 }
 
 void dumpear_tlb(){
 
 	FILE* file;
-    char* file_name = nombrar_dump_file();
 
-    log_info(LOGGER,"Creo un archivo de dump con el nombre %s\n", file_name);
+    char* path_name = string_new();
+    string_append(&path_name, CONFIG.path_dump_tlb);
+    string_append(&path_name, "/");
+    string_append(&path_name, nombrar_dump_file());
+
+    log_info(LOGGER,"Creo un archivo de dump con el nombre %s\n", path_name);
 
     char* time = temporal_get_string_time("%d/%m/%y %H:%M:%S");
 
-    file = fopen(file_name, "w");
+    file = fopen(path_name, "w+");
 
     fprintf(file, "\n\n");
     fprintf(file, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
@@ -183,7 +186,7 @@ void dumpear_tlb(){
 
     fclose(file);
 
-    free(file_name);
+    free(path_name);
     free(time);
 }
 
@@ -200,7 +203,7 @@ void mostrar_entrada(int nro_entrada, FILE* file) {
 	t_entrada_tlb* entrada = list_get(TLB, nro_entrada);
 	t_frame* frame = list_get(FRAMES_MEMORIA, entrada->frame);
 
-	fprintf(file, "Entrada: %d        Estado: %s        Carpincho: %d        Pagina: %d        Marco: %d \n",nro_entrada, frame->ocupado, entrada->pid, entrada->pag, entrada->frame);
+	fprintf(file, "Entrada: %d        Esta ocupado: %d        Carpincho: %d        Pag: %d        Frame: %d \n",nro_entrada, frame->ocupado, entrada->pid, entrada->pag, entrada->frame);
 }
 
 char* nombrar_dump_file(){
@@ -208,7 +211,7 @@ char* nombrar_dump_file(){
 
     char* nombre = "Dump_";
 	char* time = temporal_get_string_time("%d-%m-%y_%H-%M-%S");//"MiArchivo_210614235915.txt" # 14/06/2021 a las 23:59:15
-	char* extension = ".dmp";
+	char* extension = ".txt";
 
 	char nombre_archivo[strlen(time) + strlen(extension) + strlen(nombre) + 1];
 
