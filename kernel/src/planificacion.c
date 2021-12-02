@@ -318,7 +318,7 @@ void wait_sem(t_procesador* estructura_procesador) {
 			} else {
 				t_registro_uso_recurso* recurso = malloc(sizeof(t_registro_uso_recurso));
 				recurso->nombre = malloc(size_nombre_semaforo);
-				recurso->nombre = nombre;
+				memcpy(recurso->nombre, nombre, size_nombre_semaforo);
 				recurso->cantidad = 1;
 				list_add(estructura_procesador->lugar_PCB->recursos_usados, recurso);
 				//TODO hacerle free a esto
@@ -606,13 +606,17 @@ void mate_close(t_procesador* estructura_procesador) {
 	estructura_procesador->bit_de_ocupado = 0;
 	pthread_mutex_unlock(&mutex_lista_procesadores);
 
-/*	for(int k = 0; k < list_size(estructura_procesador->lugar_PCB->recursos_usados); k++) {
+	for(int k = 0; k < list_size(estructura_procesador->lugar_PCB->recursos_usados); k++) {
 
 		t_registro_uso_recurso* recurso_usado = list_get(estructura_procesador->lugar_PCB->recursos_usados, k);
+
+		printf("Recurso usado: %s\n", recurso_usado->nombre);
 
 		bool _criterio_busqueda_semaforo(void* elemento) {
 			return (strcmp(((t_semaforo_mate*)elemento)->nombre, recurso_usado->nombre) == 0);
 		}
+
+		pthread_mutex_lock(&mutex_lista_semaforos_mate);
 
 		t_semaforo_mate* recurso = (t_semaforo_mate*) list_find(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo);
 
@@ -667,6 +671,8 @@ void mate_close(t_procesador* estructura_procesador) {
 		}
 	}
 
+	pthread_mutex_unlock(&mutex_lista_semaforos_mate);
+
 	void _element_destroyer(void* elemento) {
 		free(((t_registro_uso_recurso*)elemento)->nombre);
 		free(((t_registro_uso_recurso*)elemento));
@@ -674,7 +680,7 @@ void mate_close(t_procesador* estructura_procesador) {
 
 	list_destroy_and_destroy_elements(estructura_procesador->lugar_PCB->recursos_usados, _element_destroyer);
 	free(estructura_procesador->lugar_PCB);
-*/
+
 	sem_post(&sem_grado_multiprocesamiento);
 	sem_post(&sem_grado_multiprogramacion);
 	//TODO liberar los semaforos que le correspondan y mas cosas
@@ -870,8 +876,8 @@ void algoritmo_deteccion_deadlock() {
 
 		sem_post(&sem_grado_multiprogramacion);
 
-		algoritmo_deteccion_deadlock();
 		pthread_mutex_unlock(&mutex_lista_semaforos_mate);
+		algoritmo_deteccion_deadlock();
 	} else {
 
 		pthread_mutex_unlock(&mutex_lista_semaforos_mate);
