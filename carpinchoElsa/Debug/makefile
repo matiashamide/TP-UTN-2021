@@ -26,7 +26,7 @@ endif
 all: carpinchoElsa
 
 dependents:
-	-cd /home/utnso/workspace/tp-2021-2c-DesacatadOS/matelib/Debug && $(MAKE) all
+	-cd /home/utnso/workspace/tp-2021-2c-DesacatadOS/matelib/Debug && $(MAKE) clean all
 
 # Tool invocations
 carpinchoElsa: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2021-2c-DesacatadOS/matelib/Debug/libmatelib.so
