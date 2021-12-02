@@ -9,7 +9,8 @@ int main(void) {
 
 	coordinador_multihilo();
 
-	/*int a0 = memalloc(0, 10,1);
+	/*
+	int a0 = memalloc(0, 10,1);
 	int a1 = memalloc(0, 12,1);
 	int a2 = memalloc(0, 10,1);
 	int a3 = memalloc(0, 12,1);
@@ -31,7 +32,7 @@ int main(void) {
 void init_memoria() {
 
 	//Inicializamos logger
-	LOGGER = log_create("memoria.log", "MEMORIA", 1, LOG_LEVEL_ERROR);
+	LOGGER = log_create("MEMORIA.log", "MEMORIA", 0, LOG_LEVEL_ERROR);
 
 	//Levantamos archivo de configuracion
 	CONFIG = crear_archivo_config_memoria("/home/utnso/workspace/tp-2021-2c-DesacatadOS/memoria/src/memoria.config");
@@ -121,6 +122,7 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
     config.alg_reemplazo_tlb   = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_TLB");
     config.retardo_acierto_tlb = config_get_int_value   (memoria_config, "RETARDO_ACIERTO_TLB");
     config.retardo_fallo_tlb   = config_get_int_value   (memoria_config, "RETARDO_FALLO_TLB");
+    config.path_dump_tlb       = config_get_string_value(memoria_config, "PATH_DUMP_TLB");
     config.kernel_existe	   = config_get_int_value   (memoria_config, "KERNEL_EXISTE");
 
     return config;
@@ -189,7 +191,7 @@ void atender_carpinchos(int* cliente) {
 			int size = recibir_entero(*cliente);
 			log_info(LOGGER, "MEMALLOC: el cliente %i solicito alocar memoria de %i bytes", *cliente, size);
 
-			retorno  = memalloc(size, pid, *cliente);
+			retorno  = memalloc(pid, size, *cliente);
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
 		break;
@@ -814,21 +816,27 @@ void eliminar_proceso(int pid) {
 	t_list* paginas_proceso = tabla_proceso->paginas;
 
 	if (tabla_proceso == NULL) {
-		return;
+		exit(1);
 	}
 
 	for (int i = 0; i < list_size(paginas_proceso); i++) {
+
 		t_pagina* pagina = list_get(paginas_proceso,i);
-		if(pagina->presencia){
+
+		if(pagina->presencia) {
+
 			t_frame* frame = list_get(FRAMES_MEMORIA,pagina->frame_ppal);
 			frame->ocupado = false;
 		}
+
 		free(pagina);
 	}
+
 	bool frames_del_pid(void * elemento){
 		t_frame* frame_aux = (t_frame*) elemento;
 		return frame_aux->pid == pid;
 	}
+
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA" )){
 		t_list* frames_memoria_pid = list_filter(FRAMES_MEMORIA, frames_del_pid);
 		for(int i = 0; i < list_size(frames_memoria_pid); i++) {
@@ -837,10 +845,12 @@ void eliminar_proceso(int pid) {
 			frame->pid = -1;
 		}
 	}
+
 	bool tabla_es_de_pid(void* element){
 		t_tabla_pagina* tabla_aux = (t_tabla_pagina*) element;
 		return tabla_aux->PID == pid;
 	}
+
 	list_remove_and_destroy_by_condition(TABLAS_DE_PAGINAS,tabla_es_de_pid,free);
 
 	eliminar_proceso_swap(pid);
@@ -1712,14 +1722,16 @@ void set_modificado(t_pagina* pag){
 
 void signal_metricas(){
 	log_info(LOGGER, "[SIGNAL METRICAS]: Recibi la senial de imprimir metricas, imprimiendo\n...");
-	//log_destroy(LOGGER);
 	generar_metricas_tlb();
+	exit(1);
 }
 void signal_dump(){
 	log_info(LOGGER, "[SIGNAL DUMP]: Recibi la senial de generar el dump, generando\n...");
 	dumpear_tlb();
+	exit(1);
 }
 void signal_clean_tlb(){
 	log_info(LOGGER, "[SIGNAL CLEAN TLB]: Recibi la senial para limpiar TLB, limpiando\n...");
 	limpiar_tlb();
+	exit(1);
 }
