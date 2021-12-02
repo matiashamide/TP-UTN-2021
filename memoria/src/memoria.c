@@ -6,9 +6,10 @@ int main(void) {
 	log_info(LOGGER, "Inicializa memoria");
 	log_info(LOGGER, "Ya me conecte con swamp y los marcos max son: %i \n", MAX_FRAMES_SWAP);
 
-	//coordinador_multihilo();
 
-	int a0 = memalloc(0, 10,1);
+	coordinador_multihilo();
+
+	/*int a0 = memalloc(0, 10,1);
 	int a1 = memalloc(0, 12,1);
 	int a2 = memalloc(0, 10,1);
 	int a3 = memalloc(0, 12,1);
@@ -19,7 +20,7 @@ int main(void) {
 	memfree(0,a3);
 	memfree(0,a2);
 
-	int a6 = memalloc(0,31,1);
+	int a6 = memalloc(0,31,1);*/
 
 	return EXIT_SUCCESS;
 }
@@ -30,7 +31,7 @@ int main(void) {
 void init_memoria() {
 
 	//Inicializamos logger
-	LOGGER = log_create("memoria.log", "MEMORIA", 0, LOG_LEVEL_DEBUG);
+	LOGGER = log_create("memoria.log", "MEMORIA", 1, LOG_LEVEL_ERROR);
 
 	//Levantamos archivo de configuracion
 	CONFIG = crear_archivo_config_memoria("/home/utnso/workspace/tp-2021-2c-DesacatadOS/memoria/src/memoria.config");
@@ -203,7 +204,6 @@ void atender_carpinchos(int* cliente) {
 
 			log_info(LOGGER, "MEMREAD: El cliente %i solicito leer memoria.", *cliente);
 
-			pid            = recibir_entero(*cliente);
 			dir_logica     = recibir_entero(*cliente);
 			size_contenido = recibir_entero(*cliente);
 
@@ -231,7 +231,6 @@ void atender_carpinchos(int* cliente) {
 
 			log_info(LOGGER, "MEMFREE: El cliente %i solicito liberar memoria.", *cliente);
 
-			pid        = recibir_entero(*cliente);
 			dir_logica = recibir_entero(*cliente);
 
 			retorno    = memfree(pid, dir_logica);
@@ -254,7 +253,6 @@ void atender_carpinchos(int* cliente) {
 
 			log_info(LOGGER, "MEMWRITE: El cliente %i solicito escribir memoria.", *cliente);
 
-			pid            = recibir_entero(*cliente);
 			dir_logica     = recibir_entero(*cliente);
 			size_contenido = recibir_entero(*cliente);
 
