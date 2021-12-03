@@ -7,9 +7,9 @@ int main(void) {
 	log_info(LOGGER, "Ya me conecte con swamp y los marcos max son: %i \n", MAX_FRAMES_SWAP);
 
 
-	coordinador_multihilo();
+	//coordinador_multihilo();
 
-	/*
+
 	int a0 = memalloc(0, 10,1);
 	int a1 = memalloc(0, 12,1);
 	int a2 = memalloc(0, 10,1);
@@ -21,7 +21,7 @@ int main(void) {
 	memfree(0,a3);
 	memfree(0,a2);
 
-	int a6 = memalloc(0,31,1);*/
+	int a6 = memalloc(0,31,1);
 
 	return EXIT_SUCCESS;
 }
@@ -31,11 +31,11 @@ int main(void) {
 
 void init_memoria() {
 
-	//Inicializamos logger
-	LOGGER = log_create("MEMORIA.log", "MEMORIA", 0, LOG_LEVEL_ERROR);
-
 	//Levantamos archivo de configuracion
 	CONFIG = crear_archivo_config_memoria("/home/utnso/workspace/tp-2021-2c-DesacatadOS/memoria/src/memoria.config");
+
+	//Inicializamos logger
+	LOGGER = log_create("/home/utnso/workspace/tp-2021-2c-DesacatadOS/memoria/MEMORIA.log", "MEMORIA", 0, LOG_LEVEL_INFO);
 
 	//Iniciamos servidor
 	SERVIDOR_MEMORIA = iniciar_servidor(CONFIG.ip_memoria, CONFIG.puerto_memoria);
@@ -290,7 +290,7 @@ void atender_carpinchos(int* cliente) {
 
 		case CLOSE:;
 
-			log_info(LOGGER, "MEMKILL: El cliente %i solicito matar el proceso.", *cliente);
+			log_info(LOGGER, "Se desconecto el cliente %i\n", *cliente);
 
 			if (existe_kernel) {
 				pid = recibir_entero(*cliente);
@@ -933,28 +933,15 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 
 
 			// B.B. Sobra espacio, hay que meter un header nuevo
-			}  else if (header->next_alloc - posicion_heap_actual - sizeof(heap_metadata)*2 > size) {
+			}  else if (header->next_alloc - posicion_heap_actual - sizeof(heap_metadata) * 2 > size) {
 
 				//Pag. en donde vamos a insertar el nuevo header
-				int nro_pagina_nueva = 0, offset_pagina_nueva = 0;
-				nro_pagina_nueva = floor(((double)posicion_heap_actual + size + 9) / (double)CONFIG.tamanio_pagina);
-				offset_pagina_nueva = posicion_heap_actual + size + 9 - CONFIG.tamanio_pagina * nro_pagina_nueva;
-
-				t_pagina* pag_nueva = malloc(sizeof(t_pagina));
-				pag_nueva = pagina_por_id(pid, nro_pagina_nueva);
-
-				if (!pag_nueva->presencia) { //Si esta en principal == 1
-					traer_pagina_a_mp(pag_nueva);
-				}
+				int nro_pagina          = floor(((double)posicion_heap_actual + size + sizeof(heap_metadata)) / (double)CONFIG.tamanio_pagina);
+				int offset_pagina_nueva = posicion_heap_actual + size + sizeof(heap_metadata) - CONFIG.tamanio_pagina * nro_pagina;
 
 				//Pag. en donde esta el header siguiente al header final (puede ser la misma pag. que la anterior)
-				int nro_pagina_final = 0, offset_pagina_final = 0;
-				nro_pagina_final = ceil(((double)header->next_alloc) / (double)CONFIG.tamanio_pagina);
-
-				offset_pagina_final = header->next_alloc - CONFIG.tamanio_pagina * nro_pagina_nueva;
-
-				t_pagina* pag_final = malloc(sizeof(t_pagina));
-				pag_final = pagina_por_id(pid, nro_pagina_final);
+				int nro_pagina_final    = floor(((double)header->next_alloc) / (double)CONFIG.tamanio_pagina);
+				int offset_pagina_final = header->next_alloc - CONFIG.tamanio_pagina * nro_pagina_final;
 
 				heap_metadata* header_final = desserializar_header(pid, nro_pagina_final, offset_pagina_final);
 
@@ -963,7 +950,7 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 				header_nuevo->is_free       = true;
 				header_nuevo->prev_alloc    = posicion_heap_actual;
 				header_nuevo->next_alloc    = header->next_alloc;
-				guardar_header(pid, nro_pagina_nueva, offset_pagina_nueva, header_nuevo);
+				guardar_header(pid, nro_pagina, offset_pagina_nueva, header_nuevo);
 
 				//Actualizo y guardo los headers que ya estaban.
 				header->next_alloc = posicion_heap_actual + sizeof(heap_metadata) + size;
@@ -971,13 +958,12 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 				guardar_header(pid, nro_pagina, offset, header);
 				guardar_header(pid, nro_pagina_final, offset_pagina_final, header_final);
 
-				free(pag_nueva);
-				free(pag_final);
+				alloc->direc_logica      = header_nuevo->prev_alloc;
+				alloc->flag_ultimo_alloc = 0;
+
 				free(header_nuevo);
 				free(header_final);
 
-				alloc->direc_logica      = header->next_alloc;
-				alloc->flag_ultimo_alloc = 0;
 				return alloc;
 			}
 

@@ -13,6 +13,10 @@ void init_tlb() {
 
 int buscar_pag_tlb(int pid, int pag) {
 
+	if (CONFIG.cant_entradas_tlb == 0) {
+			return -1;
+	}
+
 	int _mismo_pid_y_pag(t_entrada_tlb* entrada) {
 		return (entrada->pid == pid && entrada->pag == pag);
 	}
@@ -44,6 +48,10 @@ int obtener_tiempo(){
 }
 
 void actualizar_tlb(int pid, int pag, int frame){
+
+	if (CONFIG.cant_entradas_tlb == 0) {
+		return;
+	}
 
 	if (list_size(TLB) < CONFIG.cant_entradas_tlb) {
 		crear_entrada(pid, pag, frame);

@@ -14,10 +14,14 @@ int main(void) {
 
 	init_swamp();
 
-	int cliente = esperar_cliente(SERVIDOR_SWAP);
+	int *socket_cliente = malloc(sizeof(int));
+	(*socket_cliente)   = accept(SERVIDOR_SWAP, NULL, NULL);
+
+	log_info(LOGGER, "Se conecto el cliente %i a SWAMP", *socket_cliente);
+	printf("Se conecto el cliente %i a SWAMP", *socket_cliente);
 
 	while(1) {
-		atender_peticiones(cliente);
+		atender_peticiones(socket_cliente);
 	}
 }
 
@@ -26,7 +30,7 @@ int main(void) {
 void init_swamp(){
 
 	//Incializamos logger
-	LOGGER = log_create("swamp.log", "SWAMP", 0, LOG_LEVEL_INFO);
+	LOGGER = log_create("/home/utnso/workspace/tp-2021-2c-DesacatadOS/swamp/SWAMP.log", "SWAMP", 0, LOG_LEVEL_INFO);
 
 	//Inicializamos archivo de configuracion
 	CONFIG = crear_archivo_config_swamp("/home/utnso/workspace/tp-2021-2c-DesacatadOS/swamp/src/swamp.config");
@@ -124,12 +128,12 @@ int crear_archivo(char* path, int size) {
 
 //----------------------------------------------- COORDINADOR Y OPERACIONES PPALES -----------------------------------------//
 
-void atender_peticiones(int cliente){
+void atender_peticiones(int* cliente){
 
-	t_peticion_swap operacion = recibir_operacion_swap(cliente);
+	t_peticion_swap operacion = recibir_operacion_swap(*cliente);
 
 	//Size de lo que manda
-	recibir_entero(cliente);
+	recibir_entero(*cliente);
 
 	uint32_t pid;
 	uint32_t nro_pagina;
@@ -142,21 +146,21 @@ void atender_peticiones(int cliente){
 
 	case RESERVAR_ESPACIO:;
 
-		pid = recibir_entero(cliente);
-		uint32_t cant_paginas = recibir_entero(cliente);
+		pid = recibir_entero(*cliente);
+		uint32_t cant_paginas = recibir_entero(*cliente);
 
 		log_info(LOGGER, "[SWAMP]: Reservando %i paginas para el proceso %i", cant_paginas, pid);
 
 		int rta = reservar_espacio(pid, cant_paginas);
-		send(cliente, &rta, sizeof(uint32_t), 0);
+		send(*cliente, &rta, sizeof(uint32_t), 0);
 
 		break;
 
 	case TIRAR_A_SWAP:;
 
-		pid         = recibir_entero(cliente);
-		nro_pagina  = recibir_entero(cliente);
-		recv(cliente, buffer_pag, CONFIG.tamanio_pag, 0);
+		pid         = recibir_entero(*cliente);
+		nro_pagina  = recibir_entero(*cliente);
+		recv(*cliente, buffer_pag, CONFIG.tamanio_pag, 0);
 
 		log_info(LOGGER, "[SWAMP]: Guardando la pagina %i del proceso %i en SWAMP", nro_pagina, pid);
 
@@ -179,8 +183,8 @@ void atender_peticiones(int cliente){
 
 	case TRAER_DE_SWAP:;
 
-		pid        = recibir_entero(cliente);
-		nro_pagina = recibir_entero(cliente);
+		pid        = recibir_entero(*cliente);
+		nro_pagina = recibir_entero(*cliente);
 
 		log_info(LOGGER, "[SWAMP]: Mandando pagina %i del proceso %i a MP", nro_pagina, pid);
 
@@ -198,14 +202,14 @@ void atender_peticiones(int cliente){
 		munmap(addr, CONFIG.tamanio_swamp);
 
 		usleep(CONFIG.retardo_swap * 1000);
-		send(cliente, buffer_pag, CONFIG.tamanio_pag, 0);
+		send(*cliente, buffer_pag, CONFIG.tamanio_pag, 0);
 
 		break;
 
 	case LIBERAR_PAGINA:;
 
-		pid = recibir_entero(cliente);
-		nro_pagina = recibir_entero(cliente);
+		pid = recibir_entero(*cliente);
+		nro_pagina = recibir_entero(*cliente);
 		log_info(LOGGER, "[SWAMP]: Liberando pagina %i del proceso %i", nro_pagina, pid);
 
 		frame   = frame_de_pagina(pid, nro_pagina);
@@ -226,13 +230,13 @@ void atender_peticiones(int cliente){
 	case SOLICITAR_MARCOS_MAX:;
 
 		log_info(LOGGER, "[SWAMP->MP]: Mandando los marcos_max a MP...");
-		send(cliente, &CONFIG.marcos_max, sizeof(uint32_t), 0);
+		send(*cliente, &CONFIG.marcos_max, sizeof(uint32_t), 0);
 
 	break;
 
 	case KILL_PROCESO:;
 
-		pid = recibir_entero(cliente);
+		pid = recibir_entero(*cliente);
 		log_info(LOGGER, "[SWAMP]: No entiendo la peticion, rey.");
 		eliminar_proceso_swap(pid);
 	break;
