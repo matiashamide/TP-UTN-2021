@@ -7,9 +7,9 @@ int main(void) {
 	log_info(LOGGER, "Ya me conecte con swamp y los marcos max son: %i \n", MAX_FRAMES_SWAP);
 
 
-	//coordinador_multihilo();
+	coordinador_multihilo();
 
-
+	/*
 	int a0 = memalloc(0, 10,1);
 	int a1 = memalloc(0, 12,1);
 	int a2 = memalloc(0, 10,1);
@@ -23,6 +23,7 @@ int main(void) {
 
 	int a6 = memalloc(0,31,1);
 
+	 */
 	return EXIT_SUCCESS;
 }
 

@@ -15,7 +15,7 @@ int main(void) {
 	init_swamp();
 
 	int *socket_cliente = malloc(sizeof(int));
-	(*socket_cliente)   = accept(SERVIDOR_SWAP, NULL, NULL);
+	(*socket_cliente)   = esperar_cliente(SERVIDOR_SWAP);
 
 	log_info(LOGGER, "Se conecto el cliente %i a SWAMP", *socket_cliente);
 	printf("Se conecto el cliente %i a SWAMP", *socket_cliente);
