@@ -243,31 +243,6 @@ void solicitar_pagina(int socket, int pid, int nro_pagina) {
 	eliminar_paquete_swap(paquete);
 }
 
-
-void enviar_pagina(t_peticion_swap sentido_swapeo, int tam_pagina, void* pagina, int socket_cliente, uint32_t pid, uint32_t nro_pagina) {
-	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
-
-	paquete->cod_op = sentido_swapeo;
-	paquete->buffer = malloc(sizeof(t_buffer));
-	paquete->buffer->size = tam_pagina + sizeof(uint32_t) * 2;
-	paquete->buffer->stream = malloc(paquete->buffer->size);
-
-	memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
-	int offset = sizeof(uint32_t);
-	memcpy(paquete->buffer->stream + offset, &nro_pagina, sizeof(uint32_t));
-	offset 	  += sizeof(uint32_t);
-	memcpy(paquete->buffer->stream + offset, pagina, tam_pagina);
-
-	int bytes;
-
-	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
-
-	send(socket_cliente, a_enviar, bytes, 0);
-
-	free(a_enviar);
-	eliminar_paquete_swap(paquete);
-}
-
 void* serializar_paquete_swap(t_paquete_swap* paquete, int* bytes) {
 
    int size_serializado = sizeof(t_peticion_swap) + sizeof(uint32_t) + paquete->buffer->size;
@@ -284,16 +259,6 @@ void* serializar_paquete_swap(t_paquete_swap* paquete, int* bytes) {
 
    (*bytes) = size_serializado;
    return buffer;
-}
-
-int recibir_operacion_swap(int socket_cliente) {
-   int cod_op;
-
-   if (recv(socket_cliente, &cod_op, sizeof(t_peticion_swap), MSG_WAITALL) != 0)
-	   return cod_op;
-
-	close(socket_cliente);
-    return -1;
 }
 
 void eliminar_paquete_swap(t_paquete_swap* paquete) {

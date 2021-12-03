@@ -7,22 +7,23 @@ int main(void) {
 	log_info(LOGGER, "Ya me conecte con swamp y los marcos max son: %i \n", MAX_FRAMES_SWAP);
 
 
-	coordinador_multihilo();
+	//coordinador_multihilo();
+
+	int a0 = memalloc(0,10,1);
+
+	int a1 = memalloc(1,10,1);
+
+	int a2 = memalloc(0,20000,1);
+
+	int a3 = memalloc(1,4,1);
+
+	int a4 = memalloc(0, 10,1);
 
 	/*
-	int a0 = memalloc(0, 10,1);
-	int a1 = memalloc(0, 12,1);
-	int a2 = memalloc(0, 10,1);
 	int a3 = memalloc(0, 12,1);
 	int a4 = memalloc(0, 12,1);
 	int a5 = memalloc(0, 40,1);
-
-	memfree(0,a1);
-	memfree(0,a3);
-	memfree(0,a2);
-
 	int a6 = memalloc(0,31,1);
-
 	 */
 	return EXIT_SUCCESS;
 }
@@ -1280,7 +1281,7 @@ int reemplazar_con_LRU(int pid) {
 		pag_reemplazo->modificado = false;
 	}
 
-	pag_reemplazo->presencia  = 0;
+	pag_reemplazo->presencia  = false;
 	unlockear(pag_reemplazo);
 
 	return pag_reemplazo->frame_ppal;

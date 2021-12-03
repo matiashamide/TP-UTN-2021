@@ -137,8 +137,8 @@ void atender_peticiones(int* cliente){
 
 	uint32_t pid;
 	uint32_t nro_pagina;
-	t_frame* frame = malloc(sizeof(t_frame));
-	t_metadata_archivo* archivo = malloc(sizeof(t_metadata_archivo));
+	t_frame* frame;
+	t_metadata_archivo* archivo;
 	void* addr;
 	void* buffer_pag = malloc(CONFIG.tamanio_pag);
 
@@ -243,8 +243,8 @@ void atender_peticiones(int* cliente){
 
 	default: log_info(LOGGER, "[SWAMP]: No entiendo la peticion, rey.");
 	break;
-
 	}
+	free(buffer_pag);
 	return;
 }
 
@@ -260,16 +260,16 @@ int reservar_espacio(int pid, int cant_paginas) {
 
 		if (archivo->espacio_disponible >= cant_paginas * CONFIG.tamanio_pag) {
 
+			t_list* frames;
+			if (CONFIG.marcos_max > 0) {
+				frames = frames_libres_del_proceso(nro_archivo, pid);
+			} else {
+				frames = frames_libres_del_archivo(nro_archivo);
+			}
+
 			for (int i = 1; i <= cant_paginas; i++) {
 
-				t_frame* frame;
-
-				if (CONFIG.marcos_max > 0) {
-					frame = list_get(frames_libres_del_proceso(nro_archivo, pid), i);
-				} else {
-					frame = list_get(frames_libres_del_archivo(nro_archivo), i);
-				}
-
+				t_frame* frame = list_get(frames, i-1);
 				frame->ocupado = true;
 				frame->pid     = pid;
 				frame->id_pag  = ultima_pagina_proceso(pid)->id_pag + i;
@@ -350,6 +350,18 @@ void eliminar_proceso_swap(int pid) {
 	}
 }
 
+//--------------------------------------------------- FUNCIONES DE CONEXION ---------------------------------------------------//
+
+int recibir_operacion_swap(int socket_cliente) {
+   int cod_op;
+
+   if (recv(socket_cliente, &cod_op, sizeof(t_peticion_swap), MSG_WAITALL) != 0)
+	   return cod_op;
+
+	close(socket_cliente);
+    return -1;
+}
+
 
 //--------------------------------------------------- FUNCIONES UTILES ---------------------------------------------------//
 
@@ -391,7 +403,7 @@ t_metadata_archivo* obtener_archivo_con_id(int aid) {
 t_metadata_archivo* obtener_archivo_mayor_espacio_libre() {
 
 	bool _de_mayor_espacio(t_metadata_archivo* un_archivo, t_metadata_archivo* otro_archivo) {
-		return un_archivo->espacio_disponible < otro_archivo->espacio_disponible;
+		return un_archivo->espacio_disponible > otro_archivo->espacio_disponible;
 	}
 
 	list_sort(METADATA_ARCHIVOS, (void*)_de_mayor_espacio);

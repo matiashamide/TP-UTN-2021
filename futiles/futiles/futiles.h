@@ -93,7 +93,6 @@ int size_char_array(char** array);
 // Envios MEMORIA - SWAP
 void* serializar_paquete_swap(t_paquete_swap* paquete, int* bytes);
 void eliminar_paquete_swap(t_paquete_swap*);
-int recibir_operacion_swap(int socket_cliente);
 uint32_t recibir_entero(int cliente);
 
 #endif /* FUTILES_H_ */

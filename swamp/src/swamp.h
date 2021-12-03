@@ -57,6 +57,7 @@ void crear_archivos();
 int crear_archivo(char* path, int size);
 
 void atender_peticiones(int* cliente);
+int recibir_operacion_swap(int socket_cliente);
 
 t_metadata_archivo* obtener_archivo_mayor_espacio_libre();
 int archivo_proceso_existente(int pid);
