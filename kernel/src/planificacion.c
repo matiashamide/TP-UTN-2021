@@ -720,8 +720,10 @@ void mate_close(t_procesador* estructura_procesador) {
 //ver el tema de que el deadlock no siga corriendo cada ese tiempo de config mientras estamos recuperandonos de un deadlock
 
 void correr_algoritmo_deadlock() {
-	usleep(CONFIG_KERNEL.tiempo_deadlock);
-	algoritmo_deteccion_deadlock();
+	while(1) {
+		usleep(CONFIG_KERNEL.tiempo_deadlock);
+		algoritmo_deteccion_deadlock();
+	}
 }
 
 
@@ -731,6 +733,8 @@ void algoritmo_deteccion_deadlock() {
 	int j;
 	t_list* lista_bloqueados_por_semaforo = list_create();
 	t_list* lista_procesos_en_deadlock = list_create();
+
+	printf("CORRIENDO DETECCION DEADLOCK\n");
 
 	pthread_mutex_lock(&mutex_lista_semaforos_mate);
 	//Ver tema mutex lista de bloqueados
@@ -877,9 +881,11 @@ void algoritmo_deteccion_deadlock() {
 		sem_post(&sem_grado_multiprogramacion);
 
 		pthread_mutex_unlock(&mutex_lista_semaforos_mate);
+		printf("ENCONTRE UN DEADLOCK AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
 		algoritmo_deteccion_deadlock();
-	} else {
 
+	} else {
+		printf("NO ENCONTRE UN DEADLOCK BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\n");
 		pthread_mutex_unlock(&mutex_lista_semaforos_mate);
 
 	}

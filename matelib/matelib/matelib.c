@@ -30,6 +30,15 @@ void recibir_permiso_para_continuar(int conexion) {
 
 }
 
+int recibir_finalizacion_por_deadlock(int conexion) {
+	uint32_t result;
+	int bytes_recibidos = recv(conexion, &result, sizeof(uint32_t), MSG_WAITALL);
+
+	printf("Ya recibi permiso %d\n", bytes_recibidos);
+
+	return result;
+}
+
 int recibir_operacion(int socket_cliente) {
    peticion_carpincho cod_op;
    if (recv(socket_cliente, &cod_op, sizeof(peticion_carpincho), MSG_WAITALL) != 0) {
@@ -333,12 +342,23 @@ int mate_sem_wait(mate_instance *lib_ref, mate_sem_name sem) {
 
 	send(((mate_inner_structure *)lib_ref->group_info)->socket_conexion, a_enviar, bytes, 0);
 
-	recibir_permiso_para_continuar(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
+	//recibir_permiso_para_continuar(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
+	uint32_t resultado = recibir_finalizacion_por_deadlock(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
 
-	free(a_enviar);
-	eliminar_paquete(paquete);
+	if(resultado == 1) {
+		return 0;
+		free(a_enviar);
+		eliminar_paquete(paquete);
+	} else {
+		close(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
+		free(lib_ref->group_info);
+		printf("Fui finalizado por deadlock, adiosss\n");
+		free(a_enviar);
+		eliminar_paquete(paquete);
+		pthread_exit(NULL);
+	}
+
 	return 0;
-
 }
 
 int mate_sem_post(mate_instance *lib_ref, mate_sem_name sem) {
