@@ -71,7 +71,7 @@ int reservar_espacio(int pid , int cant_paginas);
 
 t_list* frames_libres_del_archivo(int aid);
 t_list* frames_libres_del_proceso(int aid, int pid);
-t_frame* ultima_pagina_proceso(int pid);
+int ultima_pagina_proceso(int pid);
 t_list* frames_del_proceso(int pid);
 
 #endif /* SWAMP_H_ */

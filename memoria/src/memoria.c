@@ -8,6 +8,9 @@ int main(void) {
 
 	coordinador_multihilo();
 
+	//int a1 = memalloc(0,20000,1);
+	//int a2 = memalloc(1, 200, 1);
+
 	return EXIT_SUCCESS;
 }
 
@@ -278,7 +281,6 @@ void atender_carpinchos(int* cliente) {
 
 			log_info(LOGGER, "Se desconecto el cliente %i\n", *cliente);
 
-			/*
 			if (existe_kernel) {
 				pid = recibir_entero(*cliente);
 			} else {
@@ -290,7 +292,6 @@ void atender_carpinchos(int* cliente) {
 			if (!existe_kernel) {
 				dar_permiso_para_continuar((*cliente));
 			}
-			*/
 
 		break;
 
@@ -1280,11 +1281,11 @@ int reemplazar_con_LRU(int32_t pid) {
 
 int reemplazar_con_CLOCK_M(int32_t pid) {
 
-	int pag_seleccionada;
-	int encontre = 0;
-	int busco_modificado = 0;
 	int i = POSICION_CLOCK;
-	int primera_vuelta = 1;
+	int pag_seleccionada;
+	int encontre         = 0;
+	int busco_modificado = 0;
+	int primera_vuelta   = 1;
 
 	t_list* paginas = list_filter(paginas_en_mp(), (void*)no_esta_lockeada);
 	t_pagina* victima;
@@ -1294,6 +1295,7 @@ int reemplazar_con_CLOCK_M(int32_t pid) {
 		if (i >= list_size(paginas)) {
 			i = 0;
 		}
+
 		t_pagina* pagina = list_get(paginas, i);
 
 
@@ -1305,7 +1307,7 @@ int reemplazar_con_CLOCK_M(int32_t pid) {
 
 		if (!busco_modificado) {
 
-			if (pagina->uso == 0 && pagina->modificado == 0) {
+			if (pagina->uso == false && pagina->modificado == false) {
 
 				pag_seleccionada = i;
 				POSICION_CLOCK   = i;
@@ -1319,7 +1321,7 @@ int reemplazar_con_CLOCK_M(int32_t pid) {
 
 		} else {
 
-			if(pagina->uso == 0) {
+			if(pagina->uso == false && pagina->modificado == false) {
 
 				pag_seleccionada = i;
 				POSICION_CLOCK   = i;
@@ -1327,7 +1329,7 @@ int reemplazar_con_CLOCK_M(int32_t pid) {
 
 			} else {
 				i++;
-				pagina->uso = 0;
+				pagina->uso = false;
 			}
 
 		}
@@ -1591,7 +1593,7 @@ void tirar_a_swap(t_pagina* pagina) {
 
 	printf("TIRANDO A SWAP \n");
 
-	log_info(LOGGER, "[MP->SWAMP] Tirando la pagina modificada %i en swap, del proceso ", pagina->id , pagina->pid);
+	log_info(LOGGER, "[MP->SWAMP] Tirando la pagina modificada %i en swap, del proceso %i", pagina->id , pagina->pid);
 
 	void* buffer_pag = malloc(CONFIG.tamanio_pagina);
 	//buffer_pag = realloc(buffer_pag, CONFIG.tamanio_pagina);
@@ -1723,7 +1725,8 @@ void set_modificado(t_pagina* pag){
 void signal_metricas(){
 	log_info(LOGGER, "[SIGNAL METRICAS]: Recibi la senial de imprimir metricas, imprimiendo\n...");
 	//generar_metricas_tlb();
-	dump_memoria_principal();
+	//dump_memoria_principal();
+	dumpear_tlb();
 	exit(1);
 }
 void signal_dump(){
@@ -1740,9 +1743,6 @@ void signal_clean_tlb(){
 //--------------------------------------------------- DUMP ----------------------------------------------------//
 
 void dump_memoria_principal() {
-
-	t_list* pags = paginas_en_mp();
-	printf("Hay %i pags en principal", list_size(pags));
 
 	FILE* file;
 
@@ -1767,21 +1767,18 @@ void dump_memoria_principal() {
 	list_sort(pags_mp, (void*)_frames_ascendente);
 
 	for (int i = 0 ; i < list_size(FRAMES_MEMORIA) ; i++) {
-		fprintf(file, "||       %i      ", i);
+		fprintf(file, "||          %i        ", i);
 	}
 	fprintf(file, "\n");
 
 	for (int i = 0 ; i < list_size(pags_mp) ; i++) {
 
 		pagina = list_get(pags_mp, i);
-		fprintf(file, "|| C%i P%i TIEMPO: %i ", pagina->pid+1, pagina->id, pagina->tiempo_uso);
+		fprintf(file, "||    C%i P%i    ", pagina->pid+1, pagina->id);
 
 	}
 
 	fprintf(file, "||\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
 	fclose(file);
-
-	free(path_name);
-
 
 }

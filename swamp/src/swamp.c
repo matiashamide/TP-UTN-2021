@@ -20,7 +20,7 @@ int main(void) {
 	log_info(LOGGER, "Se conecto el cliente %i a SWAMP", *socket_cliente);
 	printf("Se conecto el cliente %i a SWAMP", *socket_cliente);
 
-	//int i = 0;
+	int i = 0;
 	while(1) {
 		atender_peticiones(socket_cliente);
 		//i++;
@@ -140,11 +140,11 @@ void atender_peticiones(int* cliente){
 	//int size = recibir_entero_swap(*cliente);
 	//printf("Size paquete: %i",size);
 
-	uint32_t pid, nro_pagina, rta;
+	uint32_t pid, nro_pagina, rta, cant_paginas;
 	t_frame* frame;
 	t_metadata_archivo* archivo;
 	void* addr;
-	void* buffer_pag = malloc(CONFIG.tamanio_pag);
+	void* buffer_pag;
 
 	switch (operacion) {
 
@@ -152,8 +152,8 @@ void atender_peticiones(int* cliente){
 
 		printf("\n\nReservar espacio\n\n");
 
-		pid = recibir_entero(*cliente);
-		uint32_t cant_paginas = recibir_entero(*cliente);
+		pid          = recibir_entero(*cliente);
+		cant_paginas = recibir_entero(*cliente);
 
 		log_info(LOGGER, "[SWAMP]: Reservando %i paginas para el proceso %i", cant_paginas, pid);
 
@@ -165,6 +165,10 @@ void atender_peticiones(int* cliente){
 	case TIRAR_A_SWAP:;
 
 		printf("\n\nTirar a swap\n\n");
+
+		buffer_pag  = malloc(CONFIG.tamanio_pag);
+		buffer_pag  = realloc(buffer_pag, CONFIG.tamanio_pag);
+
 		pid         = recibir_entero(*cliente);
 		nro_pagina  = recibir_entero(*cliente);
 		recv(*cliente, buffer_pag, CONFIG.tamanio_pag, 0);
@@ -172,19 +176,26 @@ void atender_peticiones(int* cliente){
 		log_info(LOGGER, "[SWAMP]: Guardando la pagina %i del proceso %i en SWAMP", nro_pagina, pid);
 
 		frame   = frame_de_pagina(pid, nro_pagina);
+
+		if(frame == NULL) {
+			printf("ERROR EL FRAME ES 0!!!\n");
+			return;
+		}
 		archivo = obtener_archivo_con_id(frame->aid);
 
-		addr = mmap(NULL, CONFIG.tamanio_pag, PROT_READ | PROT_WRITE, MAP_SHARED, archivo->fd, 0);
+		addr = mmap(NULL, CONFIG.tamanio_swamp, PROT_READ | PROT_WRITE, MAP_SHARED, archivo->fd, 0);
 
 		if (addr == MAP_FAILED) {
 			perror("Error mapping \n");
 			exit(1);
 		}
 
+		printf("Por memcopiar en archivo %i offset %i", archivo->id, frame->offset);
 		memcpy(addr + frame->offset, buffer_pag, CONFIG.tamanio_pag);
-		msync(addr, CONFIG.tamanio_pag, 0);
+		msync(addr, CONFIG.tamanio_swamp, MS_SYNC);
 
-		munmap(addr, CONFIG.tamanio_pag);
+		munmap(addr, CONFIG.tamanio_swamp);
+		free(buffer_pag);
 
 		rta = 1;
 		send(*cliente, &rta, sizeof(uint32_t), 0);
@@ -192,6 +203,9 @@ void atender_peticiones(int* cliente){
 		break;
 
 	case TRAER_DE_SWAP:;
+
+		buffer_pag = malloc(CONFIG.tamanio_pag);
+		buffer_pag = realloc(buffer_pag, CONFIG.tamanio_pag);
 
 		pid        = recibir_entero(*cliente);
 		nro_pagina = recibir_entero(*cliente);
@@ -214,11 +228,13 @@ void atender_peticiones(int* cliente){
 		usleep(CONFIG.retardo_swap * 1000);
 		send(*cliente, buffer_pag, CONFIG.tamanio_pag, 0);
 
+		free(buffer_pag);
+
 		break;
 
 	case LIBERAR_PAGINA:;
 
-		pid = recibir_entero(*cliente);
+		pid        = recibir_entero(*cliente);
 		nro_pagina = recibir_entero(*cliente);
 		log_info(LOGGER, "[SWAMP]: Liberando pagina %i del proceso %i", nro_pagina, pid);
 
@@ -256,7 +272,7 @@ void atender_peticiones(int* cliente){
 	default: log_info(LOGGER, "[SWAMP]: No entiendo la peticion, rey.");
 	break;
 	}
-	free(buffer_pag);
+	//free(buffer_pag);
 	return;
 }
 
@@ -279,12 +295,15 @@ int32_t reservar_espacio(int32_t pid, int cant_paginas) {
 				frames = frames_libres_del_archivo(nro_archivo);
 			}
 
+			int id_ult_pag = ultima_pagina_proceso(pid);
+
 			for (int i = 1; i <= cant_paginas; i++) {
 
 				t_frame* frame = list_get(frames, i-1);
 				frame->ocupado = true;
 				frame->pid     = pid;
-				frame->id_pag  = ultima_pagina_proceso(pid)->id_pag + i;
+				frame->id_pag  = id_ult_pag + i;
+				printf("PROCESO %i ID PAG: %i",frame->pid, frame->id_pag);
 
 			}
 
@@ -453,22 +472,23 @@ t_list* frames_libres_del_proceso(int aid, int32_t pid) {
 	return list_filter(FRAMES_SWAP, frame_libre_del_proceso);
 }
 
-t_frame* ultima_pagina_proceso(int32_t pid) {
+int ultima_pagina_proceso(int32_t pid) {
+
+	t_list* frames_proceso = frames_del_proceso(pid);
 
 	bool frame_ocupado(void* elemento) {
 		t_frame* frame_aux = (t_frame*) elemento;
 		return frame_aux->ocupado && frame_aux->id_pag != -1;
 	}
 
-	t_list* frames_asignados = list_filter(frames_del_proceso(pid), frame_ocupado);
+	t_list* frames_asignados = list_filter(frames_proceso, (void*)frame_ocupado);
 
-	t_frame* _ultima_pagina_proceso(void* un_frame, void* otro_frame) {
-		t_frame* f1 = (t_frame*) un_frame;
-		t_frame* f2 = (t_frame*) otro_frame;
-		return f1->id_pag > f2->id_pag ? f1 : f2;
+	int id_pag_asc(t_frame* unFrame, t_frame* otroFrame) {
+		return (otroFrame->id_pag > unFrame->id_pag);
 	}
 
-	return list_get_maximum(frames_asignados, (void*)_ultima_pagina_proceso);
+	list_sort(frames_asignados, (void*)id_pag_asc);
+	return ((t_frame*)list_get(frames_asignados, 0))->id_pag;
 }
 
 t_list* frames_del_proceso(int32_t pid) {

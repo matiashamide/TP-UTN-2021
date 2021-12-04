@@ -90,7 +90,7 @@ void reemplazar_FIFO(int pid, int pag, int frame){
 	t_entrada_tlb* victima = (t_entrada_tlb*)list_get(TLB, 0);
 	log_info(LOGGER, "|| TLB FIFO || [VICTIMA] PID: %i | NRO_PAG: %i | FRAME: %i ||| [NUEVA ENTRADA] PID: %i | NRO_PAG: %i | FRAME: %i | \n", victima->pid, victima->pag, victima->frame, entrada_nueva->pid, entrada_nueva->pag, entrada_nueva->frame);
 	list_remove_and_destroy_element(TLB, 0, free);
-	list_add_in_index(TLB , CONFIG.cant_entradas_tlb -1, entrada_nueva);
+	list_add(TLB, entrada_nueva);
 	pthread_mutex_unlock(&mutexTLB);
 }
 
@@ -187,6 +187,7 @@ void dumpear_tlb(){
     fprintf(file, "\n\n");
     fprintf(file, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
     fprintf(file, "Dump: %s\n\n",time);
+    fprintf(file, "Algoritmo utilizado: %s \n", CONFIG.alg_reemplazo_tlb);
 
     mostrar_entradas_tlb(file);
 
