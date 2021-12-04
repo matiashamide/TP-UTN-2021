@@ -67,7 +67,8 @@ typedef enum{
 	TRAER_DE_SWAP,        // MP -> SWAP (pid, id)
 	SOLICITAR_MARCOS_MAX, // MP -> SWAP (nada)
 	LIBERAR_PAGINA,		  // MP -> SWAP (pid, id)
-	KILL_PROCESO
+	KILL_PROCESO,
+	EXIT
 } t_peticion_swap;
 
 typedef struct {

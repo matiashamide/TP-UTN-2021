@@ -156,7 +156,7 @@ void* traer_de_swap(int32_t pid, int32_t nro_pagina);
 void enviar_pagina(void* pagina, int socket_cliente, uint32_t pid, uint32_t nro_pagina);
 void  eliminar_pag_swap(int32_t pid , int nro_pagina);
 void eliminar_proceso_swap(int32_t pid);
-
+void exit_memoria();
 //// ---- funciones de estado
 bool esta_libre_frame(t_frame* frame);
 bool esta_libre_y_desasignado(t_frame* frame);
