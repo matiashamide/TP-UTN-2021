@@ -173,15 +173,23 @@ void atender_peticiones(int* cliente){
 		nro_pagina  = recibir_entero(*cliente);
 		recv(*cliente, buffer_pag, CONFIG.tamanio_pag, 0);
 
+		printf("antes del log\n");
+
 		log_info(LOGGER, "[SWAMP]: Guardando la pagina %i del proceso %i en SWAMP", nro_pagina, pid);
 
-		frame   = frame_de_pagina(pid, nro_pagina);
+		frame = frame_de_pagina(pid, nro_pagina);
 
+		printf("ya tengo el frame no se si es null \n");
 		if(frame == NULL) {
-			printf("ERROR EL FRAME ES 0!!!\n");
 			return;
 		}
+
+		printf("el frame es %i", frame->offset);
 		archivo = obtener_archivo_con_id(frame->aid);
+		printf("tengo el archivo");
+		if (archivo == NULL) {
+			printf("pincho archivo");
+		}
 
 		addr = mmap(NULL, CONFIG.tamanio_swamp, PROT_READ | PROT_WRITE, MAP_SHARED, archivo->fd, 0);
 
@@ -284,7 +292,7 @@ int32_t reservar_espacio(int32_t pid, int cant_paginas) {
 	//CASO 1: Proceso existente
 	if (nro_archivo != -1) {
 
-		archivo = (t_metadata_archivo*)list_get(METADATA_ARCHIVOS, nro_archivo);
+		archivo = obtener_archivo_con_id(nro_archivo);
 
 		if (archivo->espacio_disponible >= cant_paginas * CONFIG.tamanio_pag) {
 

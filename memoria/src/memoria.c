@@ -8,9 +8,6 @@ int main(void) {
 
 	coordinador_multihilo();
 
-	//int a1 = memalloc(0,20000,1);
-	//int a2 = memalloc(1, 200, 1);
-
 	return EXIT_SUCCESS;
 }
 
