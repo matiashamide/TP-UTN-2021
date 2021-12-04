@@ -6,36 +6,7 @@ int main(void) {
 	log_info(LOGGER, "Inicializa memoria");
 	log_info(LOGGER, "Ya me conecte con swamp y los marcos max son: %i \n", MAX_FRAMES_SWAP);
 
-
-	//int a0 = memalloc(0,128,1);
-
 	coordinador_multihilo();
-
-//	int a0 = memalloc(0,10,1);
-
-//	int a1 = memalloc(1,10,1);
-
-	//int a2 = memalloc(0,128,1);
-	//close(CONEXION_SWAP);
-
-
-//	int a3 = memalloc(1,4,1);
-/*
-	int a0 = memalloc(0, 10,1);
-
-	t_list* pags = paginas_en_mp();
-		printf("Hay %i pags en principal", pags);
-	int a3 = memalloc(0, 12,1);
-	int a4 = memalloc(0, 12,1);
-	int a5 = memalloc(0, 40,1);
-	pags = paginas_en_mp();
-		printf("Hay %i pags en principal", pags);
-	int a6 = memalloc(0,31,1);
-
-	pags = paginas_en_mp();
-		printf("Hay %i pags en principal", pags);
-	dump_memoria_principal();
-	*/
 
 	return EXIT_SUCCESS;
 }
@@ -1320,11 +1291,11 @@ int reemplazar_con_CLOCK_M(int32_t pid) {
 
 	while(!encontre) {
 
-		t_pagina* pagina = list_get(paginas, i);
-
 		if (i >= list_size(paginas)) {
 			i = 0;
 		}
+		t_pagina* pagina = list_get(paginas, i);
+
 
 		if (i == POSICION_CLOCK && !encontre && !primera_vuelta) {
 			busco_modificado = 1;
@@ -1773,8 +1744,6 @@ void dump_memoria_principal() {
 	t_list* pags = paginas_en_mp();
 	printf("Hay %i pags en principal", list_size(pags));
 
-
-
 	FILE* file;
 
 	char* path_name = "/home/utnso/workspace/tp-2021-2c-DesacatadOS/dump_memoria_principal";
@@ -1805,7 +1774,7 @@ void dump_memoria_principal() {
 	for (int i = 0 ; i < list_size(pags_mp) ; i++) {
 
 		pagina = list_get(pags_mp, i);
-		fprintf(file, "|| C%i P%i ", pagina->pid+1, pagina->id);
+		fprintf(file, "|| C%i P%i TIEMPO: %i ", pagina->pid+1, pagina->id, pagina->tiempo_uso);
 
 	}
 
