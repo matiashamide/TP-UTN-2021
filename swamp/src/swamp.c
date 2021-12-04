@@ -20,9 +20,12 @@ int main(void) {
 	log_info(LOGGER, "Se conecto el cliente %i a SWAMP", *socket_cliente);
 	printf("Se conecto el cliente %i a SWAMP", *socket_cliente);
 
+	//int i = 0;
 	while(1) {
 		atender_peticiones(socket_cliente);
+		//i++;
 	}
+	return 1;
 }
 
 //------------------------------------------------------ INIT SWAMP -----------------------------------------------------//
@@ -133,10 +136,11 @@ void atender_peticiones(int* cliente){
 	t_peticion_swap operacion = recibir_operacion_swap(*cliente);
 
 	//Size de lo que manda
-	recibir_entero(*cliente);
+	recibir_entero_swap(*cliente);
+	//int size = recibir_entero_swap(*cliente);
+	//printf("Size paquete: %i",size);
 
-	uint32_t pid;
-	uint32_t nro_pagina;
+	uint32_t pid, nro_pagina, rta;
 	t_frame* frame;
 	t_metadata_archivo* archivo;
 	void* addr;
@@ -146,18 +150,21 @@ void atender_peticiones(int* cliente){
 
 	case RESERVAR_ESPACIO:;
 
+		printf("\n\nReservar espacio\n\n");
+
 		pid = recibir_entero(*cliente);
 		uint32_t cant_paginas = recibir_entero(*cliente);
 
 		log_info(LOGGER, "[SWAMP]: Reservando %i paginas para el proceso %i", cant_paginas, pid);
 
-		int rta = reservar_espacio(pid, cant_paginas);
+		rta = reservar_espacio(pid, cant_paginas);
 		send(*cliente, &rta, sizeof(uint32_t), 0);
-
+		printf("\n\nReserve espacio y salio %i\n\n",rta);
 		break;
 
 	case TIRAR_A_SWAP:;
 
+		printf("\n\nTirar a swap\n\n");
 		pid         = recibir_entero(*cliente);
 		nro_pagina  = recibir_entero(*cliente);
 		recv(*cliente, buffer_pag, CONFIG.tamanio_pag, 0);
@@ -177,7 +184,10 @@ void atender_peticiones(int* cliente){
 		memcpy(addr + frame->offset, buffer_pag, CONFIG.tamanio_pag);
 		msync(addr, CONFIG.tamanio_pag, 0);
 
-		munmap(addr, CONFIG.tamanio_swamp);
+		munmap(addr, CONFIG.tamanio_pag);
+
+		rta = 1;
+		send(*cliente, &rta, sizeof(uint32_t), 0);
 
 		break;
 
@@ -229,6 +239,8 @@ void atender_peticiones(int* cliente){
 
 	case SOLICITAR_MARCOS_MAX:;
 
+	printf("\n\nMarcos max\n\n");
+
 		log_info(LOGGER, "[SWAMP->MP]: Mandando los marcos_max a MP...");
 		send(*cliente, &CONFIG.marcos_max, sizeof(uint32_t), 0);
 
@@ -248,7 +260,7 @@ void atender_peticiones(int* cliente){
 	return;
 }
 
-int reservar_espacio(int pid, int cant_paginas) {
+int32_t reservar_espacio(int32_t pid, int cant_paginas) {
 
 	int nro_archivo = archivo_proceso_existente(pid);
 	t_metadata_archivo* archivo;
@@ -329,7 +341,7 @@ int reservar_espacio(int pid, int cant_paginas) {
 	}
 }
 
-void eliminar_proceso_swap(int pid) {
+void eliminar_proceso_swap(int32_t pid) {
 
 	int fd = archivo_proceso_existente(pid);
 
@@ -352,8 +364,8 @@ void eliminar_proceso_swap(int pid) {
 
 //--------------------------------------------------- FUNCIONES DE CONEXION ---------------------------------------------------//
 
-int recibir_operacion_swap(int socket_cliente) {
-   int cod_op;
+int32_t recibir_operacion_swap(int socket_cliente) {
+   int32_t cod_op;
 
    if (recv(socket_cliente, &cod_op, sizeof(t_peticion_swap), MSG_WAITALL) != 0)
 	   return cod_op;
@@ -362,10 +374,21 @@ int recibir_operacion_swap(int socket_cliente) {
     return -1;
 }
 
+int32_t recibir_entero_swap(int cliente){
+	uint32_t entero;
+
+	if (recv(cliente, &entero, sizeof(uint32_t), MSG_WAITALL) != 0) {
+	      return entero;
+	} else {
+	    close(cliente);
+	    return -1;
+	}
+}
+
 
 //--------------------------------------------------- FUNCIONES UTILES ---------------------------------------------------//
 
-int archivo_proceso_existente(int pid) {
+int archivo_proceso_existente(int32_t pid) {
 
 	bool existe_proceso_por_pid(void* elemento) {
 		t_frame* frame_aux = (t_frame*) elemento;
@@ -380,7 +403,7 @@ int archivo_proceso_existente(int pid) {
     return frame->aid;
 }
 
-t_frame* frame_de_pagina(int pid, int nro_pagina) {
+t_frame* frame_de_pagina(int32_t pid, int nro_pagina) {
 
 	bool _existe_pag_pid_nro(void * elemento) {
 		t_frame* frame = (t_frame*) elemento;
@@ -420,7 +443,7 @@ t_list* frames_libres_del_archivo(int aid) {
 	return list_filter(FRAMES_SWAP, frame_libre_del_archivo);
 }
 
-t_list* frames_libres_del_proceso(int aid, int pid) {
+t_list* frames_libres_del_proceso(int aid, int32_t pid) {
 
 	bool frame_libre_del_proceso(void * elemento) {
 		t_frame* frame_aux = (t_frame*) elemento;
@@ -430,7 +453,7 @@ t_list* frames_libres_del_proceso(int aid, int pid) {
 	return list_filter(FRAMES_SWAP, frame_libre_del_proceso);
 }
 
-t_frame* ultima_pagina_proceso(int pid) {
+t_frame* ultima_pagina_proceso(int32_t pid) {
 
 	bool frame_ocupado(void* elemento) {
 		t_frame* frame_aux = (t_frame*) elemento;
@@ -448,7 +471,7 @@ t_frame* ultima_pagina_proceso(int pid) {
 	return list_get_maximum(frames_asignados, (void*)_ultima_pagina_proceso);
 }
 
-t_list* frames_del_proceso(int pid) {
+t_list* frames_del_proceso(int32_t pid) {
 
 	bool _frame_del_pid(void * elemento) {
 		t_frame* frame = (t_frame*) elemento;

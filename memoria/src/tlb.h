@@ -27,7 +27,7 @@ t_list* TLB_HITS;
 t_list* TLB_MISS;
 
 //// --- semaforos
-pthread_mutex_t mutexTiempo;
+pthread_mutex_t mutexTiempoTLB;
 pthread_mutex_t mutexTLB;
 
 // FUNCIONES
@@ -46,7 +46,7 @@ void actualizar_tlb(int pid, int pag, int frame);
 void registrar_evento(int pid, int event);
 
 //// ---- funciones secundarias
-int  obtener_tiempo();
+int  obtener_tiempo_TLB();
 void printear_TLB(int entradas);
 
 //// ---- funciones signals

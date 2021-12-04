@@ -29,7 +29,7 @@ int buscar_pag_tlb(int pid, int pag) {
 		//TLB HIT
 		registrar_evento(pid, 1);
 		log_info(LOGGER , "[TLB HIT] PID: %i  NRO_PAG: %i  FRAME: %i \n", entrada->pid, entrada->pag, entrada->frame);
-		entrada->ultimo_uso = obtener_tiempo();
+		entrada->ultimo_uso = obtener_tiempo_TLB();
 		return entrada->frame;
 	}
 
@@ -39,11 +39,11 @@ int buscar_pag_tlb(int pid, int pag) {
 	return -1;
 }
 
-int obtener_tiempo(){
-	pthread_mutex_lock(&mutexTiempo);
+int obtener_tiempo_TLB(){
+	pthread_mutex_lock(&mutexTiempoTLB);
 	int t = TIEMPO_TLB;
 	TIEMPO_TLB++;
-	pthread_mutex_unlock(&mutexTiempo);
+	pthread_mutex_unlock(&mutexTiempoTLB);
 	return t;
 }
 
@@ -73,7 +73,7 @@ void crear_entrada(int pid, int pag, int frame) {
 	entrada->pag        = pag;
 	entrada->pid        = pid;
 	entrada->frame      = frame;
-	entrada->ultimo_uso = obtener_tiempo();
+	entrada->ultimo_uso = obtener_tiempo_TLB();
 
 	list_add(TLB, entrada);
 }
@@ -100,7 +100,7 @@ void reemplazar_LRU(int pid, int pag, int frame){
 	entrada_nueva->pid 	      = pid;
 	entrada_nueva->pag        = pag;
 	entrada_nueva->frame      = frame;
-	entrada_nueva->ultimo_uso = obtener_tiempo();
+	entrada_nueva->ultimo_uso = obtener_tiempo_TLB();
 
 	int masVieja(t_entrada_tlb* una_entrada, t_entrada_tlb* otra_entrada){
 		return (otra_entrada->ultimo_uso > una_entrada->ultimo_uso);

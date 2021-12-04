@@ -7,24 +7,36 @@ int main(void) {
 	log_info(LOGGER, "Ya me conecte con swamp y los marcos max son: %i \n", MAX_FRAMES_SWAP);
 
 
-	//coordinador_multihilo();
+	//int a0 = memalloc(0,128,1);
 
-	int a0 = memalloc(0,10,1);
+	coordinador_multihilo();
 
-	int a1 = memalloc(1,10,1);
+//	int a0 = memalloc(0,10,1);
 
-	int a2 = memalloc(0,20000,1);
+//	int a1 = memalloc(1,10,1);
 
-	int a3 = memalloc(1,4,1);
+	//int a2 = memalloc(0,128,1);
+	//close(CONEXION_SWAP);
 
-	int a4 = memalloc(0, 10,1);
 
-	/*
+//	int a3 = memalloc(1,4,1);
+/*
+	int a0 = memalloc(0, 10,1);
+
+	t_list* pags = paginas_en_mp();
+		printf("Hay %i pags en principal", pags);
 	int a3 = memalloc(0, 12,1);
 	int a4 = memalloc(0, 12,1);
 	int a5 = memalloc(0, 40,1);
+	pags = paginas_en_mp();
+		printf("Hay %i pags en principal", pags);
 	int a6 = memalloc(0,31,1);
-	 */
+
+	pags = paginas_en_mp();
+		printf("Hay %i pags en principal", pags);
+	dump_memoria_principal();
+	*/
+
 	return EXIT_SUCCESS;
 }
 
@@ -60,8 +72,9 @@ void init_memoria() {
 	CONEXION_SWAP   = crear_conexion(CONFIG.ip_swap, CONFIG.puerto_swap);
 	MAX_FRAMES_SWAP = solicitar_marcos_max_swap();
 
-	//Inicializamos PID_GLOBAL
+	//Inicializamos PID_GLOBAL y TIEMPO_MMU
 	PID_GLOBAL = 0;
+	TIEMPO_MMU = 0;
 
 	//Senales
 	signal(SIGINT,  &signal_metricas);
@@ -113,13 +126,13 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
 	config.puerto_swap         = config_get_string_value(memoria_config, "PUERTO_SWAP");
     config.tamanio_memoria     = config_get_int_value   (memoria_config, "TAMANIO");
     config.tamanio_pagina      = config_get_int_value   (memoria_config, "TAMANIO_PAGINA");
-    config.alg_remp_mmu        = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_MMU");
     config.tipo_asignacion     = config_get_string_value(memoria_config, "TIPO_ASIGNACION");
 
     if (string_equals_ignore_case(config.tipo_asignacion,"FIJA")) {
-    	config.marcos_max      = config_get_int_value   (memoria_config, "MARCOS_POR_CARPINCHO");
+        	config.marcos_max      = config_get_int_value   (memoria_config, "MARCOS_POR_CARPINCHO");
     }
 
+    config.alg_remp_mmu        = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_MMU");
     config.cant_entradas_tlb   = config_get_int_value   (memoria_config, "CANTIDAD_ENTRADAS_TLB");
     config.alg_reemplazo_tlb   = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_TLB");
     config.retardo_acierto_tlb = config_get_int_value   (memoria_config, "RETARDO_ACIERTO_TLB");
@@ -177,8 +190,8 @@ void atender_carpinchos(int* cliente) {
 	while(1) {
 
 		peticion_carpincho operacion = recibir_operacion(*cliente);
-		int size_paquete = recibir_entero(*cliente);
-		int pid, retorno, dir_logica, size_contenido;
+		int32_t size_paquete = recibir_entero(*cliente);
+		int32_t pid, retorno, dir_logica, size_contenido;
 
 		switch (operacion) {
 
@@ -190,7 +203,7 @@ void atender_carpinchos(int* cliente) {
 				pid = pid_por_conexion(*cliente);
 			}
 
-			int size = recibir_entero(*cliente);
+			int32_t size = recibir_entero(*cliente);
 			log_info(LOGGER, "MEMALLOC: el cliente %i solicito alocar memoria de %i bytes", *cliente, size);
 
 			retorno  = memalloc(pid, size, *cliente);
@@ -294,17 +307,19 @@ void atender_carpinchos(int* cliente) {
 
 			log_info(LOGGER, "Se desconecto el cliente %i\n", *cliente);
 
+			/*
 			if (existe_kernel) {
 				pid = recibir_entero(*cliente);
 			} else {
 				pid = pid_por_conexion(*cliente);
 			}
 
-			eliminar_proceso(pid);
+			//eliminar_proceso(pid);
 
 			if (!existe_kernel) {
 				dar_permiso_para_continuar((*cliente));
 			}
+			*/
 
 		break;
 
@@ -325,7 +340,10 @@ void atender_carpinchos(int* cliente) {
 
 //--------------------------------------------------- FUNCIONES PRINCIPALES ----------------------------------------------//
 
-int memalloc(int pid, int size, int cliente){
+int memalloc(int32_t pid, int32_t size, int cliente){
+
+	printf("Entre al memalloc\n");
+
 	int dir_logica = -1;
 	int paginas_necesarias = ceil(((double)size + sizeof(heap_metadata)*2)/ (double)CONFIG.tamanio_pagina);
 
@@ -394,7 +412,9 @@ int memalloc(int pid, int size, int cliente){
 		header_sig->prev_alloc    = 0;
 
 		//Bloque de paginas en donde se meten los headers
-		void* buffer_pags_proceso = malloc(paginas_necesarias * CONFIG.tamanio_pagina);
+		int tam_buffer = paginas_necesarias * CONFIG.tamanio_pagina;
+		void* buffer_pags_proceso = malloc(tam_buffer);
+		buffer_pags_proceso = realloc(buffer_pags_proceso, tam_buffer);
 
 		memcpy(buffer_pags_proceso, header, sizeof(heap_metadata));
 		memcpy(buffer_pags_proceso + sizeof(heap_metadata) + size, header_sig, sizeof(heap_metadata));
@@ -409,7 +429,7 @@ int memalloc(int pid, int size, int cliente){
 			pagina->modificado    = 1;
 			pagina->lock          = 1;
 			pagina->presencia     = 1;
-			pagina->tiempo_uso    = obtener_tiempo();
+			pagina->tiempo_uso    = obtener_tiempo_MMU();
 			pagina->uso           = 0;
 
 			list_add(nueva_tabla->paginas, pagina);
@@ -489,7 +509,7 @@ int memalloc(int pid, int size, int cliente){
 				pagina->modificado    = 1;
 				pagina->lock          = 1;
 				pagina->presencia     = 1;
-				pagina->tiempo_uso    = obtener_tiempo();
+				pagina->tiempo_uso    = obtener_tiempo_MMU();
 				pagina->uso           = 0;
 
 				list_add(paginas_proceso, pagina);
@@ -511,7 +531,7 @@ int memalloc(int pid, int size, int cliente){
 	return dir_logica + sizeof(heap_metadata);
 }
 
-int memfree(int pid, int dir_logica){
+int memfree(int32_t pid, int32_t dir_logica){
 
 t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 
@@ -633,7 +653,7 @@ t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 	return 1;
 }
 
-int memread(int pid, int dir_logica, void* dest, int size) {
+int memread(int32_t pid, int32_t dir_logica, void* dest, int32_t size) {
 
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 
@@ -698,7 +718,7 @@ int memread(int pid, int dir_logica, void* dest, int size) {
 	return 1;
 }
 
-int memwrite(int pid, void* contenido, int dir_logica,  int size) {
+int memwrite(int32_t pid, void* contenido, int32_t dir_logica,  int32_t size) {
 
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 
@@ -767,7 +787,7 @@ int memwrite(int pid, void* contenido, int dir_logica,  int size) {
 	return 1;
 }
 
-void suspender_proceso(int pid) {
+void suspender_proceso(int32_t pid) {
 	t_list* paginas_proceso =  (tabla_por_pid(pid))->paginas;
 	//Sirve para dinamico y fijo
 	for (int i = 0; i < list_size(paginas_proceso); i++) {
@@ -798,7 +818,7 @@ void suspender_proceso(int pid) {
 
 }
 
-void dessuspender_proceso(int pid) {
+void dessuspender_proceso(int32_t pid) {
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA" )){
 
@@ -813,7 +833,7 @@ void dessuspender_proceso(int pid) {
 	}
 }
 
-void eliminar_proceso(int pid) {
+void eliminar_proceso(int32_t pid) {
 	t_tabla_pagina* tabla_proceso = tabla_por_pid(pid);
 	t_list* paginas_proceso = tabla_proceso->paginas;
 
@@ -867,7 +887,7 @@ void eliminar_proceso(int pid) {
 
 //------------------------------------------------- FUNCIONES ALLOCs/HEADERs ---------------------------------------------//
 
-t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicion_heap_actual) {
+t_alloc_disponible* obtener_alloc_disponible(int32_t pid, int32_t size, uint32_t posicion_heap_actual) {
 
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 	int nro_pagina = 0, offset = 0;
@@ -975,7 +995,7 @@ t_alloc_disponible* obtener_alloc_disponible(int pid, int size, uint32_t posicio
 	return obtener_alloc_disponible(pid, size, header->next_alloc);
 }
 
-void guardar_header(int pid, int index_pag, int offset, heap_metadata* header){
+void guardar_header(int32_t pid, int index_pag, int offset, heap_metadata* header){
 
 	t_list* pags_proceso = tabla_por_pid(pid)->paginas;
 	t_pagina* pag        = (t_pagina*)list_get(pags_proceso, index_pag);
@@ -1019,7 +1039,7 @@ void guardar_header(int pid, int index_pag, int offset, heap_metadata* header){
 	unlockear(pag);
 }
 
-heap_metadata* desserializar_header(int pid, int index_pag, int offset_header) {
+heap_metadata* desserializar_header(int32_t pid, int index_pag, int offset_header) {
 
 	int frame_pagina;
 	int offset = 0;
@@ -1064,7 +1084,7 @@ heap_metadata* desserializar_header(int pid, int index_pag, int offset_header) {
 	return header;
 }
 
-int liberar_si_hay_paginas_libres(int pid, int posicion_inicial, int posicion_final){
+int liberar_si_hay_paginas_libres(int32_t pid, int posicion_inicial, int posicion_final){
 
 	t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 
@@ -1116,7 +1136,7 @@ int liberar_si_hay_paginas_libres(int pid, int posicion_inicial, int posicion_fi
 	return 1;
 }
 
-void actualizar_headers_por_liberar_pagina(int pid, int nro_pag_liberada){
+void actualizar_headers_por_liberar_pagina(int32_t pid, int nro_pag_liberada){
 	int i = 1;
 	int nro_pagina, offset;
 
@@ -1156,7 +1176,7 @@ void actualizar_headers_por_liberar_pagina(int pid, int nro_pag_liberada){
 
 //------------------------------------------------ FUNCIONES SECUNDARIAS -----------------------------------------------//
 
-int buscar_pagina(int pid, int pag) {
+int buscar_pagina(int32_t pid, int pag) {
 	t_list* pags_proceso = tabla_por_pid(pid)->paginas;
 	t_pagina* pagina     = pagina_por_id(pid, pag);
 
@@ -1166,7 +1186,7 @@ int buscar_pagina(int pid, int pag) {
 		return -1;
 	}
 
-	pagina->uso = obtener_tiempo();
+	pagina->tiempo_uso = obtener_tiempo_MMU();
 
 	//NO esta en memoria
 	if (!pagina->presencia) {
@@ -1192,7 +1212,7 @@ int buscar_pagina(int pid, int pag) {
 	return frame;
 }
 
-int solicitar_frame_en_ppal(int pid){
+int solicitar_frame_en_ppal(int32_t pid){
 
 	//Caso asignacion FIJA
 
@@ -1235,7 +1255,7 @@ int solicitar_frame_en_ppal(int pid){
 
 //------------------------------------------------ ALGORITMOS DE REEMPLAZO -----------------------------------------------//
 
-int ejecutar_algoritmo_reemplazo(int pid) {
+int ejecutar_algoritmo_reemplazo(int32_t pid) {
 
 	int retorno = -1;
 
@@ -1248,7 +1268,7 @@ int ejecutar_algoritmo_reemplazo(int pid) {
 	return retorno;
 }
 
-int reemplazar_con_LRU(int pid) {
+int reemplazar_con_LRU(int32_t pid) {
 
 	t_list* paginas;
 
@@ -1287,7 +1307,7 @@ int reemplazar_con_LRU(int pid) {
 	return pag_reemplazo->frame_ppal;
 }
 
-int reemplazar_con_CLOCK_M(int pid) {
+int reemplazar_con_CLOCK_M(int32_t pid) {
 
 	int pag_seleccionada;
 	int encontre = 0;
@@ -1361,6 +1381,13 @@ int reemplazar_con_CLOCK_M(int pid) {
 	return victima->frame_ppal;
 }
 
+int obtener_tiempo_MMU(){
+	pthread_mutex_lock(&mutexTiempoMMU);
+	int t = TIEMPO_MMU;
+	TIEMPO_MMU++;
+	pthread_mutex_unlock(&mutexTiempoMMU);
+	return t;
+}
 
 //--------------------------------------------- FUNCIONES PARA LAS LISTAS ADMIN. -----------------------------------------//
 
@@ -1386,11 +1413,11 @@ t_list* paginas_en_mp(){
 	//FILTRO LAS QUE TENGAN EL BIT DE PRESENCIA EN 1 => ESTAN EN MP
 	t_list* paginas_en_mp = list_filter(paginas, (void*)esta_en_mp);
 
-	list_destroy(paginas);
+	//list_destroy(paginas);
 	return paginas_en_mp;
 }
 
-t_tabla_pagina* tabla_por_pid(int pid){
+t_tabla_pagina* tabla_por_pid(int32_t pid){
 
 	t_tabla_pagina* tabla;
 
@@ -1405,7 +1432,7 @@ t_tabla_pagina* tabla_por_pid(int pid){
 	return tabla;
 }
 
-t_pagina* pagina_por_id(int pid, int id) {
+t_pagina* pagina_por_id(int32_t pid, int id) {
 
 	t_list* paginas = tabla_por_pid(pid)->paginas;
 	t_pagina* pagina;
@@ -1434,7 +1461,7 @@ int index_de_pag(t_list* paginas, int id_pag) {
 	return -1;
 }
 
-t_list* frames_libres_del_proceso(int pid){
+t_list* frames_libres_del_proceso(int32_t pid){
 
 	int _mismo_pid_y_libre(t_frame* frame_aux) {
 		return (frame_aux->pid == pid && !frame_aux->ocupado);
@@ -1461,7 +1488,7 @@ int pid_por_conexion(int cliente) {
 
 //------------------------------------------------ INTERACCIONES CON SWAMP -----------------------------------------------//
 
-int solicitar_marcos_max_swap() {
+int32_t solicitar_marcos_max_swap() {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
 
 	paquete->cod_op         = SOLICITAR_MARCOS_MAX;
@@ -1475,7 +1502,7 @@ int solicitar_marcos_max_swap() {
 
 	pthread_mutex_lock(&mutex_swamp);
 	send(CONEXION_SWAP, a_enviar, bytes, 0);
-	int retorno = recibir_entero(CONEXION_SWAP);
+	int32_t retorno = recibir_entero(CONEXION_SWAP);
 	pthread_mutex_unlock(&mutex_swamp);
 
 	free(a_enviar);
@@ -1488,7 +1515,10 @@ int solicitar_marcos_max_swap() {
 	return retorno;
 }
 
-int reservar_espacio_en_swap(int pid, int cant_pags) {
+int32_t reservar_espacio_en_swap(int32_t pid, int cant_pags) {
+
+	printf("\n\nReserve espacio\n\n");
+
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
 	int offset = 0;
 
@@ -1507,8 +1537,10 @@ int reservar_espacio_en_swap(int pid, int cant_pags) {
 
 	pthread_mutex_lock(&mutex_swamp);
 	send(CONEXION_SWAP, a_enviar, bytes, 0);
-	int retorno = recibir_entero(CONEXION_SWAP);
+	int32_t retorno = recibir_entero(CONEXION_SWAP);
 	pthread_mutex_unlock(&mutex_swamp);
+
+	printf("Swap me mando reservar espacio %i \n", retorno);
 
 	free(a_enviar);
 	eliminar_paquete_swap(paquete);
@@ -1555,7 +1587,7 @@ int traer_pagina_a_mp(t_pagina* pagina) {
 	return pos_frame;
 }
 
-void* traer_de_swap(uint32_t pid, uint32_t nro_pagina) {
+void* traer_de_swap(int32_t pid, int32_t nro_pagina) {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
 
 	paquete->cod_op         = TRAER_DE_SWAP;
@@ -1586,12 +1618,17 @@ void* traer_de_swap(uint32_t pid, uint32_t nro_pagina) {
 
 void tirar_a_swap(t_pagina* pagina) {
 
+	printf("TIRANDO A SWAP \n");
+
 	log_info(LOGGER, "[MP->SWAMP] Tirando la pagina modificada %i en swap, del proceso ", pagina->id , pagina->pid);
 
 	void* buffer_pag = malloc(CONFIG.tamanio_pagina);
+	//buffer_pag = realloc(buffer_pag, CONFIG.tamanio_pagina);
+
 	memcpy(buffer_pag, MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
 	pthread_mutex_lock(&mutex_swamp);
 	enviar_pagina(buffer_pag, CONEXION_SWAP, pagina->pid, pagina-> id);
+	int32_t retorno = recibir_entero(CONEXION_SWAP);
 	pthread_mutex_unlock(&mutex_swamp);
 	free(buffer_pag);
 
@@ -1599,6 +1636,7 @@ void tirar_a_swap(t_pagina* pagina) {
 
 void enviar_pagina(void* pagina, int socket_cliente, uint32_t pid, uint32_t nro_pagina) {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+	//paquete = realloc(paquete, sizeof(t_paquete_swap));
 
 	paquete->cod_op = TIRAR_A_SWAP;
 	paquete->buffer = malloc(sizeof(t_buffer));
@@ -1621,9 +1659,11 @@ void enviar_pagina(void* pagina, int socket_cliente, uint32_t pid, uint32_t nro_
 	eliminar_paquete_swap(paquete);
 }
 
-void eliminar_pag_swap(int pid , int nro_pagina){
+void eliminar_pag_swap(int32_t pid , int nro_pagina){
 
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+	paquete = realloc(paquete, sizeof(t_paquete_swap));
+
 	int offset = 0;
 
 	paquete->cod_op         = LIBERAR_PAGINA;
@@ -1648,27 +1688,28 @@ void eliminar_pag_swap(int pid , int nro_pagina){
 
 }
 
-void eliminar_proceso_swap(int pid){
+void eliminar_proceso_swap(int32_t pid){
 
-		t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+	paquete = realloc(paquete, sizeof(t_paquete_swap));
 
-		paquete->cod_op         = KILL_PROCESO;
-		paquete->buffer         = malloc(sizeof(t_buffer));
-		paquete->buffer->size   = sizeof(uint32_t);
-		paquete->buffer->stream = malloc(paquete->buffer->size);
+	paquete->cod_op         = KILL_PROCESO;
+	paquete->buffer         = malloc(sizeof(t_buffer));
+	paquete->buffer->size   = sizeof(uint32_t);
+	paquete->buffer->stream = malloc(paquete->buffer->size);
 
-		memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
+	memcpy(paquete->buffer->stream, &pid, sizeof(uint32_t));
 
-		int bytes;
+	int bytes;
 
-		void* a_enviar = serializar_paquete_swap(paquete, &bytes);
+	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
 
-		pthread_mutex_lock(&mutex_swamp);
-		send(CONEXION_SWAP, a_enviar, bytes, 0);
-		pthread_mutex_unlock(&mutex_swamp);
+	pthread_mutex_lock(&mutex_swamp);
+	send(CONEXION_SWAP, a_enviar, bytes, 0);
+	pthread_mutex_unlock(&mutex_swamp);
 
-		free(a_enviar);
-		eliminar_paquete_swap(paquete);
+	free(a_enviar);
+	eliminar_paquete_swap(paquete);
 
 }
 
@@ -1710,7 +1751,8 @@ void set_modificado(t_pagina* pag){
 
 void signal_metricas(){
 	log_info(LOGGER, "[SIGNAL METRICAS]: Recibi la senial de imprimir metricas, imprimiendo\n...");
-	generar_metricas_tlb();
+	//generar_metricas_tlb();
+	dump_memoria_principal();
 	exit(1);
 }
 void signal_dump(){
@@ -1722,4 +1764,55 @@ void signal_clean_tlb(){
 	log_info(LOGGER, "[SIGNAL CLEAN TLB]: Recibi la senial para limpiar TLB, limpiando\n...");
 	limpiar_tlb();
 	exit(1);
+}
+
+//--------------------------------------------------- DUMP ----------------------------------------------------//
+
+void dump_memoria_principal() {
+
+	t_list* pags = paginas_en_mp();
+	printf("Hay %i pags en principal", list_size(pags));
+
+
+
+	FILE* file;
+
+	char* path_name = "/home/utnso/workspace/tp-2021-2c-DesacatadOS/dump_memoria_principal";
+
+	log_info(LOGGER,"Creo un archivo de dump con el nombre %s\n", path_name);
+
+	file = fopen(path_name, "w+");
+
+	fprintf(file, "\n");
+	fprintf(file, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
+	fprintf(file, "DUMP MEMORIA PRINCIPAL \n");
+	fprintf(file, "ALGORITMO DE REEMPLAZO DE MMU UTILIZADO: %s \n", CONFIG.alg_remp_mmu);
+
+	t_pagina* pagina;
+	t_list* pags_mp = paginas_en_mp();
+
+	bool _frames_ascendente(t_pagina* pag, t_pagina* pag2) {
+		return pag->frame_ppal < pag2->frame_ppal;
+	}
+
+	list_sort(pags_mp, (void*)_frames_ascendente);
+
+	for (int i = 0 ; i < list_size(FRAMES_MEMORIA) ; i++) {
+		fprintf(file, "||       %i      ", i);
+	}
+	fprintf(file, "\n");
+
+	for (int i = 0 ; i < list_size(pags_mp) ; i++) {
+
+		pagina = list_get(pags_mp, i);
+		fprintf(file, "|| C%i P%i ", pagina->pid+1, pagina->id);
+
+	}
+
+	fprintf(file, "||\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
+	fclose(file);
+
+	free(path_name);
+
+
 }

@@ -137,8 +137,8 @@ peticion_carpincho recibir_operacion_carpincho(int socket_cliente) {
 	//}
 }
 
-uint32_t recibir_entero(int cliente){
-	uint32_t entero;
+int32_t recibir_entero(int cliente){
+	int32_t entero;
 
 	if (recv(cliente, &entero, sizeof(uint32_t), MSG_WAITALL) != 0) {
 	      return entero;
@@ -246,7 +246,9 @@ void solicitar_pagina(int socket, int pid, int nro_pagina) {
 void* serializar_paquete_swap(t_paquete_swap* paquete, int* bytes) {
 
    int size_serializado = sizeof(t_peticion_swap) + sizeof(uint32_t) + paquete->buffer->size;
-   void *buffer = malloc(size_serializado);
+
+   void* buffer = malloc(size_serializado);
+   buffer = realloc(buffer, size_serializado);
 
    int offset = 0;
 

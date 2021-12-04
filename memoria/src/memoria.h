@@ -32,8 +32,8 @@ typedef struct {
 }t_memoria_config;
 
 typedef struct {
-	int pid;
-	int id;
+	int32_t pid;
+	int32_t id;
     int frame_ppal;
     int presencia;
     int uso;
@@ -43,12 +43,12 @@ typedef struct {
 }t_pagina;
 
 typedef struct {
-    int PID;
+    int32_t PID;
     t_list* paginas;
 }t_tabla_pagina;
 
 typedef struct {
-	int  pid;
+	int32_t  pid;
 	int  id;
 	bool ocupado;
 }t_frame;
@@ -60,7 +60,7 @@ typedef struct{
 
 typedef struct {
 	int cliente;
-	int pid;
+	int32_t pid;
 }t_pid_cliente;
 
 typedef enum {
@@ -73,6 +73,8 @@ typedef enum {
 
 int SERVIDOR_MEMORIA;
 int PID_GLOBAL;
+int TIEMPO_MMU;
+
 t_memoria_config CONFIG;
 t_log* LOGGER;
 
@@ -93,6 +95,7 @@ pthread_mutex_t mutex_frames;
 pthread_mutex_t mutex_tablas_dp;
 pthread_mutex_t mutex_swamp;
 pthread_mutex_t mutex_PID;
+pthread_mutex_t mutexTiempoMMU;
 
 
 // FUNCIONES
@@ -133,6 +136,7 @@ int solicitar_frame_en_ppal(int pid);
 int ejecutar_algoritmo_reemplazo(int pid);
 int reemplazar_con_LRU(int pid);
 int reemplazar_con_CLOCK_M(int pid);
+int obtener_tiempo_MMU();
 
 //// ---- funciones para listas administrativas
 bool            hay_frames_libres_mp(int frames_necesarios);
@@ -145,13 +149,13 @@ int             index_de_pag(t_list* paginas, int id_pag);
 
 //// ---- funciones de interaccion con SWAMP
 int   solicitar_marcos_max_swap();
-int   reservar_espacio_en_swap(int pid, int cant_pags);
+int   reservar_espacio_en_swap(int32_t pid, int cant_pags);
 int   traer_pagina_a_mp(t_pagina* pag);
 void  tirar_a_swap(t_pagina* pagina);
-void* traer_de_swap(uint32_t pid, uint32_t nro_pagina);
+void* traer_de_swap(int32_t pid, int32_t nro_pagina);
 void enviar_pagina(void* pagina, int socket_cliente, uint32_t pid, uint32_t nro_pagina);
-void  eliminar_pag_swap(int pid , int nro_pagina);
-void eliminar_proceso_swap(int pid);
+void  eliminar_pag_swap(int32_t pid , int nro_pagina);
+void eliminar_proceso_swap(int32_t pid);
 
 //// ---- funciones de estado
 bool esta_libre_frame(t_frame* frame);
@@ -167,5 +171,8 @@ int  esta_en_swap(t_pagina* pag);
 void signal_metricas();
 void signal_dump();
 void signal_clean_tlb();
+
+//// ---- funcion dump
+void dump_memoria_principal();
 
 #endif /* MEMORIA_H_ */
