@@ -1686,6 +1686,28 @@ void eliminar_proceso_swap(int32_t pid){
 
 }
 
+void exit_memoria(){
+	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
+	paquete = realloc(paquete, sizeof(t_paquete_swap));
+
+	paquete->cod_op         = EXIT;
+	paquete->buffer         = malloc(sizeof(t_buffer));
+	paquete->buffer->size   = 0;
+	paquete->buffer->stream = NULL;
+	int bytes;
+
+	void* a_enviar = serializar_paquete_swap(paquete, &bytes);
+
+	pthread_mutex_lock(&mutex_swamp);
+	send(CONEXION_SWAP, a_enviar, bytes, 0);
+	pthread_mutex_unlock(&mutex_swamp);
+
+	free(a_enviar);
+	eliminar_paquete_swap(paquete);
+
+	exit(1);
+}
+
 //-------------------------------------------- FUNCIONES DE ESTADO - t_frame & t_pagina - ------------------------------//
 
 bool esta_libre_frame(t_frame* frame) {
@@ -1727,6 +1749,7 @@ void signal_metricas(){
 	//generar_metricas_tlb();
 	//dump_memoria_principal();
 	dumpear_tlb();
+	exit_memoria();
 	exit(1);
 }
 void signal_dump(){

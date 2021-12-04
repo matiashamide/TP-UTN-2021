@@ -269,6 +269,11 @@ void atender_peticiones(int* cliente){
 		eliminar_proceso_swap(pid);
 	break;
 
+	case EXIT:;
+		exit(1);
+		//aca podriamos liberar todo swap, igualmente se libera solo
+	break;
+
 	default: log_info(LOGGER, "[SWAMP]: No entiendo la peticion, rey.");
 	break;
 	}
