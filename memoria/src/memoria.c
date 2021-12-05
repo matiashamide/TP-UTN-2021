@@ -1319,7 +1319,80 @@ int reemplazar_con_LRU(int32_t pid) {
 
 	return pag_reemplazo->frame_ppal;
 }
+int reemplazar_con_CLOCK_M2(int32_t pid) {
 
+    t_list* paginas;
+
+    if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
+        t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
+        paginas_proceso = list_filter(paginas_proceso, (void*)esta_en_mp);
+        paginas = list_filter(paginas_proceso, (void*)no_esta_lockeada);
+    }
+    if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
+            paginas = list_filter(paginas_en_mp(), (void*)no_esta_lockeada);
+	}
+	int retorno = algoritmo_clock(paginas);
+
+	if ( retorno == -1){
+		printf("No se encontró a la victima... F");
+		exit(1);
+	}
+
+	t_pagina* victima = list_get(paginas,retorno);
+
+	lockear(victima);
+	desreferenciar_pag_tlb(pid , victima->id , victima->frame_ppal);
+
+	log_info(LOGGER, "[REEMPLAZO CLOCK-M] Saco NRO_PAG %i del PID %i en FRAME %i", victima->id, victima->pid, victima->frame_ppal);
+
+	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
+	if (victima->modificado) {
+		tirar_a_swap(victima);
+		victima->modificado = false;
+	}
+
+	victima->presencia = 0;
+	unlockear(victima);
+
+	return victima->frame_ppal;
+
+}
+
+int algoritmo_clock(t_list* paginas){
+ int pag_seleccionada;
+
+ 	 for(int i = 1; i <= 4; i++){
+ 		 for(int j = 0; j < list_size(paginas); j++){
+
+ 			 if (POSICION_CLOCK >= list_size(paginas)) {
+ 				 POSICION_CLOCK = 0;
+ 			 }
+
+ 			 t_pagina* pagina = list_get(paginas, POSICION_CLOCK);
+
+ 			 if(i == 1 || i ==3){
+ 				 //Buscamos 0,0
+ 				 if (pagina->uso == false && pagina->modificado == false) {
+ 					 pag_seleccionada = POSICION_CLOCK;
+ 					 POSICION_CLOCK++;
+ 					 return pag_seleccionada;
+ 				 } else {
+ 					 POSICION_CLOCK++;
+ 				 }
+ 			 }if(i == 2 || i ==4){
+ 				 if (pagina->uso == false && pagina->modificado == true) {
+ 					 pag_seleccionada = POSICION_CLOCK;
+ 					 POSICION_CLOCK++;
+ 					 return pag_seleccionada;
+ 				 } else {
+ 					 POSICION_CLOCK++;
+ 					 pagina->uso = false;
+			  }
+		  }
+	  }
+  }
+  return -1;
+}
 int reemplazar_con_CLOCK_M(int32_t pid) {
 
 	int i = POSICION_CLOCK;
