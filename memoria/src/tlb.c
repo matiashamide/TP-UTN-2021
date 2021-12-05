@@ -53,10 +53,13 @@ void actualizar_tlb(int pid, int pag, int frame){
 		return;
 	}
 
+	pthread_mutex_lock(&mutexTLB);
 	if (list_size(TLB) < CONFIG.cant_entradas_tlb) {
 		crear_entrada(pid, pag, frame);
+		pthread_mutex_unlock(&mutexTLB);
 		return;
 	}
+	pthread_mutex_unlock(&mutexTLB);
 
 	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb,"LRU"))
 		reemplazar_LRU(pid, pag, frame);
@@ -76,9 +79,15 @@ void crear_entrada(int pid, int pag, int frame) {
 	entrada->ultimo_uso = obtener_tiempo_TLB();
 
 	list_add(TLB, entrada);
+
+	printf("Agregue entrada en TLB quedo asi : \n ");
+	printear_tlb();
 }
 
 void reemplazar_FIFO(int pid, int pag, int frame){
+
+	printf("TLB Reemplazando FIFO\n");
+	printear_tlb();
 
 	t_entrada_tlb* entrada_nueva = malloc(sizeof(t_entrada_tlb));
 	entrada_nueva->pag        = pag;
@@ -92,6 +101,9 @@ void reemplazar_FIFO(int pid, int pag, int frame){
 	list_remove_and_destroy_element(TLB, 0, free);
 	list_add(TLB, entrada_nueva);
 	pthread_mutex_unlock(&mutexTLB);
+
+	printf("\n Ya reemplace y quedo asi: \n");
+	printear_tlb();
 }
 
 void reemplazar_LRU(int pid, int pag, int frame){
@@ -102,16 +114,35 @@ void reemplazar_LRU(int pid, int pag, int frame){
 	entrada_nueva->frame      = frame;
 	entrada_nueva->ultimo_uso = obtener_tiempo_TLB();
 
-	int masVieja(t_entrada_tlb* una_entrada, t_entrada_tlb* otra_entrada){
-		return (otra_entrada->ultimo_uso > una_entrada->ultimo_uso);
+	t_entrada_tlb* masVieja(t_entrada_tlb* una_entrada, t_entrada_tlb* otra_entrada){
+
+		if (otra_entrada->ultimo_uso > una_entrada->ultimo_uso)
+			return una_entrada;
+
+		if (otra_entrada->ultimo_uso < una_entrada->ultimo_uso)
+			return otra_entrada;
+
+		return una_entrada;
     }
 
 	pthread_mutex_lock(&mutexTLB);
-
-	list_sort(TLB, (void*) masVieja);
-	t_entrada_tlb* victima = (t_entrada_tlb*)list_get(TLB, 0);
+	t_entrada_tlb* victima = list_get_minimum(TLB, (void*) masVieja);
 	log_info(LOGGER, "|| TLB LRU || [VICTIMA] PID: %i | NRO_PAG: %i | FRAME: %i ||| [NUEVA ENTRADA] PID: %i | NRO_PAG: %i | FRAME: %i | \n", victima->pid, victima->pag, victima->frame, entrada_nueva->pid, entrada_nueva->pag, entrada_nueva->frame);
-	list_replace_and_destroy_element(TLB, 0, entrada_nueva, free);
+	free(victima);
+	list_add(TLB , entrada_nueva);
+	pthread_mutex_unlock(&mutexTLB);
+
+}
+
+void desreferenciar_pag_tlb(int pid , int nro_pag , int frame){
+
+	bool mismo_pid_id_frame(void* elemento){
+		t_entrada_tlb* entrada = (t_entrada_tlb*) elemento;
+		return entrada->frame == frame && entrada->pag == nro_pag && entrada->pid == pid;
+	}
+
+	pthread_mutex_lock(&mutexTLB);
+	list_remove_and_destroy_by_condition(TLB , mismo_pid_id_frame , free);
 	pthread_mutex_unlock(&mutexTLB);
 }
 
@@ -232,6 +263,14 @@ char* nombrar_dump_file(){
 	free(time);
 
 	return nombre_final;
+}
+
+void printear_tlb() {
+	for(int i = 0; i < list_size(TLB); i++){
+		t_entrada_tlb* entrada = list_get(TLB, i);
+		t_frame* frame = list_get(FRAMES_MEMORIA, entrada->frame);
+		printf("Entrada: %d        Esta ocupado: %d        Carpincho: %d        Pag: %d        Frame: %d \n",i, frame->ocupado, entrada->pid, entrada->pag, entrada->frame);
+	}
 }
 
 void limpiar_tlb(){

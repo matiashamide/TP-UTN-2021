@@ -167,30 +167,31 @@ void atender_peticiones(int* cliente){
 		printf("\n\nTirar a swap\n\n");
 
 		buffer_pag  = malloc(CONFIG.tamanio_pag);
-		buffer_pag  = realloc(buffer_pag, CONFIG.tamanio_pag);
+		//buffer_pag  = realloc(buffer_pag, CONFIG.tamanio_pag);
 
 		pid         = recibir_entero(*cliente);
 		nro_pagina  = recibir_entero(*cliente);
 		recv(*cliente, buffer_pag, CONFIG.tamanio_pag, 0);
 
-		printf("antes del log\n");
+		//printf("antes del log\n");
 
-		log_info(LOGGER, "[SWAMP]: Guardando la pagina %i del proceso %i en SWAMP", nro_pagina, pid);
+		//log_info(LOGGER, "[SWAMP]: Guardando la pagina %i del proceso %i en SWAMP", nro_pagina, pid);
 
 		frame = frame_de_pagina(pid, nro_pagina);
 
-		printf("ya tengo el frame no se si es null \n");
+		//printf("ya tengo el frame no se si es null \n");
 		if(frame == NULL) {
 			return;
 		}
 
-		printf("el frame es %i", frame->offset);
+		//printf("el frame es %i", frame->offset);
 		archivo = obtener_archivo_con_id(frame->aid);
-		printf("tengo el archivo");
+		//printf("tengo el archivo");
 		if (archivo == NULL) {
 			printf("pincho archivo");
 		}
 
+		addr = calloc(1, CONFIG.tamanio_swamp);
 		addr = mmap(NULL, CONFIG.tamanio_swamp, PROT_READ | PROT_WRITE, MAP_SHARED, archivo->fd, 0);
 
 		if (addr == MAP_FAILED) {
@@ -200,20 +201,20 @@ void atender_peticiones(int* cliente){
 
 		printf("Por memcopiar en archivo %i offset %i", archivo->id, frame->offset);
 		memcpy(addr + frame->offset, buffer_pag, CONFIG.tamanio_pag);
-		msync(addr, CONFIG.tamanio_swamp, MS_SYNC);
+		msync(addr, CONFIG.tamanio_swamp, 0);
 
 		munmap(addr, CONFIG.tamanio_swamp);
-		free(buffer_pag);
+		//free(buffer_pag);
 
-		rta = 1;
-		send(*cliente, &rta, sizeof(uint32_t), 0);
+		//rta = 1;
+		//send(*cliente, &rta, sizeof(uint32_t), 0);
 
 		break;
 
 	case TRAER_DE_SWAP:;
 
 		buffer_pag = malloc(CONFIG.tamanio_pag);
-		buffer_pag = realloc(buffer_pag, CONFIG.tamanio_pag);
+		//buffer_pag = realloc(buffer_pag, CONFIG.tamanio_pag);
 
 		pid        = recibir_entero(*cliente);
 		nro_pagina = recibir_entero(*cliente);
@@ -223,6 +224,7 @@ void atender_peticiones(int* cliente){
 		frame   = frame_de_pagina(pid, nro_pagina);
 		archivo = obtener_archivo_con_id(frame->aid);
 
+		addr = calloc(1, CONFIG.tamanio_pag);
 		addr = mmap(NULL, CONFIG.tamanio_pag, PROT_READ | PROT_WRITE, MAP_SHARED, archivo->fd, 0);
 
 		if (addr == MAP_FAILED) {
@@ -231,9 +233,9 @@ void atender_peticiones(int* cliente){
 		}
 
 		memcpy(buffer_pag, addr + frame->offset, CONFIG.tamanio_pag);
-		munmap(addr, CONFIG.tamanio_swamp);
+		//munmap(addr, CONFIG.tamanio_swamp);
 
-		usleep(CONFIG.retardo_swap * 1000);
+		//usleep(CONFIG.retardo_swap * 1000);
 		send(*cliente, buffer_pag, CONFIG.tamanio_pag, 0);
 
 		free(buffer_pag);
@@ -402,7 +404,7 @@ int32_t recibir_operacion_swap(int socket_cliente) {
    if (recv(socket_cliente, &cod_op, sizeof(t_peticion_swap), MSG_WAITALL) != 0)
 	   return cod_op;
 
-	close(socket_cliente);
+	//close(socket_cliente);
     return -1;
 }
 
@@ -497,11 +499,17 @@ int ultima_pagina_proceso(int32_t pid) {
 	t_list* frames_asignados = list_filter(frames_proceso, (void*)frame_ocupado);
 
 	int id_pag_asc(t_frame* unFrame, t_frame* otroFrame) {
-		return (otroFrame->id_pag > unFrame->id_pag);
+		return (otroFrame->id_pag < unFrame->id_pag);
 	}
 
 	list_sort(frames_asignados, (void*)id_pag_asc);
-	return ((t_frame*)list_get(frames_asignados, 0))->id_pag;
+
+	int pag0 = ((t_frame*)list_get(frames_asignados, 0))->id_pag;
+	//int pag1 = ((t_frame*)list_get(frames_asignados, 1))->id_pag;
+
+	//printf("Pag 0: %i/n", pag0);
+	//printf("Pag 1: %i/n", pag1);
+	return pag0;
 }
 
 t_list* frames_del_proceso(int32_t pid) {

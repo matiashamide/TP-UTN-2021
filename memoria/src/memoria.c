@@ -2,11 +2,47 @@
 
 int main(void) {
 
+	//Inicializacion memoria
 	init_memoria();
-	log_info(LOGGER, "Inicializa memoria");
-	log_info(LOGGER, "Ya me conecte con swamp y los marcos max son: %i \n", MAX_FRAMES_SWAP);
 
+	//Coordinacion multihilo de carpinchos
 	coordinador_multihilo();
+
+/*
+	int C0 = memalloc(3, 23, 1);
+
+	int A0 = memalloc(1, 23, 1);
+
+	int B0 = memalloc(2, 23, 1);
+
+	int C1 = memalloc(3, 23, 1);
+
+	int A1 = memalloc(1, 23, 1);
+
+	int B1 = memalloc(2, 23, 1);
+
+	int C2 = memalloc(3, 23, 1);
+
+	int A2 = memalloc(1, 10, 1);
+
+	int B2 = memalloc(2, 10, 1);
+
+	int C3 = memalloc(3, 10, 1);
+
+	//Aca escriben c1 c2 y c3
+
+	int A3 = memalloc(1, 23, 1);
+	printf("\nA3 ok\n");
+	int A4 = memalloc(1, 23, 1);
+	printf("\nA4 ok\n");
+	int A5 = memalloc(1, 23, 1);
+	printf("\nA5 ok\n");
+	int A6 = memalloc(1, 23, 1);
+	printf("\nA5 ok\n");
+
+	printf("\ntermine ok\n");
+	*/
+
 
 	return EXIT_SUCCESS;
 }
@@ -36,12 +72,18 @@ void init_memoria() {
 
 	if (MEMORIA_PRINCIPAL == NULL) {
 	   	perror("MALLOC FAIL!\n");
-	   	log_info(LOGGER,"No se pudo alocar correctamente la memoria principal.");
+	   	log_error(LOGGER,"No se pudo alocar correctamente la memoria principal.");
         return;
 	}
 
 	CONEXION_SWAP   = crear_conexion(CONFIG.ip_swap, CONFIG.puerto_swap);
+
+	if (CONEXION_SWAP == -1) {
+		log_error(LOGGER, "No se pudo establecer conexion con SWAMP.");
+	}
+
 	MAX_FRAMES_SWAP = solicitar_marcos_max_swap();
+	log_info(LOGGER, "Conexion satisfactoria con SWAMP. Los marcos max por carpincho son %i.", MAX_FRAMES_SWAP);
 
 	//Inicializamos PID_GLOBAL y TIEMPO_MMU
 	PID_GLOBAL = 0;
@@ -54,13 +96,15 @@ void init_memoria() {
 
 	//Iniciamos paginacion
 	iniciar_paginacion();
+
+	log_info(LOGGER, "Memoria principal inicializada con exito.");
 }
 
 void iniciar_paginacion() {
 
 	int cant_frames_ppal = CONFIG.tamanio_memoria / CONFIG.tamanio_pagina;
 
-	log_info(LOGGER, "Tengo %d frames de %d bytes en memoria principal", cant_frames_ppal, CONFIG.tamanio_pagina);
+	log_info(LOGGER, "Hay %d frames de %d bytes en memoria principal", cant_frames_ppal, CONFIG.tamanio_pagina);
 
 	//Creamos lista de tablas de paginas
 	TABLAS_DE_PAGINAS = list_create();
@@ -1259,10 +1303,11 @@ int reemplazar_con_LRU(int32_t pid) {
 
 	//COMO REEMPLAZO SEGUN LRU, ELIJO LA PRIMERA QUE ES LA MAS VIEJA
 	t_pagina* pag_reemplazo = list_get(paginas, 0);
+	lockear(pag_reemplazo);
+
+	desreferenciar_pag_tlb(pid , pag_reemplazo->id , pag_reemplazo->frame_ppal);
 
 	log_info(LOGGER, "[REEMPLAZO LRU] Saco NRO_PAG %i del PID %i en FRAME %i", pag_reemplazo->id, pag_reemplazo->pid, pag_reemplazo->frame_ppal);
-
-	lockear(pag_reemplazo);
 
 	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
 	if(pag_reemplazo->modificado) {
@@ -1334,10 +1379,12 @@ int reemplazar_con_CLOCK_M(int32_t pid) {
 	}
 
 	victima = list_get(paginas, pag_seleccionada);
+	lockear(victima);
+	desreferenciar_pag_tlb(pid , victima->id , victima->frame_ppal);
 
 	log_info(LOGGER, "[REEMPLAZO CLOCK-M] Saco NRO_PAG %i del PID %i en FRAME %i", victima->id, victima->pid, victima->frame_ppal);
 
-	lockear(victima);
+
 
 	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
 	if (victima->modificado) {
@@ -1551,7 +1598,7 @@ int traer_pagina_a_mp(t_pagina* pagina) {
 	memcpy(MEMORIA_PRINCIPAL + pos_frame * CONFIG.tamanio_pagina, pag_serializada, CONFIG.tamanio_pagina);
 
 	pagina->presencia  = true;
-	pagina->modificado = 0;
+	pagina->modificado = false;
 	pagina->frame_ppal = pos_frame;
 
 	return pos_frame;
@@ -1597,8 +1644,8 @@ void tirar_a_swap(t_pagina* pagina) {
 
 	memcpy(buffer_pag, MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
 	pthread_mutex_lock(&mutex_swamp);
-	enviar_pagina(buffer_pag, CONEXION_SWAP, pagina->pid, pagina-> id);
-	int32_t retorno = recibir_entero(CONEXION_SWAP);
+	enviar_pagina(buffer_pag, CONEXION_SWAP, pagina->pid, pagina->id);
+	//int32_t retorno = recibir_entero(CONEXION_SWAP);
 	pthread_mutex_unlock(&mutex_swamp);
 	free(buffer_pag);
 
