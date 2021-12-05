@@ -6,9 +6,9 @@ int main(void) {
 	init_memoria();
 
 	//Coordinacion multihilo de carpinchos
-	//coordinador_multihilo();
+	coordinador_multihilo();
 
-
+/*
 	int C0 = memalloc(3, 23, 1);
 
 	int A0 = memalloc(1, 23, 1);
@@ -41,6 +41,7 @@ int main(void) {
 	printf("\nA5 ok\n");
 
 	printf("\ntermine ok\n");
+	*/
 
 
 	return EXIT_SUCCESS;

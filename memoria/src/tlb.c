@@ -53,12 +53,13 @@ void actualizar_tlb(int pid, int pag, int frame){
 		return;
 	}
 
-	pthread_mutex_lock(&mutexTiempoTLB);
+	pthread_mutex_lock(&mutexTLB);
 	if (list_size(TLB) < CONFIG.cant_entradas_tlb) {
 		crear_entrada(pid, pag, frame);
+		pthread_mutex_unlock(&mutexTLB);
 		return;
 	}
-	pthread_mutex_unlock(&mutexTiempoTLB);
+	pthread_mutex_unlock(&mutexTLB);
 
 	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb,"LRU"))
 		reemplazar_LRU(pid, pag, frame);
@@ -114,11 +115,14 @@ void reemplazar_LRU(int pid, int pag, int frame){
 	entrada_nueva->ultimo_uso = obtener_tiempo_TLB();
 
 	t_entrada_tlb* masVieja(t_entrada_tlb* una_entrada, t_entrada_tlb* otra_entrada){
-		if(otra_entrada->ultimo_uso > una_entrada->ultimo_uso){
+
+		if (otra_entrada->ultimo_uso > una_entrada->ultimo_uso)
 			return una_entrada;
-		}else if (otra_entrada->ultimo_uso < una_entrada->ultimo_uso){
+
+		if (otra_entrada->ultimo_uso < una_entrada->ultimo_uso)
 			return otra_entrada;
-		}else return una_entrada;
+
+		return una_entrada;
     }
 
 	pthread_mutex_lock(&mutexTLB);
