@@ -1,2 +1,1012 @@
 [WARNING] 23:53:59:274 KERNEL/(8087:8115): Operacion desconocida. No quieras meter la pata
 [WARNING] 00:16:27:858 KERNEL/(9249:9257): Operacion desconocida. No quieras meter la pata
+[INFO] 15:43:37:888 KERNEL/(5065:5065): Cree un dispositivo
+
+[INFO] 15:43:37:888 KERNEL/(5065:5065): Nombre dispositivo pelopincho
+
+[INFO] 15:43:37:888 KERNEL/(5065:5065): Rafaga dispositivo 2000
+
+[INFO] 15:43:37:888 KERNEL/(5065:5065): Creé un procesador
+
+[INFO] 15:43:37:888 KERNEL/(5065:5065): Ya cree el planificador de largo plazo
+
+[INFO] 15:43:37:889 KERNEL/(5065:5065): Ya cree el planificador de corto plazo utilizando el algoritmo SJF
+
+[INFO] 15:43:37:889 KERNEL/(5065:5065): Ya cree el algoritmo para correr deadlock
+
+[INFO] 15:43:47:649 KERNEL/(5065:5078): Se conectó el carpincho 0 en la conexión 5
+
+[INFO] 15:43:47:651 KERNEL/(5065:5069): Pasó a READY el carpincho 0
+
+[INFO] 15:43:47:651 KERNEL/(5065:5070): El algoritmo elige al carpincho 0
+
+[INFO] 15:43:47:651 KERNEL/(5065:5070): Pasó a EXEC el carpincho 0
+
+[INFO] 15:43:47:651 KERNEL/(5065:5078): Pasó a NEW el carpincho 0
+
+[INFO] 15:43:47:651 KERNEL/(5065:5080): Se conectó el carpincho 1 en la conexión 7
+
+[INFO] 15:43:47:652 KERNEL/(5065:5069): Pasó a READY el carpincho 1
+
+[INFO] 15:43:47:652 KERNEL/(5065:5080): Pasó a NEW el carpincho 1
+
+[INFO] 15:43:49:652 KERNEL/(5065:5068): El carpincho 0, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:43:49:652 KERNEL/(5065:5068): Pasó a BLOCKED el carpincho 0
+
+[INFO] 15:43:49:653 KERNEL/(5065:5070): El algoritmo elige al carpincho 1
+
+[INFO] 15:43:49:653 KERNEL/(5065:5070): Pasó a EXEC el carpincho 1
+
+[INFO] 15:43:49:654 KERNEL/(5065:5081): Se conectó el carpincho 2 en la conexión 8
+
+[INFO] 15:43:49:654 KERNEL/(5065:5069): Pasó a READY el carpincho 2
+
+[INFO] 15:43:49:654 KERNEL/(5065:5081): Pasó a NEW el carpincho 2
+
+[INFO] 15:43:49:655 KERNEL/(5065:5066): Pasó a READY el carpincho 0
+
+[INFO] 15:43:51:654 KERNEL/(5065:5068): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:43:51:655 KERNEL/(5065:5068): Pasó a BLOCKED el carpincho 1
+
+[INFO] 15:43:51:655 KERNEL/(5065:5070): El algoritmo elige al carpincho 2
+
+[INFO] 15:43:51:655 KERNEL/(5065:5070): Pasó a EXEC el carpincho 2
+
+[INFO] 15:43:51:658 KERNEL/(5065:5066): Pasó a READY el carpincho 1
+
+[INFO] 15:44:01:659 KERNEL/(5065:5068): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:44:01:661 KERNEL/(5065:5068): Pasó a BLOCKED el carpincho 2
+
+[INFO] 15:44:01:663 KERNEL/(5065:5070): El algoritmo elige al carpincho 0
+
+[INFO] 15:44:01:663 KERNEL/(5065:5066): Pasó a READY el carpincho 2
+
+[INFO] 15:44:01:663 KERNEL/(5065:5070): Pasó a EXEC el carpincho 0
+
+[INFO] 15:44:03:665 KERNEL/(5065:5068): El carpincho 0, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:44:03:666 KERNEL/(5065:5068): Pasó a BLOCKED el carpincho 0
+
+[INFO] 15:44:03:666 KERNEL/(5065:5070): El algoritmo elige al carpincho 1
+
+[INFO] 15:44:03:666 KERNEL/(5065:5070): Pasó a EXEC el carpincho 1
+
+[INFO] 15:44:03:669 KERNEL/(5065:5066): Pasó a READY el carpincho 0
+
+[INFO] 15:44:05:667 KERNEL/(5065:5068): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:44:05:668 KERNEL/(5065:5068): Pasó a BLOCKED el carpincho 1
+
+[INFO] 15:44:05:668 KERNEL/(5065:5070): El algoritmo elige al carpincho 2
+
+[INFO] 15:44:05:668 KERNEL/(5065:5070): Pasó a EXEC el carpincho 2
+
+[INFO] 15:44:05:670 KERNEL/(5065:5066): Pasó a READY el carpincho 1
+
+[INFO] 15:44:15:672 KERNEL/(5065:5068): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:44:15:673 KERNEL/(5065:5068): Pasó a BLOCKED el carpincho 2
+
+[INFO] 15:44:15:674 KERNEL/(5065:5070): El algoritmo elige al carpincho 0
+
+[INFO] 15:44:15:674 KERNEL/(5065:5070): Pasó a EXEC el carpincho 0
+
+[INFO] 15:44:15:676 KERNEL/(5065:5066): Pasó a READY el carpincho 2
+
+[INFO] 15:44:17:675 KERNEL/(5065:5068): El carpincho 0, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:44:17:676 KERNEL/(5065:5068): Pasó a BLOCKED el carpincho 0
+
+[INFO] 15:44:17:676 KERNEL/(5065:5070): El algoritmo elige al carpincho 1
+
+[INFO] 15:44:17:676 KERNEL/(5065:5070): Pasó a EXEC el carpincho 1
+
+[INFO] 15:44:17:679 KERNEL/(5065:5066): Pasó a READY el carpincho 0
+
+[INFO] 15:44:19:677 KERNEL/(5065:5068): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:44:19:678 KERNEL/(5065:5068): Pasó a BLOCKED el carpincho 1
+
+[INFO] 15:44:19:678 KERNEL/(5065:5070): El algoritmo elige al carpincho 2
+
+[INFO] 15:44:19:678 KERNEL/(5065:5070): Pasó a EXEC el carpincho 2
+
+[INFO] 15:44:19:680 KERNEL/(5065:5066): Pasó a READY el carpincho 1
+
+[INFO] 15:44:29:683 KERNEL/(5065:5068): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:44:29:684 KERNEL/(5065:5068): Pasó a BLOCKED el carpincho 2
+
+[INFO] 15:44:29:685 KERNEL/(5065:5070): El algoritmo elige al carpincho 0
+
+[INFO] 15:44:29:685 KERNEL/(5065:5070): Pasó a EXEC el carpincho 0
+
+[INFO] 15:44:29:687 KERNEL/(5065:5066): Pasó a READY el carpincho 2
+
+[INFO] 15:44:31:686 KERNEL/(5065:5068): El carpincho 0, terminó
+
+[INFO] 15:44:31:686 KERNEL/(5065:5070): El algoritmo elige al carpincho 1
+
+[INFO] 15:44:31:686 KERNEL/(5065:5070): Pasó a EXEC el carpincho 1
+
+[INFO] 15:44:33:687 KERNEL/(5065:5068): El carpincho 1, terminó
+
+[INFO] 15:44:33:688 KERNEL/(5065:5070): El algoritmo elige al carpincho 2
+
+[INFO] 15:44:33:688 KERNEL/(5065:5070): Pasó a EXEC el carpincho 2
+
+[INFO] 15:44:43:691 KERNEL/(5065:5068): El carpincho 2, terminó
+
+[INFO] 15:58:44:545 KERNEL/(5680:5680): 
+
+---------------------------------------------------
+
+
+[INFO] 15:58:44:545 KERNEL/(5680:5680): Cree un dispositivo
+
+[INFO] 15:58:44:545 KERNEL/(5680:5680): Nombre dispositivo pelopincho
+
+[INFO] 15:58:44:545 KERNEL/(5680:5680): Rafaga dispositivo 2000
+
+[INFO] 15:58:44:545 KERNEL/(5680:5680): Creé un procesador
+
+[INFO] 15:58:44:545 KERNEL/(5680:5680): Ya cree el planificador de largo plazo
+
+[INFO] 15:58:44:545 KERNEL/(5680:5680): Ya cree el planificador de corto plazo utilizando el algoritmo SJF
+
+[INFO] 15:58:44:546 KERNEL/(5680:5680): Ya cree el algoritmo para correr deadlock
+
+[INFO] 15:58:47:833 KERNEL/(5680:5692): Se conectó el carpincho 0 en la conexión 5
+
+[INFO] 15:58:47:833 KERNEL/(5680:5684): Pasó a READY el carpincho 0
+
+[INFO] 15:58:47:833 KERNEL/(5680:5685): El algoritmo elige al carpincho 0
+
+[INFO] 15:58:47:833 KERNEL/(5680:5685): Pasó a EXEC el carpincho 0
+
+[INFO] 15:58:47:834 KERNEL/(5680:5692): Pasó a NEW el carpincho 0
+
+[INFO] 15:58:47:834 KERNEL/(5680:5693): Se conectó el carpincho 1 en la conexión 7
+
+[INFO] 15:58:47:834 KERNEL/(5680:5684): Pasó a READY el carpincho 1
+
+[INFO] 15:58:47:834 KERNEL/(5680:5693): Pasó a NEW el carpincho 1
+
+[INFO] 15:58:49:834 KERNEL/(5680:5683): El carpincho 0, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:58:49:835 KERNEL/(5680:5683): Pasó a BLOCKED el carpincho 0
+
+[INFO] 15:58:49:836 KERNEL/(5680:5685): El algoritmo elige al carpincho 1
+
+[INFO] 15:58:49:836 KERNEL/(5680:5685): Pasó a EXEC el carpincho 1
+
+[INFO] 15:58:49:837 KERNEL/(5680:5695): Se conectó el carpincho 2 en la conexión 8
+
+[INFO] 15:58:49:838 KERNEL/(5680:5682): Pasó a READY el carpincho 0
+
+[INFO] 15:58:49:838 KERNEL/(5680:5684): Pasó a READY el carpincho 2
+
+[INFO] 15:58:49:838 KERNEL/(5680:5695): Pasó a NEW el carpincho 2
+
+[INFO] 15:58:51:837 KERNEL/(5680:5683): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:58:51:838 KERNEL/(5680:5683): Pasó a BLOCKED el carpincho 1
+
+[INFO] 15:58:51:838 KERNEL/(5680:5685): El algoritmo elige al carpincho 0
+
+[INFO] 15:58:51:838 KERNEL/(5680:5685): Pasó a EXEC el carpincho 0
+
+[INFO] 15:58:51:841 KERNEL/(5680:5682): Pasó a READY el carpincho 1
+
+[INFO] 15:58:53:839 KERNEL/(5680:5683): El carpincho 0, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:58:53:840 KERNEL/(5680:5683): Pasó a BLOCKED el carpincho 0
+
+[INFO] 15:58:53:840 KERNEL/(5680:5685): El algoritmo elige al carpincho 2
+
+[INFO] 15:58:53:841 KERNEL/(5680:5685): Pasó a EXEC el carpincho 2
+
+[INFO] 15:58:53:842 KERNEL/(5680:5682): Pasó a READY el carpincho 0
+
+[INFO] 15:59:03:845 KERNEL/(5680:5683): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:59:03:846 KERNEL/(5680:5683): Pasó a BLOCKED el carpincho 2
+
+[INFO] 15:59:03:849 KERNEL/(5680:5685): El algoritmo elige al carpincho 1
+
+[INFO] 15:59:03:849 KERNEL/(5680:5682): Pasó a READY el carpincho 2
+
+[INFO] 15:59:03:849 KERNEL/(5680:5685): Pasó a EXEC el carpincho 1
+
+[INFO] 15:59:05:849 KERNEL/(5680:5683): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:59:05:850 KERNEL/(5680:5683): Pasó a BLOCKED el carpincho 1
+
+[INFO] 15:59:05:850 KERNEL/(5680:5685): El algoritmo elige al carpincho 0
+
+[INFO] 15:59:05:850 KERNEL/(5680:5685): Pasó a EXEC el carpincho 0
+
+[INFO] 15:59:05:852 KERNEL/(5680:5682): Pasó a READY el carpincho 1
+
+[INFO] 15:59:07:852 KERNEL/(5680:5683): El carpincho 0, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:59:07:853 KERNEL/(5680:5683): Pasó a BLOCKED el carpincho 0
+
+[INFO] 15:59:07:853 KERNEL/(5680:5685): El algoritmo elige al carpincho 2
+
+[INFO] 15:59:07:854 KERNEL/(5680:5685): Pasó a EXEC el carpincho 2
+
+[INFO] 15:59:07:856 KERNEL/(5680:5682): Pasó a READY el carpincho 0
+
+[INFO] 15:59:17:857 KERNEL/(5680:5683): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:59:17:858 KERNEL/(5680:5683): Pasó a BLOCKED el carpincho 2
+
+[INFO] 15:59:17:858 KERNEL/(5680:5685): El algoritmo elige al carpincho 1
+
+[INFO] 15:59:17:858 KERNEL/(5680:5685): Pasó a EXEC el carpincho 1
+
+[INFO] 15:59:17:860 KERNEL/(5680:5682): Pasó a READY el carpincho 2
+
+[INFO] 15:59:19:859 KERNEL/(5680:5683): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:59:19:860 KERNEL/(5680:5683): Pasó a BLOCKED el carpincho 1
+
+[INFO] 15:59:19:860 KERNEL/(5680:5685): El algoritmo elige al carpincho 0
+
+[INFO] 15:59:19:860 KERNEL/(5680:5685): Pasó a EXEC el carpincho 0
+
+[INFO] 15:59:19:862 KERNEL/(5680:5682): Pasó a READY el carpincho 1
+
+[INFO] 15:59:21:861 KERNEL/(5680:5683): El carpincho 0, terminó
+
+[INFO] 15:59:21:862 KERNEL/(5680:5685): El algoritmo elige al carpincho 2
+
+[INFO] 15:59:21:862 KERNEL/(5680:5685): Pasó a EXEC el carpincho 2
+
+[INFO] 15:59:31:865 KERNEL/(5680:5683): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 15:59:31:866 KERNEL/(5680:5683): Pasó a BLOCKED el carpincho 2
+
+[INFO] 15:59:31:869 KERNEL/(5680:5685): El algoritmo elige al carpincho 1
+
+[INFO] 15:59:31:869 KERNEL/(5680:5682): Pasó a READY el carpincho 2
+
+[INFO] 15:59:31:869 KERNEL/(5680:5685): Pasó a EXEC el carpincho 1
+
+[INFO] 15:59:33:870 KERNEL/(5680:5683): El carpincho 1, terminó
+
+[INFO] 15:59:33:870 KERNEL/(5680:5685): El algoritmo elige al carpincho 2
+
+[INFO] 15:59:33:870 KERNEL/(5680:5685): Pasó a EXEC el carpincho 2
+
+[INFO] 15:59:43:874 KERNEL/(5680:5683): El carpincho 2, terminó
+
+[INFO] 16:00:27:584 KERNEL/(5809:5809): 
+
+---------------------------------------------------
+
+
+[INFO] 16:00:27:585 KERNEL/(5809:5809): Cree un dispositivo
+
+[INFO] 16:00:27:585 KERNEL/(5809:5809): Nombre dispositivo pelopincho
+
+[INFO] 16:00:27:585 KERNEL/(5809:5809): Rafaga dispositivo 2000
+
+[INFO] 16:00:27:585 KERNEL/(5809:5809): Creé un procesador
+
+[INFO] 16:00:27:585 KERNEL/(5809:5809): Ya cree el planificador de largo plazo
+
+[INFO] 16:00:27:585 KERNEL/(5809:5809): Ya cree el planificador de corto plazo utilizando el algoritmo SJF
+
+[INFO] 16:00:27:585 KERNEL/(5809:5809): Ya cree el algoritmo para correr deadlock
+
+[INFO] 16:00:29:853 KERNEL/(5809:5826): Se conectó el carpincho 1 en la conexión 5
+
+[INFO] 16:00:29:853 KERNEL/(5809:5813): Pasó a READY el carpincho 1
+
+[INFO] 16:00:29:853 KERNEL/(5809:5814): El algoritmo elige al carpincho 1
+
+[INFO] 16:00:29:853 KERNEL/(5809:5814): Pasó a EXEC el carpincho 1
+
+[INFO] 16:00:29:854 KERNEL/(5809:5826): Pasó a NEW el carpincho 1
+
+[INFO] 16:00:29:854 KERNEL/(5809:5827): Se conectó el carpincho 2 en la conexión 7
+
+[INFO] 16:00:29:854 KERNEL/(5809:5813): Pasó a READY el carpincho 2
+
+[INFO] 16:00:29:854 KERNEL/(5809:5827): Pasó a NEW el carpincho 2
+
+[INFO] 16:00:31:854 KERNEL/(5809:5812): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:00:31:854 KERNEL/(5809:5812): Pasó a BLOCKED el carpincho 1
+
+[INFO] 16:00:31:854 KERNEL/(5809:5814): El algoritmo elige al carpincho 2
+
+[INFO] 16:00:31:854 KERNEL/(5809:5814): Pasó a EXEC el carpincho 2
+
+[INFO] 16:00:31:856 KERNEL/(5809:5811): Pasó a READY el carpincho 1
+
+[INFO] 16:00:31:856 KERNEL/(5809:5828): Se conectó el carpincho 3 en la conexión 8
+
+[INFO] 16:00:31:856 KERNEL/(5809:5813): Pasó a READY el carpincho 3
+
+[INFO] 16:00:31:856 KERNEL/(5809:5828): Pasó a NEW el carpincho 3
+
+[INFO] 16:00:33:855 KERNEL/(5809:5812): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:00:33:856 KERNEL/(5809:5812): Pasó a BLOCKED el carpincho 2
+
+[INFO] 16:00:33:857 KERNEL/(5809:5814): El algoritmo elige al carpincho 1
+
+[INFO] 16:00:33:857 KERNEL/(5809:5814): Pasó a EXEC el carpincho 1
+
+[INFO] 16:00:33:859 KERNEL/(5809:5811): Pasó a READY el carpincho 2
+
+[INFO] 16:00:35:858 KERNEL/(5809:5812): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:00:35:858 KERNEL/(5809:5812): Pasó a BLOCKED el carpincho 1
+
+[INFO] 16:00:35:858 KERNEL/(5809:5814): El algoritmo elige al carpincho 3
+
+[INFO] 16:00:35:858 KERNEL/(5809:5814): Pasó a EXEC el carpincho 3
+
+[INFO] 16:00:35:861 KERNEL/(5809:5811): Pasó a READY el carpincho 1
+
+[INFO] 16:00:45:862 KERNEL/(5809:5812): El carpincho 3, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:00:45:863 KERNEL/(5809:5812): Pasó a BLOCKED el carpincho 3
+
+[INFO] 16:00:45:864 KERNEL/(5809:5814): El algoritmo elige al carpincho 2
+
+[INFO] 16:00:45:865 KERNEL/(5809:5814): Pasó a EXEC el carpincho 2
+
+[INFO] 16:00:45:866 KERNEL/(5809:5811): Pasó a READY el carpincho 3
+
+[INFO] 16:00:47:866 KERNEL/(5809:5812): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:00:47:867 KERNEL/(5809:5812): Pasó a BLOCKED el carpincho 2
+
+[INFO] 16:00:47:867 KERNEL/(5809:5814): El algoritmo elige al carpincho 1
+
+[INFO] 16:00:47:867 KERNEL/(5809:5814): Pasó a EXEC el carpincho 1
+
+[INFO] 16:00:47:871 KERNEL/(5809:5811): Pasó a READY el carpincho 2
+
+[INFO] 16:00:49:868 KERNEL/(5809:5812): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:00:49:868 KERNEL/(5809:5812): Pasó a BLOCKED el carpincho 1
+
+[INFO] 16:00:49:868 KERNEL/(5809:5814): El algoritmo elige al carpincho 3
+
+[INFO] 16:00:49:869 KERNEL/(5809:5814): Pasó a EXEC el carpincho 3
+
+[INFO] 16:00:49:870 KERNEL/(5809:5811): Pasó a READY el carpincho 1
+
+[INFO] 16:00:59:874 KERNEL/(5809:5812): El carpincho 3, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:00:59:875 KERNEL/(5809:5812): Pasó a BLOCKED el carpincho 3
+
+[INFO] 16:00:59:878 KERNEL/(5809:5814): El algoritmo elige al carpincho 2
+
+[INFO] 16:00:59:878 KERNEL/(5809:5811): Pasó a READY el carpincho 3
+
+[INFO] 16:00:59:878 KERNEL/(5809:5814): Pasó a EXEC el carpincho 2
+
+[INFO] 16:01:01:879 KERNEL/(5809:5812): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:01:01:880 KERNEL/(5809:5812): Pasó a BLOCKED el carpincho 2
+
+[INFO] 16:01:01:881 KERNEL/(5809:5814): El algoritmo elige al carpincho 1
+
+[INFO] 16:01:01:881 KERNEL/(5809:5814): Pasó a EXEC el carpincho 1
+
+[INFO] 16:01:01:883 KERNEL/(5809:5811): Pasó a READY el carpincho 2
+
+[INFO] 16:01:03:881 KERNEL/(5809:5812): El carpincho 1, terminó
+
+[INFO] 16:01:03:882 KERNEL/(5809:5814): El algoritmo elige al carpincho 3
+
+[INFO] 16:01:03:882 KERNEL/(5809:5814): Pasó a EXEC el carpincho 3
+
+[INFO] 16:01:13:887 KERNEL/(5809:5812): El carpincho 3, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:01:13:889 KERNEL/(5809:5812): Pasó a BLOCKED el carpincho 3
+
+[INFO] 16:01:13:891 KERNEL/(5809:5814): El algoritmo elige al carpincho 2
+
+[INFO] 16:01:13:891 KERNEL/(5809:5814): Pasó a EXEC el carpincho 2
+
+[INFO] 16:01:13:891 KERNEL/(5809:5811): Pasó a READY el carpincho 3
+
+[INFO] 16:01:15:892 KERNEL/(5809:5812): El carpincho 2, terminó
+
+[INFO] 16:01:15:893 KERNEL/(5809:5814): El algoritmo elige al carpincho 3
+
+[INFO] 16:01:15:893 KERNEL/(5809:5814): Pasó a EXEC el carpincho 3
+
+[INFO] 16:01:25:897 KERNEL/(5809:5812): El carpincho 3, terminó
+
+[INFO] 16:03:44:059 KERNEL/(5986:5986): 
+
+---------------------------------------------------
+
+
+[INFO] 16:03:44:060 KERNEL/(5986:5986): Cree un dispositivo
+
+[INFO] 16:03:44:060 KERNEL/(5986:5986): Nombre dispositivo pelopincho
+
+[INFO] 16:03:44:060 KERNEL/(5986:5986): Rafaga dispositivo 2000
+
+[INFO] 16:03:44:060 KERNEL/(5986:5986): Creé un procesador
+
+[INFO] 16:03:44:060 KERNEL/(5986:5986): Ya cree el planificador de largo plazo
+
+[INFO] 16:03:44:060 KERNEL/(5986:5986): Ya cree el planificador de corto plazo utilizando el algoritmo SJF
+
+[INFO] 16:03:44:060 KERNEL/(5986:5986): Ya cree el algoritmo para correr deadlock
+
+[INFO] 16:03:49:153 KERNEL/(5986:6000): Se conectó el carpincho 1 en la conexión 5
+
+[INFO] 16:03:49:153 KERNEL/(5986:6000): Pasó a NEW el carpincho 1
+
+[INFO] 16:03:49:153 KERNEL/(5986:5990): Pasó a READY el carpincho 1
+
+[INFO] 16:03:49:153 KERNEL/(5986:5991): El algoritmo elige al carpincho 1
+
+[INFO] 16:03:49:153 KERNEL/(5986:5991): Pasó a EXEC el carpincho 1
+
+[INFO] 16:03:49:154 KERNEL/(5986:6001): Se conectó el carpincho 2 en la conexión 7
+
+[INFO] 16:03:49:154 KERNEL/(5986:6001): Pasó a NEW el carpincho 2
+
+[INFO] 16:03:49:154 KERNEL/(5986:5990): Pasó a READY el carpincho 2
+
+[INFO] 16:03:51:154 KERNEL/(5986:5989): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:03:51:155 KERNEL/(5986:5989): Pasó a BLOCKED el carpincho 1
+
+[INFO] 16:03:51:156 KERNEL/(5986:5991): El algoritmo elige al carpincho 2
+
+[INFO] 16:03:51:156 KERNEL/(5986:5991): Pasó a EXEC el carpincho 2
+
+[INFO] 16:03:51:157 KERNEL/(5986:6002): Se conectó el carpincho 3 en la conexión 8
+
+[INFO] 16:03:51:158 KERNEL/(5986:6002): Pasó a NEW el carpincho 3
+
+[INFO] 16:03:51:158 KERNEL/(5986:5988): Pasó a READY el carpincho 1
+
+[INFO] 16:03:51:158 KERNEL/(5986:5990): Pasó a READY el carpincho 3
+
+[INFO] 16:03:53:158 KERNEL/(5986:5989): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:03:53:158 KERNEL/(5986:5989): Pasó a BLOCKED el carpincho 2
+
+[INFO] 16:03:53:159 KERNEL/(5986:5991): El algoritmo elige al carpincho 1
+
+[INFO] 16:03:53:159 KERNEL/(5986:5991): Pasó a EXEC el carpincho 1
+
+[INFO] 16:03:53:161 KERNEL/(5986:5988): Pasó a READY el carpincho 2
+
+[INFO] 16:03:55:160 KERNEL/(5986:5989): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:03:55:161 KERNEL/(5986:5989): Pasó a BLOCKED el carpincho 1
+
+[INFO] 16:03:55:161 KERNEL/(5986:5991): El algoritmo elige al carpincho 3
+
+[INFO] 16:03:55:161 KERNEL/(5986:5991): Pasó a EXEC el carpincho 3
+
+[INFO] 16:03:55:163 KERNEL/(5986:5988): Pasó a READY el carpincho 1
+
+[INFO] 16:04:05:165 KERNEL/(5986:5989): El carpincho 3, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:04:05:167 KERNEL/(5986:5989): Pasó a BLOCKED el carpincho 3
+
+[INFO] 16:04:05:169 KERNEL/(5986:5991): El algoritmo elige al carpincho 2
+
+[INFO] 16:04:05:169 KERNEL/(5986:5988): Pasó a READY el carpincho 3
+
+[INFO] 16:04:05:169 KERNEL/(5986:5991): Pasó a EXEC el carpincho 2
+
+[INFO] 16:04:07:170 KERNEL/(5986:5989): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:04:07:171 KERNEL/(5986:5989): Pasó a BLOCKED el carpincho 2
+
+[INFO] 16:04:07:171 KERNEL/(5986:5991): El algoritmo elige al carpincho 1
+
+[INFO] 16:04:07:172 KERNEL/(5986:5991): Pasó a EXEC el carpincho 1
+
+[INFO] 16:04:07:174 KERNEL/(5986:5988): Pasó a READY el carpincho 2
+
+[INFO] 16:04:09:173 KERNEL/(5986:5989): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:04:09:173 KERNEL/(5986:5989): Pasó a BLOCKED el carpincho 1
+
+[INFO] 16:04:09:174 KERNEL/(5986:5991): El algoritmo elige al carpincho 3
+
+[INFO] 16:04:09:174 KERNEL/(5986:5991): Pasó a EXEC el carpincho 3
+
+[INFO] 16:04:09:176 KERNEL/(5986:5988): Pasó a READY el carpincho 1
+
+[INFO] 16:04:19:177 KERNEL/(5986:5989): El carpincho 3, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:04:19:180 KERNEL/(5986:5989): Pasó a BLOCKED el carpincho 3
+
+[INFO] 16:04:19:181 KERNEL/(5986:5991): El algoritmo elige al carpincho 2
+
+[INFO] 16:04:19:181 KERNEL/(5986:5991): Pasó a EXEC el carpincho 2
+
+[INFO] 16:04:19:183 KERNEL/(5986:5988): Pasó a READY el carpincho 3
+
+[INFO] 16:04:21:182 KERNEL/(5986:5989): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:04:21:183 KERNEL/(5986:5989): Pasó a BLOCKED el carpincho 2
+
+[INFO] 16:04:21:183 KERNEL/(5986:5991): El algoritmo elige al carpincho 1
+
+[INFO] 16:04:21:183 KERNEL/(5986:5991): Pasó a EXEC el carpincho 1
+
+[INFO] 16:04:21:185 KERNEL/(5986:5988): Pasó a READY el carpincho 2
+
+[INFO] 16:04:23:184 KERNEL/(5986:5989): El carpincho 1, terminó
+
+[INFO] 16:04:23:185 KERNEL/(5986:5991): El algoritmo elige al carpincho 3
+
+[INFO] 16:04:23:185 KERNEL/(5986:5991): Pasó a EXEC el carpincho 3
+
+[INFO] 16:04:33:189 KERNEL/(5986:5989): El carpincho 3, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:04:33:193 KERNEL/(5986:5989): Pasó a BLOCKED el carpincho 3
+
+[INFO] 16:04:33:193 KERNEL/(5986:5991): El algoritmo elige al carpincho 2
+
+[INFO] 16:04:33:193 KERNEL/(5986:5991): Pasó a EXEC el carpincho 2
+
+[INFO] 16:04:33:195 KERNEL/(5986:5988): Pasó a READY el carpincho 3
+
+[INFO] 16:04:35:194 KERNEL/(5986:5989): El carpincho 2, terminó
+
+[INFO] 16:04:35:195 KERNEL/(5986:5991): El algoritmo elige al carpincho 3
+
+[INFO] 16:04:35:195 KERNEL/(5986:5991): Pasó a EXEC el carpincho 3
+
+[INFO] 16:04:45:200 KERNEL/(5986:5989): El carpincho 3, terminó
+
+[INFO] 16:12:48:410 KERNEL/(6259:6259): 
+
+---------------------------------------------------
+
+
+[INFO] 16:12:48:411 KERNEL/(6259:6259): Cree un dispositivo
+
+[INFO] 16:12:48:411 KERNEL/(6259:6259): Nombre dispositivo pelopincho
+
+[INFO] 16:12:48:411 KERNEL/(6259:6259): Rafaga dispositivo 2000
+
+[INFO] 16:12:48:411 KERNEL/(6259:6259): Creé un procesador
+
+[INFO] 16:12:48:411 KERNEL/(6259:6259): Ya cree el planificador de largo plazo
+
+[INFO] 16:12:48:411 KERNEL/(6259:6259): Ya cree el planificador de corto plazo utilizando el algoritmo SJF
+
+[INFO] 16:12:48:411 KERNEL/(6259:6259): Ya cree el algoritmo para correr deadlock
+
+[INFO] 16:12:51:507 KERNEL/(6259:6271): Se conectó el carpincho 1 en la conexión 5
+
+[INFO] 16:12:51:507 KERNEL/(6259:6271): Pasó a NEW el carpincho 1
+
+[INFO] 16:12:51:507 KERNEL/(6259:6263): Pasó a READY el carpincho 1
+
+[INFO] 16:12:51:507 KERNEL/(6259:6264): El algoritmo elige al carpincho 1
+
+[INFO] 16:12:51:507 KERNEL/(6259:6264): Pasó a EXEC el carpincho 1
+
+[INFO] 16:12:51:508 KERNEL/(6259:6272): Se conectó el carpincho 2 en la conexión 7
+
+[INFO] 16:12:51:508 KERNEL/(6259:6272): Pasó a NEW el carpincho 2
+
+[INFO] 16:12:51:508 KERNEL/(6259:6263): Pasó a READY el carpincho 2
+
+[INFO] 16:12:53:509 KERNEL/(6259:6262): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:12:53:509 KERNEL/(6259:6262): Pasó a BLOCKED el carpincho 1
+
+[INFO] 16:12:53:509 KERNEL/(6259:6264): El algoritmo elige al carpincho 2
+
+[INFO] 16:12:53:509 KERNEL/(6259:6264): Pasó a EXEC el carpincho 2
+
+[INFO] 16:12:53:510 KERNEL/(6259:6274): Se conectó el carpincho 3 en la conexión 8
+
+[INFO] 16:12:53:510 KERNEL/(6259:6274): Pasó a NEW el carpincho 3
+
+[INFO] 16:12:53:510 KERNEL/(6259:6263): Pasó a READY el carpincho 3
+
+[INFO] 16:12:53:511 KERNEL/(6259:6261): Pasó a READY el carpincho 1
+
+[INFO] 16:12:55:510 KERNEL/(6259:6262): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:12:55:511 KERNEL/(6259:6262): Pasó a BLOCKED el carpincho 2
+
+[INFO] 16:12:55:511 KERNEL/(6259:6264): El algoritmo elige al carpincho 3
+
+[INFO] 16:12:55:511 KERNEL/(6259:6264): Pasó a EXEC el carpincho 3
+
+[INFO] 16:12:55:514 KERNEL/(6259:6261): Pasó a READY el carpincho 2
+
+[INFO] 16:13:05:516 KERNEL/(6259:6262): El carpincho 3, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:13:05:517 KERNEL/(6259:6262): Pasó a BLOCKED el carpincho 3
+
+[INFO] 16:13:05:520 KERNEL/(6259:6264): El algoritmo elige al carpincho 1
+
+[INFO] 16:13:05:520 KERNEL/(6259:6261): Pasó a READY el carpincho 3
+
+[INFO] 16:13:05:520 KERNEL/(6259:6264): Pasó a EXEC el carpincho 1
+
+[INFO] 16:13:07:520 KERNEL/(6259:6262): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:13:07:521 KERNEL/(6259:6262): Pasó a BLOCKED el carpincho 1
+
+[INFO] 16:13:07:521 KERNEL/(6259:6264): El algoritmo elige al carpincho 2
+
+[INFO] 16:13:07:521 KERNEL/(6259:6264): Pasó a EXEC el carpincho 2
+
+[INFO] 16:13:07:523 KERNEL/(6259:6261): Pasó a READY el carpincho 1
+
+[INFO] 16:13:09:521 KERNEL/(6259:6262): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:13:09:522 KERNEL/(6259:6262): Pasó a BLOCKED el carpincho 2
+
+[INFO] 16:13:09:522 KERNEL/(6259:6264): El algoritmo elige al carpincho 3
+
+[INFO] 16:13:09:522 KERNEL/(6259:6264): Pasó a EXEC el carpincho 3
+
+[INFO] 16:13:09:525 KERNEL/(6259:6261): Pasó a READY el carpincho 2
+
+[INFO] 16:13:19:527 KERNEL/(6259:6262): El carpincho 3, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:13:19:529 KERNEL/(6259:6262): Pasó a BLOCKED el carpincho 3
+
+[INFO] 16:13:19:529 KERNEL/(6259:6264): El algoritmo elige al carpincho 1
+
+[INFO] 16:13:19:529 KERNEL/(6259:6264): Pasó a EXEC el carpincho 1
+
+[INFO] 16:13:19:531 KERNEL/(6259:6261): Pasó a READY el carpincho 3
+
+[INFO] 16:13:21:530 KERNEL/(6259:6262): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:13:21:531 KERNEL/(6259:6262): Pasó a BLOCKED el carpincho 1
+
+[INFO] 16:13:21:531 KERNEL/(6259:6264): El algoritmo elige al carpincho 2
+
+[INFO] 16:13:21:531 KERNEL/(6259:6264): Pasó a EXEC el carpincho 2
+
+[INFO] 16:13:21:533 KERNEL/(6259:6261): Pasó a READY el carpincho 1
+
+[INFO] 16:13:23:532 KERNEL/(6259:6262): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:13:23:533 KERNEL/(6259:6262): Pasó a BLOCKED el carpincho 2
+
+[INFO] 16:13:23:533 KERNEL/(6259:6264): El algoritmo elige al carpincho 3
+
+[INFO] 16:13:23:533 KERNEL/(6259:6264): Pasó a EXEC el carpincho 3
+
+[INFO] 16:13:23:536 KERNEL/(6259:6261): Pasó a READY el carpincho 2
+
+[INFO] 16:13:33:536 KERNEL/(6259:6262): El carpincho 3, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:13:33:537 KERNEL/(6259:6262): Pasó a BLOCKED el carpincho 3
+
+[INFO] 16:13:33:537 KERNEL/(6259:6264): El algoritmo elige al carpincho 1
+
+[INFO] 16:13:33:537 KERNEL/(6259:6264): Pasó a EXEC el carpincho 1
+
+[INFO] 16:13:33:540 KERNEL/(6259:6261): Pasó a READY el carpincho 3
+
+[INFO] 16:13:35:538 KERNEL/(6259:6262): El carpincho 1, terminó
+
+[INFO] 16:13:35:538 KERNEL/(6259:6264): El algoritmo elige al carpincho 2
+
+[INFO] 16:13:35:539 KERNEL/(6259:6264): Pasó a EXEC el carpincho 2
+
+[INFO] 16:13:37:540 KERNEL/(6259:6262): El carpincho 2, terminó
+
+[INFO] 16:13:37:540 KERNEL/(6259:6264): El algoritmo elige al carpincho 3
+
+[INFO] 16:13:37:541 KERNEL/(6259:6264): Pasó a EXEC el carpincho 3
+
+[INFO] 16:13:47:547 KERNEL/(6259:6262): El carpincho 3, terminó
+
+[INFO] 16:54:08:986 KERNEL/(6920:6920): 
+
+---------------------------------------------------
+
+
+[INFO] 16:54:08:986 KERNEL/(6920:6920): Cree un dispositivo
+
+[INFO] 16:54:08:986 KERNEL/(6920:6920): Nombre dispositivo pelopincho
+
+[INFO] 16:54:08:987 KERNEL/(6920:6920): Rafaga dispositivo 2000
+
+[INFO] 16:54:08:987 KERNEL/(6920:6920): Creé un procesador
+
+[INFO] 16:54:08:987 KERNEL/(6920:6920): Ya cree el planificador de largo plazo
+
+[INFO] 16:54:08:987 KERNEL/(6920:6920): Ya cree el planificador de corto plazo utilizando el algoritmo SJF
+
+[INFO] 16:54:08:987 KERNEL/(6920:6920): Ya cree el algoritmo para correr deadlock
+
+[INFO] 16:54:14:936 KERNEL/(6920:6933): Se conectó el carpincho 1 en la conexión 5
+
+[INFO] 16:54:14:936 KERNEL/(6920:6933): Pasó a NEW el carpincho 1
+
+[INFO] 16:54:14:936 KERNEL/(6920:6924): Pasó a READY el carpincho 1
+
+[INFO] 16:54:14:936 KERNEL/(6920:6925): El algoritmo elige al carpincho 1
+
+[INFO] 16:54:14:937 KERNEL/(6920:6925): Pasó a EXEC el carpincho 1
+
+[INFO] 16:54:14:937 KERNEL/(6920:6934): Se conectó el carpincho 2 en la conexión 7
+
+[INFO] 16:54:14:937 KERNEL/(6920:6934): Pasó a NEW el carpincho 2
+
+[INFO] 16:54:14:937 KERNEL/(6920:6924): Pasó a READY el carpincho 2
+
+[INFO] 16:54:16:938 KERNEL/(6920:6923): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:54:16:938 KERNEL/(6920:6923): Pasó a BLOCKED el carpincho 1
+
+[INFO] 16:54:16:939 KERNEL/(6920:6925): El algoritmo elige al carpincho 2
+
+[INFO] 16:54:16:939 KERNEL/(6920:6925): Pasó a EXEC el carpincho 2
+
+[INFO] 16:54:16:940 KERNEL/(6920:6935): Se conectó el carpincho 3 en la conexión 8
+
+[INFO] 16:54:16:941 KERNEL/(6920:6935): Pasó a NEW el carpincho 3
+
+[INFO] 16:54:16:941 KERNEL/(6920:6924): Pasó a READY el carpincho 3
+
+[INFO] 16:54:16:941 KERNEL/(6920:6922): Pasó a READY el carpincho 1
+
+[INFO] 16:54:18:940 KERNEL/(6920:6923): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:54:18:940 KERNEL/(6920:6923): Pasó a BLOCKED el carpincho 2
+
+[INFO] 16:54:18:940 KERNEL/(6920:6925): El algoritmo elige al carpincho 3
+
+[INFO] 16:54:18:941 KERNEL/(6920:6925): Pasó a EXEC el carpincho 3
+
+[INFO] 16:54:18:942 KERNEL/(6920:6922): Pasó a READY el carpincho 2
+
+[INFO] 16:54:28:944 KERNEL/(6920:6923): El carpincho 3, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:54:28:948 KERNEL/(6920:6923): Pasó a BLOCKED el carpincho 3
+
+[INFO] 16:54:28:948 KERNEL/(6920:6925): El algoritmo elige al carpincho 1
+
+[INFO] 16:54:28:949 KERNEL/(6920:6925): Pasó a EXEC el carpincho 1
+
+[INFO] 16:54:28:950 KERNEL/(6920:6922): Pasó a READY el carpincho 3
+
+[INFO] 16:54:30:949 KERNEL/(6920:6923): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:54:30:949 KERNEL/(6920:6923): Pasó a BLOCKED el carpincho 1
+
+[INFO] 16:54:30:949 KERNEL/(6920:6925): El algoritmo elige al carpincho 2
+
+[INFO] 16:54:30:950 KERNEL/(6920:6925): Pasó a EXEC el carpincho 2
+
+[INFO] 16:54:30:951 KERNEL/(6920:6922): Pasó a READY el carpincho 1
+
+[INFO] 16:54:32:950 KERNEL/(6920:6923): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:54:32:950 KERNEL/(6920:6923): Pasó a BLOCKED el carpincho 2
+
+[INFO] 16:54:32:951 KERNEL/(6920:6925): El algoritmo elige al carpincho 3
+
+[INFO] 16:54:32:951 KERNEL/(6920:6925): Pasó a EXEC el carpincho 3
+
+[INFO] 16:54:32:953 KERNEL/(6920:6922): Pasó a READY el carpincho 2
+
+[INFO] 16:54:42:954 KERNEL/(6920:6923): El carpincho 3, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:54:42:956 KERNEL/(6920:6923): Pasó a BLOCKED el carpincho 3
+
+[INFO] 16:54:42:957 KERNEL/(6920:6925): El algoritmo elige al carpincho 1
+
+[INFO] 16:54:42:957 KERNEL/(6920:6925): Pasó a EXEC el carpincho 1
+
+[INFO] 16:54:42:959 KERNEL/(6920:6922): Pasó a READY el carpincho 3
+
+[INFO] 16:54:44:957 KERNEL/(6920:6923): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:54:44:958 KERNEL/(6920:6923): Pasó a BLOCKED el carpincho 1
+
+[INFO] 16:54:44:958 KERNEL/(6920:6925): El algoritmo elige al carpincho 2
+
+[INFO] 16:54:44:958 KERNEL/(6920:6925): Pasó a EXEC el carpincho 2
+
+[INFO] 16:54:44:961 KERNEL/(6920:6922): Pasó a READY el carpincho 1
+
+[INFO] 16:54:46:960 KERNEL/(6920:6923): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:54:46:961 KERNEL/(6920:6923): Pasó a BLOCKED el carpincho 2
+
+[INFO] 16:54:46:961 KERNEL/(6920:6925): El algoritmo elige al carpincho 3
+
+[INFO] 16:54:46:961 KERNEL/(6920:6925): Pasó a EXEC el carpincho 3
+
+[INFO] 16:54:46:963 KERNEL/(6920:6922): Pasó a READY el carpincho 2
+
+[INFO] 16:54:56:966 KERNEL/(6920:6923): El carpincho 3, pidió hacer entrada salida en pelopincho
+
+[INFO] 16:54:56:967 KERNEL/(6920:6923): Pasó a BLOCKED el carpincho 3
+
+[INFO] 16:54:56:968 KERNEL/(6920:6925): El algoritmo elige al carpincho 1
+
+[INFO] 16:54:56:969 KERNEL/(6920:6925): Pasó a EXEC el carpincho 1
+
+[INFO] 16:54:56:969 KERNEL/(6920:6922): Pasó a READY el carpincho 3
+
+[INFO] 16:54:58:969 KERNEL/(6920:6923): El carpincho 1, terminó
+
+[INFO] 16:54:58:970 KERNEL/(6920:6925): El algoritmo elige al carpincho 2
+
+[INFO] 16:54:58:971 KERNEL/(6920:6925): Pasó a EXEC el carpincho 2
+
+[INFO] 16:55:00:971 KERNEL/(6920:6923): El carpincho 2, terminó
+
+[INFO] 16:55:00:972 KERNEL/(6920:6925): El algoritmo elige al carpincho 3
+
+[INFO] 16:55:00:972 KERNEL/(6920:6925): Pasó a EXEC el carpincho 3
+
+[INFO] 16:55:10:976 KERNEL/(6920:6923): El carpincho 3, terminó
+
+[INFO] 17:41:08:963 KERNEL/(8353:8353): 
+
+---------------------------------------------------
+
+
+[INFO] 17:41:08:964 KERNEL/(8353:8353): Cree un dispositivo
+
+[INFO] 17:41:08:964 KERNEL/(8353:8353): Nombre dispositivo pelopincho
+
+[INFO] 17:41:08:964 KERNEL/(8353:8353): Rafaga dispositivo 2000
+
+[INFO] 17:41:08:964 KERNEL/(8353:8353): Creé un procesador
+
+[INFO] 17:41:08:964 KERNEL/(8353:8353): Ya cree el planificador de largo plazo
+
+[INFO] 17:41:08:964 KERNEL/(8353:8353): Ya cree el planificador de corto plazo utilizando el algoritmo SJF
+
+[INFO] 17:41:08:964 KERNEL/(8353:8353): Ya cree el algoritmo para correr deadlock
+
+[INFO] 17:41:11:947 KERNEL/(8353:8365): Se conectó el carpincho 1 en la conexión 5
+
+[INFO] 17:41:11:947 KERNEL/(8353:8365): Pasó a NEW el carpincho 1
+
+[INFO] 17:41:11:947 KERNEL/(8353:8357): Pasó a READY el carpincho 1
+
+[INFO] 17:41:11:947 KERNEL/(8353:8358): El algoritmo elige al carpincho 1
+
+[INFO] 17:41:11:947 KERNEL/(8353:8358): Pasó a EXEC el carpincho 1
+
+[INFO] 17:41:11:948 KERNEL/(8353:8366): Se conectó el carpincho 2 en la conexión 7
+
+[INFO] 17:41:11:948 KERNEL/(8353:8366): Pasó a NEW el carpincho 2
+
+[INFO] 17:41:11:948 KERNEL/(8353:8357): Pasó a READY el carpincho 2
+
+[INFO] 17:41:13:949 KERNEL/(8353:8356): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 17:41:13:949 KERNEL/(8353:8356): Pasó a BLOCKED el carpincho 1
+
+[INFO] 17:41:13:949 KERNEL/(8353:8358): El algoritmo elige al carpincho 2
+
+[INFO] 17:41:13:949 KERNEL/(8353:8358): Pasó a EXEC el carpincho 2
+
+[INFO] 17:41:13:950 KERNEL/(8353:8367): Se conectó el carpincho 3 en la conexión 8
+
+[INFO] 17:41:13:950 KERNEL/(8353:8367): Pasó a NEW el carpincho 3
+
+[INFO] 17:41:13:950 KERNEL/(8353:8357): Pasó a READY el carpincho 3
+
+[INFO] 17:41:13:952 KERNEL/(8353:8355): Pasó a READY el carpincho 1
+
+[INFO] 17:41:15:950 KERNEL/(8353:8356): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 17:41:15:951 KERNEL/(8353:8356): Pasó a BLOCKED el carpincho 2
+
+[INFO] 17:41:15:951 KERNEL/(8353:8358): El algoritmo elige al carpincho 3
+
+[INFO] 17:41:15:951 KERNEL/(8353:8358): Pasó a EXEC el carpincho 3
+
+[INFO] 17:41:15:953 KERNEL/(8353:8355): Pasó a READY el carpincho 2
+
+[INFO] 17:41:25:954 KERNEL/(8353:8356): El carpincho 3, pidió hacer entrada salida en pelopincho
+
+[INFO] 17:41:25:957 KERNEL/(8353:8356): Pasó a BLOCKED el carpincho 3
+
+[INFO] 17:41:25:958 KERNEL/(8353:8358): El algoritmo elige al carpincho 1
+
+[INFO] 17:41:25:958 KERNEL/(8353:8358): Pasó a EXEC el carpincho 1
+
+[INFO] 17:41:25:960 KERNEL/(8353:8355): Pasó a READY el carpincho 3
+
+[INFO] 17:41:27:959 KERNEL/(8353:8356): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 17:41:27:960 KERNEL/(8353:8356): Pasó a BLOCKED el carpincho 1
+
+[INFO] 17:41:27:960 KERNEL/(8353:8358): El algoritmo elige al carpincho 2
+
+[INFO] 17:41:27:960 KERNEL/(8353:8358): Pasó a EXEC el carpincho 2
+
+[INFO] 17:41:27:962 KERNEL/(8353:8355): Pasó a READY el carpincho 1
+
+[INFO] 17:41:29:961 KERNEL/(8353:8356): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 17:41:29:962 KERNEL/(8353:8356): Pasó a BLOCKED el carpincho 2
+
+[INFO] 17:41:29:962 KERNEL/(8353:8358): El algoritmo elige al carpincho 3
+
+[INFO] 17:41:29:962 KERNEL/(8353:8358): Pasó a EXEC el carpincho 3
+
+[INFO] 17:41:29:965 KERNEL/(8353:8355): Pasó a READY el carpincho 2
+
+[INFO] 17:41:39:965 KERNEL/(8353:8356): El carpincho 3, pidió hacer entrada salida en pelopincho
+
+[INFO] 17:41:39:966 KERNEL/(8353:8356): Pasó a BLOCKED el carpincho 3
+
+[INFO] 17:41:39:969 KERNEL/(8353:8358): El algoritmo elige al carpincho 1
+
+[INFO] 17:41:39:969 KERNEL/(8353:8355): Pasó a READY el carpincho 3
+
+[INFO] 17:41:39:969 KERNEL/(8353:8358): Pasó a EXEC el carpincho 1
+
+[INFO] 17:41:41:970 KERNEL/(8353:8356): El carpincho 1, pidió hacer entrada salida en pelopincho
+
+[INFO] 17:41:41:971 KERNEL/(8353:8356): Pasó a BLOCKED el carpincho 1
+
+[INFO] 17:41:41:971 KERNEL/(8353:8358): El algoritmo elige al carpincho 2
+
+[INFO] 17:41:41:971 KERNEL/(8353:8358): Pasó a EXEC el carpincho 2
+
+[INFO] 17:41:41:973 KERNEL/(8353:8355): Pasó a READY el carpincho 1
+
+[INFO] 17:41:43:972 KERNEL/(8353:8356): El carpincho 2, pidió hacer entrada salida en pelopincho
+
+[INFO] 17:41:43:973 KERNEL/(8353:8356): Pasó a BLOCKED el carpincho 2
+
+[INFO] 17:41:43:974 KERNEL/(8353:8358): El algoritmo elige al carpincho 3
+
+[INFO] 17:41:43:974 KERNEL/(8353:8358): Pasó a EXEC el carpincho 3
+
+[INFO] 17:41:43:976 KERNEL/(8353:8355): Pasó a READY el carpincho 2
+
+[INFO] 17:41:53:978 KERNEL/(8353:8356): El carpincho 3, pidió hacer entrada salida en pelopincho
+
+[INFO] 17:41:53:979 KERNEL/(8353:8356): Pasó a BLOCKED el carpincho 3
+
+[INFO] 17:41:53:979 KERNEL/(8353:8358): El algoritmo elige al carpincho 1
+
+[INFO] 17:41:53:979 KERNEL/(8353:8358): Pasó a EXEC el carpincho 1
+
+[INFO] 17:41:53:982 KERNEL/(8353:8355): Pasó a READY el carpincho 3
+
+[INFO] 17:41:55:979 KERNEL/(8353:8356): El carpincho 1, terminó
+
+[INFO] 17:41:55:980 KERNEL/(8353:8358): El algoritmo elige al carpincho 2
+
+[INFO] 17:41:55:980 KERNEL/(8353:8358): Pasó a EXEC el carpincho 2
+
+[INFO] 17:41:57:982 KERNEL/(8353:8356): El carpincho 2, terminó
+
+[INFO] 17:41:57:982 KERNEL/(8353:8358): El algoritmo elige al carpincho 3
+
+[INFO] 17:41:57:983 KERNEL/(8353:8358): Pasó a EXEC el carpincho 3
+
+[INFO] 17:42:07:988 KERNEL/(8353:8356): El carpincho 3, terminó
+

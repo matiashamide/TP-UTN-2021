@@ -13,9 +13,10 @@ void pedir_permiso_para_continuar(int conexion) {
 
 	uint32_t handshake = 1;
 
-	int numero_de_bytes = send(conexion, &handshake, sizeof(uint32_t), 0);
+	//int numero_de_bytes =
+			send(conexion, &handshake, sizeof(uint32_t), 0);
 
-	printf("Ya pedi permiso %d\n", numero_de_bytes);
+	//printf("Ya pedi permiso %d\n", numero_de_bytes);
 
 }
 
@@ -23,18 +24,20 @@ void recibir_permiso_para_continuar(int conexion) {
 
 
 	uint32_t result;
-	int bytes_recibidos = recv(conexion, &result, sizeof(uint32_t), MSG_WAITALL);
+	//int bytes_recibidos =
+			recv(conexion, &result, sizeof(uint32_t), MSG_WAITALL);
 
-	printf("Ya recibi permiso %d\n", bytes_recibidos);
+	//printf("Ya recibi permiso %d\n", bytes_recibidos);
 
 
 }
 
 int recibir_finalizacion_por_deadlock(int conexion) {
 	uint32_t result;
-	int bytes_recibidos = recv(conexion, &result, sizeof(uint32_t), MSG_WAITALL);
+	//int bytes_recibidos =
+			recv(conexion, &result, sizeof(uint32_t), MSG_WAITALL);
 
-	printf("Ya recibi permiso %d\n", bytes_recibidos);
+	//printf("Ya recibi permiso %d\n", bytes_recibidos);
 
 	return result;
 }
@@ -195,7 +198,7 @@ int mate_close(mate_instance *lib_ref)
 		close(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
 		free(lib_ref->group_info);
 
-		printf("Termine de ejecutar, adiosss\n");
+		//printf("Termine de ejecutar, adiosss\n");
 
 		return 0;
 }

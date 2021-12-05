@@ -24,6 +24,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <futiles/futiles.h>
+#include <sys/time.h>
 
 
 //ESTRUCTURAS
@@ -35,8 +36,8 @@ typedef struct {
 
 typedef struct {
 	uint32_t PID;
-	uint32_t real_anterior;
-	uint32_t estimado_anterior;
+	unsigned long real_anterior;
+	double estimado_anterior;
 	uint32_t tiempo_espera;
 	int conexion;
 	t_list* recursos_usados;
@@ -61,6 +62,8 @@ typedef struct {
 	PCB* lugar_PCB;
 	sem_t sem_exec;
 	int bit_de_ocupado;
+	struct timeval timeValBefore;
+	struct timeval timeValAfter;
 }t_procesador;
 
 typedef struct {
