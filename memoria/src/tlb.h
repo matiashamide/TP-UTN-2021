@@ -59,4 +59,6 @@ void  mostrar_entradas_tlb(FILE* file);
 void  mostrar_entrada(int entrada, FILE* file);
 char* nombrar_dump_file();
 
+void printear_tlb();
+
 #endif /* TLB_H_ */

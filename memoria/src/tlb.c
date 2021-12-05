@@ -76,9 +76,15 @@ void crear_entrada(int pid, int pag, int frame) {
 	entrada->ultimo_uso = obtener_tiempo_TLB();
 
 	list_add(TLB, entrada);
+
+	printf("Agregue entrada en TLB quedo asi : \n ");
+	printear_tlb();
 }
 
 void reemplazar_FIFO(int pid, int pag, int frame){
+
+	printf("TLB Reemplazando FIFO\n");
+	printear_tlb();
 
 	t_entrada_tlb* entrada_nueva = malloc(sizeof(t_entrada_tlb));
 	entrada_nueva->pag        = pag;
@@ -92,6 +98,9 @@ void reemplazar_FIFO(int pid, int pag, int frame){
 	list_remove_and_destroy_element(TLB, 0, free);
 	list_add(TLB, entrada_nueva);
 	pthread_mutex_unlock(&mutexTLB);
+
+	printf("\n Ya reemplace y quedo asi: \n");
+	printear_tlb();
 }
 
 void reemplazar_LRU(int pid, int pag, int frame){
@@ -232,6 +241,14 @@ char* nombrar_dump_file(){
 	free(time);
 
 	return nombre_final;
+}
+
+void printear_tlb() {
+	for(int i = 0; i < list_size(TLB); i++){
+		t_entrada_tlb* entrada = list_get(TLB, i);
+		t_frame* frame = list_get(FRAMES_MEMORIA, entrada->frame);
+		printf("Entrada: %d        Esta ocupado: %d        Carpincho: %d        Pag: %d        Frame: %d \n",i, frame->ocupado, entrada->pid, entrada->pag, entrada->frame);
+	}
 }
 
 void limpiar_tlb(){
