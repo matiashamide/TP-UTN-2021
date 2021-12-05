@@ -20,11 +20,10 @@ int main(void) {
 	log_info(LOGGER, "Se conecto el cliente %i a SWAMP", *socket_cliente);
 	printf("Se conecto el cliente %i a SWAMP", *socket_cliente);
 
-	int i = 0;
 	while(1) {
 		atender_peticiones(socket_cliente);
-		//i++;
 	}
+
 	return 1;
 }
 
@@ -50,6 +49,7 @@ void init_swamp(){
 }
 
 t_swamp_config crear_archivo_config_swamp(char* ruta) {
+
 	t_swamp_config config;
 	t_config* swamp_config = config_create(ruta);
 
@@ -58,13 +58,13 @@ t_swamp_config crear_archivo_config_swamp(char* ruta) {
         exit(-1);
     }
 
-    config.ip             = config_get_string_value(swamp_config, "IP");
-    config.puerto         = config_get_string_value(swamp_config, "PUERTO");
-    config.tamanio_swamp  = config_get_int_value(swamp_config, "TAMANIO_SWAP");
-    config.tamanio_pag    = config_get_int_value(swamp_config, "TAMANIO_PAGINA");
-    config.archivos_swamp = config_get_array_value(swamp_config,"ARCHIVOS_SWAP");
-    config.marcos_max     = config_get_int_value (swamp_config, "MARCOS_POR_CARPINCHO");
-    config.retardo_swap   = config_get_int_value(swamp_config, "RETARDO_SWAP");
+    config.ip             = config_get_string_value(swamp_config, "IP"                  );
+    config.puerto         = config_get_string_value(swamp_config, "PUERTO"              );
+    config.tamanio_swamp  = config_get_int_value   (swamp_config, "TAMANIO_SWAP"        );
+    config.tamanio_pag    = config_get_int_value   (swamp_config, "TAMANIO_PAGINA"      );
+    config.archivos_swamp = config_get_array_value (swamp_config, "ARCHIVOS_SWAP"       );
+    config.marcos_max     = config_get_int_value   (swamp_config, "MARCOS_POR_CARPINCHO");
+    config.retardo_swap   = config_get_int_value   (swamp_config, "RETARDO_SWAP"        );
 
     return config;
 }
@@ -137,8 +137,6 @@ void atender_peticiones(int* cliente){
 
 	//Size de lo que manda
 	recibir_entero_swap(*cliente);
-	//int size = recibir_entero_swap(*cliente);
-	//printf("Size paquete: %i",size);
 
 	uint32_t pid, nro_pagina, rta, cant_paginas;
 	t_frame* frame;
@@ -167,28 +165,25 @@ void atender_peticiones(int* cliente){
 		printf("\n\nTirar a swap\n\n");
 
 		buffer_pag  = malloc(CONFIG.tamanio_pag);
-		//buffer_pag  = realloc(buffer_pag, CONFIG.tamanio_pag);
 
 		pid         = recibir_entero(*cliente);
 		nro_pagina  = recibir_entero(*cliente);
 		recv(*cliente, buffer_pag, CONFIG.tamanio_pag, 0);
 
-		//printf("antes del log\n");
-
-		//log_info(LOGGER, "[SWAMP]: Guardando la pagina %i del proceso %i en SWAMP", nro_pagina, pid);
+		log_info(LOGGER, "[SWAMP]: Guardando la pagina %i del proceso %i en SWAMP", nro_pagina, pid);
 
 		frame = frame_de_pagina(pid, nro_pagina);
 
-		//printf("ya tengo el frame no se si es null \n");
-		if(frame == NULL) {
-			return;
+		if (frame == NULL) {
+			perror("Error: no encontre el frame de la pagina en Swamp.\n");
+			exit(1);
 		}
 
-		//printf("el frame es %i", frame->offset);
 		archivo = obtener_archivo_con_id(frame->aid);
-		//printf("tengo el archivo");
+
 		if (archivo == NULL) {
-			printf("pincho archivo");
+			perror("Error: no encontre el archivo en el que esta el carpincho en Swamp.\n");
+			exit(1);
 		}
 
 		addr = calloc(1, CONFIG.tamanio_swamp);
@@ -199,22 +194,18 @@ void atender_peticiones(int* cliente){
 			exit(1);
 		}
 
-		printf("Por memcopiar en archivo %i offset %i", archivo->id, frame->offset);
 		memcpy(addr + frame->offset, buffer_pag, CONFIG.tamanio_pag);
 		msync(addr, CONFIG.tamanio_swamp, 0);
 
 		munmap(addr, CONFIG.tamanio_swamp);
-		//free(buffer_pag);
 
-		//rta = 1;
-		//send(*cliente, &rta, sizeof(uint32_t), 0);
+		free(buffer_pag);
 
 		break;
 
 	case TRAER_DE_SWAP:;
 
 		buffer_pag = malloc(CONFIG.tamanio_pag);
-		//buffer_pag = realloc(buffer_pag, CONFIG.tamanio_pag);
 
 		pid        = recibir_entero(*cliente);
 		nro_pagina = recibir_entero(*cliente);
@@ -224,8 +215,8 @@ void atender_peticiones(int* cliente){
 		frame   = frame_de_pagina(pid, nro_pagina);
 		archivo = obtener_archivo_con_id(frame->aid);
 
-		addr = calloc(1, CONFIG.tamanio_pag);
-		addr = mmap(NULL, CONFIG.tamanio_pag, PROT_READ | PROT_WRITE, MAP_SHARED, archivo->fd, 0);
+		addr = calloc(1, CONFIG.tamanio_swamp);
+		addr = mmap(NULL, CONFIG.tamanio_swamp, PROT_READ | PROT_WRITE, MAP_SHARED, archivo->fd, 0);
 
 		if (addr == MAP_FAILED) {
 			perror("Error mapping \n");
@@ -233,9 +224,9 @@ void atender_peticiones(int* cliente){
 		}
 
 		memcpy(buffer_pag, addr + frame->offset, CONFIG.tamanio_pag);
-		//munmap(addr, CONFIG.tamanio_swamp);
+		munmap(addr, CONFIG.tamanio_swamp);
 
-		//usleep(CONFIG.retardo_swap * 1000);
+		usleep(CONFIG.retardo_swap * 1000);
 		send(*cliente, buffer_pag, CONFIG.tamanio_pag, 0);
 
 		free(buffer_pag);
@@ -277,17 +268,19 @@ void atender_peticiones(int* cliente){
 		pid = recibir_entero(*cliente);
 		log_info(LOGGER, "[SWAMP]: No entiendo la peticion, rey.");
 		eliminar_proceso_swap(pid);
+
 	break;
 
 	case EXIT:;
+
 		exit(1);
 		//aca podriamos liberar todo swap, igualmente se libera solo
-	break;
+
+		break;
 
 	default: log_info(LOGGER, "[SWAMP]: No entiendo la peticion, rey.");
 	break;
 	}
-	//free(buffer_pag);
 	return;
 }
 
@@ -318,7 +311,6 @@ int32_t reservar_espacio(int32_t pid, int cant_paginas) {
 				frame->ocupado = true;
 				frame->pid     = pid;
 				frame->id_pag  = id_ult_pag + i;
-				printf("PROCESO %i ID PAG: %i",frame->pid, frame->id_pag);
 
 			}
 
@@ -504,12 +496,7 @@ int ultima_pagina_proceso(int32_t pid) {
 
 	list_sort(frames_asignados, (void*)id_pag_asc);
 
-	int pag0 = ((t_frame*)list_get(frames_asignados, 0))->id_pag;
-	//int pag1 = ((t_frame*)list_get(frames_asignados, 1))->id_pag;
-
-	//printf("Pag 0: %i/n", pag0);
-	//printf("Pag 1: %i/n", pag1);
-	return pag0;
+	return ((t_frame*)list_get(frames_asignados, 0))->id_pag;
 }
 
 t_list* frames_del_proceso(int32_t pid) {

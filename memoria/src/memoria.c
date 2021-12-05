@@ -8,42 +8,6 @@ int main(void) {
 	//Coordinacion multihilo de carpinchos
 	coordinador_multihilo();
 
-/*
-	int C0 = memalloc(3, 23, 1);
-
-	int A0 = memalloc(1, 23, 1);
-
-	int B0 = memalloc(2, 23, 1);
-
-	int C1 = memalloc(3, 23, 1);
-
-	int A1 = memalloc(1, 23, 1);
-
-	int B1 = memalloc(2, 23, 1);
-
-	int C2 = memalloc(3, 23, 1);
-
-	int A2 = memalloc(1, 10, 1);
-
-	int B2 = memalloc(2, 10, 1);
-
-	int C3 = memalloc(3, 10, 1);
-
-	//Aca escriben c1 c2 y c3
-
-	int A3 = memalloc(1, 23, 1);
-	printf("\nA3 ok\n");
-	int A4 = memalloc(1, 23, 1);
-	printf("\nA4 ok\n");
-	int A5 = memalloc(1, 23, 1);
-	printf("\nA5 ok\n");
-	int A6 = memalloc(1, 23, 1);
-	printf("\nA5 ok\n");
-
-	printf("\ntermine ok\n");
-	*/
-
-
 	return EXIT_SUCCESS;
 }
 
@@ -76,7 +40,7 @@ void init_memoria() {
         return;
 	}
 
-	CONEXION_SWAP   = crear_conexion(CONFIG.ip_swap, CONFIG.puerto_swap);
+	CONEXION_SWAP = crear_conexion(CONFIG.ip_swap, CONFIG.puerto_swap);
 
 	if (CONEXION_SWAP == -1) {
 		log_error(LOGGER, "No se pudo establecer conexion con SWAMP.");
@@ -355,8 +319,6 @@ void atender_carpinchos(int* cliente) {
 
 int memalloc(int32_t pid, int32_t size, int cliente){
 
-	printf("Entre al memalloc\n");
-
 	int dir_logica = -1;
 	int paginas_necesarias = ceil(((double)size + sizeof(heap_metadata)*2)/ (double)CONFIG.tamanio_pagina);
 
@@ -412,7 +374,7 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 		list_add(TABLAS_DE_PAGINAS, nueva_tabla);
 		pthread_mutex_unlock(&mutex_tablas_dp);
 
-		//inicializo header inicial
+		//Inicializo header inicial
 		heap_metadata* header 	  = malloc(sizeof(heap_metadata));
 		header->is_free           = false;
 		header->next_alloc        = sizeof(heap_metadata) + size;
@@ -1640,12 +1602,10 @@ void tirar_a_swap(t_pagina* pagina) {
 	log_info(LOGGER, "[MP->SWAMP] Tirando la pagina modificada %i en swap, del proceso %i", pagina->id , pagina->pid);
 
 	void* buffer_pag = malloc(CONFIG.tamanio_pagina);
-	//buffer_pag = realloc(buffer_pag, CONFIG.tamanio_pagina);
 
 	memcpy(buffer_pag, MEMORIA_PRINCIPAL + pagina->frame_ppal * CONFIG.tamanio_pagina, CONFIG.tamanio_pagina);
 	pthread_mutex_lock(&mutex_swamp);
 	enviar_pagina(buffer_pag, CONEXION_SWAP, pagina->pid, pagina->id);
-	//int32_t retorno = recibir_entero(CONEXION_SWAP);
 	pthread_mutex_unlock(&mutex_swamp);
 	free(buffer_pag);
 
@@ -1653,7 +1613,6 @@ void tirar_a_swap(t_pagina* pagina) {
 
 void enviar_pagina(void* pagina, int socket_cliente, uint32_t pid, uint32_t nro_pagina) {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
-	//paquete = realloc(paquete, sizeof(t_paquete_swap));
 
 	paquete->cod_op = TIRAR_A_SWAP;
 	paquete->buffer = malloc(sizeof(t_buffer));
@@ -1790,10 +1749,7 @@ void set_modificado(t_pagina* pag){
 
 void signal_metricas(){
 	log_info(LOGGER, "[SIGNAL METRICAS]: Recibi la senial de imprimir metricas, imprimiendo\n...");
-	//generar_metricas_tlb();
-	//dump_memoria_principal();
-	dumpear_tlb();
-	exit_memoria();
+	generar_metricas_tlb();
 	exit(1);
 }
 void signal_dump(){
