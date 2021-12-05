@@ -59,7 +59,7 @@ t_kernel_config crear_archivo_config_kernel(char* ruta) {
 //
   //  }else{
     	config.estimacion_inicial = config_get_int_value(kernel_config, "ESTIMACION_INICIAL");
-    	config.alfa = config_get_int_value(kernel_config, "ALFA");
+    	config.alfa = config_get_double_value(kernel_config, "ALFA");
 
   //  }
     config.dispositivos_IO = config_get_array_value(kernel_config,"DISPOSITIVOS_IO");
@@ -135,13 +135,13 @@ void crear_dispositivos_io() {
 		pthread_t hilo_dispositivo;
 
 		pthread_create(&hilo_dispositivo, NULL, (void*)ejecutar_io, dispositivo_io);
-		printf("Cree un dispositivo\n");
 		pthread_detach(hilo_dispositivo);
 
-		//TEST
-		printf("Nombre dispositivo %s\n", dispositivo_io->nombre);
-		printf("Rafaga dispositivo %d\n", dispositivo_io->rafaga);
-		//FIN TEST
+		//LOG
+		log_info(LOGGER, "Cree un dispositivo\n");
+		log_info(LOGGER, "Nombre dispositivo %s\n", dispositivo_io->nombre);
+		log_info(LOGGER, "Rafaga dispositivo %d\n", dispositivo_io->rafaga);
+		//FIN LOG
 
 	}
 }
@@ -156,8 +156,6 @@ void coordinador_multihilo(){
 
 		(*socket_cliente) = accept(SERVIDOR_KERNEL, NULL, NULL);
 
-		printf("Se conecto un carpincho usando la mateLib\n");
-
 		pthread_create(&hilo_atender_carpincho, NULL , (void*)atender_carpinchos, socket_cliente);
 		pthread_detach(hilo_atender_carpincho);
 	}
@@ -166,21 +164,21 @@ void coordinador_multihilo(){
 void iniciar_planificador_largo_plazo() {
 
 	pthread_create(&planificador_largo_plazo, NULL, (void*)algoritmo_planificador_largo_plazo, NULL);
-	printf("Ya cree el planificador de largo plazo\n");
+	log_info(LOGGER, "Ya cree el planificador de largo plazo\n");
 	pthread_detach(planificador_largo_plazo);
 }
 
 void iniciar_planificador_corto_plazo() {
 
 	pthread_create(&planificador_corto_plazo, NULL, (void*)algoritmo_planificador_corto_plazo, NULL);
-	printf("Ya cree el planificador de corto plazo\n");
+	log_info(LOGGER, "Ya cree el planificador de corto plazo utilizando el algoritmo %s\n", CONFIG_KERNEL.alg_plani);
 	pthread_detach(planificador_largo_plazo);
 }
 
 void iniciar_algoritmo_deadlock() {
 
 	pthread_create(&administrador_deadlock, NULL, (void*)correr_algoritmo_deadlock, NULL);
-	printf("Ya cree el algoritmo para correr deadlock\n");
+	log_info(LOGGER, "Ya cree el algoritmo para correr deadlock\n");
 	pthread_detach(administrador_deadlock);
 }
 
@@ -200,7 +198,7 @@ void atender_carpinchos(int* cliente) {
 	pcb_carpincho->recursos_usados = list_create();
 	//TODO hacerle free a esto
 
-	printf("Conexion %d\n", (*cliente));
+	log_info(LOGGER, "Se conectó el carpincho %d en la conexión %d\n", pcb_carpincho->PID, (*cliente));
 
 	recibir_peticion_para_continuar(pcb_carpincho->conexion);
 
@@ -216,6 +214,8 @@ void pasar_a_new(PCB* pcb_carpincho) {
 	sem_post(&sem_algoritmo_planificador_largo_plazo);
 
 	algoritmo_planificador_mediano_plazo_blocked_suspended();
+
+	log_info(LOGGER, "Pasó a NEW el carpincho %d\n", pcb_carpincho->PID);
 }
 
 void crear_procesadores() {
@@ -231,7 +231,7 @@ void crear_procesadores() {
 		pthread_t hilo_procesador;
 
 		pthread_create(&hilo_procesador, NULL, (void*)ejecutar, estructura_procesador);
-		printf("Cree un procesador\n");
+		log_info(LOGGER, "Creé un procesador\n");
 		pthread_detach(hilo_procesador);
 
 	}
