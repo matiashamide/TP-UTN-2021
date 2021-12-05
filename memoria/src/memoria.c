@@ -1302,10 +1302,11 @@ int reemplazar_con_LRU(int32_t pid) {
 
 	//COMO REEMPLAZO SEGUN LRU, ELIJO LA PRIMERA QUE ES LA MAS VIEJA
 	t_pagina* pag_reemplazo = list_get(paginas, 0);
+	lockear(pag_reemplazo);
+
+	desreferenciar_pag_tlb(pid , pag_reemplazo->id , pag_reemplazo->frame_ppal);
 
 	log_info(LOGGER, "[REEMPLAZO LRU] Saco NRO_PAG %i del PID %i en FRAME %i", pag_reemplazo->id, pag_reemplazo->pid, pag_reemplazo->frame_ppal);
-
-	lockear(pag_reemplazo);
 
 	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
 	if(pag_reemplazo->modificado) {
@@ -1377,10 +1378,12 @@ int reemplazar_con_CLOCK_M(int32_t pid) {
 	}
 
 	victima = list_get(paginas, pag_seleccionada);
+	lockear(victima);
+	desreferenciar_pag_tlb(pid , victima->id , victima->frame_ppal);
 
 	log_info(LOGGER, "[REEMPLAZO CLOCK-M] Saco NRO_PAG %i del PID %i en FRAME %i", victima->id, victima->pid, victima->frame_ppal);
 
-	lockear(victima);
+
 
 	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
 	if (victima->modificado) {

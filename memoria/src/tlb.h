@@ -44,7 +44,7 @@ void reemplazar_LRU(int pid, int pag, int frame);
 int  buscar_pag_tlb(int pid, int pag);
 void actualizar_tlb(int pid, int pag, int frame);
 void registrar_evento(int pid, int event);
-
+void desreferenciar_pag_tlb(int pid , int nro_pagina , int frame);
 //// ---- funciones secundarias
 int  obtener_tiempo_TLB();
 void printear_TLB(int entradas);

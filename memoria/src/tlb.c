@@ -124,6 +124,18 @@ void reemplazar_LRU(int pid, int pag, int frame){
 	pthread_mutex_unlock(&mutexTLB);
 }
 
+void desreferenciar_pag_tlb(int pid , int nro_pag , int frame){
+
+	bool mismo_pid_id_frame(void* elemento){
+		t_entrada_tlb* entrada = (t_entrada_tlb*) elemento;
+		return entrada->frame == frame && entrada->pag == nro_pag && entrada->pid == pid;
+	}
+
+	pthread_mutex_lock(&mutexTLB);
+	list_remove_and_destroy_by_condition(TLB , mismo_pid_id_frame , free);
+	pthread_mutex_unlock(&mutexTLB);
+}
+
 
 //1 --> HIT
 //0 --> MISS
