@@ -80,20 +80,15 @@ void crear_entrada(int pid, int pag, int frame) {
 
 	list_add(TLB, entrada);
 
-	printf("Agregue entrada en TLB quedo asi : \n ");
-	printear_tlb();
 }
 
 void reemplazar_FIFO(int pid, int pag, int frame){
 
-	printf("TLB Reemplazando FIFO\n");
-	printear_tlb();
-
 	t_entrada_tlb* entrada_nueva = malloc(sizeof(t_entrada_tlb));
-	entrada_nueva->pag        = pag;
-	entrada_nueva->pid        = pid;
-	entrada_nueva->frame      = frame;
-	entrada_nueva->ultimo_uso = -1;
+	entrada_nueva->pag           = pag;
+	entrada_nueva->pid           = pid;
+	entrada_nueva->frame         = frame;
+	entrada_nueva->ultimo_uso    = -1;
 
 	pthread_mutex_lock(&mutexTLB);
 	t_entrada_tlb* victima = (t_entrada_tlb*)list_get(TLB, 0);
@@ -102,8 +97,6 @@ void reemplazar_FIFO(int pid, int pag, int frame){
 	list_add(TLB, entrada_nueva);
 	pthread_mutex_unlock(&mutexTLB);
 
-	printf("\n Ya reemplace y quedo asi: \n");
-	printear_tlb();
 }
 
 void reemplazar_LRU(int pid, int pag, int frame){
@@ -166,16 +159,6 @@ void registrar_evento(int pid, int event){
 		nodo_nuevo->pid       = pid;
 		nodo_nuevo->contador  = 1;
 		list_add(event_list, nodo_nuevo);
-	}
-}
-
-void printear_TLB(int entradas){
-	printf("-------------------\n");
-	for(int i = 0 ; i < entradas ; i++){
-		printf("entrada      %i :\n " , i);
-		printf("pag          %i     " , ((t_entrada_tlb*)list_get(TLB, i))->pag       );
-		printf("marco        %i     " , ((t_entrada_tlb*)list_get(TLB, i))->frame     );
-		printf("ultimo uso   %i   \n" , ((t_entrada_tlb*)list_get(TLB, i))->ultimo_uso);
 	}
 }
 
