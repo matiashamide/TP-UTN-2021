@@ -6,7 +6,41 @@ int main(void) {
 	init_memoria();
 
 	//Coordinacion multihilo de carpinchos
-	coordinador_multihilo();
+	//coordinador_multihilo();
+
+	int C0 = memalloc(3, 23, 1);
+
+	int A0 = memalloc(1, 23, 1);
+
+	int B0 = memalloc(2, 23, 1);
+
+	int C1 = memalloc(3, 23, 1);
+
+	int A1 = memalloc(1, 23, 1);
+
+	int B1 = memalloc(2, 23, 1);
+
+	int C2 = memalloc(3, 23, 1);
+
+	int A2 = memalloc(1, 10, 1);
+
+	int B2 = memalloc(2, 10, 1);
+
+	int C3 = memalloc(3, 10, 1);
+
+	//Aca escriben c1 c2 y c3
+
+	int A3 = memalloc(1, 23, 1);
+	printf("\nA3 ok\n");
+
+	int A4 = memalloc(1, 23, 1);
+    printf("\nA4 ok\n");
+    int A5 = memalloc(1, 23, 1);
+    printf("\nA5 ok\n");
+    int A6 = memalloc(1, 23, 1);
+    printf("\nA5 ok\n");
+
+    printf("\ntermine ok\n");
 
 	return EXIT_SUCCESS;
 }
@@ -1237,8 +1271,11 @@ int ejecutar_algoritmo_reemplazo(int32_t pid) {
 	if (string_equals_ignore_case(CONFIG.alg_remp_mmu, "LRU"))
 		retorno = reemplazar_con_LRU(pid);
 
-	if(string_equals_ignore_case(CONFIG.alg_remp_mmu, "CLOCK-M"))
+	if(string_equals_ignore_case(CONFIG.alg_remp_mmu, "CLOCK-M")){
+		pthread_mutex_lock(&mutex_clock);
 		retorno = reemplazar_con_CLOCK_M(pid);
+		pthread_mutex_unlock(&mutex_clock);
+	}
 
 	return retorno;
 }
@@ -1289,9 +1326,20 @@ int reemplazar_con_CLOCK_M(int32_t pid) {
 	int pag_seleccionada;
 	int encontre         = 0;
 	int busco_modificado = 0;
-	int primera_vuelta   = 1;
+	int caso_0_0 		 = 1;
 
-	t_list* paginas = list_filter(paginas_en_mp(), (void*)no_esta_lockeada);
+	t_list* paginas;
+
+	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
+		t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
+		paginas_proceso = list_filter(paginas_proceso, (void*)esta_en_mp);
+		paginas = list_filter(paginas_proceso, (void*)no_esta_lockeada);
+	}
+
+	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
+		paginas = list_filter(paginas_en_mp(), (void*)no_esta_lockeada);
+	}
+
 	t_pagina* victima;
 
 	while(!encontre) {
@@ -1303,11 +1351,13 @@ int reemplazar_con_CLOCK_M(int32_t pid) {
 		t_pagina* pagina = list_get(paginas, i);
 
 
-		if (i == POSICION_CLOCK && !encontre && !primera_vuelta) {
+		if (!caso_0_0) {
 			busco_modificado = 1;
+		} else {
+			busco_modificado = 0;
 		}
 
-		primera_vuelta = 0;
+
 
 		if (!busco_modificado) {
 
@@ -1320,12 +1370,15 @@ int reemplazar_con_CLOCK_M(int32_t pid) {
 			} else {
 
 				i++;
+				if (i == POSICION_CLOCK) {
+					caso_0_0 = 0;
 
+				}
 			}
 
 		} else {
 
-			if(pagina->uso == false && pagina->modificado == false) {
+			if(pagina->uso == false && pagina->modificado == true) {
 
 				pag_seleccionada = i;
 				POSICION_CLOCK   = i;
@@ -1334,13 +1387,16 @@ int reemplazar_con_CLOCK_M(int32_t pid) {
 			} else {
 				i++;
 				pagina->uso = false;
+
+				if (i == POSICION_CLOCK) {
+					caso_0_0 = 1;
+
+				}
 			}
-
 		}
-
 	}
 
-	victima = list_get(paginas, pag_seleccionada);
+	victima = list_get(paginas, 0);
 	lockear(victima);
 	desreferenciar_pag_tlb(pid , victima->id , victima->frame_ppal);
 
@@ -1749,7 +1805,12 @@ void set_modificado(t_pagina* pag){
 
 void signal_metricas(){
 	log_info(LOGGER, "[SIGNAL METRICAS]: Recibi la senial de imprimir metricas, imprimiendo\n...");
-	generar_metricas_tlb();
+
+	//generar_metricas_tlb();
+	dump_memoria_principal();
+	//dumpear_tlb();
+	exit_memoria();
+
 	exit(1);
 }
 void signal_dump(){
