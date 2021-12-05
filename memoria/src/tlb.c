@@ -53,10 +53,12 @@ void actualizar_tlb(int pid, int pag, int frame){
 		return;
 	}
 
+	pthread_mutex_lock(&mutexTiempoTLB);
 	if (list_size(TLB) < CONFIG.cant_entradas_tlb) {
 		crear_entrada(pid, pag, frame);
 		return;
 	}
+	pthread_mutex_unlock(&mutexTiempoTLB);
 
 	if (string_equals_ignore_case(CONFIG.alg_reemplazo_tlb,"LRU"))
 		reemplazar_LRU(pid, pag, frame);
