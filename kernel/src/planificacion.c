@@ -20,6 +20,8 @@ void algoritmo_planificador_largo_plazo() {
 			pthread_mutex_lock(&mutex_lista_ready);
 			list_add(LISTA_READY, pcb);
 			pthread_mutex_unlock(&mutex_lista_ready);
+
+			log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 		}
 		pthread_mutex_unlock(&mutex_lista_ready_suspended);
 
@@ -33,6 +35,8 @@ void algoritmo_planificador_mediano_plazo_ready_suspended() {
 	pthread_mutex_lock(&mutex_lista_ready);
 	list_add(LISTA_READY, pcb);
 	pthread_mutex_unlock(&mutex_lista_ready);
+
+	log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 }
 
 void algoritmo_planificador_mediano_plazo_blocked_suspended() {
@@ -50,9 +54,9 @@ void algoritmo_planificador_mediano_plazo_blocked_suspended() {
 
 		pthread_mutex_lock(&mutex_lista_blocked_suspended);
 		list_add(LISTA_BLOCKED_SUSPENDED, pcb);
-		//TEST
-		printf("Tamanio blocked suspended: %d\n", list_size(LISTA_BLOCKED_SUSPENDED));
-		//FIN TEST
+		//LOG
+		log_info(LOGGER, "Pasó a BLOCKED-SUSPENDED el carpincho %d\n", pcb->PID);
+		//FIN LOG
 		pthread_mutex_unlock(&mutex_lista_blocked_suspended);
 
 		sem_post(&sem_grado_multiprogramacion);
@@ -72,8 +76,10 @@ void algoritmo_planificador_corto_plazo() {
 
 		if(strcmp(CONFIG_KERNEL.alg_plani, "SJF") == 0) {
 			pcb = algoritmo_SJF();
+			log_info(LOGGER, "El algoritmo elige al carpincho %d\n", pcb->PID);
 		} else if (strcmp(CONFIG_KERNEL.alg_plani, "HRRN") == 0){
 			pcb = algoritmo_HRRN();
+			log_info(LOGGER, "El algoritmo elige al carpincho %d\n", pcb->PID);
 		} else {
 			log_info(LOGGER, "El algoritmo de planificacion ingresado no existe\n");
 		}
@@ -94,6 +100,8 @@ void correr_dispatcher(PCB* pcb) {
 	dar_permiso_para_continuar(pcb->conexion);
 	sem_post(&procesador_libre->sem_exec);
 	pthread_mutex_unlock(&mutex_lista_procesadores);
+
+	log_info(LOGGER, "Pasó a EXEC el carpincho %d\n", pcb->PID);
 }
 
 PCB* algoritmo_SJF() {
@@ -173,8 +181,6 @@ void ejecutar(t_procesador* estructura_procesador) {
 		sem_post(&estructura_procesador->sem_exec);
 
 		peticion_carpincho cod_op = recibir_operacion_carpincho(estructura_procesador->lugar_PCB->conexion);
-
-		printf("Peticion del carpincho: %d\n", cod_op);
 
 		switch (cod_op) {
 		case INICIALIZAR_SEM:
@@ -275,9 +281,7 @@ void init_sem(t_procesador* estructura_procesador) {
 	list_add(LISTA_SEMAFOROS_MATE, nuevo_semaforo);
 	pthread_mutex_unlock(&mutex_lista_semaforos_mate);
 
-	printf("Tamanio lista de semaforos: %d\n", list_size(LISTA_SEMAFOROS_MATE));
-	printf("Nombre semaforo: %s\n", nuevo_semaforo->nombre);
-	printf("Valor semaforo: %d\n", nuevo_semaforo->value);
+	log_info(LOGGER, "El carpincho %d, inicializó el semaforo %s con valor %d\n", estructura_procesador->lugar_PCB->PID, nuevo_semaforo->nombre, nuevo_semaforo->value);
 
 	dar_permiso_para_continuar(estructura_procesador->lugar_PCB->conexion);
 }
@@ -296,12 +300,6 @@ void wait_sem(t_procesador* estructura_procesador) {
 	bool _criterio_busqueda_semaforo(void* elemento) {
 				return (strcmp(((t_semaforo_mate*)elemento)->nombre, nombre) == 0);
 			}
-
-	//TEST
-	pthread_mutex_lock(&mutex_lista_blocked);
-	printf("Tamanio blocked: %d\n", list_size(LISTA_BLOCKED));
-	pthread_mutex_unlock(&mutex_lista_blocked);
-	//FIN TEST
 
 		pthread_mutex_lock(&mutex_lista_semaforos_mate);
 		t_semaforo_mate* semaforo = (t_semaforo_mate*) list_find(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo);
@@ -881,11 +879,9 @@ void algoritmo_deteccion_deadlock() {
 		sem_post(&sem_grado_multiprogramacion);
 
 		pthread_mutex_unlock(&mutex_lista_semaforos_mate);
-		printf("ENCONTRE UN DEADLOCK AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
 		algoritmo_deteccion_deadlock();
 
 	} else {
-		printf("NO ENCONTRE UN DEADLOCK BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\n");
 		pthread_mutex_unlock(&mutex_lista_semaforos_mate);
 
 	}
