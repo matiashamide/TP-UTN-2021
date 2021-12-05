@@ -113,17 +113,21 @@ void reemplazar_LRU(int pid, int pag, int frame){
 	entrada_nueva->frame      = frame;
 	entrada_nueva->ultimo_uso = obtener_tiempo_TLB();
 
-	int masVieja(t_entrada_tlb* una_entrada, t_entrada_tlb* otra_entrada){
-		return (otra_entrada->ultimo_uso > una_entrada->ultimo_uso);
+	t_entrada_tlb* masVieja(t_entrada_tlb* una_entrada, t_entrada_tlb* otra_entrada){
+		if(otra_entrada->ultimo_uso > una_entrada->ultimo_uso){
+			return una_entrada;
+		}else if (otra_entrada->ultimo_uso < una_entrada->ultimo_uso){
+			return otra_entrada;
+		}else return una_entrada;
     }
 
 	pthread_mutex_lock(&mutexTLB);
-
-	list_sort(TLB, (void*) masVieja);
-	t_entrada_tlb* victima = (t_entrada_tlb*)list_get(TLB, 0);
+	t_entrada_tlb* victima = list_get_minimum(TLB, (void*) masVieja);
 	log_info(LOGGER, "|| TLB LRU || [VICTIMA] PID: %i | NRO_PAG: %i | FRAME: %i ||| [NUEVA ENTRADA] PID: %i | NRO_PAG: %i | FRAME: %i | \n", victima->pid, victima->pag, victima->frame, entrada_nueva->pid, entrada_nueva->pag, entrada_nueva->frame);
-	list_replace_and_destroy_element(TLB, 0, entrada_nueva, free);
+	free(victima);
+	list_add(TLB , entrada_nueva);
 	pthread_mutex_unlock(&mutexTLB);
+
 }
 
 void desreferenciar_pag_tlb(int pid , int nro_pag , int frame){
