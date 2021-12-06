@@ -6,42 +6,27 @@ int main(void) {
 	init_memoria();
 
 	//Coordinacion multihilo de carpinchos
-	//coordinador_multihilo();
+	coordinador_multihilo();
 
-	int C0 = memalloc(3, 23, 1);
+	/*int C0 = memalloc(0, 23, 1);
+	int C1 = memalloc(0, 23, 1);
+	int C2 = memalloc(0, 23, 1);
+	int C3 = memalloc(0, 23, 1);
+	int C4 = memalloc(0, 23, 1);
+	int C5 = memalloc(0, 23, 1);
+	int C6 = memalloc(0, 23, 1);
+	int C7 = memalloc(0, 23, 1);
+	int C8 = memalloc(0, 23, 1);
+	memwrite(0, "hola", C1, 5);
 
-	int A0 = memalloc(1, 23, 1);
-
-	int B0 = memalloc(2, 23, 1);
-
-	int C1 = memalloc(3, 23, 1);
-
-	int A1 = memalloc(1, 23, 1);
-
-	int B1 = memalloc(2, 23, 1);
-
-	int C2 = memalloc(3, 23, 1);
-
-	int A2 = memalloc(1, 10, 1);
-
-	int B2 = memalloc(2, 10, 1);
-
-	int C3 = memalloc(3, 10, 1);
-
-	//Aca escriben c1 c2 y c3
-
-	int A3 = memalloc(1, 23, 1);
-	printf("\nA3 ok\n");
-
-	int A4 = memalloc(1, 23, 1);
-    printf("\nA4 ok\n");
-    int A5 = memalloc(1, 23, 1);
-    printf("\nA5 ok\n");
-    int A6 = memalloc(1, 23, 1);
-    printf("\nA5 ok\n");
-
-    printf("\ntermine ok\n");
-
+	dump_memoria_principal();
+/*	C0 P6  UM
+	C0 P7  UM
+	C0 P8  UM
+->	C0 P3  -M
+	C0 P4  -M
+	C0 P5  -M
+*/
 	return EXIT_SUCCESS;
 }
 
@@ -439,7 +424,7 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 			pagina->lock          = 1;
 			pagina->presencia     = 1;
 			pagina->tiempo_uso    = obtener_tiempo_MMU();
-			pagina->uso           = 0;
+			pagina->uso           = 1;
 
 			list_add(nueva_tabla->paginas, pagina);
 
@@ -1217,7 +1202,7 @@ int buscar_pagina(int32_t pid, int pag) {
 		}
 		usleep(CONFIG.retardo_acierto_tlb * 1000);
 	}
-
+	pagina->uso = true;
 	return frame;
 }
 
@@ -1273,7 +1258,7 @@ int ejecutar_algoritmo_reemplazo(int32_t pid) {
 
 	if(string_equals_ignore_case(CONFIG.alg_remp_mmu, "CLOCK-M")){
 		pthread_mutex_lock(&mutex_clock);
-		retorno = reemplazar_con_CLOCK_M(pid);
+		retorno = reemplazar_con_CLOCK_M2(pid);
 		pthread_mutex_unlock(&mutex_clock);
 	}
 
