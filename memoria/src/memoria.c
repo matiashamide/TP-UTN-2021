@@ -8,6 +8,25 @@ int main(void) {
 	//Coordinacion multihilo de carpinchos
 	coordinador_multihilo();
 
+	/*int C0 = memalloc(0, 23, 1);
+	int C1 = memalloc(0, 23, 1);
+	int C2 = memalloc(0, 23, 1);
+	int C3 = memalloc(0, 23, 1);
+	int C4 = memalloc(0, 23, 1);
+	int C5 = memalloc(0, 23, 1);
+	int C6 = memalloc(0, 23, 1);
+	int C7 = memalloc(0, 23, 1);
+	int C8 = memalloc(0, 23, 1);
+	memwrite(0, "hola", C1, 5);
+
+	dump_memoria_principal();
+/*	C0 P6  UM
+	C0 P7  UM
+	C0 P8  UM
+->	C0 P3  -M
+	C0 P4  -M
+	C0 P5  -M
+*/
 	return EXIT_SUCCESS;
 }
 
@@ -145,7 +164,7 @@ void recibir_peticion_para_continuar(int conexion) {
 	uint32_t result;
 	int bytes_recibidos = recv(conexion, &result, sizeof(uint32_t), MSG_WAITALL);
 
-	printf("Ya recibi peticion %d\n", bytes_recibidos);
+	//printf("Ya recibi peticion %d\n", bytes_recibidos);
 
 }
 
@@ -153,7 +172,7 @@ void dar_permiso_para_continuar(int conexion){
 
 	uint32_t handshake  = 1;
 	int numero_de_bytes = send(conexion, &handshake, sizeof(uint32_t), 0);
-	printf("Ya di permiso %d\n", numero_de_bytes);
+	//printf("Ya di permiso %d\n", numero_de_bytes);
 
 }
 
@@ -170,7 +189,7 @@ void atender_carpinchos(int* cliente) {
 
 		peticion_carpincho operacion = recibir_operacion(*cliente);
 		int32_t size_paquete = recibir_entero(*cliente);
-		int32_t pid, retorno, dir_logica, size_contenido;
+		int32_t pid,dir_logica, size_contenido, retorno = 1;
 
 		switch (operacion) {
 
@@ -271,7 +290,7 @@ void atender_carpinchos(int* cliente) {
 			log_info(LOGGER, "MEMSUSP: El cliente %i solicito suspender el proceso.", *cliente);
 			pid = recibir_entero(*cliente);
 			suspender_proceso(pid);
-
+			send(*cliente, &retorno, sizeof(uint32_t), 0);
 		break;
 
 		case MEMDESSUSP:;
@@ -279,6 +298,7 @@ void atender_carpinchos(int* cliente) {
 			log_info(LOGGER, "MEMDESSUSP: El cliente %i solicito dessuspender el proceso.", *cliente);
 			pid = recibir_entero(*cliente);
 			dessuspender_proceso(pid);
+			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
 		break;
 
@@ -297,6 +317,7 @@ void atender_carpinchos(int* cliente) {
 			if (!existe_kernel) {
 				dar_permiso_para_continuar((*cliente));
 			}
+			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
 		break;
 
@@ -405,7 +426,7 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 			pagina->lock          = 1;
 			pagina->presencia     = 1;
 			pagina->tiempo_uso    = obtener_tiempo_MMU();
-			pagina->uso           = 0;
+			pagina->uso           = 1;
 
 			list_add(nueva_tabla->paginas, pagina);
 
@@ -485,7 +506,7 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 				pagina->lock          = 1;
 				pagina->presencia     = 1;
 				pagina->tiempo_uso    = obtener_tiempo_MMU();
-				pagina->uso           = 0;
+				pagina->uso           = 1;
 
 				list_add(paginas_proceso, pagina);
 				unlockear(pagina);
@@ -1162,6 +1183,7 @@ int buscar_pagina(int32_t pid, int pag) {
 	}
 
 	pagina->tiempo_uso = obtener_tiempo_MMU();
+	pagina->uso = true;
 
 	//NO esta en memoria
 	if (!pagina->presencia) {
@@ -1183,7 +1205,6 @@ int buscar_pagina(int32_t pid, int pag) {
 		}
 		usleep(CONFIG.retardo_acierto_tlb * 1000);
 	}
-
 	return frame;
 }
 
@@ -1237,8 +1258,11 @@ int ejecutar_algoritmo_reemplazo(int32_t pid) {
 	if (string_equals_ignore_case(CONFIG.alg_remp_mmu, "LRU"))
 		retorno = reemplazar_con_LRU(pid);
 
-	if(string_equals_ignore_case(CONFIG.alg_remp_mmu, "CLOCK-M"))
-		retorno = reemplazar_con_CLOCK_M(pid);
+	if(string_equals_ignore_case(CONFIG.alg_remp_mmu, "CLOCK-M")){
+		pthread_mutex_lock(&mutex_clock);
+		retorno = reemplazar_con_CLOCK_M2(pid);
+		pthread_mutex_unlock(&mutex_clock);
+	}
 
 	return retorno;
 }
@@ -1282,16 +1306,100 @@ int reemplazar_con_LRU(int32_t pid) {
 
 	return pag_reemplazo->frame_ppal;
 }
+int reemplazar_con_CLOCK_M2(int32_t pid) {
 
+    t_list* paginas;
+
+    if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
+        t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
+        paginas_proceso = list_filter(paginas_proceso, (void*)esta_en_mp);
+        paginas = list_filter(paginas_proceso, (void*)no_esta_lockeada);
+    }
+    if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
+            paginas = list_filter(paginas_en_mp(), (void*)no_esta_lockeada);
+	}
+	int retorno = algoritmo_clock(paginas);
+
+	if ( retorno == -1){
+		printf("No se encontró a la victima... F");
+		exit(1);
+	}
+
+	t_pagina* victima = list_get(paginas,retorno);
+
+	lockear(victima);
+	desreferenciar_pag_tlb(pid , victima->id , victima->frame_ppal);
+
+	log_info(LOGGER, "[REEMPLAZO CLOCK-M] Saco NRO_PAG %i del PID %i en FRAME %i", victima->id, victima->pid, victima->frame_ppal);
+
+	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
+	if (victima->modificado) {
+		tirar_a_swap(victima);
+		victima->modificado = false;
+	}
+
+	victima->presencia = 0;
+	unlockear(victima);
+
+	return victima->frame_ppal;
+
+}
+
+int algoritmo_clock(t_list* paginas){
+ int pag_seleccionada;
+
+ 	 for(int i = 1; i <= 4; i++){
+ 		 for(int j = 0; j < list_size(paginas); j++){
+
+ 			 if (POSICION_CLOCK >= list_size(paginas)) {
+ 				 POSICION_CLOCK = 0;
+ 			 }
+
+ 			 t_pagina* pagina = list_get(paginas, POSICION_CLOCK);
+
+ 			 if(i == 1 || i ==3){
+ 				 //Buscamos 0,0
+ 				 if (pagina->uso == false && pagina->modificado == false) {
+ 					 pag_seleccionada = POSICION_CLOCK;
+ 					 POSICION_CLOCK++;
+ 					 return pag_seleccionada;
+ 				 } else {
+ 					 POSICION_CLOCK++;
+ 				 }
+ 			 }if(i == 2 || i ==4){
+ 				 if (pagina->uso == false && pagina->modificado == true) {
+ 					 pag_seleccionada = POSICION_CLOCK;
+ 					 POSICION_CLOCK++;
+ 					 return pag_seleccionada;
+ 				 } else {
+ 					 POSICION_CLOCK++;
+ 					 pagina->uso = false;
+			  }
+		  }
+	  }
+  }
+  return -1;
+}
 int reemplazar_con_CLOCK_M(int32_t pid) {
 
 	int i = POSICION_CLOCK;
 	int pag_seleccionada;
 	int encontre         = 0;
 	int busco_modificado = 0;
-	int primera_vuelta   = 1;
+	int caso_0_0 		 = 1;
 
-	t_list* paginas = list_filter(paginas_en_mp(), (void*)no_esta_lockeada);
+	t_list* paginas;
+
+	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
+		t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
+		paginas_proceso = list_filter(paginas_proceso, (void*)esta_en_mp);
+		paginas = list_filter(paginas_proceso, (void*)no_esta_lockeada);
+	}
+
+	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
+		paginas = list_filter(paginas_en_mp(), (void*)no_esta_lockeada);
+	}
+
 	t_pagina* victima;
 
 	while(!encontre) {
@@ -1303,11 +1411,13 @@ int reemplazar_con_CLOCK_M(int32_t pid) {
 		t_pagina* pagina = list_get(paginas, i);
 
 
-		if (i == POSICION_CLOCK && !encontre && !primera_vuelta) {
+		if (!caso_0_0) {
 			busco_modificado = 1;
+		} else {
+			busco_modificado = 0;
 		}
 
-		primera_vuelta = 0;
+
 
 		if (!busco_modificado) {
 
@@ -1320,12 +1430,15 @@ int reemplazar_con_CLOCK_M(int32_t pid) {
 			} else {
 
 				i++;
+				if (i == POSICION_CLOCK) {
+					caso_0_0 = 0;
 
+				}
 			}
 
 		} else {
 
-			if(pagina->uso == false && pagina->modificado == false) {
+			if(pagina->uso == false && pagina->modificado == true) {
 
 				pag_seleccionada = i;
 				POSICION_CLOCK   = i;
@@ -1334,13 +1447,16 @@ int reemplazar_con_CLOCK_M(int32_t pid) {
 			} else {
 				i++;
 				pagina->uso = false;
+
+				if (i == POSICION_CLOCK) {
+					caso_0_0 = 1;
+
+				}
 			}
-
 		}
-
 	}
 
-	victima = list_get(paginas, pag_seleccionada);
+	victima = list_get(paginas, 0);
 	lockear(victima);
 	desreferenciar_pag_tlb(pid , victima->id , victima->frame_ppal);
 
@@ -1749,7 +1865,12 @@ void set_modificado(t_pagina* pag){
 
 void signal_metricas(){
 	log_info(LOGGER, "[SIGNAL METRICAS]: Recibi la senial de imprimir metricas, imprimiendo\n...");
-	generar_metricas_tlb();
+
+	//generar_metricas_tlb();
+	dump_memoria_principal();
+	//dumpear_tlb();
+	exit_memoria();
+
 	exit(1);
 }
 void signal_dump(){
