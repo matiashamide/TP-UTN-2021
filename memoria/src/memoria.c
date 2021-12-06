@@ -504,7 +504,7 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 				pagina->lock          = 1;
 				pagina->presencia     = 1;
 				pagina->tiempo_uso    = obtener_tiempo_MMU();
-				pagina->uso           = 0;
+				pagina->uso           = 1;
 
 				list_add(paginas_proceso, pagina);
 				unlockear(pagina);
