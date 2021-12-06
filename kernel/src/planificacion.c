@@ -100,6 +100,7 @@ void correr_dispatcher(PCB* pcb) {
 	sem_post(&procesador_libre->sem_exec);
 	log_info(LOGGER, "Pasó a EXEC el carpincho %d\n", pcb->PID);
 	pthread_mutex_unlock(&mutex_lista_procesadores);
+
 }
 
 PCB* algoritmo_SJF() {
@@ -114,17 +115,18 @@ PCB* algoritmo_SJF() {
 		estimacion_actual2 = (CONFIG_KERNEL.alfa) * (((PCB*)elemento2)->real_anterior) + (1-(CONFIG_KERNEL.alfa))*(((PCB*)elemento2)->estimado_anterior);
 
 		if(estimacion_actual1 <= estimacion_actual2) {
-			(((PCB*)elemento2)->estimado_anterior) = estimacion_actual2;
 			return ((PCB*)elemento1);
 		} else {
-			(((PCB*)elemento1)->estimado_anterior) = estimacion_actual1;
 			return ((PCB*)elemento2);
 		}
 	}
 
 	pthread_mutex_lock(&mutex_lista_ready);
 	PCB* pcb = (PCB*) list_get_minimum(LISTA_READY, _eleccion_SJF);
-	pcb->estimado_anterior = (CONFIG_KERNEL.alfa) * (pcb->real_anterior) + (1-(CONFIG_KERNEL.alfa))*(pcb->estimado_anterior);
+	for(int i = 0; i < list_size(LISTA_READY); i++) {
+		PCB* pcbActualizacion = list_get(LISTA_READY, i);
+		pcbActualizacion->estimado_anterior = (CONFIG_KERNEL.alfa) * (pcb->real_anterior) + (1-(CONFIG_KERNEL.alfa))*(pcb->estimado_anterior);
+	}
 	pthread_mutex_unlock(&mutex_lista_ready);
 
 	bool _criterio_remocion_lista(void* elemento) {
@@ -153,17 +155,18 @@ PCB* algoritmo_HRRN() {
 						/(((CONFIG_KERNEL.alfa) * (((PCB*)elemento2)->real_anterior) + (1-(CONFIG_KERNEL.alfa))*(((PCB*)elemento2)->estimado_anterior)));
 
 		if(valor_actual1 >= valor_actual2) {
-			((PCB*)elemento2)->estimado_anterior = (CONFIG_KERNEL.alfa) * (((PCB*)elemento2)->real_anterior) + (1-(CONFIG_KERNEL.alfa))*(((PCB*)elemento2)->estimado_anterior);
 			return ((PCB*)elemento1);
 		} else {
-			((PCB*)elemento1)->estimado_anterior = (CONFIG_KERNEL.alfa) * (((PCB*)elemento1)->real_anterior) + (1-(CONFIG_KERNEL.alfa))*(((PCB*)elemento1)->estimado_anterior);
 			return ((PCB*)elemento2);
 		}
 	}
 
 	pthread_mutex_lock(&mutex_lista_ready);
 	PCB* pcb = (PCB*) list_get_maximum(LISTA_READY, _eleccion_HRRN);
-	pcb->estimado_anterior = (CONFIG_KERNEL.alfa) * (pcb->real_anterior) + (1-(CONFIG_KERNEL.alfa))*(pcb->estimado_anterior);
+	for(int i = 0; i < list_size(LISTA_READY); i++) {
+		PCB* pcbActualizacion = list_get(LISTA_READY, i);
+		pcbActualizacion->estimado_anterior = (CONFIG_KERNEL.alfa) * (pcb->real_anterior) + (1-(CONFIG_KERNEL.alfa))*(pcb->estimado_anterior);
+	}
 	pthread_mutex_unlock(&mutex_lista_ready);
 
 

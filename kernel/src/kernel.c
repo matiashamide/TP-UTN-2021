@@ -15,17 +15,6 @@ int main(void) {
 
 	init_kernel();
 
-	//int *socket_cliente = malloc(sizeof(int));
-
-	//*socket_cliente = accept(SERVIDOR_KERNEL, NULL, NULL);
-
-	//recibir_peticion_para_continuar(*socket_cliente);
-	//dar_permiso_para_continuar(*socket_cliente);
-
-	//printf("%d\n",recibir_operacion_carpincho(*socket_cliente));
-
-
-	//fflush(stdout);
 	coordinador_multihilo();
 
 
@@ -79,6 +68,7 @@ void init_kernel(){
 	//Inicializamos logger
 	LOGGER = log_create("/home/utnso/workspace/tp-2021-2c-DesacatadOS/kernel/kernel.log", "KERNEL", 1, LOG_LEVEL_INFO);
 
+	log_info(LOGGER, "\n\n---------------------------------------------------\n\n");
 	log_info(LOGGER, "\n\n---------------------------------------------------\n\n");
 
 	//Iniciamos servidor

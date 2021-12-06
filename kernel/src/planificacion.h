@@ -50,7 +50,7 @@ typedef struct {
     char* puerto_kernel;
     char* alg_plani;
     int estimacion_inicial;
-    int alfa;
+    double alfa;
     char** dispositivos_IO;
     char** duraciones_IO;
     int tiempo_deadlock;
