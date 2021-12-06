@@ -164,7 +164,7 @@ void recibir_peticion_para_continuar(int conexion) {
 	uint32_t result;
 	int bytes_recibidos = recv(conexion, &result, sizeof(uint32_t), MSG_WAITALL);
 
-	printf("Ya recibi peticion %d\n", bytes_recibidos);
+	//printf("Ya recibi peticion %d\n", bytes_recibidos);
 
 }
 
@@ -172,7 +172,7 @@ void dar_permiso_para_continuar(int conexion){
 
 	uint32_t handshake  = 1;
 	int numero_de_bytes = send(conexion, &handshake, sizeof(uint32_t), 0);
-	printf("Ya di permiso %d\n", numero_de_bytes);
+	//printf("Ya di permiso %d\n", numero_de_bytes);
 
 }
 
@@ -189,7 +189,7 @@ void atender_carpinchos(int* cliente) {
 
 		peticion_carpincho operacion = recibir_operacion(*cliente);
 		int32_t size_paquete = recibir_entero(*cliente);
-		int32_t pid, retorno, dir_logica, size_contenido;
+		int32_t pid,dir_logica, size_contenido, retorno = 1;
 
 		switch (operacion) {
 
@@ -290,7 +290,7 @@ void atender_carpinchos(int* cliente) {
 			log_info(LOGGER, "MEMSUSP: El cliente %i solicito suspender el proceso.", *cliente);
 			pid = recibir_entero(*cliente);
 			suspender_proceso(pid);
-
+			send(*cliente, &retorno, sizeof(uint32_t), 0);
 		break;
 
 		case MEMDESSUSP:;
@@ -298,6 +298,7 @@ void atender_carpinchos(int* cliente) {
 			log_info(LOGGER, "MEMDESSUSP: El cliente %i solicito dessuspender el proceso.", *cliente);
 			pid = recibir_entero(*cliente);
 			dessuspender_proceso(pid);
+			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
 		break;
 
@@ -316,6 +317,7 @@ void atender_carpinchos(int* cliente) {
 			if (!existe_kernel) {
 				dar_permiso_para_continuar((*cliente));
 			}
+			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
 		break;
 
@@ -1181,6 +1183,7 @@ int buscar_pagina(int32_t pid, int pag) {
 	}
 
 	pagina->tiempo_uso = obtener_tiempo_MMU();
+	pagina->uso = true;
 
 	//NO esta en memoria
 	if (!pagina->presencia) {
@@ -1202,7 +1205,6 @@ int buscar_pagina(int32_t pid, int pag) {
 		}
 		usleep(CONFIG.retardo_acierto_tlb * 1000);
 	}
-	pagina->uso = true;
 	return frame;
 }
 
