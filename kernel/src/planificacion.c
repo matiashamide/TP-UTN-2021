@@ -19,9 +19,9 @@ void algoritmo_planificador_largo_plazo() {
 
 			pthread_mutex_lock(&mutex_lista_ready);
 			list_add(LISTA_READY, pcb);
+			log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 			pthread_mutex_unlock(&mutex_lista_ready);
 
-			log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 		}
 		pthread_mutex_unlock(&mutex_lista_ready_suspended);
 
@@ -34,9 +34,9 @@ void algoritmo_planificador_mediano_plazo_ready_suspended() {
 
 	pthread_mutex_lock(&mutex_lista_ready);
 	list_add(LISTA_READY, pcb);
+	log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 	pthread_mutex_unlock(&mutex_lista_ready);
 
-	log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 }
 
 void algoritmo_planificador_mediano_plazo_blocked_suspended() {
@@ -54,9 +54,7 @@ void algoritmo_planificador_mediano_plazo_blocked_suspended() {
 
 		pthread_mutex_lock(&mutex_lista_blocked_suspended);
 		list_add(LISTA_BLOCKED_SUSPENDED, pcb);
-		//LOG
 		log_info(LOGGER, "Pasó a BLOCKED-SUSPENDED el carpincho %d\n", pcb->PID);
-		//FIN LOG
 		pthread_mutex_unlock(&mutex_lista_blocked_suspended);
 
 		sem_post(&sem_grado_multiprogramacion);
@@ -98,10 +96,11 @@ void correr_dispatcher(PCB* pcb) {
 	procesador_libre->lugar_PCB = pcb;
 	procesador_libre->bit_de_ocupado = 1;
 	dar_permiso_para_continuar(pcb->conexion);
+	gettimeofday(&procesador_libre->timeValBefore, NULL);
 	sem_post(&procesador_libre->sem_exec);
+	log_info(LOGGER, "Pasó a EXEC el carpincho %d\n", pcb->PID);
 	pthread_mutex_unlock(&mutex_lista_procesadores);
 
-	log_info(LOGGER, "Pasó a EXEC el carpincho %d\n", pcb->PID);
 }
 
 PCB* algoritmo_SJF() {
@@ -109,8 +108,8 @@ PCB* algoritmo_SJF() {
 
 	void* _eleccion_SJF(void* elemento1, void* elemento2) {
 
-		uint32_t estimacion_actual1;
-		uint32_t estimacion_actual2;
+		double estimacion_actual1;
+		double estimacion_actual2;
 
 		estimacion_actual1 = (CONFIG_KERNEL.alfa) * (((PCB*)elemento1)->real_anterior) + (1-(CONFIG_KERNEL.alfa))*(((PCB*)elemento1)->estimado_anterior);
 		estimacion_actual2 = (CONFIG_KERNEL.alfa) * (((PCB*)elemento2)->real_anterior) + (1-(CONFIG_KERNEL.alfa))*(((PCB*)elemento2)->estimado_anterior);
@@ -124,6 +123,10 @@ PCB* algoritmo_SJF() {
 
 	pthread_mutex_lock(&mutex_lista_ready);
 	PCB* pcb = (PCB*) list_get_minimum(LISTA_READY, _eleccion_SJF);
+	for(int i = 0; i < list_size(LISTA_READY); i++) {
+		PCB* pcbActualizacion = list_get(LISTA_READY, i);
+		pcbActualizacion->estimado_anterior = (CONFIG_KERNEL.alfa) * (pcb->real_anterior) + (1-(CONFIG_KERNEL.alfa))*(pcb->estimado_anterior);
+	}
 	pthread_mutex_unlock(&mutex_lista_ready);
 
 	bool _criterio_remocion_lista(void* elemento) {
@@ -141,8 +144,8 @@ PCB* algoritmo_HRRN() {
 
 	void* _eleccion_HRRN(void* elemento1, void* elemento2) {
 
-		uint32_t valor_actual1;
-		uint32_t valor_actual2;
+		double valor_actual1;
+		double valor_actual2;
 
 		valor_actual1 = (((CONFIG_KERNEL.alfa) * (((PCB*)elemento1)->real_anterior) + (1-(CONFIG_KERNEL.alfa))*(((PCB*)elemento1)->estimado_anterior))
 						+(((PCB*)elemento1)->tiempo_espera))
@@ -160,6 +163,10 @@ PCB* algoritmo_HRRN() {
 
 	pthread_mutex_lock(&mutex_lista_ready);
 	PCB* pcb = (PCB*) list_get_maximum(LISTA_READY, _eleccion_HRRN);
+	for(int i = 0; i < list_size(LISTA_READY); i++) {
+		PCB* pcbActualizacion = list_get(LISTA_READY, i);
+		pcbActualizacion->estimado_anterior = (CONFIG_KERNEL.alfa) * (pcb->real_anterior) + (1-(CONFIG_KERNEL.alfa))*(pcb->estimado_anterior);
+	}
 	pthread_mutex_unlock(&mutex_lista_ready);
 
 
@@ -233,9 +240,10 @@ void recibir_peticion_para_continuar(int conexion) {
 
 
 	uint32_t result;
-	int bytes_recibidos = recv(conexion, &result, sizeof(uint32_t), MSG_WAITALL);
+	//int bytes_recibidos =
+			recv(conexion, &result, sizeof(uint32_t), MSG_WAITALL);
 
-	printf("Ya recibi peticion %d\n", bytes_recibidos);
+	//printf("Ya recibi peticion %d\n", bytes_recibidos);
 
 
 }
@@ -244,17 +252,19 @@ void dar_permiso_para_continuar(int conexion){
 
 	uint32_t handshake = 1;
 
-	int numero_de_bytes = send(conexion, &handshake, sizeof(uint32_t), 0);
+	//int numero_de_bytes =
+			send(conexion, &handshake, sizeof(uint32_t), 0);
 
-	printf("Ya di permiso %d\n", numero_de_bytes);
+	//printf("Ya di permiso %d\n", numero_de_bytes);
 }
 
 void avisar_finalizacion_por_deadlock(int conexion) {
 	uint32_t handshake = 2;
 
-	int numero_de_bytes = send(conexion, &handshake, sizeof(uint32_t), 0);
+	//int numero_de_bytes =
+			send(conexion, &handshake, sizeof(uint32_t), 0);
 
-	printf("Finalice un carpincho por deadlock %d\n", numero_de_bytes);
+	//printf("Finalice un carpincho por deadlock %d\n", numero_de_bytes);
 }
 
 // TODO manejar error de crear un semaforo con el mismo nombre que uno ya existente
@@ -328,6 +338,8 @@ void wait_sem(t_procesador* estructura_procesador) {
 		} else {
 			list_add(semaforo->cola_bloqueados, estructura_procesador->lugar_PCB);
 			pthread_mutex_lock(&mutex_lista_blocked);
+			gettimeofday(&estructura_procesador->timeValAfter, NULL);
+			estructura_procesador->lugar_PCB->real_anterior = ((estructura_procesador->timeValAfter.tv_sec - estructura_procesador->timeValBefore.tv_sec)*1000000L+estructura_procesador->timeValAfter.tv_usec) - estructura_procesador->timeValBefore.tv_usec;
 			list_add(LISTA_BLOCKED, estructura_procesador->lugar_PCB);
 			log_info(LOGGER, "Pasó a BLOCKED el carpincho %d\n", estructura_procesador->lugar_PCB->PID);
 			pthread_mutex_unlock(&mutex_lista_blocked);
@@ -378,11 +390,10 @@ void post_sem(t_procesador* estructura_procesador) {
 
 			pthread_mutex_lock(&mutex_lista_ready);
 			list_add(LISTA_READY, pcb);
+			log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 			pthread_mutex_unlock(&mutex_lista_ready);
 
 			sem_post(&sem_cola_ready);
-
-			log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 		} else {
 			pthread_mutex_lock(&mutex_lista_blocked_suspended);
 			list_remove_by_condition(LISTA_BLOCKED_SUSPENDED, _criterio_remocion_lista);
@@ -390,11 +401,10 @@ void post_sem(t_procesador* estructura_procesador) {
 
 			pthread_mutex_lock(&mutex_lista_ready_suspended);
 			list_add(LISTA_READY_SUSPENDED, pcb);
+			log_info(LOGGER, "Pasó a READY-SUSPENDED el carpincho %d\n", pcb->PID);
 			pthread_mutex_unlock(&mutex_lista_ready_suspended);
 
 			sem_post(&sem_algoritmo_planificador_largo_plazo);
-
-			log_info(LOGGER, "Pasó a READY-SUSPENDED el carpincho %d\n", pcb->PID);
 		}
 
 	} else {
@@ -441,11 +451,10 @@ void destroy_sem(t_procesador* estructura_procesador) {
 
 				pthread_mutex_lock(&mutex_lista_ready);
 				list_add(LISTA_READY, pcb);
+				log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 				pthread_mutex_unlock(&mutex_lista_ready);
 
 				sem_post(&sem_cola_ready);
-
-				log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 			} else {
 				pthread_mutex_lock(&mutex_lista_blocked_suspended);
 				list_remove_by_condition(LISTA_BLOCKED_SUSPENDED, _criterio_remocion_lista);
@@ -453,20 +462,18 @@ void destroy_sem(t_procesador* estructura_procesador) {
 
 				pthread_mutex_lock(&mutex_lista_ready_suspended);
 				list_add(LISTA_READY_SUSPENDED, pcb);
+				log_info(LOGGER, "Pasó a READY-SUSPENDED el carpincho %d\n", pcb->PID);
 				pthread_mutex_unlock(&mutex_lista_ready_suspended);
 
 				sem_post(&sem_algoritmo_planificador_largo_plazo);
-
-				log_info(LOGGER, "Pasó a READY-SUSPENDED el carpincho %d\n", pcb->PID);
 			}
 		}
 	}
 
 	list_remove_by_condition(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo);
+	log_info(LOGGER, "Se eliminó el semaforo %s\n", nombre);
 
 	pthread_mutex_unlock(&mutex_lista_semaforos_mate);
-
-	log_info(LOGGER, "Se eliminó el semaforo %s\n", nombre);
 
 	free(semaforo->cola_bloqueados);
 	free(semaforo->nombre);
@@ -497,6 +504,8 @@ void call_IO(t_procesador* estructura_procesador) {
 	pthread_mutex_unlock(&mutex_lista_dispositivos_io);
 
 	pthread_mutex_lock(&mutex_lista_blocked);
+	gettimeofday(&estructura_procesador->timeValAfter, NULL);
+	estructura_procesador->lugar_PCB->real_anterior = ((estructura_procesador->timeValAfter.tv_sec - estructura_procesador->timeValBefore.tv_sec)*1000000L+estructura_procesador->timeValAfter.tv_usec) - estructura_procesador->timeValBefore.tv_usec;
 	list_add(LISTA_BLOCKED, estructura_procesador->lugar_PCB);
 	log_info(LOGGER, "Pasó a BLOCKED el carpincho %d\n", estructura_procesador->lugar_PCB->PID);
 	pthread_mutex_unlock(&mutex_lista_blocked);
@@ -526,10 +535,10 @@ void ejecutar_io(t_dispositivo* dispositivo) {
 
 			pthread_mutex_lock(&mutex_lista_ready);
 			list_add(LISTA_READY, pcb);
+			log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 			pthread_mutex_unlock(&mutex_lista_ready);
 
 			sem_post(&sem_cola_ready);
-			log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 		} else {
 			pthread_mutex_lock(&mutex_lista_blocked_suspended);
 			list_remove_by_condition(LISTA_BLOCKED_SUSPENDED, _criterio_remocion_lista);
@@ -537,10 +546,10 @@ void ejecutar_io(t_dispositivo* dispositivo) {
 
 			pthread_mutex_lock(&mutex_lista_ready_suspended);
 			list_add(LISTA_READY_SUSPENDED, pcb);
+			log_info(LOGGER, "Pasó a READY-SUSPENDED el carpincho %d\n", pcb->PID);
 			pthread_mutex_unlock(&mutex_lista_ready_suspended);
 
 			sem_post(&sem_algoritmo_planificador_largo_plazo);
-			log_info(LOGGER, "Pasó a READY-SUSPENDED el carpincho %d\n", pcb->PID);
 		}
 	}
 }
@@ -605,10 +614,10 @@ void mate_close(t_procesador* estructura_procesador) {
 
 					pthread_mutex_lock(&mutex_lista_ready);
 					list_add(LISTA_READY, pcb);
+					log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 					pthread_mutex_unlock(&mutex_lista_ready);
 
 					sem_post(&sem_cola_ready);
-					log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 				} else {
 					pthread_mutex_lock(&mutex_lista_blocked_suspended);
 					list_remove_by_condition(LISTA_BLOCKED_SUSPENDED, _criterio_remocion_lista);
@@ -616,10 +625,10 @@ void mate_close(t_procesador* estructura_procesador) {
 
 					pthread_mutex_lock(&mutex_lista_ready_suspended);
 					list_add(LISTA_READY_SUSPENDED, pcb);
+					log_info(LOGGER, "Pasó a READY-SUSPENDED el carpincho %d\n", pcb->PID);
 					pthread_mutex_unlock(&mutex_lista_ready_suspended);
 
 					sem_post(&sem_algoritmo_planificador_largo_plazo);
-					log_info(LOGGER, "Pasó a READY-SUSPENDED el carpincho %d\n", pcb->PID);
 				}
 
 			} else {
@@ -800,10 +809,10 @@ void algoritmo_deteccion_deadlock() {
 
 						pthread_mutex_lock(&mutex_lista_ready);
 						list_add(LISTA_READY, pcb);
+						log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 						pthread_mutex_unlock(&mutex_lista_ready);
 
 						sem_post(&sem_cola_ready);
-						log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 					} else {
 						pthread_mutex_lock(&mutex_lista_blocked_suspended);
 						list_remove_by_condition(LISTA_BLOCKED_SUSPENDED, _criterio_remocion_lista);
@@ -811,10 +820,10 @@ void algoritmo_deteccion_deadlock() {
 
 						pthread_mutex_lock(&mutex_lista_ready_suspended);
 						list_add(LISTA_READY_SUSPENDED, pcb);
+						log_info(LOGGER, "Pasó a READY-SUSPENDED el carpincho %d\n", pcb->PID);
 						pthread_mutex_unlock(&mutex_lista_ready_suspended);
 
 						sem_post(&sem_algoritmo_planificador_largo_plazo);
-						log_info(LOGGER, "Pasó a READY-SUSPENDED el carpincho %d\n", pcb->PID);
 					}
 
 				} else {

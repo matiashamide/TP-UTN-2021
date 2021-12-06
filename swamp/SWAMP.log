@@ -1,0 +1,246 @@
+[INFO] 21:19:35:435 SWAMP/(20513:20513): Se conecto el cliente 9 a SWAMP
+[INFO] 21:19:35:435 SWAMP/(20513:20513): [SWAMP->MP]: Mandando los marcos_max a MP...
+[INFO] 21:20:19:436 SWAMP/(20513:20513): [SWAMP]: Reservando 2 paginas para el proceso 0
+[INFO] 21:20:19:436 SWAMP/(20513:20513): Se reservaron 2 frames y 2 paginas para el proceso 0
+[INFO] 21:20:19:437 SWAMP/(20513:20513): [SWAMP]: Reservando 2 paginas para el proceso 1
+[INFO] 21:20:19:437 SWAMP/(20513:20513): Se reservaron 2 frames y 2 paginas para el proceso 1
+[INFO] 21:20:19:437 SWAMP/(20513:20513): [SWAMP]: Reservando 2 paginas para el proceso 2
+[INFO] 21:20:19:437 SWAMP/(20513:20513): Se reservaron 2 frames y 2 paginas para el proceso 2
+[INFO] 21:20:19:438 SWAMP/(20513:20513): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:20:19:438 SWAMP/(20513:20513): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:20:19:439 SWAMP/(20513:20513): [SWAMP]: Reservando 1 paginas para el proceso 1
+[INFO] 21:20:19:439 SWAMP/(20513:20513): Se reservaron 1 paginas para el proceso 1
+[INFO] 21:20:19:439 SWAMP/(20513:20513): [SWAMP]: Reservando 1 paginas para el proceso 2
+[INFO] 21:20:19:439 SWAMP/(20513:20513): Se reservaron 1 paginas para el proceso 2
+[INFO] 21:20:19:440 SWAMP/(20513:20513): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:20:19:440 SWAMP/(20513:20513): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:20:19:441 SWAMP/(20513:20513): [SWAMP]: Reservando 1 paginas para el proceso 1
+[INFO] 21:20:19:441 SWAMP/(20513:20513): Se reservaron 1 paginas para el proceso 1
+[INFO] 21:20:19:442 SWAMP/(20513:20513): [SWAMP]: Reservando 1 paginas para el proceso 2
+[INFO] 21:20:19:442 SWAMP/(20513:20513): Se reservaron 1 paginas para el proceso 2
+[INFO] 21:20:19:448 SWAMP/(20513:20513): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:20:19:448 SWAMP/(20513:20513): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:20:19:448 SWAMP/(20513:20513): [SWAMP]: Guardando la pagina 0 del proceso 0 en SWAMP
+[INFO] 21:20:19:486 SWAMP/(20513:20513): [SWAMP]: Mandando pagina 0 del proceso 0 a MP
+[INFO] 21:20:19:486 SWAMP/(20513:20513): [SWAMP]: Guardando la pagina 2 del proceso 0 en SWAMP
+[INFO] 21:20:19:525 SWAMP/(20513:20513): [SWAMP]: Mandando pagina 2 del proceso 0 a MP
+[INFO] 21:20:19:525 SWAMP/(20513:20513): [SWAMP]: Guardando la pagina 0 del proceso 1 en SWAMP
+[INFO] 21:20:19:565 SWAMP/(20513:20513): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:20:19:565 SWAMP/(20513:20513): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:20:19:565 SWAMP/(20513:20513): [SWAMP]: Guardando la pagina 1 del proceso 1 en SWAMP
+[INFO] 21:20:19:605 SWAMP/(20513:20513): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:20:19:605 SWAMP/(20513:20513): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:20:19:605 SWAMP/(20513:20513): [SWAMP]: Guardando la pagina 2 del proceso 1 en SWAMP
+[INFO] 21:20:19:645 SWAMP/(20513:20513): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:20:19:645 SWAMP/(20513:20513): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:20:19:645 SWAMP/(20513:20513): [SWAMP]: Guardando la pagina 3 del proceso 1 en SWAMP
+[INFO] 21:22:16:054 SWAMP/(21298:21298): Se conecto el cliente 9 a SWAMP
+[INFO] 21:22:16:054 SWAMP/(21298:21298): [SWAMP->MP]: Mandando los marcos_max a MP...
+[INFO] 21:22:25:585 SWAMP/(21298:21298): [SWAMP]: Reservando 2 paginas para el proceso 0
+[INFO] 21:22:25:585 SWAMP/(21298:21298): Se reservaron 2 frames y 2 paginas para el proceso 0
+[INFO] 21:22:25:585 SWAMP/(21298:21298): [SWAMP]: Reservando 2 paginas para el proceso 1
+[INFO] 21:22:25:585 SWAMP/(21298:21298): Se reservaron 2 frames y 2 paginas para el proceso 1
+[INFO] 21:22:25:586 SWAMP/(21298:21298): [SWAMP]: Reservando 2 paginas para el proceso 2
+[INFO] 21:22:25:586 SWAMP/(21298:21298): Se reservaron 2 frames y 2 paginas para el proceso 2
+[INFO] 21:22:25:586 SWAMP/(21298:21298): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:22:25:586 SWAMP/(21298:21298): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:22:25:587 SWAMP/(21298:21298): [SWAMP]: Reservando 1 paginas para el proceso 1
+[INFO] 21:22:25:587 SWAMP/(21298:21298): Se reservaron 1 paginas para el proceso 1
+[INFO] 21:22:25:588 SWAMP/(21298:21298): [SWAMP]: Reservando 1 paginas para el proceso 2
+[INFO] 21:22:25:588 SWAMP/(21298:21298): Se reservaron 1 paginas para el proceso 2
+[INFO] 21:22:25:588 SWAMP/(21298:21298): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:22:25:589 SWAMP/(21298:21298): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:22:25:589 SWAMP/(21298:21298): [SWAMP]: Reservando 1 paginas para el proceso 1
+[INFO] 21:22:25:589 SWAMP/(21298:21298): Se reservaron 1 paginas para el proceso 1
+[INFO] 21:22:25:590 SWAMP/(21298:21298): [SWAMP]: Reservando 1 paginas para el proceso 2
+[INFO] 21:22:25:590 SWAMP/(21298:21298): Se reservaron 1 paginas para el proceso 2
+[INFO] 21:22:25:591 SWAMP/(21298:21298): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:22:25:591 SWAMP/(21298:21298): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:22:25:591 SWAMP/(21298:21298): [SWAMP]: Guardando la pagina 0 del proceso 0 en SWAMP
+[INFO] 21:22:25:629 SWAMP/(21298:21298): [SWAMP]: Mandando pagina 0 del proceso 0 a MP
+[INFO] 21:22:25:630 SWAMP/(21298:21298): [SWAMP]: Guardando la pagina 2 del proceso 0 en SWAMP
+[INFO] 21:22:25:669 SWAMP/(21298:21298): [SWAMP]: Mandando pagina 2 del proceso 0 a MP
+[INFO] 21:22:25:669 SWAMP/(21298:21298): [SWAMP]: Guardando la pagina 0 del proceso 1 en SWAMP
+[INFO] 21:22:25:709 SWAMP/(21298:21298): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:22:25:709 SWAMP/(21298:21298): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:22:25:709 SWAMP/(21298:21298): [SWAMP]: Guardando la pagina 1 del proceso 1 en SWAMP
+[INFO] 21:22:25:749 SWAMP/(21298:21298): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:22:25:749 SWAMP/(21298:21298): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:22:25:749 SWAMP/(21298:21298): [SWAMP]: Guardando la pagina 2 del proceso 1 en SWAMP
+[INFO] 21:22:25:789 SWAMP/(21298:21298): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:22:25:789 SWAMP/(21298:21298): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:22:25:790 SWAMP/(21298:21298): [SWAMP]: Guardando la pagina 3 del proceso 1 en SWAMP
+[INFO] 21:22:25:829 SWAMP/(21298:21298): [SWAMP]: Mandando pagina 0 del proceso 1 a MP
+[INFO] 21:22:25:830 SWAMP/(21298:21298): [SWAMP]: Guardando la pagina 0 del proceso 2 en SWAMP
+[INFO] 21:22:25:869 SWAMP/(21298:21298): [SWAMP]: Mandando pagina 1 del proceso 1 a MP
+[INFO] 21:22:25:869 SWAMP/(21298:21298): [SWAMP]: Guardando la pagina 1 del proceso 2 en SWAMP
+[INFO] 21:22:25:910 SWAMP/(21298:21298): [SWAMP]: Mandando pagina 0 del proceso 2 a MP
+[INFO] 21:22:25:910 SWAMP/(21298:21298): [SWAMP]: Guardando la pagina 2 del proceso 2 en SWAMP
+[INFO] 21:22:25:949 SWAMP/(21298:21298): [SWAMP]: Mandando pagina 1 del proceso 2 a MP
+[INFO] 21:22:25:949 SWAMP/(21298:21298): [SWAMP]: Guardando la pagina 3 del proceso 2 en SWAMP
+[INFO] 21:22:25:990 SWAMP/(21298:21298): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:22:25:990 SWAMP/(21298:21298): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:23:54:832 SWAMP/(21529:21529): Se conecto el cliente 9 a SWAMP
+[INFO] 21:23:54:833 SWAMP/(21529:21529): [SWAMP->MP]: Mandando los marcos_max a MP...
+[INFO] 21:23:57:974 SWAMP/(21529:21529): [SWAMP]: Reservando 2 paginas para el proceso 0
+[INFO] 21:23:57:974 SWAMP/(21529:21529): Se reservaron 2 frames y 2 paginas para el proceso 0
+[INFO] 21:23:57:975 SWAMP/(21529:21529): [SWAMP]: Reservando 2 paginas para el proceso 1
+[INFO] 21:23:57:975 SWAMP/(21529:21529): Se reservaron 2 frames y 2 paginas para el proceso 1
+[INFO] 21:23:57:976 SWAMP/(21529:21529): [SWAMP]: Reservando 2 paginas para el proceso 2
+[INFO] 21:23:57:976 SWAMP/(21529:21529): Se reservaron 2 frames y 2 paginas para el proceso 2
+[INFO] 21:23:57:976 SWAMP/(21529:21529): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:23:57:976 SWAMP/(21529:21529): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:23:57:977 SWAMP/(21529:21529): [SWAMP]: Reservando 1 paginas para el proceso 1
+[INFO] 21:23:57:977 SWAMP/(21529:21529): Se reservaron 1 paginas para el proceso 1
+[INFO] 21:23:57:978 SWAMP/(21529:21529): [SWAMP]: Reservando 1 paginas para el proceso 2
+[INFO] 21:23:57:978 SWAMP/(21529:21529): Se reservaron 1 paginas para el proceso 2
+[INFO] 21:23:57:979 SWAMP/(21529:21529): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:23:57:979 SWAMP/(21529:21529): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:23:57:979 SWAMP/(21529:21529): [SWAMP]: Reservando 1 paginas para el proceso 1
+[INFO] 21:23:57:979 SWAMP/(21529:21529): Se reservaron 1 paginas para el proceso 1
+[INFO] 21:23:57:980 SWAMP/(21529:21529): [SWAMP]: Reservando 1 paginas para el proceso 2
+[INFO] 21:23:57:980 SWAMP/(21529:21529): Se reservaron 1 paginas para el proceso 2
+[INFO] 21:23:57:982 SWAMP/(21529:21529): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:23:57:982 SWAMP/(21529:21529): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:23:57:982 SWAMP/(21529:21529): [SWAMP]: Guardando la pagina 0 del proceso 0 en SWAMP
+[INFO] 21:23:58:021 SWAMP/(21529:21529): [SWAMP]: Mandando pagina 0 del proceso 0 a MP
+[INFO] 21:23:58:021 SWAMP/(21529:21529): [SWAMP]: Guardando la pagina 2 del proceso 0 en SWAMP
+[INFO] 21:23:58:061 SWAMP/(21529:21529): [SWAMP]: Mandando pagina 2 del proceso 0 a MP
+[INFO] 21:23:58:061 SWAMP/(21529:21529): [SWAMP]: Guardando la pagina 0 del proceso 1 en SWAMP
+[INFO] 21:23:58:101 SWAMP/(21529:21529): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:23:58:101 SWAMP/(21529:21529): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:23:58:101 SWAMP/(21529:21529): [SWAMP]: Guardando la pagina 1 del proceso 1 en SWAMP
+[INFO] 21:23:58:141 SWAMP/(21529:21529): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:23:58:141 SWAMP/(21529:21529): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:23:58:142 SWAMP/(21529:21529): [SWAMP]: Guardando la pagina 2 del proceso 1 en SWAMP
+[INFO] 21:23:58:181 SWAMP/(21529:21529): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:23:58:181 SWAMP/(21529:21529): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:23:58:182 SWAMP/(21529:21529): [SWAMP]: Guardando la pagina 3 del proceso 1 en SWAMP
+[INFO] 21:23:58:221 SWAMP/(21529:21529): [SWAMP]: Mandando pagina 0 del proceso 1 a MP
+[INFO] 21:23:58:221 SWAMP/(21529:21529): [SWAMP]: Guardando la pagina 0 del proceso 2 en SWAMP
+[INFO] 21:23:58:261 SWAMP/(21529:21529): [SWAMP]: Mandando pagina 1 del proceso 1 a MP
+[INFO] 21:23:58:261 SWAMP/(21529:21529): [SWAMP]: Guardando la pagina 1 del proceso 2 en SWAMP
+[INFO] 21:23:58:301 SWAMP/(21529:21529): [SWAMP]: Mandando pagina 0 del proceso 2 a MP
+[INFO] 21:23:58:302 SWAMP/(21529:21529): [SWAMP]: Guardando la pagina 2 del proceso 2 en SWAMP
+[INFO] 21:23:58:341 SWAMP/(21529:21529): [SWAMP]: Mandando pagina 1 del proceso 2 a MP
+[INFO] 21:23:58:341 SWAMP/(21529:21529): [SWAMP]: Guardando la pagina 3 del proceso 2 en SWAMP
+[INFO] 21:23:58:382 SWAMP/(21529:21529): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:23:58:383 SWAMP/(21529:21529): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:26:07:035 SWAMP/(21780:21780): Se conecto el cliente 9 a SWAMP
+[INFO] 21:26:07:036 SWAMP/(21780:21780): [SWAMP->MP]: Mandando los marcos_max a MP...
+[INFO] 21:26:14:959 SWAMP/(21780:21780): [SWAMP]: Reservando 2 paginas para el proceso 0
+[INFO] 21:26:14:959 SWAMP/(21780:21780): Se reservaron 2 frames y 2 paginas para el proceso 0
+[INFO] 21:26:14:960 SWAMP/(21780:21780): [SWAMP]: Reservando 2 paginas para el proceso 1
+[INFO] 21:26:14:960 SWAMP/(21780:21780): Se reservaron 2 frames y 2 paginas para el proceso 1
+[INFO] 21:26:14:960 SWAMP/(21780:21780): [SWAMP]: Reservando 2 paginas para el proceso 2
+[INFO] 21:26:14:961 SWAMP/(21780:21780): Se reservaron 2 frames y 2 paginas para el proceso 2
+[INFO] 21:26:14:961 SWAMP/(21780:21780): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:26:14:961 SWAMP/(21780:21780): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:26:14:962 SWAMP/(21780:21780): [SWAMP]: Reservando 1 paginas para el proceso 1
+[INFO] 21:26:14:962 SWAMP/(21780:21780): Se reservaron 1 paginas para el proceso 1
+[INFO] 21:26:14:963 SWAMP/(21780:21780): [SWAMP]: Reservando 1 paginas para el proceso 2
+[INFO] 21:26:14:963 SWAMP/(21780:21780): Se reservaron 1 paginas para el proceso 2
+[INFO] 21:26:14:963 SWAMP/(21780:21780): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:26:14:963 SWAMP/(21780:21780): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:26:14:964 SWAMP/(21780:21780): [SWAMP]: Reservando 1 paginas para el proceso 1
+[INFO] 21:26:14:964 SWAMP/(21780:21780): Se reservaron 1 paginas para el proceso 1
+[INFO] 21:26:14:965 SWAMP/(21780:21780): [SWAMP]: Reservando 1 paginas para el proceso 2
+[INFO] 21:26:14:965 SWAMP/(21780:21780): Se reservaron 1 paginas para el proceso 2
+[INFO] 21:26:14:971 SWAMP/(21780:21780): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:26:14:971 SWAMP/(21780:21780): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:26:14:971 SWAMP/(21780:21780): [SWAMP]: Guardando la pagina 0 del proceso 0 en SWAMP
+[INFO] 21:26:15:009 SWAMP/(21780:21780): [SWAMP]: Mandando pagina 0 del proceso 0 a MP
+[INFO] 21:26:15:009 SWAMP/(21780:21780): [SWAMP]: Guardando la pagina 2 del proceso 0 en SWAMP
+[INFO] 21:26:15:049 SWAMP/(21780:21780): [SWAMP]: Mandando pagina 2 del proceso 0 a MP
+[INFO] 21:26:15:049 SWAMP/(21780:21780): [SWAMP]: Guardando la pagina 0 del proceso 1 en SWAMP
+[INFO] 21:26:15:090 SWAMP/(21780:21780): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:26:15:090 SWAMP/(21780:21780): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:26:15:090 SWAMP/(21780:21780): [SWAMP]: Guardando la pagina 1 del proceso 1 en SWAMP
+[INFO] 21:26:15:129 SWAMP/(21780:21780): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:26:15:129 SWAMP/(21780:21780): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:26:15:129 SWAMP/(21780:21780): [SWAMP]: Guardando la pagina 2 del proceso 1 en SWAMP
+[INFO] 21:26:15:170 SWAMP/(21780:21780): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:26:15:170 SWAMP/(21780:21780): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:26:15:170 SWAMP/(21780:21780): [SWAMP]: Guardando la pagina 3 del proceso 1 en SWAMP
+[INFO] 21:29:23:204 SWAMP/(21962:21962): Se conecto el cliente 9 a SWAMP
+[INFO] 21:29:23:204 SWAMP/(21962:21962): [SWAMP->MP]: Mandando los marcos_max a MP...
+[INFO] 21:29:26:952 SWAMP/(21962:21962): [SWAMP]: Reservando 2 paginas para el proceso 0
+[INFO] 21:29:26:952 SWAMP/(21962:21962): Se reservaron 2 frames y 2 paginas para el proceso 0
+[INFO] 21:29:26:953 SWAMP/(21962:21962): [SWAMP]: Reservando 2 paginas para el proceso 1
+[INFO] 21:29:26:953 SWAMP/(21962:21962): Se reservaron 2 frames y 2 paginas para el proceso 1
+[INFO] 21:29:26:954 SWAMP/(21962:21962): [SWAMP]: Reservando 2 paginas para el proceso 2
+[INFO] 21:29:26:954 SWAMP/(21962:21962): Se reservaron 2 frames y 2 paginas para el proceso 2
+[INFO] 21:29:26:954 SWAMP/(21962:21962): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:29:26:954 SWAMP/(21962:21962): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:29:26:955 SWAMP/(21962:21962): [SWAMP]: Reservando 1 paginas para el proceso 1
+[INFO] 21:29:26:955 SWAMP/(21962:21962): Se reservaron 1 paginas para el proceso 1
+[INFO] 21:29:26:956 SWAMP/(21962:21962): [SWAMP]: Reservando 1 paginas para el proceso 2
+[INFO] 21:29:26:956 SWAMP/(21962:21962): Se reservaron 1 paginas para el proceso 2
+[INFO] 21:29:26:957 SWAMP/(21962:21962): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:29:26:957 SWAMP/(21962:21962): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:29:26:958 SWAMP/(21962:21962): [SWAMP]: Reservando 1 paginas para el proceso 1
+[INFO] 21:29:26:958 SWAMP/(21962:21962): Se reservaron 1 paginas para el proceso 1
+[INFO] 21:29:26:959 SWAMP/(21962:21962): [SWAMP]: Reservando 1 paginas para el proceso 2
+[INFO] 21:29:26:959 SWAMP/(21962:21962): Se reservaron 1 paginas para el proceso 2
+[INFO] 21:29:26:964 SWAMP/(21962:21962): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:29:26:964 SWAMP/(21962:21962): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:29:26:964 SWAMP/(21962:21962): [SWAMP]: Guardando la pagina 0 del proceso 0 en SWAMP
+[INFO] 21:29:27:001 SWAMP/(21962:21962): [SWAMP]: Mandando pagina 0 del proceso 0 a MP
+[INFO] 21:29:27:002 SWAMP/(21962:21962): [SWAMP]: Guardando la pagina 2 del proceso 0 en SWAMP
+[INFO] 21:29:27:041 SWAMP/(21962:21962): [SWAMP]: Mandando pagina 2 del proceso 0 a MP
+[INFO] 21:29:27:041 SWAMP/(21962:21962): [SWAMP]: Guardando la pagina 0 del proceso 1 en SWAMP
+[INFO] 21:29:27:082 SWAMP/(21962:21962): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:29:27:082 SWAMP/(21962:21962): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:29:27:082 SWAMP/(21962:21962): [SWAMP]: Guardando la pagina 1 del proceso 1 en SWAMP
+[INFO] 21:29:27:121 SWAMP/(21962:21962): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:29:27:121 SWAMP/(21962:21962): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:29:27:121 SWAMP/(21962:21962): [SWAMP]: Guardando la pagina 2 del proceso 1 en SWAMP
+[INFO] 21:29:27:161 SWAMP/(21962:21962): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:29:27:161 SWAMP/(21962:21962): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:29:27:162 SWAMP/(21962:21962): [SWAMP]: Guardando la pagina 3 del proceso 1 en SWAMP
+[INFO] 21:31:47:241 SWAMP/(22090:22090): Se conecto el cliente 9 a SWAMP
+[INFO] 21:31:47:241 SWAMP/(22090:22090): [SWAMP->MP]: Mandando los marcos_max a MP...
+[INFO] 21:31:55:966 SWAMP/(22090:22090): [SWAMP]: Reservando 2 paginas para el proceso 0
+[INFO] 21:31:55:966 SWAMP/(22090:22090): Se reservaron 2 frames y 2 paginas para el proceso 0
+[INFO] 21:31:55:966 SWAMP/(22090:22090): [SWAMP]: Reservando 2 paginas para el proceso 1
+[INFO] 21:31:55:966 SWAMP/(22090:22090): Se reservaron 2 frames y 2 paginas para el proceso 1
+[INFO] 21:31:55:967 SWAMP/(22090:22090): [SWAMP]: Reservando 2 paginas para el proceso 2
+[INFO] 21:31:55:967 SWAMP/(22090:22090): Se reservaron 2 frames y 2 paginas para el proceso 2
+[INFO] 21:31:55:967 SWAMP/(22090:22090): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:31:55:967 SWAMP/(22090:22090): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:31:55:968 SWAMP/(22090:22090): [SWAMP]: Reservando 1 paginas para el proceso 1
+[INFO] 21:31:55:968 SWAMP/(22090:22090): Se reservaron 1 paginas para el proceso 1
+[INFO] 21:31:55:969 SWAMP/(22090:22090): [SWAMP]: Reservando 1 paginas para el proceso 2
+[INFO] 21:31:55:969 SWAMP/(22090:22090): Se reservaron 1 paginas para el proceso 2
+[INFO] 21:31:55:969 SWAMP/(22090:22090): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:31:55:969 SWAMP/(22090:22090): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:31:55:970 SWAMP/(22090:22090): [SWAMP]: Reservando 1 paginas para el proceso 1
+[INFO] 21:31:55:970 SWAMP/(22090:22090): Se reservaron 1 paginas para el proceso 1
+[INFO] 21:31:55:971 SWAMP/(22090:22090): [SWAMP]: Reservando 1 paginas para el proceso 2
+[INFO] 21:31:55:971 SWAMP/(22090:22090): Se reservaron 1 paginas para el proceso 2
+[INFO] 21:31:55:972 SWAMP/(22090:22090): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:31:55:972 SWAMP/(22090:22090): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:31:55:972 SWAMP/(22090:22090): [SWAMP]: Guardando la pagina 0 del proceso 0 en SWAMP
+[INFO] 21:31:56:009 SWAMP/(22090:22090): [SWAMP]: Mandando pagina 0 del proceso 0 a MP
+[INFO] 21:31:56:009 SWAMP/(22090:22090): [SWAMP]: Guardando la pagina 2 del proceso 0 en SWAMP
+[INFO] 21:31:56:049 SWAMP/(22090:22090): [SWAMP]: Mandando pagina 2 del proceso 0 a MP
+[INFO] 21:31:56:049 SWAMP/(22090:22090): [SWAMP]: Guardando la pagina 0 del proceso 1 en SWAMP
+[INFO] 21:31:56:089 SWAMP/(22090:22090): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:31:56:089 SWAMP/(22090:22090): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:31:56:089 SWAMP/(22090:22090): [SWAMP]: Guardando la pagina 1 del proceso 1 en SWAMP
+[INFO] 21:31:56:130 SWAMP/(22090:22090): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:31:56:130 SWAMP/(22090:22090): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:31:56:130 SWAMP/(22090:22090): [SWAMP]: Guardando la pagina 2 del proceso 1 en SWAMP
+[INFO] 21:31:56:169 SWAMP/(22090:22090): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:31:56:169 SWAMP/(22090:22090): Se reservaron 1 paginas para el proceso 0
+[INFO] 21:31:56:169 SWAMP/(22090:22090): [SWAMP]: Guardando la pagina 3 del proceso 1 en SWAMP
+[INFO] 21:31:56:209 SWAMP/(22090:22090): [SWAMP]: Mandando pagina 0 del proceso 1 a MP
+[INFO] 21:31:56:209 SWAMP/(22090:22090): [SWAMP]: Guardando la pagina 0 del proceso 2 en SWAMP
+[INFO] 21:31:56:249 SWAMP/(22090:22090): [SWAMP]: Mandando pagina 1 del proceso 1 a MP
+[INFO] 21:31:56:249 SWAMP/(22090:22090): [SWAMP]: Guardando la pagina 1 del proceso 2 en SWAMP
+[INFO] 21:31:56:289 SWAMP/(22090:22090): [SWAMP]: Mandando pagina 0 del proceso 2 a MP
+[INFO] 21:31:56:290 SWAMP/(22090:22090): [SWAMP]: Guardando la pagina 2 del proceso 2 en SWAMP
+[INFO] 21:31:56:329 SWAMP/(22090:22090): [SWAMP]: Mandando pagina 1 del proceso 2 a MP
+[INFO] 21:31:56:329 SWAMP/(22090:22090): [SWAMP]: Guardando la pagina 3 del proceso 2 en SWAMP
+[INFO] 21:31:56:370 SWAMP/(22090:22090): [SWAMP]: Reservando 1 paginas para el proceso 0
+[INFO] 21:31:56:370 SWAMP/(22090:22090): Se reservaron 1 paginas para el proceso 0

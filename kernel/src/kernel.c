@@ -15,17 +15,6 @@ int main(void) {
 
 	init_kernel();
 
-	//int *socket_cliente = malloc(sizeof(int));
-
-	//*socket_cliente = accept(SERVIDOR_KERNEL, NULL, NULL);
-
-	//recibir_peticion_para_continuar(*socket_cliente);
-	//dar_permiso_para_continuar(*socket_cliente);
-
-	//printf("%d\n",recibir_operacion_carpincho(*socket_cliente));
-
-
-	//fflush(stdout);
 	coordinador_multihilo();
 
 
@@ -77,7 +66,10 @@ void init_kernel(){
 	CONFIG_KERNEL = crear_archivo_config_kernel("/home/utnso/workspace/tp-2021-2c-DesacatadOS/kernel/src/kernel.config");
 
 	//Inicializamos logger
-	LOGGER = log_create("kernel.log", "KERNEL", 0, LOG_LEVEL_INFO);
+	LOGGER = log_create("/home/utnso/workspace/tp-2021-2c-DesacatadOS/kernel/kernel.log", "KERNEL", 1, LOG_LEVEL_INFO);
+
+	log_info(LOGGER, "\n\n---------------------------------------------------\n\n");
+	log_info(LOGGER, "\n\n---------------------------------------------------\n\n");
 
 	//Iniciamos servidor
 	SERVIDOR_KERNEL = iniciar_servidor(CONFIG_KERNEL.ip_kernel,CONFIG_KERNEL.puerto_kernel);
@@ -111,7 +103,7 @@ void init_kernel(){
 	sem_init(&sem_grado_multiprocesamiento, 0, CONFIG_KERNEL.grado_multiprocesamiento);
 
 	//Variable que asigna PIDs a los nuevos carpinchos
-	PID_PROX_CARPINCHO = 0;
+	PID_PROX_CARPINCHO = 1;
 
 	crear_dispositivos_io();
 	crear_procesadores();
@@ -209,13 +201,12 @@ void pasar_a_new(PCB* pcb_carpincho) {
 
 	pthread_mutex_lock(&mutex_lista_new);
 	list_add(LISTA_NEW, pcb_carpincho);
+	log_info(LOGGER, "Pasó a NEW el carpincho %d\n", pcb_carpincho->PID);
 	pthread_mutex_unlock(&mutex_lista_new);
 
 	sem_post(&sem_algoritmo_planificador_largo_plazo);
 
 	algoritmo_planificador_mediano_plazo_blocked_suspended();
-
-	log_info(LOGGER, "Pasó a NEW el carpincho %d\n", pcb_carpincho->PID);
 }
 
 void crear_procesadores() {

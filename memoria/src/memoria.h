@@ -96,7 +96,7 @@ pthread_mutex_t mutex_tablas_dp;
 pthread_mutex_t mutex_swamp;
 pthread_mutex_t mutex_PID;
 pthread_mutex_t mutexTiempoMMU;
-
+pthread_mutex_t mutex_clock;
 
 // FUNCIONES
 
@@ -136,6 +136,7 @@ int solicitar_frame_en_ppal(int pid);
 int ejecutar_algoritmo_reemplazo(int pid);
 int reemplazar_con_LRU(int pid);
 int reemplazar_con_CLOCK_M(int pid);
+int reemplazar_con_CLOCK_M2(int pid);
 int obtener_tiempo_MMU();
 
 //// ---- funciones para listas administrativas
