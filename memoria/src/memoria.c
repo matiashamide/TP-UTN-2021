@@ -186,6 +186,9 @@ void atender_carpinchos(int* cliente) {
 			retorno  = memalloc(pid, size, *cliente);
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
+			if (existe_kernel)
+				pthread_exit(NULL);
+
 		break;
 
 		case MEMREAD:;
@@ -214,6 +217,9 @@ void atender_carpinchos(int* cliente) {
 
 			free(dest);
 
+			if (existe_kernel)
+				pthread_exit(NULL);
+
 		break;
 
 		case MEMFREE:;
@@ -235,6 +241,9 @@ void atender_carpinchos(int* cliente) {
 			}
 
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
+
+			if (existe_kernel)
+				pthread_exit(NULL);
 
 		break;
 
@@ -263,6 +272,9 @@ void atender_carpinchos(int* cliente) {
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 			free(contenido);
 
+			if (existe_kernel)
+				pthread_exit(NULL);
+
 		break;
 
 		case MEMSUSP:;
@@ -271,6 +283,10 @@ void atender_carpinchos(int* cliente) {
 			pid = recibir_entero(*cliente);
 			suspender_proceso(pid);
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
+
+			if (existe_kernel)
+				pthread_exit(NULL);
+
 		break;
 
 		case MEMDESSUSP:;
@@ -280,11 +296,12 @@ void atender_carpinchos(int* cliente) {
 			dessuspender_proceso(pid);
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
+			if (existe_kernel)
+				pthread_exit(NULL);
+
 		break;
 
 		case CLOSE:;
-
-			log_info(LOGGER, "Se desconecto el cliente %i\n", *cliente);
 
 			if (existe_kernel) {
 				pid = recibir_entero(*cliente);
@@ -292,14 +309,18 @@ void atender_carpinchos(int* cliente) {
 				pid = pid_por_conexion(*cliente);
 			}
 
-			//eliminar_proceso(pid);
-
 			printf("MATECLOSE DEL PID %i", pid);
+
+			eliminar_proceso(pid);
+
+			log_info(LOGGER, "Se desconecto el cliente %i\n", *cliente);
 
 			if (!existe_kernel) {
 				dar_permiso_para_continuar((*cliente));
 			}
+
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
+			pthread_exit(NULL);
 
 		break;
 
@@ -311,8 +332,7 @@ void atender_carpinchos(int* cliente) {
 
 		break;
 
-		default:;
-			sleep(20);
+		default:; log_info(LOGGER, "No se entendio la solicitud del cliente %i.", *cliente);
 		break;
 
 		}
@@ -765,6 +785,7 @@ int memwrite(int32_t pid, void* contenido, int32_t dir_logica,  int32_t size) {
 
 void suspender_proceso(int32_t pid) {
 	t_list* paginas_proceso =  (tabla_por_pid(pid))->paginas;
+
 	//Sirve para dinamico y fijo
 	for (int i = 0; i < list_size(paginas_proceso); i++) {
 		t_pagina* pagina = list_get(paginas_proceso,i);
@@ -810,6 +831,7 @@ void dessuspender_proceso(int32_t pid) {
 }
 
 void eliminar_proceso(int32_t pid) {
+	/*
 	t_tabla_pagina* tabla_proceso = tabla_por_pid(pid);
 	t_list* paginas_proceso = tabla_proceso->paginas;
 
@@ -840,7 +862,7 @@ void eliminar_proceso(int32_t pid) {
 		for(int i = 0; i < list_size(frames_memoria_pid); i++) {
 			t_frame* frame = list_get(frames_memoria_pid, i);
 			frame->ocupado = false;
-			frame->pid = -1;
+			frame->pid     = -1;
 		}
 	}
 
@@ -853,11 +875,13 @@ void eliminar_proceso(int32_t pid) {
 
 	eliminar_proceso_swap(pid);
 
-	bool tabla_es_de_pid2(void* element){
+	*/
+
+	bool pid_de_conexiones(void* element){
 		t_pid_cliente* tabla_aux = (t_pid_cliente*) element;
 		return tabla_aux->pid == pid;
 	}
-	list_remove_and_destroy_by_condition(PIDS_CLIENTE,tabla_es_de_pid2,free);
+	list_remove_and_destroy_by_condition(PIDS_CLIENTE,pid_de_conexiones,free);
 
 }
 
@@ -1303,14 +1327,6 @@ int reemplazar_con_CLOCK_M2(int32_t pid) {
     if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
             paginas = list_filter(paginas_en_mp(), (void*)no_esta_lockeada);
 	}
-
-    bool index_frame(void* ele1 , void* ele2){
-    	t_pagina* pag1 = (t_pagina*) ele1;
-    	t_pagina* pag2 = (t_pagina*) ele2;
-    	return pag1->frame_ppal < pag2->frame_ppal;
-    }
-
-    list_sort(paginas , index_frame);
 	int retorno = algoritmo_clock(paginas);
 
 	if ( retorno == -1){
