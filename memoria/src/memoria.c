@@ -8,20 +8,6 @@ int main(void) {
 	//Coordinacion multihilo de carpinchos
 	coordinador_multihilo();
 
-/*
-	memalloc(0, 10,1);
-	//memalloc(0, sizeof(uint32_t),1);
-	memalloc(1, 10,1);
-	//memalloc(1, sizeof(uint32_t),1);
-
-	int i = 0;
-
-	while (i < 50) {
-		memalloc(0,1,1);
-		i++;
-	}
-	printf("\nSalio Ok \n");
-	*/
 	return EXIT_SUCCESS;
 }
 
@@ -160,15 +146,12 @@ void recibir_peticion_para_continuar(int conexion) {
 	uint32_t result;
 	int bytes_recibidos = recv(conexion, &result, sizeof(uint32_t), MSG_WAITALL);
 
-	//printf("Ya recibi peticion %d\n", bytes_recibidos);
-
 }
 
 void dar_permiso_para_continuar(int conexion){
 
 	uint32_t handshake  = 1;
 	int numero_de_bytes = send(conexion, &handshake, sizeof(uint32_t), 0);
-	//printf("Ya di permiso %d\n", numero_de_bytes);
 
 }
 
@@ -229,8 +212,6 @@ void atender_carpinchos(int* cliente) {
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 			send(*cliente, dest, size_contenido, 0);
 
-			printf("MEMREAD PID %i DIRLOGICA %i\n", pid, dir_logica);
-
 			free(dest);
 
 		break;
@@ -280,8 +261,6 @@ void atender_carpinchos(int* cliente) {
 			}
 
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
-
-			printf("MEMWRITE PID %i DIRLOGICA %i\n", pid, dir_logica);
 			free(contenido);
 
 		break;
@@ -315,6 +294,8 @@ void atender_carpinchos(int* cliente) {
 
 			//eliminar_proceso(pid);
 
+			printf("MATECLOSE DEL PID %i", pid);
+
 			if (!existe_kernel) {
 				dar_permiso_para_continuar((*cliente));
 			}
@@ -340,8 +321,6 @@ void atender_carpinchos(int* cliente) {
 //--------------------------------------------------- FUNCIONES PRINCIPALES ----------------------------------------------//
 
 int memalloc(int32_t pid, int32_t size, int cliente){
-	printf("ENTRE AL MEMALLOC SOY %i", pid);
-
 	int dir_logica = -1;
 	int paginas_necesarias = ceil(((double)size + sizeof(heap_metadata)*2)/ (double)CONFIG.tamanio_pagina);
 
@@ -436,8 +415,6 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 			unlockear(pagina);
 		}
 
-		printf("PID%i CANT PAGS %i \n", pid, paginas_necesarias);
-
 		dir_logica = header_sig->prev_alloc;
 		free(header);
 		log_info(LOGGER, "El proceso %i fue inicializado correctamente." , pid);
@@ -449,10 +426,6 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 		t_alloc_disponible* alloc = obtener_alloc_disponible(pid, size, 0);
 
 		if(alloc->flag_ultimo_alloc){
-
-			if (alloc->direc_logica == 2052) {
-				printf("CASO B MEMALLOC hackeado \n");
-			}
 
 			t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 			int tamanio_total = list_size(paginas_proceso) * CONFIG.tamanio_pagina;
@@ -522,21 +495,13 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 
 			guardar_header(pid, nro_pagina, offset, ultimo_header);
 			guardar_header(pid, nro_pagina_nueva , offset_nuevo, nuevo_header);
-			//heap_metadata* head = desserializar_header(pid, nro_pagina, offset_nuevo);
-
-			printf("PID%i le agregue %i pags\n", pid, cantidad_paginas);
 
 			free(ultimo_header);
 			free(nuevo_header);
 
 		}
 		dir_logica = alloc->direc_logica;
-		if(dir_logica == 2052){
-			printf("FINAL DE MEMALLOC hackeado\n");
-		}
-		printf("PID%i agregue alloc en pag existente dir logica %i\n", pid, dir_logica);
 	}
-
 	log_info(LOGGER, "Se le asignaron correctamente %i bytes al proceso %i.", size, pid);
 	return dir_logica + sizeof(heap_metadata);
 }
@@ -938,9 +903,6 @@ t_alloc_disponible* obtener_alloc_disponible(int32_t pid, int32_t size, uint32_t
 
 				alloc->direc_logica      = header_nuevo->prev_alloc;
 				alloc->flag_ultimo_alloc = 0;
-
-				//heap_metadata* headeraver = desserializar_header(pid, nro_pagina, offset);
-				//heap_metadata* headeraver2 = desserializar_header(pid, nro_pagina, offset + size + sizeof(heap_metadata));
 
 				free(header_nuevo);
 				free(header);
@@ -1634,8 +1596,6 @@ int32_t solicitar_marcos_max_swap() {
 
 int32_t reservar_espacio_en_swap(int32_t pid, int cant_pags) {
 
-	printf("\n\nReserve espacio\n\n");
-
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
 	int offset = 0;
 
@@ -1656,8 +1616,6 @@ int32_t reservar_espacio_en_swap(int32_t pid, int cant_pags) {
 	send(CONEXION_SWAP, a_enviar, bytes, 0);
 	int32_t retorno = recibir_entero(CONEXION_SWAP);
 	pthread_mutex_unlock(&mutex_swamp);
-
-	printf("Swap me mando reservar espacio %i \n", retorno);
 
 	free(a_enviar);
 	eliminar_paquete_swap(paquete);
@@ -1707,8 +1665,6 @@ int traer_pagina_a_mp(t_pagina* pagina) {
 void* traer_de_swap(int32_t pid, int32_t nro_pagina) {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
 
-	printf("Pidiendole a swamp PID%i PAG%i", pid, nro_pagina);
-
 	paquete->cod_op         = TRAER_DE_SWAP;
 	paquete->buffer         = malloc(sizeof(t_buffer));
 	paquete->buffer->size   = sizeof(uint32_t) * 2;
@@ -1736,8 +1692,6 @@ void* traer_de_swap(int32_t pid, int32_t nro_pagina) {
 }
 
 void tirar_a_swap(t_pagina* pagina) {
-
-	printf("TIRANDO A SWAP PID%i PAG%i \n", pagina->pid, pagina->id);
 
 	log_info(LOGGER, "[MP->SWAMP] Tirando la pagina modificada %i en swap, del proceso %i", pagina->id , pagina->pid);
 
@@ -1949,4 +1903,23 @@ void dump_memoria_principal() {
 	fprintf(file, "||\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
 	fclose(file);
 
+}
+
+void printear_memoria_principal(){
+	t_pagina* pagina;
+	t_list* pags_mp = paginas_en_mp();
+
+	bool _frames_ascendente(t_pagina* pag, t_pagina* pag2) {
+		return pag->frame_ppal < pag2->frame_ppal;
+	}
+
+	list_sort(pags_mp, (void*)_frames_ascendente);
+
+	for (int i = 0 ; i < list_size(pags_mp) ; i++) {
+
+		pagina = list_get(pags_mp, i);
+		printf(" C%i P%i F%i ", pagina->pid+1, pagina->id, pagina->frame_ppal);
+
+	}
+	printf("\n");
 }

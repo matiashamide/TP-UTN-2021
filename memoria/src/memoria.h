@@ -175,5 +175,6 @@ void signal_clean_tlb();
 
 //// ---- funcion dump
 void dump_memoria_principal();
+void printear_memoria_principal();
 
 #endif /* MEMORIA_H_ */
