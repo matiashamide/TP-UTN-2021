@@ -6,7 +6,22 @@ int main(void) {
 	init_memoria();
 
 	//Coordinacion multihilo de carpinchos
-	coordinador_multihilo();
+	//coordinador_multihilo();
+
+
+	memalloc(0, 10,1);
+	memalloc(0, sizeof(uint32_t),1);
+	memalloc(1, 10,1);
+	memalloc(1, sizeof(uint32_t),1);
+
+	int i = 0;
+
+	while (i < 1000) {
+
+		memalloc(0,1,1);
+		memalloc(1,1,1);
+		i++;
+	}
 
 	/*int C0 = memalloc(0, 23, 1);
 	int C1 = memalloc(0, 23, 1);
@@ -63,6 +78,7 @@ void init_memoria() {
 
 	if (CONEXION_SWAP == -1) {
 		log_error(LOGGER, "No se pudo establecer conexion con SWAMP.");
+		return;
 	}
 
 	MAX_FRAMES_SWAP = solicitar_marcos_max_swap();
@@ -118,25 +134,25 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
         exit(-1);
     }
 
-    config.ip_memoria          = config_get_string_value(memoria_config, "IP");
-    config.puerto_memoria      = config_get_string_value(memoria_config, "PUERTO");
-    config.ip_swap             = config_get_string_value(memoria_config, "IP_SWAP");
-	config.puerto_swap         = config_get_string_value(memoria_config, "PUERTO_SWAP");
-    config.tamanio_memoria     = config_get_int_value   (memoria_config, "TAMANIO");
-    config.tamanio_pagina      = config_get_int_value   (memoria_config, "TAMANIO_PAGINA");
-    config.tipo_asignacion     = config_get_string_value(memoria_config, "TIPO_ASIGNACION");
+    config.ip_memoria          = config_get_string_value(memoria_config, "IP"                      );
+    config.puerto_memoria      = config_get_string_value(memoria_config, "PUERTO"                  );
+    config.ip_swap             = config_get_string_value(memoria_config, "IP_SWAP"                 );
+	config.puerto_swap         = config_get_string_value(memoria_config, "PUERTO_SWAP"             );
+    config.tamanio_memoria     = config_get_int_value   (memoria_config, "TAMANIO"                 );
+    config.tamanio_pagina      = config_get_int_value   (memoria_config, "TAMANIO_PAGINA"          );
+    config.tipo_asignacion     = config_get_string_value(memoria_config, "TIPO_ASIGNACION"         );
 
     if (string_equals_ignore_case(config.tipo_asignacion,"FIJA")) {
-        	config.marcos_max      = config_get_int_value   (memoria_config, "MARCOS_POR_CARPINCHO");
+        config.marcos_max      = config_get_int_value   (memoria_config, "MARCOS_POR_CARPINCHO"    );
     }
 
-    config.alg_remp_mmu        = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_MMU");
-    config.cant_entradas_tlb   = config_get_int_value   (memoria_config, "CANTIDAD_ENTRADAS_TLB");
-    config.alg_reemplazo_tlb   = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_TLB");
-    config.retardo_acierto_tlb = config_get_int_value   (memoria_config, "RETARDO_ACIERTO_TLB");
-    config.retardo_fallo_tlb   = config_get_int_value   (memoria_config, "RETARDO_FALLO_TLB");
-    config.path_dump_tlb       = config_get_string_value(memoria_config, "PATH_DUMP_TLB");
-    config.kernel_existe	   = config_get_int_value   (memoria_config, "KERNEL_EXISTE");
+    config.alg_remp_mmu        = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_MMU" );
+    config.cant_entradas_tlb   = config_get_int_value   (memoria_config, "CANTIDAD_ENTRADAS_TLB"   );
+    config.alg_reemplazo_tlb   = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_TLB" );
+    config.retardo_acierto_tlb = config_get_int_value   (memoria_config, "RETARDO_ACIERTO_TLB"     );
+    config.retardo_fallo_tlb   = config_get_int_value   (memoria_config, "RETARDO_FALLO_TLB"       );
+    config.path_dump_tlb       = config_get_string_value(memoria_config, "PATH_DUMP_TLB"           );
+    config.kernel_existe	   = config_get_int_value   (memoria_config, "KERNEL_EXISTE"           );
 
     return config;
 }
@@ -232,6 +248,9 @@ void atender_carpinchos(int* cliente) {
 
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 			send(*cliente, dest, size_contenido, 0);
+
+			printf("MEMREAD PID %i DIRLOGICA %i\n", pid, dir_logica);
+
 			free(dest);
 
 		break;
@@ -274,13 +293,15 @@ void atender_carpinchos(int* cliente) {
 			void* contenido = malloc(size_contenido);
 			recv(*cliente, contenido, size_contenido, 0);
 
-			retorno = memwrite(pid, contenido, dir_logica, size_paquete - sizeof(int)*2);
+			retorno = memwrite(pid, contenido, dir_logica, size_contenido);
 
 			if(retorno == -1){
 				retorno = MATE_WRITE_FAULT;
 			}
 
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
+
+			printf("MEMWRITE PID %i DIRLOGICA %i\n", pid, dir_logica);
 			free(contenido);
 
 		break;
@@ -339,6 +360,7 @@ void atender_carpinchos(int* cliente) {
 //--------------------------------------------------- FUNCIONES PRINCIPALES ----------------------------------------------//
 
 int memalloc(int32_t pid, int32_t size, int cliente){
+	printf("ENTRE AL MEMALLOC SOY %i", pid);
 
 	int dir_logica = -1;
 	int paginas_necesarias = ceil(((double)size + sizeof(heap_metadata)*2)/ (double)CONFIG.tamanio_pagina);
@@ -434,6 +456,8 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 			unlockear(pagina);
 		}
 
+		printf("PID%i CANT PAGS %i \n", pid, paginas_necesarias);
+
 		dir_logica = header_sig->prev_alloc;
 		free(header);
 		log_info(LOGGER, "El proceso %i fue inicializado correctamente." , pid);
@@ -445,6 +469,10 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 		t_alloc_disponible* alloc = obtener_alloc_disponible(pid, size, 0);
 
 		if(alloc->flag_ultimo_alloc){
+
+			if (alloc->direc_logica == 2052) {
+				printf("CASO B MEMALLOC hackeado \n");
+			}
 
 			t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
 			int tamanio_total = list_size(paginas_proceso) * CONFIG.tamanio_pagina;
@@ -512,15 +540,21 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 				unlockear(pagina);
 			}
 
-			dir_logica = ultimo_header->prev_alloc;
+			//dir_logica = ultimo_header->prev_alloc;
 			guardar_header(pid, nro_pagina, offset, ultimo_header);
 			guardar_header(pid, nro_pagina_nueva , offset_nuevo, nuevo_header);
+
+			printf("PID%i le agregue %i pags\n", pid, cantidad_paginas);
 
 			free(ultimo_header);
 			free(nuevo_header);
 
 		}
 		dir_logica = alloc->direc_logica;
+		if(dir_logica == 2052){
+			printf("FINAL DE MEMALLOC hackeado\n");
+		}
+		printf("PID%i agregue alloc en pag existente dir logica %i\n", pid, dir_logica);
 	}
 
 	log_info(LOGGER, "Se le asignaron correctamente %i bytes al proceso %i.", size, pid);
@@ -905,6 +939,10 @@ t_alloc_disponible* obtener_alloc_disponible(int32_t pid, int32_t size, uint32_t
 
 			int tamanio_total      = list_size(paginas_proceso) * CONFIG.tamanio_pagina;
 			int tamanio_disponible = tamanio_total - (int)posicion_heap_actual - sizeof(heap_metadata) * 2;
+
+			if (posicion_heap_actual == 2042 ) {
+				printf("OBTENER ALLOC DISPONIBLE hackeado \n");
+			}
 
 			if (tamanio_disponible > size) {
 
@@ -1685,6 +1723,8 @@ int traer_pagina_a_mp(t_pagina* pagina) {
 void* traer_de_swap(int32_t pid, int32_t nro_pagina) {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
 
+	printf("Pidiendole a swamp PID%i PAG%i", pid, nro_pagina);
+
 	paquete->cod_op         = TRAER_DE_SWAP;
 	paquete->buffer         = malloc(sizeof(t_buffer));
 	paquete->buffer->size   = sizeof(uint32_t) * 2;
@@ -1713,7 +1753,7 @@ void* traer_de_swap(int32_t pid, int32_t nro_pagina) {
 
 void tirar_a_swap(t_pagina* pagina) {
 
-	printf("TIRANDO A SWAP \n");
+	printf("TIRANDO A SWAP PID%i PAG%i \n", pagina->pid, pagina->id);
 
 	log_info(LOGGER, "[MP->SWAMP] Tirando la pagina modificada %i en swap, del proceso %i", pagina->id , pagina->pid);
 

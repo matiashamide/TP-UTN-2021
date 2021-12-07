@@ -162,13 +162,13 @@ void atender_peticiones(int* cliente){
 
 	case TIRAR_A_SWAP:;
 
-		printf("\n\nTirar a swap\n\n");
-
 		buffer_pag  = malloc(CONFIG.tamanio_pag);
 
 		pid         = recibir_entero(*cliente);
 		nro_pagina  = recibir_entero(*cliente);
 		recv(*cliente, buffer_pag, CONFIG.tamanio_pag, 0);
+
+		printf("\nTIRAN A SWAMP PID%i PAG%i\n", pid, nro_pagina);
 
 		log_info(LOGGER, "[SWAMP]: Guardando la pagina %i del proceso %i en SWAMP", nro_pagina, pid);
 
@@ -209,6 +209,8 @@ void atender_peticiones(int* cliente){
 
 		pid        = recibir_entero(*cliente);
 		nro_pagina = recibir_entero(*cliente);
+
+		printf("\nMandando a MP PID%i PAG%i\n",pid, nro_pagina);
 
 		log_info(LOGGER, "[SWAMP]: Mandando pagina %i del proceso %i a MP", nro_pagina, pid);
 
@@ -316,6 +318,8 @@ int32_t reservar_espacio(int32_t pid, int cant_paginas) {
 
 			archivo->espacio_disponible -= cant_paginas * CONFIG.tamanio_pag;
 
+			printf("Archivo id %i fd %i con espacio %i \n", archivo->id, archivo->fd, archivo->espacio_disponible);
+
 			log_info(LOGGER, "Se reservaron %i paginas para el proceso %i", cant_paginas, pid);
 			return 1;
 		}
@@ -357,6 +361,8 @@ int32_t reservar_espacio(int32_t pid, int cant_paginas) {
 			}
 
 			archivo->espacio_disponible -= cant_frames_requeridos * CONFIG.tamanio_pag;
+
+			printf("Archivo id %i fd %i sera del proceso %i \n", archivo->id, archivo->fd, pid);
 
 			log_info(LOGGER, "Se reservaron %i frames y %i paginas para el proceso %i", cant_frames_requeridos, cant_paginas, pid);
 			return 1;
