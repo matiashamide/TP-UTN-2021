@@ -5916,3 +5916,521 @@
 
 [INFO] 21:39:01:925 KERNEL/(29145:29147): El carpincho 2, terminó
 
+[INFO] 13:09:42:154 KERNEL/(2171:2171): 
+
+---------------------------------------------------
+
+
+[INFO] 13:09:42:154 KERNEL/(2171:2171): 
+
+---------------------------------------------------
+
+
+[INFO] 13:09:42:154 KERNEL/(2171:2171): Cree un dispositivo
+
+[INFO] 13:09:42:154 KERNEL/(2171:2171): Nombre dispositivo pelopincho
+
+[INFO] 13:09:42:154 KERNEL/(2171:2171): Rafaga dispositivo 2000
+
+[INFO] 13:09:42:154 KERNEL/(2171:2171): Creé un procesador
+
+[INFO] 13:09:42:155 KERNEL/(2171:2171): Ya cree el planificador de largo plazo
+
+[INFO] 13:09:42:155 KERNEL/(2171:2171): Ya cree el planificador de corto plazo utilizando el algoritmo SJF
+
+[INFO] 13:09:42:155 KERNEL/(2171:2171): Ya cree el algoritmo para correr deadlock
+
+[INFO] 13:09:44:250 KERNEL/(2171:2181): Se conectó el carpincho 0 en la conexión 5
+
+[INFO] 13:09:44:250 KERNEL/(2171:2181): Pasó a NEW el carpincho 0
+
+[INFO] 13:09:44:251 KERNEL/(2171:2174): Pasó a READY el carpincho 0
+
+[INFO] 13:09:44:251 KERNEL/(2171:2175): Pasó a EXEC el carpincho 0
+
+[INFO] 13:09:44:251 KERNEL/(2171:2182): Se conectó el carpincho 1 en la conexión 7
+
+[INFO] 13:09:44:251 KERNEL/(2171:2182): Pasó a NEW el carpincho 1
+
+[INFO] 13:09:44:251 KERNEL/(2171:2174): Pasó a READY el carpincho 1
+
+[INFO] 13:09:46:251 KERNEL/(2171:2173): El carpincho 0, pidió hacer I/O en pelopincho
+
+[INFO] 13:09:46:252 KERNEL/(2171:2173): Pasó a BLOCKED el carpincho 0
+
+[INFO] 13:09:46:252 KERNEL/(2171:2175): Pasó a EXEC el carpincho 1
+
+[INFO] 13:09:46:253 KERNEL/(2171:2183): Se conectó el carpincho 2 en la conexión 8
+
+[INFO] 13:09:46:254 KERNEL/(2171:2183): Pasó a NEW el carpincho 2
+
+[INFO] 13:09:46:254 KERNEL/(2171:2174): Pasó a READY el carpincho 2
+
+[INFO] 13:09:48:253 KERNEL/(2171:2172): Pasó a READY el carpincho 0
+
+[INFO] 13:09:48:253 KERNEL/(2171:2173): El carpincho 1, pidió hacer I/O en pelopincho
+
+[INFO] 13:09:48:253 KERNEL/(2171:2173): Pasó a BLOCKED el carpincho 1
+
+[INFO] 13:09:48:254 KERNEL/(2171:2175): Pasó a EXEC el carpincho 2
+
+[INFO] 13:09:50:254 KERNEL/(2171:2172): Pasó a READY el carpincho 1
+
+[INFO] 13:09:58:257 KERNEL/(2171:2173): El carpincho 2, pidió hacer I/O en pelopincho
+
+[INFO] 13:09:58:257 KERNEL/(2171:2173): Pasó a BLOCKED el carpincho 2
+
+[INFO] 13:09:58:257 KERNEL/(2171:2175): Pasó a EXEC el carpincho 0
+
+[INFO] 13:10:00:258 KERNEL/(2171:2172): Pasó a READY el carpincho 2
+
+[INFO] 13:10:00:258 KERNEL/(2171:2173): El carpincho 0, pidió hacer I/O en pelopincho
+
+[INFO] 13:10:00:258 KERNEL/(2171:2173): Pasó a BLOCKED el carpincho 0
+
+[INFO] 13:10:00:258 KERNEL/(2171:2175): Pasó a EXEC el carpincho 1
+
+[INFO] 13:10:02:258 KERNEL/(2171:2172): Pasó a READY el carpincho 0
+
+[INFO] 13:10:02:259 KERNEL/(2171:2173): El carpincho 1, pidió hacer I/O en pelopincho
+
+[INFO] 13:10:02:260 KERNEL/(2171:2173): Pasó a BLOCKED el carpincho 1
+
+[INFO] 13:10:02:260 KERNEL/(2171:2175): Pasó a EXEC el carpincho 0
+
+[INFO] 13:10:04:260 KERNEL/(2171:2172): Pasó a READY el carpincho 1
+
+[INFO] 13:10:04:261 KERNEL/(2171:2173): El carpincho 0, pidió hacer I/O en pelopincho
+
+[INFO] 13:10:04:261 KERNEL/(2171:2173): Pasó a BLOCKED el carpincho 0
+
+[INFO] 13:10:04:261 KERNEL/(2171:2175): Pasó a EXEC el carpincho 1
+
+[INFO] 13:10:06:262 KERNEL/(2171:2172): Pasó a READY el carpincho 0
+
+[INFO] 13:10:06:262 KERNEL/(2171:2173): El carpincho 1, pidió hacer I/O en pelopincho
+
+[INFO] 13:10:06:262 KERNEL/(2171:2173): Pasó a BLOCKED el carpincho 1
+
+[INFO] 13:10:06:263 KERNEL/(2171:2175): Pasó a EXEC el carpincho 0
+
+[INFO] 13:10:08:263 KERNEL/(2171:2172): Pasó a READY el carpincho 1
+
+[INFO] 13:10:08:263 KERNEL/(2171:2173): El carpincho 0, terminó
+
+[INFO] 13:10:08:263 KERNEL/(2171:2175): Pasó a EXEC el carpincho 1
+
+[INFO] 13:10:10:264 KERNEL/(2171:2173): El carpincho 1, terminó
+
+[INFO] 13:10:10:265 KERNEL/(2171:2175): Pasó a EXEC el carpincho 2
+
+[INFO] 13:10:20:267 KERNEL/(2171:2173): El carpincho 2, pidió hacer I/O en pelopincho
+
+[INFO] 13:10:20:268 KERNEL/(2171:2173): Pasó a BLOCKED el carpincho 2
+
+[INFO] 13:10:22:268 KERNEL/(2171:2172): Pasó a READY el carpincho 2
+
+[INFO] 13:10:22:268 KERNEL/(2171:2175): Pasó a EXEC el carpincho 2
+
+[INFO] 13:10:32:271 KERNEL/(2171:2173): El carpincho 2, pidió hacer I/O en pelopincho
+
+[INFO] 13:10:32:271 KERNEL/(2171:2173): Pasó a BLOCKED el carpincho 2
+
+[INFO] 13:10:34:271 KERNEL/(2171:2172): Pasó a READY el carpincho 2
+
+[INFO] 13:10:34:272 KERNEL/(2171:2175): Pasó a EXEC el carpincho 2
+
+[INFO] 13:10:44:274 KERNEL/(2171:2173): El carpincho 2, terminó
+
+[INFO] 13:13:02:092 KERNEL/(2275:2275): 
+
+---------------------------------------------------
+
+
+[INFO] 13:13:02:092 KERNEL/(2275:2275): 
+
+---------------------------------------------------
+
+
+[INFO] 13:13:02:093 KERNEL/(2275:2275): Cree un dispositivo
+
+[INFO] 13:13:02:093 KERNEL/(2275:2275): Nombre dispositivo laguna
+
+[INFO] 13:13:02:093 KERNEL/(2275:2275): Rafaga dispositivo 2500
+
+[INFO] 13:13:02:093 KERNEL/(2275:2275): Creé un procesador
+
+[INFO] 13:13:02:093 KERNEL/(2275:2275): Creé un procesador
+
+[INFO] 13:13:02:093 KERNEL/(2275:2275): Creé un procesador
+
+[INFO] 13:13:02:093 KERNEL/(2275:2275): Creé un procesador
+
+[INFO] 13:13:02:093 KERNEL/(2275:2275): Creé un procesador
+
+[INFO] 13:13:02:093 KERNEL/(2275:2275): Creé un procesador
+
+[INFO] 13:13:02:093 KERNEL/(2275:2275): Creé un procesador
+
+[INFO] 13:13:02:094 KERNEL/(2275:2275): Creé un procesador
+
+[INFO] 13:13:02:094 KERNEL/(2275:2275): Ya cree el planificador de largo plazo
+
+[INFO] 13:13:02:094 KERNEL/(2275:2275): Ya cree el planificador de corto plazo utilizando el algoritmo SJF
+
+[INFO] 13:13:02:094 KERNEL/(2275:2275): Ya cree el algoritmo para correr deadlock
+
+[INFO] 13:13:14:320 KERNEL/(2275:2289): Se conectó el carpincho 0 en la conexión 5
+
+[INFO] 13:13:14:321 KERNEL/(2275:2289): Pasó a NEW el carpincho 0
+
+[INFO] 13:13:14:321 KERNEL/(2275:2285): Pasó a READY el carpincho 0
+
+[INFO] 13:13:14:321 KERNEL/(2275:2286): Pasó a EXEC el carpincho 0
+
+[INFO] 13:13:14:321 KERNEL/(2275:2277): El carpincho 0, inicializó el semaforo SEM1 con valor 1
+
+[INFO] 13:13:14:321 KERNEL/(2275:2277): El carpincho 0, inicializó el semaforo SEM2 con valor 1
+
+[INFO] 13:13:14:321 KERNEL/(2275:2277): El carpincho 0, inicializó el semaforo SEM3 con valor 1
+
+[INFO] 13:13:14:321 KERNEL/(2275:2277): El carpincho 0, inicializó el semaforo SEM4 con valor 1
+
+[INFO] 13:13:14:321 KERNEL/(2275:2277): El carpincho 0, inicializó el semaforo SEM5 con valor 1
+
+[INFO] 13:13:14:321 KERNEL/(2275:2277): El carpincho 0, inicializó el semaforo SEM6 con valor 1
+
+[INFO] 13:13:14:321 KERNEL/(2275:2291): Se conectó el carpincho 1 en la conexión 7
+
+[INFO] 13:13:14:321 KERNEL/(2275:2291): Pasó a NEW el carpincho 1
+
+[INFO] 13:13:14:322 KERNEL/(2275:2285): Pasó a READY el carpincho 1
+
+[INFO] 13:13:14:322 KERNEL/(2275:2286): Pasó a EXEC el carpincho 1
+
+[INFO] 13:13:14:322 KERNEL/(2275:2278): El carpincho 1, hizo wait al semaforo SEM1
+
+[INFO] 13:13:15:322 KERNEL/(2275:2295): Se conectó el carpincho 2 en la conexión 8
+
+[INFO] 13:13:15:323 KERNEL/(2275:2295): Pasó a NEW el carpincho 2
+
+[INFO] 13:13:15:323 KERNEL/(2275:2285): Pasó a READY el carpincho 2
+
+[INFO] 13:13:15:323 KERNEL/(2275:2286): Pasó a EXEC el carpincho 2
+
+[INFO] 13:13:15:324 KERNEL/(2275:2279): El carpincho 2, hizo wait al semaforo SEM2
+
+[INFO] 13:13:16:323 KERNEL/(2275:2297): Se conectó el carpincho 3 en la conexión 9
+
+[INFO] 13:13:16:323 KERNEL/(2275:2297): Pasó a NEW el carpincho 3
+
+[INFO] 13:13:16:324 KERNEL/(2275:2285): Pasó a READY el carpincho 3
+
+[INFO] 13:13:16:324 KERNEL/(2275:2286): Pasó a EXEC el carpincho 3
+
+[INFO] 13:13:16:324 KERNEL/(2275:2280): El carpincho 3, hizo wait al semaforo SEM3
+
+[INFO] 13:13:17:322 KERNEL/(2275:2278): El carpincho 1, hizo wait al semaforo SEM2
+
+[INFO] 13:13:17:322 KERNEL/(2275:2278): Pasó a BLOCKED el carpincho 1
+
+[INFO] 13:13:17:323 KERNEL/(2275:2299): Se conectó el carpincho 4 en la conexión 10
+
+[INFO] 13:13:17:323 KERNEL/(2275:2299): Pasó a NEW el carpincho 4
+
+[INFO] 13:13:17:324 KERNEL/(2275:2285): Pasó a READY el carpincho 4
+
+[INFO] 13:13:17:324 KERNEL/(2275:2286): Pasó a EXEC el carpincho 4
+
+[INFO] 13:13:17:324 KERNEL/(2275:2278): El carpincho 4, hizo wait al semaforo SEM4
+
+[INFO] 13:13:18:323 KERNEL/(2275:2301): Se conectó el carpincho 5 en la conexión 11
+
+[INFO] 13:13:18:324 KERNEL/(2275:2301): Pasó a NEW el carpincho 5
+
+[INFO] 13:13:18:324 KERNEL/(2275:2285): Pasó a READY el carpincho 5
+
+[INFO] 13:13:18:324 KERNEL/(2275:2286): Pasó a EXEC el carpincho 5
+
+[INFO] 13:13:18:324 KERNEL/(2275:2281): El carpincho 5, hizo wait al semaforo SEM5
+
+[INFO] 13:13:18:324 KERNEL/(2275:2279): El carpincho 2, hizo wait al semaforo SEM3
+
+[INFO] 13:13:18:325 KERNEL/(2275:2279): Pasó a BLOCKED el carpincho 2
+
+[INFO] 13:13:19:324 KERNEL/(2275:2303): Se conectó el carpincho 6 en la conexión 12
+
+[INFO] 13:13:19:325 KERNEL/(2275:2280): El carpincho 3, hizo wait al semaforo SEM4
+
+[INFO] 13:13:19:325 KERNEL/(2275:2280): Pasó a BLOCKED el carpincho 3
+
+[INFO] 13:13:19:325 KERNEL/(2275:2303): Pasó a NEW el carpincho 6
+
+[INFO] 13:13:19:326 KERNEL/(2275:2285): Pasó a READY el carpincho 6
+
+[INFO] 13:13:19:326 KERNEL/(2275:2286): Pasó a EXEC el carpincho 6
+
+[INFO] 13:13:19:327 KERNEL/(2275:2279): El carpincho 6, hizo wait al semaforo SEM6
+
+[INFO] 13:13:20:324 KERNEL/(2275:2277): El carpincho 0, terminó
+
+[INFO] 13:13:20:325 KERNEL/(2275:2278): El carpincho 4, hizo wait al semaforo SEM1
+
+[INFO] 13:13:20:325 KERNEL/(2275:2278): Pasó a BLOCKED el carpincho 4
+
+[INFO] 13:13:21:325 KERNEL/(2275:2281): El carpincho 5, hizo wait al semaforo SEM6
+
+[INFO] 13:13:21:325 KERNEL/(2275:2281): Pasó a BLOCKED el carpincho 5
+
+[INFO] 13:13:22:327 KERNEL/(2275:2279): El carpincho 6, hizo wait al semaforo SEM1
+
+[INFO] 13:13:22:327 KERNEL/(2275:2279): Pasó a BLOCKED el carpincho 6
+
+[INFO] 13:13:52:095 KERNEL/(2275:2287): Finalizo al carpincho 6 por deadlock
+
+[INFO] 13:13:52:095 KERNEL/(2275:2287): Pasó a READY el carpincho 5
+
+[INFO] 13:13:52:096 KERNEL/(2275:2287): Finalizo al carpincho 4 por deadlock
+
+[INFO] 13:13:52:096 KERNEL/(2275:2286): Pasó a EXEC el carpincho 5
+
+[INFO] 13:13:52:097 KERNEL/(2275:2287): Pasó a READY el carpincho 3
+
+[INFO] 13:13:52:098 KERNEL/(2275:2286): Pasó a EXEC el carpincho 3
+
+[INFO] 13:13:55:097 KERNEL/(2275:2277): El carpincho 5, hizo signal al semaforo SEM5
+
+[INFO] 13:13:55:097 KERNEL/(2275:2277): El carpincho 5, hizo signal al semaforo SEM6
+
+[INFO] 13:13:55:098 KERNEL/(2275:2277): El carpincho 5, terminó
+
+[INFO] 13:13:55:098 KERNEL/(2275:2278): El carpincho 3, hizo signal al semaforo SEM3
+
+[INFO] 13:13:55:098 KERNEL/(2275:2278): Pasó a READY el carpincho 2
+
+[INFO] 13:13:55:098 KERNEL/(2275:2286): Pasó a EXEC el carpincho 2
+
+[INFO] 13:13:55:098 KERNEL/(2275:2278): El carpincho 3, hizo signal al semaforo SEM4
+
+[INFO] 13:13:55:098 KERNEL/(2275:2278): El carpincho 3, terminó
+
+[INFO] 13:13:58:099 KERNEL/(2275:2277): El carpincho 2, hizo signal al semaforo SEM2
+
+[INFO] 13:13:58:099 KERNEL/(2275:2277): Pasó a READY el carpincho 1
+
+[INFO] 13:13:58:099 KERNEL/(2275:2286): Pasó a EXEC el carpincho 1
+
+[INFO] 13:13:58:100 KERNEL/(2275:2277): El carpincho 2, hizo signal al semaforo SEM3
+
+[INFO] 13:13:58:100 KERNEL/(2275:2277): El carpincho 2, terminó
+
+[INFO] 13:14:01:100 KERNEL/(2275:2278): El carpincho 1, hizo signal al semaforo SEM1
+
+[INFO] 13:14:01:101 KERNEL/(2275:2278): El carpincho 1, hizo signal al semaforo SEM2
+
+[INFO] 13:14:01:101 KERNEL/(2275:2278): El carpincho 1, terminó
+
+[INFO] 13:14:01:103 KERNEL/(2275:2304): Se conectó el carpincho 7 en la conexión 13
+
+[INFO] 13:14:01:103 KERNEL/(2275:2304): Pasó a NEW el carpincho 7
+
+[INFO] 13:14:01:104 KERNEL/(2275:2285): Pasó a READY el carpincho 7
+
+[INFO] 13:14:01:104 KERNEL/(2275:2286): Pasó a EXEC el carpincho 7
+
+[INFO] 13:14:01:104 KERNEL/(2275:2277): El carpincho 7, hizo destroy al semaforo SEM1
+
+[INFO] 13:14:01:104 KERNEL/(2275:2277): Se eliminó el semaforo SEM1
+
+[INFO] 13:14:01:104 KERNEL/(2275:2277): El carpincho 7, hizo destroy al semaforo SEM2
+
+[INFO] 13:14:01:105 KERNEL/(2275:2277): Se eliminó el semaforo SEM2
+
+[INFO] 13:14:01:105 KERNEL/(2275:2277): El carpincho 7, hizo destroy al semaforo SEM3
+
+[INFO] 13:14:01:105 KERNEL/(2275:2277): Se eliminó el semaforo SEM3
+
+[INFO] 13:14:01:105 KERNEL/(2275:2277): El carpincho 7, hizo destroy al semaforo SEM4
+
+[INFO] 13:14:01:106 KERNEL/(2275:2277): Se eliminó el semaforo SEM4
+
+[INFO] 13:14:01:106 KERNEL/(2275:2277): El carpincho 7, hizo destroy al semaforo SEM5
+
+[INFO] 13:14:01:106 KERNEL/(2275:2277): Se eliminó el semaforo SEM5
+
+[INFO] 13:14:01:106 KERNEL/(2275:2277): El carpincho 7, hizo destroy al semaforo SEM6
+
+[INFO] 13:14:01:107 KERNEL/(2275:2277): Se eliminó el semaforo SEM6
+
+[INFO] 13:14:01:107 KERNEL/(2275:2277): El carpincho 7, terminó
+
+[INFO] 13:16:26:782 KERNEL/(2398:2398): 
+
+---------------------------------------------------
+
+
+[INFO] 13:16:26:783 KERNEL/(2398:2398): 
+
+---------------------------------------------------
+
+
+[INFO] 13:16:26:783 KERNEL/(2398:2398): Cree un dispositivo
+
+[INFO] 13:16:26:783 KERNEL/(2398:2398): Nombre dispositivo PILETA
+
+[INFO] 13:16:26:783 KERNEL/(2398:2398): Rafaga dispositivo 5000
+
+[INFO] 13:16:26:783 KERNEL/(2398:2398): Creé un procesador
+
+[INFO] 13:16:26:783 KERNEL/(2398:2398): Creé un procesador
+
+[INFO] 13:16:26:783 KERNEL/(2398:2398): Ya cree el planificador de largo plazo
+
+[INFO] 13:16:26:783 KERNEL/(2398:2398): Ya cree el planificador de corto plazo utilizando el algoritmo SJF
+
+[INFO] 13:16:26:784 KERNEL/(2398:2398): Ya cree el algoritmo para correr deadlock
+
+[INFO] 13:16:31:399 KERNEL/(2398:2407): Se conectó el carpincho 0 en la conexión 5
+
+[INFO] 13:16:31:399 KERNEL/(2398:2407): Pasó a NEW el carpincho 0
+
+[INFO] 13:16:31:399 KERNEL/(2398:2402): Pasó a READY el carpincho 0
+
+[INFO] 13:16:31:399 KERNEL/(2398:2403): Pasó a EXEC el carpincho 0
+
+[INFO] 13:16:31:399 KERNEL/(2398:2400): El carpincho 0, pidió hacer I/O en PILETA
+
+[INFO] 13:16:31:399 KERNEL/(2398:2400): Pasó a BLOCKED el carpincho 0
+
+[INFO] 13:16:32:400 KERNEL/(2398:2409): Se conectó el carpincho 1 en la conexión 7
+
+[INFO] 13:16:32:401 KERNEL/(2398:2409): Pasó a NEW el carpincho 1
+
+[INFO] 13:16:32:401 KERNEL/(2398:2402): Pasó a READY el carpincho 1
+
+[INFO] 13:16:32:401 KERNEL/(2398:2403): Pasó a EXEC el carpincho 1
+
+[INFO] 13:16:32:402 KERNEL/(2398:2400): El carpincho 1, pidió hacer I/O en PILETA
+
+[INFO] 13:16:32:402 KERNEL/(2398:2400): Pasó a BLOCKED el carpincho 1
+
+[INFO] 13:16:33:399 KERNEL/(2398:2411): Se conectó el carpincho 2 en la conexión 8
+
+[INFO] 13:16:33:400 KERNEL/(2398:2411): Pasó a NEW el carpincho 2
+
+[INFO] 13:16:33:400 KERNEL/(2398:2411): Pasó a BLOCKED-SUSPENDED el carpincho 1
+
+[INFO] 13:16:33:400 KERNEL/(2398:2402): Pasó a READY el carpincho 2
+
+[INFO] 13:16:33:400 KERNEL/(2398:2403): Pasó a EXEC el carpincho 2
+
+[INFO] 13:16:33:400 KERNEL/(2398:2400): El carpincho 2, pidió hacer I/O en PILETA
+
+[INFO] 13:16:33:400 KERNEL/(2398:2400): Pasó a BLOCKED el carpincho 2
+
+[INFO] 13:16:34:400 KERNEL/(2398:2413): Se conectó el carpincho 3 en la conexión 9
+
+[INFO] 13:16:34:400 KERNEL/(2398:2413): Pasó a NEW el carpincho 3
+
+[INFO] 13:16:34:400 KERNEL/(2398:2413): Pasó a BLOCKED-SUSPENDED el carpincho 2
+
+[INFO] 13:16:34:400 KERNEL/(2398:2402): Pasó a READY el carpincho 3
+
+[INFO] 13:16:34:400 KERNEL/(2398:2403): Pasó a EXEC el carpincho 3
+
+[INFO] 13:16:34:400 KERNEL/(2398:2400): El carpincho 3, pidió hacer I/O en PILETA
+
+[INFO] 13:16:34:401 KERNEL/(2398:2400): Pasó a BLOCKED el carpincho 3
+
+[INFO] 13:16:36:400 KERNEL/(2398:2399): Pasó a READY el carpincho 0
+
+[INFO] 13:16:36:400 KERNEL/(2398:2403): Pasó a EXEC el carpincho 0
+
+[INFO] 13:16:36:400 KERNEL/(2398:2400): El carpincho 0, pidió hacer I/O en PILETA
+
+[INFO] 13:16:36:400 KERNEL/(2398:2400): Pasó a BLOCKED el carpincho 0
+
+[INFO] 13:16:41:400 KERNEL/(2398:2399): Pasó a READY-SUSPENDED el carpincho 1
+
+[INFO] 13:16:46:401 KERNEL/(2398:2399): Pasó a READY-SUSPENDED el carpincho 2
+
+[INFO] 13:16:51:402 KERNEL/(2398:2399): Pasó a READY el carpincho 3
+
+[INFO] 13:16:51:402 KERNEL/(2398:2403): Pasó a EXEC el carpincho 3
+
+[INFO] 13:16:51:403 KERNEL/(2398:2400): El carpincho 3, pidió hacer I/O en PILETA
+
+[INFO] 13:16:51:403 KERNEL/(2398:2400): Pasó a BLOCKED el carpincho 3
+
+[INFO] 13:16:56:403 KERNEL/(2398:2399): Pasó a READY el carpincho 0
+
+[INFO] 13:16:56:403 KERNEL/(2398:2403): Pasó a EXEC el carpincho 0
+
+[INFO] 13:16:56:403 KERNEL/(2398:2400): El carpincho 0, pidió hacer I/O en PILETA
+
+[INFO] 13:16:56:403 KERNEL/(2398:2400): Pasó a BLOCKED el carpincho 0
+
+[INFO] 13:17:01:404 KERNEL/(2398:2399): Pasó a READY el carpincho 3
+
+[INFO] 13:17:01:405 KERNEL/(2398:2403): Pasó a EXEC el carpincho 3
+
+[INFO] 13:17:01:405 KERNEL/(2398:2400): El carpincho 3, pidió hacer I/O en PILETA
+
+[INFO] 13:17:01:405 KERNEL/(2398:2400): Pasó a BLOCKED el carpincho 3
+
+[INFO] 13:17:06:405 KERNEL/(2398:2399): Pasó a READY el carpincho 0
+
+[INFO] 13:17:06:405 KERNEL/(2398:2403): Pasó a EXEC el carpincho 0
+
+[INFO] 13:17:06:405 KERNEL/(2398:2400): El carpincho 0, terminó
+
+[INFO] 13:17:06:406 KERNEL/(2398:2402): Pasó a READY el carpincho 1
+
+[INFO] 13:17:06:406 KERNEL/(2398:2403): Pasó a EXEC el carpincho 1
+
+[INFO] 13:17:06:406 KERNEL/(2398:2400): El carpincho 1, pidió hacer I/O en PILETA
+
+[INFO] 13:17:06:406 KERNEL/(2398:2400): Pasó a BLOCKED el carpincho 1
+
+[INFO] 13:17:11:406 KERNEL/(2398:2399): Pasó a READY el carpincho 3
+
+[INFO] 13:17:11:407 KERNEL/(2398:2403): Pasó a EXEC el carpincho 3
+
+[INFO] 13:17:11:407 KERNEL/(2398:2400): El carpincho 3, terminó
+
+[INFO] 13:17:11:408 KERNEL/(2398:2402): Pasó a READY el carpincho 2
+
+[INFO] 13:17:11:408 KERNEL/(2398:2403): Pasó a EXEC el carpincho 2
+
+[INFO] 13:17:11:408 KERNEL/(2398:2400): El carpincho 2, pidió hacer I/O en PILETA
+
+[INFO] 13:17:11:409 KERNEL/(2398:2400): Pasó a BLOCKED el carpincho 2
+
+[INFO] 13:17:16:407 KERNEL/(2398:2399): Pasó a READY el carpincho 1
+
+[INFO] 13:17:16:408 KERNEL/(2398:2403): Pasó a EXEC el carpincho 1
+
+[INFO] 13:17:16:409 KERNEL/(2398:2400): El carpincho 1, pidió hacer I/O en PILETA
+
+[INFO] 13:17:16:409 KERNEL/(2398:2400): Pasó a BLOCKED el carpincho 1
+
+[INFO] 13:17:21:409 KERNEL/(2398:2399): Pasó a READY el carpincho 2
+
+[INFO] 13:17:21:410 KERNEL/(2398:2403): Pasó a EXEC el carpincho 2
+
+[INFO] 13:17:21:410 KERNEL/(2398:2400): El carpincho 2, pidió hacer I/O en PILETA
+
+[INFO] 13:17:21:410 KERNEL/(2398:2400): Pasó a BLOCKED el carpincho 2
+
+[INFO] 13:17:26:410 KERNEL/(2398:2399): Pasó a READY el carpincho 1
+
+[INFO] 13:17:26:410 KERNEL/(2398:2403): Pasó a EXEC el carpincho 1
+
+[INFO] 13:17:26:410 KERNEL/(2398:2400): El carpincho 1, terminó
+
+[INFO] 13:17:31:410 KERNEL/(2398:2399): Pasó a READY el carpincho 2
+
+[INFO] 13:17:31:411 KERNEL/(2398:2403): Pasó a EXEC el carpincho 2
+
+[INFO] 13:17:31:412 KERNEL/(2398:2400): El carpincho 2, terminó
+

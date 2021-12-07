@@ -204,16 +204,16 @@ void ejecutar(t_procesador* estructura_procesador) {
 			call_IO(estructura_procesador);
 			break;
 		case MEMALLOC:
-			//TODO DEFINIR
+			memalloc(estructura_procesador);
 			break;
 		case MEMREAD:
-			//TODO DEFINIR
+			memread(estructura_procesador);
 			break;
 		case MEMFREE:
-			//TODO DEFINIR
+			memfree(estructura_procesador);
 			break;
 		case MEMWRITE:
-			//TODO DEFINIR
+			memwrite(estructura_procesador);
 			break;
 		case CLOSE:
 			mate_close(estructura_procesador);
@@ -556,17 +556,171 @@ void ejecutar_io(t_dispositivo* dispositivo) {
 
 void memalloc(t_procesador* estructura_procesador) {
 
+	int32_t entero;
+	uint32_t mallocSize;
+
+	recv(estructura_procesador->lugar_PCB->conexion, &entero, sizeof(uint32_t), MSG_WAITALL);
+	recv(estructura_procesador->lugar_PCB->conexion, &mallocSize, sizeof(uint32_t), MSG_WAITALL);
+
+	int conexion_memoria = crear_conexion(CONFIG_KERNEL.ip_memoria , CONFIG_KERNEL.puerto_memoria);
+
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = MEMALLOC;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = sizeof(uint32_t)*2;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	int offset = 0;
+
+	memcpy(paquete->buffer->stream, &estructura_procesador->lugar_PCB->PID, sizeof(uint32_t));
+	offset += sizeof(uint32_t);
+	memcpy(paquete->buffer->stream, &mallocSize, sizeof(unsigned int));
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	int32_t dir_logica;
+
+	send(conexion_memoria, a_enviar, bytes, 0);
+	recv(conexion_memoria, &dir_logica , sizeof(int32_t) , 0);
+
+	send(estructura_procesador->lugar_PCB->conexion, &dir_logica, sizeof(int32_t), 0);
+
+	free(a_enviar);
+	eliminar_paquete(paquete);
+
+	close(conexion_memoria);
+
 }
 
 void memread(t_procesador* estructura_procesador) {
+
+	int32_t entero;
+	uint32_t origin;
+	uint32_t size;
+
+	recv(estructura_procesador->lugar_PCB->conexion, &entero, sizeof(uint32_t), MSG_WAITALL);
+	recv(estructura_procesador->lugar_PCB->conexion, &origin, sizeof(uint32_t), MSG_WAITALL);
+	recv(estructura_procesador->lugar_PCB->conexion, &size, sizeof(uint32_t), MSG_WAITALL);
+
+	int conexion_memoria = crear_conexion(CONFIG_KERNEL.ip_memoria , CONFIG_KERNEL.puerto_memoria);
+
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = MEMREAD;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = sizeof(int32_t) * 3;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	memcpy(paquete->buffer->stream, &estructura_procesador->lugar_PCB->PID, sizeof(uint32_t));
+	memcpy(paquete->buffer->stream + sizeof(uint32_t), &origin, sizeof(uint32_t));
+	memcpy(paquete->buffer->stream + (sizeof(uint32_t)*2), &size, sizeof(uint32_t));
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	MATE_RETURNS retorno;
+	void* dest = malloc(size);
+
+	send(conexion_memoria, a_enviar, bytes, 0);
+	recv(conexion_memoria, &retorno , sizeof(uint32_t) , 0);
+	recv(conexion_memoria, dest, size, 0);
+
+	send(estructura_procesador->lugar_PCB->conexion, &retorno, sizeof(uint32_t), 0);
+	send(estructura_procesador->lugar_PCB->conexion, dest, size, 0);
+
+	free(a_enviar);
+	eliminar_paquete(paquete);
+	free(dest);
+
+	close(conexion_memoria);
 
 }
 
 void memfree(t_procesador* estructura_procesador) {
 
+	int32_t entero;
+	int32_t addr;
+	recv(estructura_procesador->lugar_PCB->conexion, &entero, sizeof(uint32_t), MSG_WAITALL);
+	recv(estructura_procesador->lugar_PCB->conexion, &addr, sizeof(uint32_t), MSG_WAITALL);
+
+	int conexion_memoria = crear_conexion(CONFIG_KERNEL.ip_memoria , CONFIG_KERNEL.puerto_memoria);
+
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = MEMFREE;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = sizeof(int32_t);
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	memcpy(paquete->buffer->stream, &addr, sizeof(uint32_t));
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	MATE_RETURNS retorno;
+
+	send(conexion_memoria, a_enviar, bytes, 0);
+	recv(conexion_memoria, &retorno, sizeof(uint32_t), 0);
+
+	send(estructura_procesador->lugar_PCB->conexion, &retorno, sizeof(uint32_t), 0);
+
+	free(a_enviar);
+	eliminar_paquete(paquete);
+
+	close(conexion_memoria);
+
 }
 
 void memwrite(t_procesador* estructura_procesador) {
+
+	int32_t entero;
+	void* origin;
+	uint32_t size;
+	uint32_t dest;
+
+	recv(estructura_procesador->lugar_PCB->conexion, &entero, sizeof(uint32_t), MSG_WAITALL);
+	recv(estructura_procesador->lugar_PCB->conexion, &dest, sizeof(uint32_t), MSG_WAITALL);
+	recv(estructura_procesador->lugar_PCB->conexion, &size, sizeof(uint32_t), MSG_WAITALL);
+
+	origin = malloc(size);
+
+	recv(estructura_procesador->lugar_PCB->conexion, origin, size, MSG_WAITALL);
+
+	int conexion_memoria = crear_conexion(CONFIG_KERNEL.ip_memoria , CONFIG_KERNEL.puerto_memoria);
+
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = MEMWRITE;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = sizeof(int32_t) * 2 + size;
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+
+	memcpy(paquete->buffer->stream, &estructura_procesador->lugar_PCB->PID, sizeof(uint32_t));
+	memcpy(paquete->buffer->stream + sizeof(uint32_t), &dest, sizeof(uint32_t));
+	memcpy(paquete->buffer->stream + sizeof(uint32_t)*2, &size, sizeof(uint32_t));
+	memcpy(paquete->buffer->stream + sizeof(uint32_t)*3, origin, size);
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	MATE_RETURNS retorno;
+
+	send(conexion_memoria, a_enviar, bytes, 0);
+	recv(conexion_memoria, &retorno , sizeof(uint32_t) , 0);
+
+	send(estructura_procesador->lugar_PCB->conexion, &retorno, sizeof(uint32_t), 0);
+
+	free(a_enviar);
+	eliminar_paquete(paquete);
+
+	close(conexion_memoria);
 
 }
 

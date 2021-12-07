@@ -464,7 +464,7 @@ mate_pointer mate_memalloc(mate_instance *lib_ref, int size)
   	int dir_logica;
 
   	send(((mate_inner_structure *)lib_ref->group_info)->socket_conexion, a_enviar, bytes, 0);
-  	recv(((mate_inner_structure *)lib_ref->group_info)->socket_conexion , &dir_logica , sizeof(uint32_t) , 0);
+  	recv(((mate_inner_structure *)lib_ref->group_info)->socket_conexion , &dir_logica , sizeof(int32_t) , 0);
 
   	free(a_enviar);
   	eliminar_paquete(paquete);

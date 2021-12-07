@@ -43,6 +43,13 @@ typedef struct {
 	t_list* recursos_usados;
 }PCB;
 
+typedef enum{
+	MATE_SUCCESS = 1,
+	MATE_FREE_FAULT = -5,
+	MATE_READ_FAULT = -6,
+	MATE_WRITE_FAULT = -7
+}MATE_RETURNS;
+
 typedef struct {
     char* ip_memoria;
     char* puerto_memoria;
