@@ -276,7 +276,8 @@ void atender_peticiones(int* cliente){
 
 		break;
 
-	default: log_info(LOGGER, "[SWAMP]: No entiendo la peticion, rey.");
+	default:;
+		sleep(20);
 	break;
 	}
 	return;

@@ -311,7 +311,8 @@ void atender_carpinchos(int* cliente) {
 
 		break;
 
-		default:; log_info(LOGGER, "No se entendio la solicitud del cliente %i.", *cliente);
+		default:;
+			sleep(20);
 		break;
 
 		}
@@ -1302,6 +1303,14 @@ int reemplazar_con_CLOCK_M2(int32_t pid) {
     if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
             paginas = list_filter(paginas_en_mp(), (void*)no_esta_lockeada);
 	}
+
+    bool index_frame(void* ele1 , void* ele2){
+    	t_pagina* pag1 = (t_pagina*) ele1;
+    	t_pagina* pag2 = (t_pagina*) ele2;
+    	return pag1->frame_ppal < pag2->frame_ppal;
+    }
+
+    list_sort(paginas , index_frame);
 	int retorno = algoritmo_clock(paginas);
 
 	if ( retorno == -1){
