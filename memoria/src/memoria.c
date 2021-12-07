@@ -6,42 +6,22 @@ int main(void) {
 	init_memoria();
 
 	//Coordinacion multihilo de carpinchos
-	//coordinador_multihilo();
+	coordinador_multihilo();
 
-
+/*
 	memalloc(0, 10,1);
-	memalloc(0, sizeof(uint32_t),1);
+	//memalloc(0, sizeof(uint32_t),1);
 	memalloc(1, 10,1);
-	memalloc(1, sizeof(uint32_t),1);
+	//memalloc(1, sizeof(uint32_t),1);
 
 	int i = 0;
 
-	while (i < 1000) {
-
+	while (i < 50) {
 		memalloc(0,1,1);
-		memalloc(1,1,1);
 		i++;
 	}
-
-	/*int C0 = memalloc(0, 23, 1);
-	int C1 = memalloc(0, 23, 1);
-	int C2 = memalloc(0, 23, 1);
-	int C3 = memalloc(0, 23, 1);
-	int C4 = memalloc(0, 23, 1);
-	int C5 = memalloc(0, 23, 1);
-	int C6 = memalloc(0, 23, 1);
-	int C7 = memalloc(0, 23, 1);
-	int C8 = memalloc(0, 23, 1);
-	memwrite(0, "hola", C1, 5);
-
-	dump_memoria_principal();
-/*	C0 P6  UM
-	C0 P7  UM
-	C0 P8  UM
-->	C0 P3  -M
-	C0 P4  -M
-	C0 P5  -M
-*/
+	printf("\nSalio Ok \n");
+	*/
 	return EXIT_SUCCESS;
 }
 
@@ -376,7 +356,7 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 
 			t_pid_cliente* pid_cliente = malloc(sizeof(t_pid_cliente));
 			pid_cliente->cliente = cliente;
-			pid_cliente->pid = pid;
+			pid_cliente->pid     = pid;
 			list_add(PIDS_CLIENTE, pid_cliente);
 		}
 
@@ -540,9 +520,9 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 				unlockear(pagina);
 			}
 
-			//dir_logica = ultimo_header->prev_alloc;
 			guardar_header(pid, nro_pagina, offset, ultimo_header);
 			guardar_header(pid, nro_pagina_nueva , offset_nuevo, nuevo_header);
+			//heap_metadata* head = desserializar_header(pid, nro_pagina, offset_nuevo);
 
 			printf("PID%i le agregue %i pags\n", pid, cantidad_paginas);
 
@@ -940,10 +920,6 @@ t_alloc_disponible* obtener_alloc_disponible(int32_t pid, int32_t size, uint32_t
 			int tamanio_total      = list_size(paginas_proceso) * CONFIG.tamanio_pagina;
 			int tamanio_disponible = tamanio_total - (int)posicion_heap_actual - sizeof(heap_metadata) * 2;
 
-			if (posicion_heap_actual == 2042 ) {
-				printf("OBTENER ALLOC DISPONIBLE hackeado \n");
-			}
-
 			if (tamanio_disponible > size) {
 
 				//Creo header nuevo
@@ -962,6 +938,9 @@ t_alloc_disponible* obtener_alloc_disponible(int32_t pid, int32_t size, uint32_t
 
 				alloc->direc_logica      = header_nuevo->prev_alloc;
 				alloc->flag_ultimo_alloc = 0;
+
+				//heap_metadata* headeraver = desserializar_header(pid, nro_pagina, offset);
+				//heap_metadata* headeraver2 = desserializar_header(pid, nro_pagina, offset + size + sizeof(heap_metadata));
 
 				free(header_nuevo);
 				free(header);
@@ -1032,12 +1011,16 @@ t_alloc_disponible* obtener_alloc_disponible(int32_t pid, int32_t size, uint32_t
 void guardar_header(int32_t pid, int index_pag, int offset, heap_metadata* header){
 
 	t_list* pags_proceso = tabla_por_pid(pid)->paginas;
-	t_pagina* pag        = (t_pagina*)list_get(pags_proceso, index_pag);
-
+	t_pagina* pag;
 	int diferencia;
+
+	//Header esta en la pagina siguiente al index que me pasaron
 	if (offset > CONFIG.tamanio_pagina) {
+		pag = list_get(pags_proceso, index_pag+1);
 		diferencia = offset - CONFIG.tamanio_pagina;
+		offset -= CONFIG.tamanio_pagina;
 	} else {
+		pag = list_get(pags_proceso, index_pag);
 		diferencia = CONFIG.tamanio_pagina - offset - sizeof(heap_metadata);
 	}
 
@@ -1047,10 +1030,11 @@ void guardar_header(int32_t pid, int index_pag, int offset, heap_metadata* heade
 
 	//El header entra completo en la pagina
 	if (diferencia >= 0) {
+
 		memcpy(MEMORIA_PRINCIPAL + CONFIG.tamanio_pagina * frame + offset, header, sizeof(heap_metadata));
 
 	} else {
-		t_pagina* pag_sig       = (t_pagina*)list_get(pags_proceso, index_pag + 1);
+		t_pagina* pag_sig    = (t_pagina*)list_get(pags_proceso, index_pag + 1);
 
 		void* header_buffer  = malloc(sizeof(heap_metadata));
 		memcpy(header_buffer, header, sizeof(heap_metadata));
