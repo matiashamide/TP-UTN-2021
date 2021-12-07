@@ -138,7 +138,7 @@ int reemplazar_con_LRU(int pid);
 int reemplazar_con_CLOCK_M(int pid);
 int reemplazar_con_CLOCK_M2(int pid);
 int obtener_tiempo_MMU();
-
+int algoritmo_clock(t_list* paginas);
 //// ---- funciones para listas administrativas
 bool            hay_frames_libres_mp(int frames_necesarios);
 t_list*         paginas_en_mp();
@@ -175,5 +175,6 @@ void signal_clean_tlb();
 
 //// ---- funcion dump
 void dump_memoria_principal();
+void printear_memoria_principal();
 
 #endif /* MEMORIA_H_ */

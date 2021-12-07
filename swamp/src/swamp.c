@@ -148,16 +148,16 @@ void atender_peticiones(int* cliente){
 
 	case RESERVAR_ESPACIO:;
 
-		printf("\n\nReservar espacio\n\n");
-
 		pid          = recibir_entero(*cliente);
 		cant_paginas = recibir_entero(*cliente);
 
 		log_info(LOGGER, "[SWAMP]: Reservando %i paginas para el proceso %i", cant_paginas, pid);
 
+		printf("\nRESERVAR ESPACIO PID %i CANTPAGINAS %i\n", pid, cant_paginas);
+
 		rta = reservar_espacio(pid, cant_paginas);
 		send(*cliente, &rta, sizeof(uint32_t), 0);
-		printf("\n\nReserve espacio y salio %i\n\n",rta);
+		//printf("\n\nReserve espacio y salio %i\n\n",rta);
 		break;
 
 	case TIRAR_A_SWAP:;
@@ -210,8 +210,6 @@ void atender_peticiones(int* cliente){
 		pid        = recibir_entero(*cliente);
 		nro_pagina = recibir_entero(*cliente);
 
-		printf("\nMandando a MP PID%i PAG%i\n",pid, nro_pagina);
-
 		log_info(LOGGER, "[SWAMP]: Mandando pagina %i del proceso %i a MP", nro_pagina, pid);
 
 		frame   = frame_de_pagina(pid, nro_pagina);
@@ -258,8 +256,6 @@ void atender_peticiones(int* cliente){
 
 	case SOLICITAR_MARCOS_MAX:;
 
-	printf("\n\nMarcos max\n\n");
-
 		log_info(LOGGER, "[SWAMP->MP]: Mandando los marcos_max a MP...");
 		send(*cliente, &CONFIG.marcos_max, sizeof(uint32_t), 0);
 
@@ -280,7 +276,8 @@ void atender_peticiones(int* cliente){
 
 		break;
 
-	default: log_info(LOGGER, "[SWAMP]: No entiendo la peticion, rey.");
+	default:;
+		sleep(20);
 	break;
 	}
 	return;
@@ -318,8 +315,7 @@ int32_t reservar_espacio(int32_t pid, int cant_paginas) {
 
 			archivo->espacio_disponible -= cant_paginas * CONFIG.tamanio_pag;
 
-			printf("Archivo id %i fd %i con espacio %i \n", archivo->id, archivo->fd, archivo->espacio_disponible);
-
+			log_info(LOGGER, "PID %i ARCHIVO_ID %i ARCHIVO_FD %i ESPACIO_DISPONIBLE %i \n", pid, archivo->id, archivo->fd, archivo->espacio_disponible);
 			log_info(LOGGER, "Se reservaron %i paginas para el proceso %i", cant_paginas, pid);
 			return 1;
 		}
@@ -362,8 +358,7 @@ int32_t reservar_espacio(int32_t pid, int cant_paginas) {
 
 			archivo->espacio_disponible -= cant_frames_requeridos * CONFIG.tamanio_pag;
 
-			printf("Archivo id %i fd %i sera del proceso %i \n", archivo->id, archivo->fd, pid);
-
+			log_info(LOGGER, "PID %i ARCHIVO_ID %i ARCHIVO_FD %i ESPACIO_DISPONIBLE %i \n", pid, archivo->id, archivo->fd, archivo->espacio_disponible);
 			log_info(LOGGER, "Se reservaron %i frames y %i paginas para el proceso %i", cant_frames_requeridos, cant_paginas, pid);
 			return 1;
 		}
@@ -416,7 +411,6 @@ int32_t recibir_entero_swap(int cliente){
 	    return -1;
 	}
 }
-
 
 //--------------------------------------------------- FUNCIONES UTILES ---------------------------------------------------//
 
