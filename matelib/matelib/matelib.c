@@ -355,7 +355,7 @@ int mate_sem_wait(mate_instance *lib_ref, mate_sem_name sem) {
 	} else {
 		close(((mate_inner_structure *)lib_ref->group_info)->socket_conexion);
 		free(lib_ref->group_info);
-		printf("Fui finalizado por deadlock, adiosss\n");
+		//printf("Fui finalizado por deadlock, adiosss\n");
 		free(a_enviar);
 		eliminar_paquete(paquete);
 		pthread_exit(NULL);

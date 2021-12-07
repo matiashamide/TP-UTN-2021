@@ -103,7 +103,7 @@ void init_kernel(){
 	sem_init(&sem_grado_multiprocesamiento, 0, CONFIG_KERNEL.grado_multiprocesamiento);
 
 	//Variable que asigna PIDs a los nuevos carpinchos
-	PID_PROX_CARPINCHO = 1;
+	PID_PROX_CARPINCHO = 0;
 
 	crear_dispositivos_io();
 	crear_procesadores();

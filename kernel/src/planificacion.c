@@ -74,10 +74,8 @@ void algoritmo_planificador_corto_plazo() {
 
 		if(strcmp(CONFIG_KERNEL.alg_plani, "SJF") == 0) {
 			pcb = algoritmo_SJF();
-			log_info(LOGGER, "El algoritmo elige al carpincho %d\n", pcb->PID);
 		} else if (strcmp(CONFIG_KERNEL.alg_plani, "HRRN") == 0){
 			pcb = algoritmo_HRRN();
-			log_info(LOGGER, "El algoritmo elige al carpincho %d\n", pcb->PID);
 		} else {
 			log_info(LOGGER, "El algoritmo de planificacion ingresado no existe\n");
 		}
@@ -491,7 +489,7 @@ void call_IO(t_procesador* estructura_procesador) {
 
 	recv(estructura_procesador->lugar_PCB->conexion, nombre, size_nombre_dispositivo, MSG_WAITALL);
 
-	log_info(LOGGER, "El carpincho %d, pidió hacer entrada salida en %s\n", estructura_procesador->lugar_PCB->PID, nombre);
+	log_info(LOGGER, "El carpincho %d, pidió hacer I/O en %s\n", estructura_procesador->lugar_PCB->PID, nombre);
 
 	bool _criterio_busqueda_dispositivo(void* elemento) {
 			return (strcmp(((t_dispositivo*)elemento)->nombre, nombre) == 0);
@@ -521,7 +519,7 @@ void ejecutar_io(t_dispositivo* dispositivo) {
 	while(1) {
 		sem_wait(&dispositivo->sem);
 		PCB* pcb = (PCB*) list_remove(dispositivo->cola_espera, 0);
-		usleep(dispositivo->rafaga);
+		usleep(dispositivo->rafaga*1000);
 
 		bool _criterio_remocion_lista(void* elemento) {
 			return (((PCB*)elemento)->PID == pcb->PID);
@@ -700,7 +698,7 @@ void mate_close(t_procesador* estructura_procesador) {
 
 void correr_algoritmo_deadlock() {
 	while(1) {
-		usleep(CONFIG_KERNEL.tiempo_deadlock);
+		usleep(CONFIG_KERNEL.tiempo_deadlock*1000);
 		algoritmo_deteccion_deadlock();
 	}
 }
@@ -726,6 +724,17 @@ void algoritmo_deteccion_deadlock() {
 
 	for(int h = 0; h < list_size(lista_bloqueados_por_semaforo); h++) {
 		PCB* pcb = list_get(lista_bloqueados_por_semaforo, h);
+
+		bool _criterio_igual_pid_en_bloqueados(void* elemento) {
+			return (((PCB*)elemento)->PID == pcb->PID);
+		}
+
+		bool _criterio_busqueda_semaforo_en_que_esta_bloqueado(void* elemento) {
+			return (list_any_satisfy(((t_semaforo_mate*)elemento)->cola_bloqueados, _criterio_igual_pid_en_bloqueados));
+		}
+
+		t_semaforo_mate* semaforo_en_que_esta_bloqueado = list_find(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo_en_que_esta_bloqueado);
+
 		if(list_size(pcb->recursos_usados) > 0) {
 			for(int g = 0; g < list_size(pcb->recursos_usados); g++) {
 				t_registro_uso_recurso* recurso_usado = list_get(pcb->recursos_usados, g);
@@ -747,9 +756,17 @@ void algoritmo_deteccion_deadlock() {
 				int procesos_que_lo_piden = list_count_satisfying(semaforo->cola_bloqueados, _criterio_procesos_distintos);
 
 				if(procesos_que_lo_piden > 0 && !list_any_satisfy(lista_procesos_en_deadlock, _criterio_remocion_lista)) {
-					list_add(lista_procesos_en_deadlock, pcb);
+					t_list* lista_bloqueados_por_semaforo_menos_este = list_filter(lista_bloqueados_por_semaforo, _criterio_procesos_distintos);
 
-					log_info(LOGGER, "El carpincho %d esta en deadlock\n", pcb->PID);
+					for(int k = 0; k < list_size(lista_bloqueados_por_semaforo_menos_este); k++) {
+						PCB* carpincho = list_get(lista_bloqueados_por_semaforo, k);
+						for(int o = 0; o < list_size(carpincho->recursos_usados); o++) {
+							t_registro_uso_recurso* recurso_usado_carpincho = list_get(carpincho->recursos_usados, o);
+							if(strcmp(recurso_usado_carpincho->nombre, semaforo_en_que_esta_bloqueado->nombre) == 0) {
+								list_add(lista_procesos_en_deadlock, pcb);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -766,6 +783,7 @@ void algoritmo_deteccion_deadlock() {
 		}
 
 		PCB* proceso_de_mayor_pid = (PCB*) list_get_maximum(lista_procesos_en_deadlock, _eleccion_mayor_PID);
+		log_info(LOGGER, "Finalizo al carpincho %d por deadlock\n", proceso_de_mayor_pid->PID);
 
 		bool _criterio_igual_pid(void* elemento) {
 			return (((PCB*)elemento)->PID == proceso_de_mayor_pid->PID);
@@ -835,7 +853,6 @@ void algoritmo_deteccion_deadlock() {
 		}
 
 		//TODO aca aumentar el grado de multiprogramacion, cerrar conexiones, y liquidar al carpincho
-		log_info(LOGGER, "Finalizo al carpincho %d por deadlock\n", proceso_de_mayor_pid->PID);
 		avisar_finalizacion_por_deadlock(proceso_de_mayor_pid->conexion);
 		close(proceso_de_mayor_pid->conexion);
 
