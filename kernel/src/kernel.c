@@ -111,6 +111,16 @@ void init_kernel(){
 	iniciar_planificador_corto_plazo();
 	iniciar_algoritmo_deadlock();
 
+	signal(SIGINT,  &cerrar_kernel);
+
+}
+
+void cerrar_kernel() {
+
+	//TODO aca todos los frees
+
+
+	exit(1);
 }
 
 void crear_dispositivos_io() {

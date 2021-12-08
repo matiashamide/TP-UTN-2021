@@ -190,3 +190,31 @@
 [INFO] 15:34:47:244 SWAMP/(26923:26923): PID 4 ARCHIVO_ID 0 ARCHIVO_FD 5 ESPACIO_DISPONIBLE 195584 
 
 [INFO] 15:34:47:244 SWAMP/(26923:26923): Se reservaron 1 paginas para el proceso 4
+[INFO] 15:47:43:268 SWAMP/(28570:28570): Se conecto el cliente 9 a SWAMP
+[INFO] 15:47:43:409 SWAMP/(28570:28570): [SWAMP->MP]: Mandando los marcos_max a MP...
+[INFO] 15:47:50:274 SWAMP/(28570:28570): [SWAMP]: Reservando 1 paginas para el proceso 5
+[INFO] 15:47:50:316 SWAMP/(28570:28570): PID 5 ARCHIVO_ID 2 ARCHIVO_FD 8 ESPACIO_DISPONIBLE 229376 
+
+[INFO] 15:47:50:316 SWAMP/(28570:28570): Se reservaron 32 frames y 1 paginas para el proceso 5
+[INFO] 15:47:50:329 SWAMP/(28570:28570): [SWAMP]: Reservando 1 paginas para el proceso 1
+[INFO] 15:47:50:339 SWAMP/(28570:28570): PID 1 ARCHIVO_ID 0 ARCHIVO_FD 5 ESPACIO_DISPONIBLE 229376 
+
+[INFO] 15:47:50:339 SWAMP/(28570:28570): Se reservaron 32 frames y 1 paginas para el proceso 1
+[INFO] 15:47:55:248 SWAMP/(28570:28570): [SWAMP]: Reservando 1 paginas para el proceso 7
+[INFO] 15:47:55:263 SWAMP/(28570:28570): PID 7 ARCHIVO_ID 1 ARCHIVO_FD 7 ESPACIO_DISPONIBLE 229376 
+
+[INFO] 15:47:55:264 SWAMP/(28570:28570): Se reservaron 32 frames y 1 paginas para el proceso 7
+[INFO] 15:47:56:280 SWAMP/(28570:28570): [SWAMP]: Reservando 1 paginas para el proceso 4
+[INFO] 15:47:56:301 SWAMP/(28570:28570): PID 4 ARCHIVO_ID 0 ARCHIVO_FD 5 ESPACIO_DISPONIBLE 196608 
+
+[INFO] 15:47:56:302 SWAMP/(28570:28570): Se reservaron 32 frames y 1 paginas para el proceso 4
+[INFO] 15:47:57:313 SWAMP/(28570:28570): [SWAMP]: Reservando 1 paginas para el proceso 6
+[INFO] 15:47:57:321 SWAMP/(28570:28570): PID 6 ARCHIVO_ID 1 ARCHIVO_FD 7 ESPACIO_DISPONIBLE 196608 
+
+[INFO] 15:47:57:322 SWAMP/(28570:28570): Se reservaron 32 frames y 1 paginas para el proceso 6
+[INFO] 15:47:57:655 SWAMP/(28570:28570): [SWAMP]: Reservando 1 paginas para el proceso 5
+[INFO] 15:47:57:679 SWAMP/(28570:28570): PID 5 ARCHIVO_ID 2 ARCHIVO_FD 8 ESPACIO_DISPONIBLE 228352 
+
+[INFO] 15:47:57:679 SWAMP/(28570:28570): Se reservaron 1 paginas para el proceso 5
+[INFO] 16:07:32:473 SWAMP/(29910:29910): Se conecto el cliente 7 a SWAMP
+[INFO] 16:07:32:568 SWAMP/(29910:29910): [SWAMP->MP]: Mandando los marcos_max a MP...

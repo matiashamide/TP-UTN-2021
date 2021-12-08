@@ -286,11 +286,22 @@ void init_sem(t_procesador* estructura_procesador) {
 
 	nuevo_semaforo->cola_bloqueados = list_create();
 
-	pthread_mutex_lock(&mutex_lista_semaforos_mate);
-	list_add(LISTA_SEMAFOROS_MATE, nuevo_semaforo);
-	pthread_mutex_unlock(&mutex_lista_semaforos_mate);
+	bool _criterio_busqueda_semaforo(void* elemento) {
+		return (strcmp(((t_semaforo_mate*)elemento)->nombre, nuevo_semaforo->nombre) == 0);
+	}
 
-	log_info(LOGGER, "El carpincho %d, inicializó el semaforo %s con valor %d\n", estructura_procesador->lugar_PCB->PID, nuevo_semaforo->nombre, nuevo_semaforo->value);
+	pthread_mutex_lock(&mutex_lista_semaforos_mate);
+
+	if(list_any_satisfy(LISTA_SEMAFOROS_MATE, _criterio_busqueda_semaforo)) {
+		free(nuevo_semaforo->nombre);
+		list_destroy(nuevo_semaforo->cola_bloqueados);
+		free(nuevo_semaforo);
+	} else {
+		list_add(LISTA_SEMAFOROS_MATE, nuevo_semaforo);
+		log_info(LOGGER, "El carpincho %d, inicializó el semaforo %s con valor %d\n", estructura_procesador->lugar_PCB->PID, nuevo_semaforo->nombre, nuevo_semaforo->value);
+	}
+
+	pthread_mutex_unlock(&mutex_lista_semaforos_mate);
 
 	dar_permiso_para_continuar(estructura_procesador->lugar_PCB->conexion);
 }

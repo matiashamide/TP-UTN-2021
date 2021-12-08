@@ -13900,3 +13900,2315 @@
 
 [INFO] 15:39:37:803 KERNEL/(26925:26928): El carpincho 4, terminó
 
+[INFO] 15:47:46:359 KERNEL/(28574:28574): 
+
+---------------------------------------------------
+
+
+[INFO] 15:47:46:514 KERNEL/(28574:28574): 
+
+---------------------------------------------------
+
+
+[INFO] 15:47:46:587 KERNEL/(28574:28574): Cree un dispositivo
+
+[INFO] 15:47:46:603 KERNEL/(28574:28574): Nombre dispositivo PILETA
+
+[INFO] 15:47:46:603 KERNEL/(28574:28574): Rafaga dispositivo 2500
+
+[INFO] 15:47:46:605 KERNEL/(28574:28574): Cree un dispositivo
+
+[INFO] 15:47:46:605 KERNEL/(28574:28574): Nombre dispositivo HUMEDAL
+
+[INFO] 15:47:46:612 KERNEL/(28574:28574): Rafaga dispositivo 3500
+
+[INFO] 15:47:46:615 KERNEL/(28574:28574): Creé un procesador
+
+[INFO] 15:47:46:616 KERNEL/(28574:28574): Creé un procesador
+
+[INFO] 15:47:46:617 KERNEL/(28574:28574): Creé un procesador
+
+[INFO] 15:47:46:618 KERNEL/(28574:28574): Creé un procesador
+
+[INFO] 15:47:46:619 KERNEL/(28574:28574): Ya cree el planificador de largo plazo
+
+[INFO] 15:47:46:621 KERNEL/(28574:28574): Ya cree el planificador de corto plazo utilizando el algoritmo HRRN
+
+[INFO] 15:47:46:622 KERNEL/(28574:28574): Ya cree el algoritmo para correr deadlock
+
+[INFO] 15:47:50:157 KERNEL/(28574:28593): Se conectó el carpincho 0 en la conexión 5
+
+[INFO] 15:47:50:157 KERNEL/(28574:28595): Se conectó el carpincho 1 en la conexión 8
+
+[INFO] 15:47:50:159 KERNEL/(28574:28594): Se conectó el carpincho 2 en la conexión 7
+
+[INFO] 15:47:50:159 KERNEL/(28574:28596): Se conectó el carpincho 3 en la conexión 9
+
+[INFO] 15:47:50:164 KERNEL/(28574:28595): Pasó a NEW el carpincho 1
+
+[INFO] 15:47:50:166 KERNEL/(28574:28596): Pasó a NEW el carpincho 3
+
+[INFO] 15:47:50:172 KERNEL/(28574:28581): Pasó a READY el carpincho 1
+
+[INFO] 15:47:50:179 KERNEL/(28574:28594): Pasó a NEW el carpincho 2
+
+[INFO] 15:47:50:181 KERNEL/(28574:28593): Pasó a NEW el carpincho 0
+
+[INFO] 15:47:50:180 KERNEL/(28574:28600): Se conectó el carpincho 4 en la conexión 13
+
+[INFO] 15:47:50:180 KERNEL/(28574:28597): Se conectó el carpincho 5 en la conexión 10
+
+[INFO] 15:47:50:183 KERNEL/(28574:28600): Pasó a NEW el carpincho 4
+
+[INFO] 15:47:50:180 KERNEL/(28574:28599): Se conectó el carpincho 6 en la conexión 12
+
+[INFO] 15:47:50:180 KERNEL/(28574:28598): Se conectó el carpincho 7 en la conexión 11
+
+[INFO] 15:47:50:184 KERNEL/(28574:28599): Pasó a NEW el carpincho 6
+
+[INFO] 15:47:50:187 KERNEL/(28574:28598): Pasó a NEW el carpincho 7
+
+[INFO] 15:47:50:189 KERNEL/(28574:28597): Pasó a NEW el carpincho 5
+
+[INFO] 15:47:50:203 KERNEL/(28574:28581): Pasó a READY el carpincho 3
+
+[INFO] 15:47:50:204 KERNEL/(28574:28581): Pasó a READY el carpincho 2
+
+[INFO] 15:47:50:204 KERNEL/(28574:28581): Pasó a READY el carpincho 0
+
+[INFO] 15:47:50:204 KERNEL/(28574:28581): Pasó a READY el carpincho 4
+
+[INFO] 15:47:50:205 KERNEL/(28574:28581): Pasó a READY el carpincho 6
+
+[INFO] 15:47:50:205 KERNEL/(28574:28581): Pasó a READY el carpincho 7
+
+[INFO] 15:47:50:206 KERNEL/(28574:28581): Pasó a READY el carpincho 5
+
+[INFO] 15:47:50:219 KERNEL/(28574:28582): Pasó a EXEC el carpincho 1
+
+[INFO] 15:47:50:235 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:47:50:238 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:47:50:243 KERNEL/(28574:28580): El carpincho 6, inicializó el semaforo smirnoffc2 con valor 1
+
+[INFO] 15:47:50:246 KERNEL/(28574:28580): El carpincho 6, inicializó el semaforo smirnoffc3 con valor 0
+
+[INFO] 15:47:50:247 KERNEL/(28574:28582): Pasó a EXEC el carpincho 6
+
+[INFO] 15:47:50:248 KERNEL/(28574:28580): El carpincho 6, hizo signal al semaforo smirnoffc3
+
+[INFO] 15:47:50:264 KERNEL/(28574:28580): El carpincho 6, hizo wait al semaforo smirnoffc2
+
+[INFO] 15:47:50:281 KERNEL/(28574:28580): El carpincho 6, hizo wait al semaforo smirnoffc2
+
+[INFO] 15:47:50:287 KERNEL/(28574:28580): Pasó a BLOCKED el carpincho 6
+
+[INFO] 15:47:50:290 KERNEL/(28574:28582): Pasó a EXEC el carpincho 4
+
+[INFO] 15:47:50:292 KERNEL/(28574:28580): El carpincho 4, pidió hacer I/O en PILETA
+
+[INFO] 15:47:50:300 KERNEL/(28574:28580): Pasó a BLOCKED el carpincho 4
+
+[INFO] 15:47:50:303 KERNEL/(28574:28582): Pasó a EXEC el carpincho 0
+
+[INFO] 15:47:50:304 KERNEL/(28574:28580): El carpincho 0, inicializó el semaforo SEMAFORO_NUEVO con valor 1
+
+[INFO] 15:47:50:307 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:313 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:314 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:320 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:323 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:334 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:337 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:345 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:346 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:353 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:354 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:360 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:360 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:368 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:369 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:374 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:375 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:382 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:382 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:392 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:393 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:399 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:400 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:406 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:407 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:413 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:414 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:420 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:420 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:428 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:429 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:435 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:436 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:443 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:444 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:450 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:451 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:458 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:459 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:467 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:467 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:474 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:475 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:481 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:482 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:489 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:490 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:496 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:497 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:504 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:505 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:511 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:512 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:518 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:520 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:526 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:527 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:533 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:535 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:541 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:542 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:548 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:550 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:556 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:557 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:563 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:566 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:572 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:573 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:581 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:581 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:588 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:589 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:597 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:597 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:603 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:604 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:612 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:613 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:619 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:619 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:627 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:628 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:634 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:635 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:642 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:643 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:650 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:650 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:658 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:659 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:665 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:665 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:671 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:673 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:680 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:681 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:688 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:689 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:695 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:696 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:702 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:704 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:711 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:711 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:719 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:720 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:726 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:727 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:732 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:735 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:741 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:742 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:747 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:750 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:756 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:757 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:763 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:765 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:771 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:772 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:779 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:781 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:787 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:788 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:794 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:796 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:802 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:803 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:809 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:818 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:830 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:833 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:840 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:848 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:856 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:863 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:871 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:875 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:881 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:882 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:890 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:891 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:897 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:898 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:905 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:907 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:914 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:915 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:921 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:922 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:928 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:929 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:936 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:937 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:943 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:944 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:951 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:952 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:959 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:960 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:966 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:968 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:974 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:975 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:982 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:983 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:989 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:990 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:997 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:50:998 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:004 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:007 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:014 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:016 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:022 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:022 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:029 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:030 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:035 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:036 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:042 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:043 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:049 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:049 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:057 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:058 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:064 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:065 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:070 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:073 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:079 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:080 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:088 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:088 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:094 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:095 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:101 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:103 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:109 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:110 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:116 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:119 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:125 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:126 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:134 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:134 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:140 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:141 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:149 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:150 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:155 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:156 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:162 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:164 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:171 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:172 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:180 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:181 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:186 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:187 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:195 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:196 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:202 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:203 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:211 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:212 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:217 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:218 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:226 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:227 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:233 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:234 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:241 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:242 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:248 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:249 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:255 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:257 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:263 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:264 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:271 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:272 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:279 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:279 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:285 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:288 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:294 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:294 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:302 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:303 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:308 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:309 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:315 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:318 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:324 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:325 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:332 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:333 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:339 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:340 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:346 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:349 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:355 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:355 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:363 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:368 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:374 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:375 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:383 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:386 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:398 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:402 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:410 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:412 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:418 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:419 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:425 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:427 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:433 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:434 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:441 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:442 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:449 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:450 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:456 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:457 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:463 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:465 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:471 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:472 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:477 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:478 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:485 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:486 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:492 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:492 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:499 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:501 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:507 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:508 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:515 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:516 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:522 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:523 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:529 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:531 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:538 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:538 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:546 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:547 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:554 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:555 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:562 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:563 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:568 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:569 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:577 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:578 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:584 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:585 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:590 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:593 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:599 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:600 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:608 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:608 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:615 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:616 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:621 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:624 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:630 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:631 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:638 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:639 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:645 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:646 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:651 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:654 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:660 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:661 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:667 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:670 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:675 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:676 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:682 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:685 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:690 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:691 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:697 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:700 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:706 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:706 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:712 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:715 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:721 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:722 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:728 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:730 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:736 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:737 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:743 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:746 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:751 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:752 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:761 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:761 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:767 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:768 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:774 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:776 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:783 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:784 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:792 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:792 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:798 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:799 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:807 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:808 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:814 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:814 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:822 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:822 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:830 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:830 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:837 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:838 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:844 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:845 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:852 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:853 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:859 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:860 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:866 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:868 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:874 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:875 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:882 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:883 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:889 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:890 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:896 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:899 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:905 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:906 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:912 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:913 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:919 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:920 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:925 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:926 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:932 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:933 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:939 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:939 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:945 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:946 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:952 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:953 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:960 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:961 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:967 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:968 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:973 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:974 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:980 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:981 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:987 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:987 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:993 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:51:994 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:000 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:001 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:009 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:009 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:016 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:017 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:022 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:023 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:029 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:030 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:036 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:037 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:043 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:044 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:051 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:052 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:058 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:058 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:064 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:065 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:071 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:072 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:078 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:078 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:087 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:088 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:094 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:095 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:101 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:102 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:108 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:109 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:115 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:115 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:121 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:122 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:130 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:131 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:137 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:138 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:143 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:144 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:151 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:152 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:158 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:158 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:164 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:165 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:171 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:174 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:179 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:180 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:186 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:187 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:194 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:194 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:200 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:201 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:207 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:208 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:214 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:217 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:223 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:224 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:230 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:231 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:236 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:237 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:243 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:244 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:250 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:250 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:256 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:257 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:263 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:266 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:272 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:272 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:278 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:279 KERNEL/(28574:28580): El carpincho 0, hizo signal al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:285 KERNEL/(28574:28580): El carpincho 0, hizo wait al semaforo SEMAFORO_NUEVO
+
+[INFO] 15:47:52:287 KERNEL/(28574:28580): El carpincho 0, terminó
+
+[INFO] 15:47:52:306 KERNEL/(28574:28582): Pasó a EXEC el carpincho 2
+
+[INFO] 15:47:52:802 KERNEL/(28574:28575): Pasó a READY el carpincho 4
+
+[INFO] 15:47:55:238 KERNEL/(28574:28579): El carpincho 7, inicializó el semaforo smirnoffc2 con valor 1
+
+[INFO] 15:47:55:239 KERNEL/(28574:28579): El carpincho 7, hizo signal al semaforo smirnoffc2
+
+[INFO] 15:47:55:244 KERNEL/(28574:28579): Pasó a READY el carpincho 6
+
+[INFO] 15:47:55:270 KERNEL/(28574:28579): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:47:55:273 KERNEL/(28574:28579): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:47:55:276 KERNEL/(28574:28582): Pasó a EXEC el carpincho 4
+
+[INFO] 15:47:57:308 KERNEL/(28574:28579): El carpincho 4, pidió hacer I/O en PILETA
+
+[INFO] 15:47:57:308 KERNEL/(28574:28579): Pasó a BLOCKED el carpincho 4
+
+[INFO] 15:47:57:310 KERNEL/(28574:28582): Pasó a EXEC el carpincho 6
+
+[INFO] 15:47:58:776 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:47:59:810 KERNEL/(28574:28575): Pasó a READY el carpincho 4
+
+[INFO] 15:48:06:465 KERNEL/(28574:28578): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:48:06:473 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:48:06:480 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:48:08:383 KERNEL/(28574:28578): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:48:08:384 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:48:08:387 KERNEL/(28574:28582): Pasó a EXEC el carpincho 4
+
+[INFO] 15:48:08:974 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:48:10:511 KERNEL/(28574:28578): El carpincho 4, pidió hacer I/O en PILETA
+
+[INFO] 15:48:10:513 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 4
+
+[INFO] 15:48:10:516 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:48:11:886 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:48:12:553 KERNEL/(28574:28578): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:48:12:556 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:48:12:560 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:48:13:014 KERNEL/(28574:28575): Pasó a READY el carpincho 4
+
+[INFO] 15:48:13:448 KERNEL/(28574:28578): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:48:13:450 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:48:13:454 KERNEL/(28574:28582): Pasó a EXEC el carpincho 4
+
+[INFO] 15:48:14:563 KERNEL/(28574:28578): El carpincho 4, terminó
+
+[INFO] 15:48:14:566 KERNEL/(28574:28582): Pasó a EXEC el carpincho 3
+
+[INFO] 15:48:14:566 KERNEL/(28574:28578): El carpincho 3, inicializó el semaforo SEMAFORO con valor 1
+
+[INFO] 15:48:14:567 KERNEL/(28574:28578): El carpincho 3, hizo signal al semaforo SEMAFORO
+
+[INFO] 15:48:14:568 KERNEL/(28574:28578): El carpincho 3, hizo signal al semaforo SEMAFORO
+
+[INFO] 15:48:14:568 KERNEL/(28574:28578): El carpincho 3, hizo signal al semaforo SEMAFORO
+
+[INFO] 15:48:14:571 KERNEL/(28574:28578): El carpincho 3, hizo signal al semaforo SEMAFORO
+
+[INFO] 15:48:14:572 KERNEL/(28574:28578): El carpincho 3, hizo signal al semaforo SEMAFORO
+
+[INFO] 15:48:14:572 KERNEL/(28574:28578): El carpincho 3, hizo signal al semaforo SEMAFORO
+
+[INFO] 15:48:14:573 KERNEL/(28574:28578): El carpincho 3, hizo signal al semaforo SEMAFORO
+
+[INFO] 15:48:14:573 KERNEL/(28574:28578): El carpincho 3, hizo signal al semaforo SEMAFORO
+
+[INFO] 15:48:14:576 KERNEL/(28574:28578): El carpincho 3, hizo wait al semaforo SEMAFORO
+
+[INFO] 15:48:14:577 KERNEL/(28574:28578): El carpincho 3, hizo wait al semaforo SEMAFORO
+
+[INFO] 15:48:14:578 KERNEL/(28574:28578): El carpincho 3, hizo wait al semaforo SEMAFORO
+
+[INFO] 15:48:14:578 KERNEL/(28574:28578): El carpincho 3, hizo wait al semaforo SEMAFORO
+
+[INFO] 15:48:14:579 KERNEL/(28574:28578): El carpincho 3, hizo wait al semaforo SEMAFORO
+
+[INFO] 15:48:14:579 KERNEL/(28574:28578): El carpincho 3, hizo wait al semaforo SEMAFORO
+
+[INFO] 15:48:14:580 KERNEL/(28574:28578): El carpincho 3, hizo wait al semaforo SEMAFORO
+
+[INFO] 15:48:14:580 KERNEL/(28574:28578): El carpincho 3, hizo wait al semaforo SEMAFORO
+
+[INFO] 15:48:14:581 KERNEL/(28574:28578): El carpincho 3, terminó
+
+[INFO] 15:48:15:516 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:48:15:519 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:48:16:951 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:48:17:424 KERNEL/(28574:28578): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:48:17:428 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:48:17:446 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:48:18:338 KERNEL/(28574:28578): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:48:18:340 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:48:19:929 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:48:19:932 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:48:21:841 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:48:21:881 KERNEL/(28574:28578): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:48:21:882 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:48:21:884 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:48:22:806 KERNEL/(28574:28578): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:48:22:810 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:48:24:384 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:48:24:396 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:48:26:312 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:48:26:364 KERNEL/(28574:28578): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:48:26:365 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:48:26:368 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:48:27:310 KERNEL/(28574:28578): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:48:27:314 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:48:28:866 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:48:28:870 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:48:30:772 KERNEL/(28574:28578): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:48:30:772 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:48:30:814 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:48:30:815 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:48:31:687 KERNEL/(28574:28578): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:48:31:690 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:48:33:276 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:48:33:285 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:48:35:192 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:48:35:333 KERNEL/(28574:28578): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:48:35:334 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:48:35:338 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:48:36:252 KERNEL/(28574:28578): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:48:36:253 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:48:37:835 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:48:37:837 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:48:39:665 KERNEL/(28574:28578): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:48:39:667 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:48:39:754 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:48:39:757 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:48:40:610 KERNEL/(28574:28578): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:48:40:614 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:48:42:167 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:48:42:169 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:48:44:008 KERNEL/(28574:28578): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:48:44:008 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:48:44:114 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:48:44:116 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:48:44:983 KERNEL/(28574:28578): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:48:44:985 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:48:46:510 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:48:46:514 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:48:48:454 KERNEL/(28574:28578): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:48:48:455 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:48:48:486 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:48:48:489 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:48:49:420 KERNEL/(28574:28578): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:48:49:420 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:48:50:958 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:48:50:964 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:48:52:307 KERNEL/(28574:28580): El carpincho 2, terminó
+
+[INFO] 15:48:52:782 KERNEL/(28574:28578): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:48:52:783 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:48:52:921 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:48:52:924 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:48:53:774 KERNEL/(28574:28578): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:48:53:779 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:48:55:284 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:48:55:285 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:48:55:738 KERNEL/(28574:28579): El carpincho 6, terminó
+
+[INFO] 15:48:57:140 KERNEL/(28574:28578): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:48:57:141 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:48:57:279 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:48:57:283 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:48:58:182 KERNEL/(28574:28578): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:48:58:183 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:48:59:643 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:48:59:651 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:49:01:473 KERNEL/(28574:28578): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:49:01:473 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:49:01:684 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:49:01:687 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:49:02:561 KERNEL/(28574:28578): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:49:02:568 KERNEL/(28574:28578): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:49:02:818 KERNEL/(28574:28577): El carpincho 1, terminó
+
+[INFO] 15:49:03:975 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:49:03:978 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:49:05:852 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:49:05:858 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:49:06:070 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:49:06:080 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:49:06:975 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:49:06:977 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:49:08:358 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:49:08:362 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:49:10:262 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:49:10:265 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:49:10:479 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:49:10:488 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:49:11:397 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:49:11:400 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:49:12:766 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:49:12:773 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:49:14:675 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:49:14:675 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:49:14:901 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:49:14:904 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:49:15:787 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:49:15:790 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:49:17:178 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:49:17:187 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:49:19:077 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:49:19:078 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:49:19:290 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:49:19:296 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:49:20:142 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:49:20:142 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:49:21:579 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:49:21:583 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:49:23:419 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:49:23:421 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:49:23:644 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:49:23:648 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:49:24:556 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:49:24:558 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:49:25:922 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:49:25:928 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:49:27:831 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:49:27:833 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:49:28:060 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:49:28:070 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:49:28:988 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:49:28:990 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:49:30:334 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:49:30:341 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:49:32:225 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:49:32:229 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:49:32:491 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:49:32:492 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:49:33:393 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:49:33:397 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:49:34:731 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:49:34:741 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:49:36:625 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:49:36:628 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:49:36:897 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:49:36:901 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:49:37:794 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:49:37:797 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:49:39:128 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:49:39:132 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:49:40:986 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:49:40:990 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:49:41:298 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:49:41:310 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:49:42:212 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:49:42:214 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:49:43:490 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:49:43:494 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:49:45:379 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:49:45:381 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:49:45:715 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:49:45:722 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:49:46:617 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:49:46:618 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:49:47:883 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:49:47:893 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:49:49:765 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:49:49:767 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:49:50:119 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:49:50:124 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:49:51:014 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:49:51:020 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:49:52:269 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:49:52:279 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:49:54:164 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:49:54:167 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:49:54:521 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:49:54:531 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:49:55:458 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:49:55:461 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:49:56:668 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:49:56:675 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:49:58:565 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:49:58:567 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:49:58:962 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:49:58:964 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:49:59:857 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:49:59:858 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:50:01:068 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:50:01:076 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:50:02:977 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:50:02:979 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:50:03:361 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:50:03:370 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:50:04:259 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:50:04:261 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:50:05:480 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:50:05:485 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:50:07:357 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:50:07:359 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:50:07:762 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:50:07:763 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:50:08:606 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:50:08:607 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:50:09:860 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:50:09:863 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:50:11:736 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:50:11:739 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:50:12:109 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:50:12:115 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:50:13:002 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:50:13:003 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:50:14:240 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:50:14:245 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:50:16:103 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:50:16:107 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:50:16:505 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:50:16:511 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:50:17:435 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:50:17:436 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:50:18:609 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:50:18:620 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:50:20:536 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:50:20:536 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:50:20:938 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:50:20:948 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:50:21:877 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:50:21:878 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:50:23:038 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:50:23:049 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:50:24:931 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:50:24:934 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:50:25:380 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:50:25:390 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:50:26:320 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:50:26:323 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:50:27:434 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:50:27:436 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:50:29:198 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:50:29:199 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:50:29:823 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:50:29:824 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:50:30:652 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:50:30:652 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:50:31:701 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:50:31:711 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:50:33:562 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:50:33:565 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:50:34:155 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:50:34:165 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:50:35:086 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:50:35:087 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:50:36:067 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:50:36:073 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:50:37:996 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:50:37:998 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:50:38:590 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:50:38:600 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:50:39:494 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:50:39:495 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:50:40:500 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:50:40:509 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:50:42:438 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:50:42:439 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:50:42:996 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:50:42:998 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:50:43:883 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:50:43:885 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:50:44:941 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:50:44:948 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:50:46:862 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:50:46:864 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:50:47:387 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:50:47:394 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:50:48:288 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:50:48:290 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:50:49:365 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:50:49:370 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:50:51:227 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:50:51:227 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:50:51:792 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:50:51:801 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:50:52:704 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:50:52:707 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:50:53:729 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:50:53:732 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:50:55:587 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:50:55:590 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:50:56:208 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:50:56:214 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:50:57:090 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:50:57:094 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:50:58:093 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:50:58:102 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:50:59:976 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:50:59:979 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:51:00:595 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:51:00:603 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:51:01:518 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:51:01:520 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:51:02:480 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:51:02:481 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:51:04:362 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:51:04:363 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:51:05:020 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:51:05:023 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:51:05:916 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:51:05:918 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:51:06:865 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:51:06:871 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:51:08:751 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:51:08:753 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:51:09:419 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:51:09:426 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:51:10:285 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:51:10:285 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:51:11:253 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:51:11:256 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:51:13:150 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:51:13:153 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:51:13:788 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:51:13:798 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:51:14:703 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:51:14:704 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:51:15:654 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:51:15:657 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:51:17:532 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:51:17:533 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:51:18:206 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:51:18:213 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:51:19:120 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:51:19:121 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:51:20:034 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:51:20:036 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:51:21:813 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:51:21:813 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:51:22:623 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:51:22:631 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:51:23:546 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:51:23:549 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:51:24:317 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:51:24:327 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:51:26:193 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:51:26:196 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:51:27:052 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:51:27:062 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:51:27:971 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:51:27:971 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:51:28:697 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:51:28:704 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:51:30:587 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:51:30:589 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:51:31:473 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:51:31:479 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:51:32:385 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:51:32:387 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:51:33:091 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:51:33:100 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:51:34:981 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:51:34:983 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:51:35:888 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:51:35:892 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:51:36:742 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:51:36:743 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:51:37:484 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:51:37:490 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:51:39:342 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:51:39:345 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:51:40:245 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:51:40:252 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:51:41:153 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:51:41:156 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:51:41:847 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:51:41:856 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:51:43:688 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:51:43:691 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:51:44:656 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:51:44:662 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:51:45:546 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:51:45:547 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:51:46:193 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:51:46:203 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:51:48:103 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:51:48:106 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:51:49:049 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:51:49:055 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:51:49:936 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:51:49:937 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:51:50:608 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:51:50:618 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:51:52:519 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:51:52:520 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:51:53:440 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:51:53:446 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:51:54:342 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:51:54:345 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:51:55:022 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:51:55:031 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:51:56:881 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:51:56:883 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:51:57:847 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:51:57:857 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:51:58:771 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:51:58:772 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:51:59:385 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:51:59:394 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:52:01:237 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:52:01:238 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:52:02:274 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:52:02:281 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:52:03:178 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:52:03:180 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:52:03:739 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:52:03:744 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:52:05:640 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:52:05:642 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:52:06:682 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:52:06:689 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:52:07:575 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:52:07:576 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:52:08:143 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:52:08:150 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:52:10:044 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:52:10:045 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:52:11:077 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:52:11:082 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:52:11:961 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:52:11:963 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:52:12:546 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:52:12:548 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:52:14:442 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:52:14:445 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:52:15:465 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:52:15:476 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:52:16:402 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:52:16:405 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:52:16:947 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:52:16:957 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:52:18:854 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:52:18:856 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:52:19:906 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:52:19:912 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:52:20:782 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:52:20:785 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:52:21:357 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:52:21:358 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:52:23:225 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:52:23:228 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:52:24:287 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:52:24:297 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:52:25:237 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:52:25:240 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:52:25:730 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:52:25:740 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:52:27:560 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:52:27:561 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:52:28:743 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:52:28:754 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:52:29:653 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:52:29:656 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:52:30:063 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:52:30:075 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:52:31:946 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:52:31:948 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:52:33:157 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:52:33:163 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:52:34:080 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:52:34:084 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:52:34:449 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:52:34:453 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:52:36:356 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:52:36:359 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:52:37:584 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:52:37:586 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:52:38:471 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:52:38:473 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:52:38:860 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:52:38:868 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:52:40:720 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:52:40:723 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:52:41:973 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:52:41:975 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:52:42:880 KERNEL/(28574:28577): El carpincho 7, pidió hacer I/O en HUMEDAL
+
+[INFO] 15:52:42:882 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 7
+
+[INFO] 15:52:43:223 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:52:43:224 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:52:45:108 KERNEL/(28574:28577): El carpincho 5, pidió hacer I/O en PILETA
+
+[INFO] 15:52:45:111 KERNEL/(28574:28577): Pasó a BLOCKED el carpincho 5
+
+[INFO] 15:52:46:383 KERNEL/(28574:28576): Pasó a READY el carpincho 7
+
+[INFO] 15:52:46:388 KERNEL/(28574:28582): Pasó a EXEC el carpincho 7
+
+[INFO] 15:52:46:950 KERNEL/(28574:28577): El carpincho 7, terminó
+
+[INFO] 15:52:47:611 KERNEL/(28574:28575): Pasó a READY el carpincho 5
+
+[INFO] 15:52:47:612 KERNEL/(28574:28582): Pasó a EXEC el carpincho 5
+
+[INFO] 15:52:48:255 KERNEL/(28574:28577): El carpincho 5, terminó
+
+[INFO] 16:07:34:783 KERNEL/(29912:29912): 
+
+---------------------------------------------------
+
+
+[INFO] 16:07:34:895 KERNEL/(29912:29912): 
+
+---------------------------------------------------
+
+
+[INFO] 16:07:34:946 KERNEL/(29912:29912): Cree un dispositivo
+
+[INFO] 16:07:34:961 KERNEL/(29912:29912): Nombre dispositivo PILETA
+
+[INFO] 16:07:34:961 KERNEL/(29912:29912): Rafaga dispositivo 5000
+
+[INFO] 16:07:34:963 KERNEL/(29912:29912): Creé un procesador
+
+[INFO] 16:07:34:966 KERNEL/(29912:29912): Creé un procesador
+
+[INFO] 16:07:34:967 KERNEL/(29912:29912): Ya cree el planificador de largo plazo
+
+[INFO] 16:07:34:968 KERNEL/(29912:29912): Ya cree el planificador de corto plazo utilizando el algoritmo HRRN
+
+[INFO] 16:07:34:975 KERNEL/(29912:29912): Ya cree el algoritmo para correr deadlock
+
+[INFO] 16:07:40:560 KERNEL/(29912:29921): Se conectó el carpincho 0 en la conexión 5
+
+[INFO] 16:07:40:564 KERNEL/(29912:29921): Pasó a NEW el carpincho 0
+
+[INFO] 16:07:40:570 KERNEL/(29912:29916): Pasó a READY el carpincho 0
+
+[INFO] 16:07:40:597 KERNEL/(29912:29914): El carpincho 0, pidió hacer I/O en PILETA
+
+[INFO] 16:07:40:599 KERNEL/(29912:29917): Pasó a EXEC el carpincho 0
+
+[INFO] 16:07:40:600 KERNEL/(29912:29914): Pasó a BLOCKED el carpincho 0
+
+[INFO] 16:07:41:578 KERNEL/(29912:29923): Se conectó el carpincho 1 en la conexión 7
+
+[INFO] 16:07:41:579 KERNEL/(29912:29923): Pasó a NEW el carpincho 1
+
+[INFO] 16:07:41:581 KERNEL/(29912:29916): Pasó a READY el carpincho 1
+
+[INFO] 16:07:41:586 KERNEL/(29912:29914): El carpincho 1, pidió hacer I/O en PILETA
+
+[INFO] 16:07:41:588 KERNEL/(29912:29914): Pasó a BLOCKED el carpincho 1
+
+[INFO] 16:07:41:588 KERNEL/(29912:29917): Pasó a EXEC el carpincho 1
+
+[INFO] 16:07:42:558 KERNEL/(29912:29925): Se conectó el carpincho 2 en la conexión 8
+
+[INFO] 16:07:42:560 KERNEL/(29912:29925): Pasó a NEW el carpincho 2
+
+[INFO] 16:07:42:707 KERNEL/(29912:29925): Pasó a BLOCKED-SUSPENDED el carpincho 1
+
+[INFO] 16:07:42:711 KERNEL/(29912:29916): Pasó a READY el carpincho 2
+
+[INFO] 16:07:42:712 KERNEL/(29912:29917): Pasó a EXEC el carpincho 2
+
+[INFO] 16:07:42:713 KERNEL/(29912:29914): El carpincho 2, pidió hacer I/O en PILETA
+
+[INFO] 16:07:42:713 KERNEL/(29912:29914): Pasó a BLOCKED el carpincho 2
+
+[INFO] 16:07:43:559 KERNEL/(29912:29930): Se conectó el carpincho 3 en la conexión 9
+
+[INFO] 16:07:43:561 KERNEL/(29912:29930): Pasó a NEW el carpincho 3
+
