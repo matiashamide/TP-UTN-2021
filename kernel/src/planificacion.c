@@ -576,7 +576,7 @@ void memalloc(t_procesador* estructura_procesador) {
 
 	memcpy(paquete->buffer->stream, &estructura_procesador->lugar_PCB->PID, sizeof(uint32_t));
 	offset += sizeof(uint32_t);
-	memcpy(paquete->buffer->stream, &mallocSize, sizeof(unsigned int));
+	memcpy(paquete->buffer->stream + offset, &mallocSize, sizeof(unsigned int));
 
 	int bytes;
 
@@ -654,10 +654,11 @@ void memfree(t_procesador* estructura_procesador) {
 
 	paquete->codigo_operacion = MEMFREE;
 	paquete->buffer = malloc(sizeof(t_buffer));
-	paquete->buffer->size = sizeof(int32_t);
+	paquete->buffer->size = sizeof(int32_t)*2;
 	paquete->buffer->stream = malloc(paquete->buffer->size);
 
-	memcpy(paquete->buffer->stream, &addr, sizeof(uint32_t));
+	memcpy(paquete->buffer->stream, &estructura_procesador->lugar_PCB->PID, sizeof(uint32_t));
+	memcpy(paquete->buffer->stream + sizeof(uint32_t), &addr, sizeof(uint32_t));
 
 	int bytes;
 
@@ -698,7 +699,7 @@ void memwrite(t_procesador* estructura_procesador) {
 
 	paquete->codigo_operacion = MEMWRITE;
 	paquete->buffer = malloc(sizeof(t_buffer));
-	paquete->buffer->size = sizeof(int32_t) * 2 + size;
+	paquete->buffer->size = sizeof(int32_t) * 3 + size;
 	paquete->buffer->stream = malloc(paquete->buffer->size);
 
 
