@@ -152,5 +152,8 @@ void mate_close(t_procesador*);
 int valor_matriz (int, int, t_list*);
 int cantidad_de_columnas_matriz();
 void algoritmo_deteccion_deadlock();
+void avisar_suspension_a_memoria(PCB* pcb);
+void avisar_dessuspension_a_memoria(PCB* pcb);
+void avisar_close_a_memoria(PCB* pcb);
 
 #endif /* PLANIFICACION_H_ */

@@ -31,7 +31,7 @@ void algoritmo_planificador_largo_plazo() {
 
 void algoritmo_planificador_mediano_plazo_ready_suspended() {
 	PCB* pcb = (PCB*) list_remove(LISTA_READY_SUSPENDED, 0);
-
+	avisar_dessuspension_a_memoria(pcb);
 	pthread_mutex_lock(&mutex_lista_ready);
 	list_add(LISTA_READY, pcb);
 	log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
@@ -53,6 +53,7 @@ void algoritmo_planificador_mediano_plazo_blocked_suspended() {
 		PCB* pcb = (PCB*) list_remove(LISTA_BLOCKED, cantidad_procesos_blocked-1);
 
 		pthread_mutex_lock(&mutex_lista_blocked_suspended);
+		avisar_suspension_a_memoria(pcb);
 		list_add(LISTA_BLOCKED_SUSPENDED, pcb);
 		log_info(LOGGER, "Pasó a BLOCKED-SUSPENDED el carpincho %d\n", pcb->PID);
 		pthread_mutex_unlock(&mutex_lista_blocked_suspended);
@@ -732,6 +733,8 @@ void mate_close(t_procesador* estructura_procesador) {
 
 	close(estructura_procesador->lugar_PCB->conexion);
 
+	avisar_close_a_memoria(estructura_procesador->lugar_PCB);
+
 	pthread_mutex_lock(&mutex_lista_procesadores); // TENER CUIDADO (si se bloquea todo ver aqui)
 	sem_wait(&estructura_procesador->sem_exec);
 	estructura_procesador->bit_de_ocupado = 0;
@@ -938,6 +941,7 @@ void algoritmo_deteccion_deadlock() {
 
 		PCB* proceso_de_mayor_pid = (PCB*) list_get_maximum(lista_procesos_en_deadlock, _eleccion_mayor_PID);
 		log_info(LOGGER, "Finalizo al carpincho %d por deadlock\n", proceso_de_mayor_pid->PID);
+		avisar_close_a_memoria(proceso_de_mayor_pid);
 
 		bool _criterio_igual_pid(void* elemento) {
 			return (((PCB*)elemento)->PID == proceso_de_mayor_pid->PID);
@@ -1038,6 +1042,90 @@ void algoritmo_deteccion_deadlock() {
 
 	}
 
+}
+
+void avisar_suspension_a_memoria(PCB* pcb) {
+
+	int conexion_memoria = crear_conexion(CONFIG_KERNEL.ip_memoria , CONFIG_KERNEL.puerto_memoria);
+
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = MEMSUSP;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = sizeof(int32_t);
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	memcpy(paquete->buffer->stream, &pcb->PID, sizeof(uint32_t));
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	MATE_RETURNS retorno;
+
+	send(conexion_memoria, a_enviar, bytes, 0);
+	recv(conexion_memoria, &retorno, sizeof(uint32_t), 0);
+
+	free(a_enviar);
+	eliminar_paquete(paquete);
+
+	close(conexion_memoria);
+}
+
+void avisar_dessuspension_a_memoria(PCB* pcb) {
+
+	int conexion_memoria = crear_conexion(CONFIG_KERNEL.ip_memoria , CONFIG_KERNEL.puerto_memoria);
+
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = MEMDESSUSP;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = sizeof(int32_t);
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	memcpy(paquete->buffer->stream, &pcb->PID, sizeof(uint32_t));
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	MATE_RETURNS retorno;
+
+	send(conexion_memoria, a_enviar, bytes, 0);
+	recv(conexion_memoria, &retorno, sizeof(uint32_t), 0);
+
+	free(a_enviar);
+	eliminar_paquete(paquete);
+
+	close(conexion_memoria);
+}
+
+void avisar_close_a_memoria(PCB* pcb) {
+
+	int conexion_memoria = crear_conexion(CONFIG_KERNEL.ip_memoria , CONFIG_KERNEL.puerto_memoria);
+
+	t_paquete* paquete = malloc(sizeof(t_paquete));
+
+	paquete->codigo_operacion = CLOSE;
+	paquete->buffer = malloc(sizeof(t_buffer));
+	paquete->buffer->size = sizeof(int32_t);
+	paquete->buffer->stream = malloc(paquete->buffer->size);
+
+	memcpy(paquete->buffer->stream, &pcb->PID, sizeof(uint32_t));
+
+	int bytes;
+
+	void* a_enviar = serializar_paquete(paquete, &bytes);
+
+	MATE_RETURNS retorno;
+
+	send(conexion_memoria, a_enviar, bytes, 0);
+	recv(conexion_memoria, &retorno, sizeof(uint32_t), 0);
+
+	free(a_enviar);
+	eliminar_paquete(paquete);
+
+	close(conexion_memoria);
 }
 
 /*printf("Cierro conexion con carpincho: %d\n", estructura_procesador->lugar_PCB->PID);
