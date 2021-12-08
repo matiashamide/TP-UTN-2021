@@ -31,11 +31,11 @@ void algoritmo_planificador_largo_plazo() {
 
 void algoritmo_planificador_mediano_plazo_ready_suspended() {
 	PCB* pcb = (PCB*) list_remove(LISTA_READY_SUSPENDED, 0);
-	avisar_dessuspension_a_memoria(pcb);
 	pthread_mutex_lock(&mutex_lista_ready);
 	list_add(LISTA_READY, pcb);
 	log_info(LOGGER, "Pasó a READY el carpincho %d\n", pcb->PID);
 	pthread_mutex_unlock(&mutex_lista_ready);
+	avisar_dessuspension_a_memoria(pcb);
 
 }
 
@@ -53,10 +53,10 @@ void algoritmo_planificador_mediano_plazo_blocked_suspended() {
 		PCB* pcb = (PCB*) list_remove(LISTA_BLOCKED, cantidad_procesos_blocked-1);
 
 		pthread_mutex_lock(&mutex_lista_blocked_suspended);
-		avisar_suspension_a_memoria(pcb);
 		list_add(LISTA_BLOCKED_SUSPENDED, pcb);
 		log_info(LOGGER, "Pasó a BLOCKED-SUSPENDED el carpincho %d\n", pcb->PID);
 		pthread_mutex_unlock(&mutex_lista_blocked_suspended);
+		avisar_suspension_a_memoria(pcb);
 
 		sem_post(&sem_grado_multiprogramacion);
 	}
@@ -1064,7 +1064,7 @@ void avisar_suspension_a_memoria(PCB* pcb) {
 
 	paquete->codigo_operacion = MEMSUSP;
 	paquete->buffer = malloc(sizeof(t_buffer));
-	paquete->buffer->size = sizeof(int32_t);
+	paquete->buffer->size = sizeof(uint32_t);
 	paquete->buffer->stream = malloc(paquete->buffer->size);
 
 	memcpy(paquete->buffer->stream, &pcb->PID, sizeof(uint32_t));
@@ -1084,6 +1084,39 @@ void avisar_suspension_a_memoria(PCB* pcb) {
 	close(conexion_memoria);
 }
 
+/*int32_t entero;
+int32_t addr;
+recv(estructura_procesador->lugar_PCB->conexion, &entero, sizeof(uint32_t), MSG_WAITALL);
+recv(estructura_procesador->lugar_PCB->conexion, &addr, sizeof(uint32_t), MSG_WAITALL);
+
+int conexion_memoria = crear_conexion(CONFIG_KERNEL.ip_memoria , CONFIG_KERNEL.puerto_memoria);
+
+t_paquete* paquete = malloc(sizeof(t_paquete));
+
+paquete->codigo_operacion = MEMFREE;
+paquete->buffer = malloc(sizeof(t_buffer));
+paquete->buffer->size = sizeof(int32_t)*2;
+paquete->buffer->stream = malloc(paquete->buffer->size);
+
+memcpy(paquete->buffer->stream, &estructura_procesador->lugar_PCB->PID, sizeof(uint32_t));
+memcpy(paquete->buffer->stream + sizeof(uint32_t), &addr, sizeof(uint32_t));
+
+int bytes;
+
+void* a_enviar = serializar_paquete(paquete, &bytes);
+
+MATE_RETURNS retorno;
+
+send(conexion_memoria, a_enviar, bytes, 0);
+recv(conexion_memoria, &retorno, sizeof(uint32_t), 0);
+
+send(estructura_procesador->lugar_PCB->conexion, &retorno, sizeof(uint32_t), 0);
+
+free(a_enviar);
+eliminar_paquete(paquete);
+
+close(conexion_memoria);
+*/
 void avisar_dessuspension_a_memoria(PCB* pcb) {
 
 	int conexion_memoria = crear_conexion(CONFIG_KERNEL.ip_memoria , CONFIG_KERNEL.puerto_memoria);
