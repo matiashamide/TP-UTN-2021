@@ -485,6 +485,7 @@ void destroy_sem(t_procesador* estructura_procesador) {
 
 	pthread_mutex_unlock(&mutex_lista_semaforos_mate);
 
+	//TODO aca tengo que eliminar cada elemento y destruir la lista
 	free(semaforo->cola_bloqueados);
 	free(semaforo->nombre);
 	free(semaforo);

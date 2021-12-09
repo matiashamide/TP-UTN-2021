@@ -119,6 +119,54 @@ void cerrar_kernel() {
 
 	//TODO aca todos los frees
 
+	void _recurso_usado_destroyer(void* elemento) {
+		free(((t_registro_uso_recurso*)elemento)->nombre);
+		free(((t_registro_uso_recurso*)elemento));
+	}
+
+	void _PCB_destroyer(void* elemento) {
+		list_destroy_and_destroy_elements(((PCB*)elemento)->recursos_usados, _recurso_usado_destroyer);
+		free(((PCB*)elemento));
+	}
+
+	list_destroy_and_destroy_elements(LISTA_NEW, _PCB_destroyer);
+
+	list_destroy_and_destroy_elements(LISTA_READY, _PCB_destroyer);
+
+	list_destroy_and_destroy_elements(LISTA_EXEC, _PCB_destroyer);
+
+	list_destroy_and_destroy_elements(LISTA_BLOCKED, _PCB_destroyer);
+
+	list_destroy_and_destroy_elements(LISTA_BLOCKED_SUSPENDED, _PCB_destroyer);
+
+	list_destroy_and_destroy_elements(LISTA_READY_SUSPENDED, _PCB_destroyer);
+
+/*	void _procesador_destroyer(void* elemento) {
+		list_destroy_and_destroy_elements(((t_procesador*)elemento)->lugar_PCB->recursos_usados, _recurso_usado_destroyer);
+		free(((t_procesador*)elemento)->lugar_PCB);
+		sem_destroy(&((t_procesador*)elemento)->sem_exec);
+		free(((t_procesador*)elemento));
+	}
+
+	list_destroy_and_destroy_elements(LISTA_PROCESADORES, _procesador_destroyer);
+*/
+	void _SEM_destroyer(void* elemento) {
+		list_destroy_and_destroy_elements(((t_semaforo_mate*)elemento)->cola_bloqueados, _PCB_destroyer);
+		free(((t_semaforo_mate*)elemento)->nombre);
+		free(((t_semaforo_mate*)elemento));
+	}
+
+	list_destroy_and_destroy_elements(LISTA_SEMAFOROS_MATE, _SEM_destroyer);
+
+	void _IO_destroyer(void* elemento) {
+		list_destroy_and_destroy_elements(((t_dispositivo*)elemento)->cola_espera, _PCB_destroyer);
+		free(((t_semaforo_mate*)elemento)->nombre);
+		free(((t_semaforo_mate*)elemento));
+	}
+
+	list_destroy_and_destroy_elements(LISTA_DISPOSITIVOS_IO, _IO_destroyer);
+
+
 
 	exit(1);
 }
