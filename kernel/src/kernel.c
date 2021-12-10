@@ -141,15 +141,13 @@ void cerrar_kernel() {
 
 	list_destroy_and_destroy_elements(LISTA_READY_SUSPENDED, _PCB_destroyer);
 
-/*	void _procesador_destroyer(void* elemento) {
-		list_destroy_and_destroy_elements(((t_procesador*)elemento)->lugar_PCB->recursos_usados, _recurso_usado_destroyer);
-		free(((t_procesador*)elemento)->lugar_PCB);
+	void _procesador_destroyer(void* elemento) {
 		sem_destroy(&((t_procesador*)elemento)->sem_exec);
 		free(((t_procesador*)elemento));
 	}
 
 	list_destroy_and_destroy_elements(LISTA_PROCESADORES, _procesador_destroyer);
-*/
+
 	void _SEM_destroyer(void* elemento) {
 		list_destroy_and_destroy_elements(((t_semaforo_mate*)elemento)->cola_bloqueados, _PCB_destroyer);
 		free(((t_semaforo_mate*)elemento)->nombre);
@@ -160,15 +158,35 @@ void cerrar_kernel() {
 
 	void _IO_destroyer(void* elemento) {
 		list_destroy_and_destroy_elements(((t_dispositivo*)elemento)->cola_espera, _PCB_destroyer);
-		free(((t_semaforo_mate*)elemento)->nombre);
-		free(((t_semaforo_mate*)elemento));
+		free(((t_dispositivo*)elemento)->nombre);
+		free(((t_dispositivo*)elemento));
 	}
 
 	list_destroy_and_destroy_elements(LISTA_DISPOSITIVOS_IO, _IO_destroyer);
 
+	config_kernel_destroy(CONFIG_KERNEL);
+
 
 
 	exit(1);
+}
+
+void config_kernel_destroy(t_kernel_config config_kernel) {
+	free(config_kernel.ip_memoria);
+	free(config_kernel.ip_kernel);
+	free(config_kernel.puerto_memoria);
+	free(config_kernel.puerto_kernel);
+	free(config_kernel.alg_plani);
+
+	//for(int i = 0; i < size_char_array(config_kernel.dispositivos_IO); i++) {
+	//	free(config_kernel.dispositivos_IO[i]);
+	//}
+	//free(config_kernel.dispositivos_IO);
+
+	//for(int i = 0; i < size_char_array(config_kernel.duraciones_IO); i++) {
+	//	free(config_kernel.duraciones_IO[i]);
+	//}
+	//free(config_kernel.duraciones_IO);
 }
 
 void crear_dispositivos_io() {
