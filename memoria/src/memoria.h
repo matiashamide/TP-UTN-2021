@@ -135,10 +135,9 @@ int solicitar_frame_en_ppal(int pid);
 
 //// ---- funciones algoritmos de reemplazo
 int ejecutar_algoritmo_reemplazo(int pid);
-int reemplazar_con_LRU(int pid);
-int reemplazar_con_CLOCK_M(int pid);
+int algoritmo_LRU(t_list* paginas);
+int algoritmo_CLOCK_M(t_list* paginas);
 int obtener_tiempo_MMU();
-int algoritmo_clock(t_list* paginas);
 
 //// ---- funciones para listas administrativas
 t_list*         paginas_en_mp();
