@@ -164,30 +164,12 @@ void cerrar_kernel() {
 
 	list_destroy_and_destroy_elements(LISTA_DISPOSITIVOS_IO, _IO_destroyer);
 
-	config_kernel_destroy(CONFIG_KERNEL);
 
 
 
 	exit(1);
 }
 
-void config_kernel_destroy(t_kernel_config config_kernel) {
-	free(config_kernel.ip_memoria);
-	free(config_kernel.ip_kernel);
-	free(config_kernel.puerto_memoria);
-	free(config_kernel.puerto_kernel);
-	free(config_kernel.alg_plani);
-
-	//for(int i = 0; i < size_char_array(config_kernel.dispositivos_IO); i++) {
-	//	free(config_kernel.dispositivos_IO[i]);
-	//}
-	//free(config_kernel.dispositivos_IO);
-
-	//for(int i = 0; i < size_char_array(config_kernel.duraciones_IO); i++) {
-	//	free(config_kernel.duraciones_IO[i]);
-	//}
-	//free(config_kernel.duraciones_IO);
-}
 
 void crear_dispositivos_io() {
 	for(int i = 0; i < size_char_array(CONFIG_KERNEL.dispositivos_IO); i++) {
@@ -205,11 +187,9 @@ void crear_dispositivos_io() {
 		pthread_create(&hilo_dispositivo, NULL, (void*)ejecutar_io, dispositivo_io);
 		pthread_detach(hilo_dispositivo);
 
-		//LOG
 		log_info(LOGGER, "Cree un dispositivo\n");
 		log_info(LOGGER, "Nombre dispositivo %s\n", dispositivo_io->nombre);
 		log_info(LOGGER, "Rafaga dispositivo %d\n", dispositivo_io->rafaga);
-		//FIN LOG
 
 	}
 }

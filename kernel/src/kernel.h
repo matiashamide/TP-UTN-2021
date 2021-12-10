@@ -38,7 +38,6 @@ void iniciar_planificador_corto_plazo();
 void iniciar_algoritmo_deadlock();
 void crear_procesadores();
 void crear_dispositivos_io();
-void config_kernel_destroy(t_kernel_config);
 void cerrar_kernel();
 
 #endif /* KERNEL_H_ */
