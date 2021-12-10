@@ -136,9 +136,9 @@ int solicitar_frame_en_ppal(int pid);
 int ejecutar_algoritmo_reemplazo(int pid);
 int reemplazar_con_LRU(int pid);
 int reemplazar_con_CLOCK_M(int pid);
-int reemplazar_con_CLOCK_M2(int pid);
 int obtener_tiempo_MMU();
 int algoritmo_clock(t_list* paginas);
+
 //// ---- funciones para listas administrativas
 bool            hay_frames_libres_mp(int frames_necesarios);
 t_list*         paginas_en_mp();
@@ -154,10 +154,12 @@ int   reservar_espacio_en_swap(int32_t pid, int cant_pags);
 int   traer_pagina_a_mp(t_pagina* pag);
 void  tirar_a_swap(t_pagina* pagina);
 void* traer_de_swap(int32_t pid, int32_t nro_pagina);
-void enviar_pagina(void* pagina, int socket_cliente, uint32_t pid, uint32_t nro_pagina);
+void  enviar_pagina(void* pagina, int socket_cliente, uint32_t pid, uint32_t nro_pagina);
 void  eliminar_pag_swap(int32_t pid , int nro_pagina);
-void eliminar_proceso_swap(int32_t pid);
-void exit_memoria();
+void  eliminar_proceso_swap(int32_t pid);
+void  exit_memoria();
+void  deinit();
+
 //// ---- funciones de estado
 bool esta_libre_frame(t_frame* frame);
 bool esta_libre_y_desasignado(t_frame* frame);

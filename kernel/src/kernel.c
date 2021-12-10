@@ -57,6 +57,7 @@ t_kernel_config crear_archivo_config_kernel(char* ruta) {
     config.grado_multiprogramacion = config_get_int_value(kernel_config, "GRADO_MULTIPROGRAMACION");
     config.grado_multiprocesamiento = config_get_int_value(kernel_config, "GRADO_MULTIPROCESAMIENTO");
 
+    //config_destroy(kernel_config);
 
     return config;
 }
@@ -165,7 +166,7 @@ void cerrar_kernel() {
 	list_destroy_and_destroy_elements(LISTA_DISPOSITIVOS_IO, _IO_destroyer);
 
 
-
+	log_destroy(LOGGER);
 
 	exit(1);
 }
@@ -245,6 +246,8 @@ void atender_carpinchos(int* cliente) {
 	pcb_carpincho->conexion = (*cliente);
 	pcb_carpincho->recursos_usados = list_create();
 	//TODO hacerle free a esto
+
+	free(cliente);
 
 	log_info(LOGGER, "Se conectó el carpincho %d en la conexión %d\n", pcb_carpincho->PID, (*cliente));
 

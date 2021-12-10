@@ -91,8 +91,7 @@ void iniciar_paginacion() {
 }
 
 t_memoria_config crear_archivo_config_memoria(char* ruta) {
-    t_config* memoria_config;
-    memoria_config = config_create(ruta);
+    t_config* memoria_config = config_create(ruta);
     t_memoria_config config;
 
     if (memoria_config == NULL) {
@@ -120,6 +119,7 @@ t_memoria_config crear_archivo_config_memoria(char* ruta) {
     config.path_dump_tlb       = config_get_string_value(memoria_config, "PATH_DUMP_TLB"           );
     config.kernel_existe	   = config_get_int_value   (memoria_config, "KERNEL_EXISTE"           );
 
+    //config_destroy(memoria_config);
     return config;
 }
 
@@ -138,6 +138,7 @@ void coordinador_multihilo(){
 
 		pthread_create(&hilo_atender_carpincho, NULL, (void*)atender_carpinchos, socket_cliente);
 		pthread_detach(hilo_atender_carpincho);
+		//free(socket_cliente);
 	}
 }
 
@@ -185,6 +186,7 @@ void atender_carpinchos(int* cliente) {
 
 			retorno  = memalloc(pid, size, *cliente);
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
+			free(cliente);
 
 			if (existe_kernel)
 				pthread_exit(NULL);
@@ -215,6 +217,7 @@ void atender_carpinchos(int* cliente) {
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 			send(*cliente, dest, size_contenido, 0);
 
+			free(cliente);
 			free(dest);
 
 			if (existe_kernel)
@@ -241,6 +244,8 @@ void atender_carpinchos(int* cliente) {
 			}
 
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
+
+			free(cliente);
 
 			if (existe_kernel)
 				pthread_exit(NULL);
@@ -270,6 +275,8 @@ void atender_carpinchos(int* cliente) {
 			}
 
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
+
+			free(cliente);
 			free(contenido);
 
 			if (existe_kernel)
@@ -284,6 +291,8 @@ void atender_carpinchos(int* cliente) {
 			suspender_proceso(pid);
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
+			free(cliente);
+
 			if (existe_kernel)
 				pthread_exit(NULL);
 
@@ -295,6 +304,8 @@ void atender_carpinchos(int* cliente) {
 			pid = recibir_entero(*cliente);
 			dessuspender_proceso(pid);
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
+
+			free(cliente);
 
 			if (existe_kernel)
 				pthread_exit(NULL);
@@ -320,6 +331,9 @@ void atender_carpinchos(int* cliente) {
 			}
 
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
+
+			free(cliente);
+
 			pthread_exit(NULL);
 
 		break;
@@ -329,6 +343,8 @@ void atender_carpinchos(int* cliente) {
 			char* mensaje = recibir_mensaje(*cliente);
 			printf("%s",mensaje);
 			fflush(stdout);
+
+			free(cliente);
 
 		break;
 
@@ -412,7 +428,6 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 		//Bloque de paginas en donde se meten los headers
 		int tam_buffer = paginas_necesarias * CONFIG.tamanio_pagina;
 		void* buffer_pags_proceso = malloc(tam_buffer);
-		buffer_pags_proceso = realloc(buffer_pags_proceso, tam_buffer);
 
 		memcpy(buffer_pags_proceso, header, sizeof(heap_metadata));
 		memcpy(buffer_pags_proceso + sizeof(heap_metadata) + size, header_sig, sizeof(heap_metadata));
@@ -438,6 +453,8 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 
 		dir_logica = header_sig->prev_alloc;
 		free(header);
+		free(header_sig);
+		free(buffer_pags_proceso);
 		log_info(LOGGER, "El proceso %i fue inicializado correctamente." , pid);
 
 	} else {
@@ -522,6 +539,7 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 
 		}
 		dir_logica = alloc->direc_logica;
+		free(alloc);
 	}
 	log_info(LOGGER, "Se le asignaron correctamente %i bytes al proceso %i.", size, pid);
 	return dir_logica + sizeof(heap_metadata);
@@ -890,6 +908,18 @@ void eliminar_proceso(int32_t pid) {
 
 }
 
+void deinit() {
+	free(MEMORIA_PRINCIPAL);
+
+	void _tabla_de_pag_destroyer(void* elemento) {
+		list_destroy_and_destroy_elements(((t_tabla_pagina*)elemento)->paginas, free);
+	}
+
+	list_destroy_and_destroy_elements(TABLAS_DE_PAGINAS, _tabla_de_pag_destroyer);
+
+	log_destroy(LOGGER);
+}
+
 //------------------------------------------------- FUNCIONES ALLOCs/HEADERs ---------------------------------------------//
 
 t_alloc_disponible* obtener_alloc_disponible(int32_t pid, int32_t size, uint32_t posicion_heap_actual) {
@@ -956,6 +986,7 @@ t_alloc_disponible* obtener_alloc_disponible(int32_t pid, int32_t size, uint32_t
 
 				alloc->direc_logica      = posicion_heap_actual;
 				alloc->flag_ultimo_alloc = 0;
+				free(header);
 				return alloc;
 
 
@@ -990,14 +1021,17 @@ t_alloc_disponible* obtener_alloc_disponible(int32_t pid, int32_t size, uint32_t
 
 				free(header_nuevo);
 				free(header_final);
+				free(header);
 
 				return alloc;
 			}
 
 		}
 	}
-
-	return obtener_alloc_disponible(pid, size, header->next_alloc);
+	int next_alloc = header->next_alloc;
+	free(header);
+	free(alloc);
+	return obtener_alloc_disponible(pid, size, next_alloc);
 }
 
 void guardar_header(int32_t pid, int index_pag, int offset, heap_metadata* header){
@@ -1274,7 +1308,7 @@ int ejecutar_algoritmo_reemplazo(int32_t pid) {
 
 	if(string_equals_ignore_case(CONFIG.alg_remp_mmu, "CLOCK-M")){
 		pthread_mutex_lock(&mutex_clock);
-		retorno = reemplazar_con_CLOCK_M2(pid);
+		retorno = reemplazar_con_CLOCK_M(pid);
 		pthread_mutex_unlock(&mutex_clock);
 	}
 
@@ -1286,9 +1320,9 @@ int reemplazar_con_LRU(int32_t pid) {
 	t_list* paginas;
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
-		t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
-		paginas_proceso = list_filter(paginas_proceso, (void*)esta_en_mp);
-		paginas = list_filter(paginas_proceso, (void*)no_esta_lockeada);
+		paginas = tabla_por_pid(pid)->paginas;
+		paginas = list_filter(paginas, (void*)esta_en_mp);
+		paginas = list_filter(paginas, (void*)no_esta_lockeada);
 	}
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
@@ -1318,9 +1352,11 @@ int reemplazar_con_LRU(int32_t pid) {
 	pag_reemplazo->presencia  = false;
 	unlockear(pag_reemplazo);
 
+	list_destroy(paginas);
 	return pag_reemplazo->frame_ppal;
 }
-int reemplazar_con_CLOCK_M2(int32_t pid) {
+
+int reemplazar_con_CLOCK_M(int32_t pid) {
 
     t_list* paginas;
 
@@ -1394,101 +1430,6 @@ int algoritmo_clock(t_list* paginas){
   }
   return -1;
 }
-int reemplazar_con_CLOCK_M(int32_t pid) {
-
-	int i = POSICION_CLOCK;
-	int pag_seleccionada;
-	int encontre         = 0;
-	int busco_modificado = 0;
-	int caso_0_0 		 = 1;
-
-	t_list* paginas;
-
-	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
-		t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
-		paginas_proceso = list_filter(paginas_proceso, (void*)esta_en_mp);
-		paginas = list_filter(paginas_proceso, (void*)no_esta_lockeada);
-	}
-
-	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
-		paginas = list_filter(paginas_en_mp(), (void*)no_esta_lockeada);
-	}
-
-	t_pagina* victima;
-
-	while(!encontre) {
-
-		if (i >= list_size(paginas)) {
-			i = 0;
-		}
-
-		t_pagina* pagina = list_get(paginas, i);
-
-
-		if (!caso_0_0) {
-			busco_modificado = 1;
-		} else {
-			busco_modificado = 0;
-		}
-
-
-
-		if (!busco_modificado) {
-
-			if (pagina->uso == false && pagina->modificado == false) {
-
-				pag_seleccionada = i;
-				POSICION_CLOCK   = i;
-				encontre         = 1;
-
-			} else {
-
-				i++;
-				if (i == POSICION_CLOCK) {
-					caso_0_0 = 0;
-
-				}
-			}
-
-		} else {
-
-			if(pagina->uso == false && pagina->modificado == true) {
-
-				pag_seleccionada = i;
-				POSICION_CLOCK   = i;
-				encontre         = 1;
-
-			} else {
-				i++;
-				pagina->uso = false;
-
-				if (i == POSICION_CLOCK) {
-					caso_0_0 = 1;
-
-				}
-			}
-		}
-	}
-
-	victima = list_get(paginas, 0);
-	lockear(victima);
-	desreferenciar_pag_tlb(pid , victima->id , victima->frame_ppal);
-
-	log_info(LOGGER, "[REEMPLAZO CLOCK-M] Saco NRO_PAG %i del PID %i en FRAME %i", victima->id, victima->pid, victima->frame_ppal);
-
-
-
-	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
-	if (victima->modificado) {
-		tirar_a_swap(victima);
-		victima->modificado = false;
-	}
-
-	victima->presencia = 0;
-	unlockear(victima);
-
-	return victima->frame_ppal;
-}
 
 int obtener_tiempo_MMU(){
 	pthread_mutex_lock(&mutexTiempoMMU);
@@ -1501,8 +1442,10 @@ int obtener_tiempo_MMU(){
 //--------------------------------------------- FUNCIONES PARA LAS LISTAS ADMIN. -----------------------------------------//
 
 bool hay_frames_libres_mp(int cant_frames_necesarios) {
-	t_list* frames_libes_MP = list_filter(FRAMES_MEMORIA, esta_libre_frame);
-	return list_size(frames_libes_MP) >= cant_frames_necesarios;
+	t_list* frames_libres_MP = list_filter(FRAMES_MEMORIA, (void*)esta_libre_frame);
+	bool hay_frames = list_size(frames_libres_MP) >= cant_frames_necesarios;
+	free(frames_libres_MP);
+	return hay_frames;
 }
 
 t_list* paginas_en_mp(){
@@ -1522,7 +1465,7 @@ t_list* paginas_en_mp(){
 	//FILTRO LAS QUE TENGAN EL BIT DE PRESENCIA EN 1 => ESTAN EN MP
 	t_list* paginas_en_mp = list_filter(paginas, (void*)esta_en_mp);
 
-	//list_destroy(paginas);
+	list_destroy(paginas);
 	return paginas_en_mp;
 }
 
@@ -1832,6 +1775,8 @@ void exit_memoria(){
 	free(a_enviar);
 	eliminar_paquete_swap(paquete);
 
+	deinit();
+
 	exit(1);
 }
 
@@ -1876,7 +1821,6 @@ void signal_metricas(){
 
 	//generar_metricas_tlb();
 	dump_memoria_principal();
-	//dumpear_tlb();
 	exit_memoria();
 
 	exit(1);
@@ -1884,6 +1828,7 @@ void signal_metricas(){
 void signal_dump(){
 	log_info(LOGGER, "[SIGNAL DUMP]: Recibi la senial de generar el dump, generando\n...");
 	dumpear_tlb();
+
 	exit(1);
 }
 void signal_clean_tlb(){
@@ -1932,6 +1877,7 @@ void dump_memoria_principal() {
 
 	fprintf(file, "||\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
 	fclose(file);
+	list_destroy(pags_mp);
 
 }
 

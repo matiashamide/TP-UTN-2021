@@ -421,7 +421,7 @@ void post_sem(t_procesador* estructura_procesador) {
 		semaforo->value += 1;
 	}
 	pthread_mutex_unlock(&mutex_lista_semaforos_mate);
-
+	free(nombre);
 	dar_permiso_para_continuar(estructura_procesador->lugar_PCB->conexion);
 }
 
@@ -489,6 +489,7 @@ void destroy_sem(t_procesador* estructura_procesador) {
 	free(semaforo->cola_bloqueados);
 	free(semaforo->nombre);
 	free(semaforo);
+	free(nombre);
 
 	dar_permiso_para_continuar(estructura_procesador->lugar_PCB->conexion);
 }
@@ -526,6 +527,7 @@ void call_IO(t_procesador* estructura_procesador) {
 	pthread_mutex_unlock(&mutex_lista_procesadores);
 	sem_post(&sem_grado_multiprocesamiento);
 	algoritmo_planificador_mediano_plazo_blocked_suspended();
+	free(nombre);
 }
 
 void ejecutar_io(t_dispositivo* dispositivo) {
@@ -732,6 +734,7 @@ void memwrite(t_procesador* estructura_procesador) {
 	send(estructura_procesador->lugar_PCB->conexion, &retorno, sizeof(uint32_t), 0);
 
 	free(a_enviar);
+	free(origin);
 	eliminar_paquete(paquete);
 
 	close(conexion_memoria);
