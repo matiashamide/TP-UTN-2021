@@ -333,7 +333,7 @@ void atender_carpinchos(int* cliente) {
 
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
-			free(cliente);
+			//free(cliente);
 
 			pthread_exit(NULL);
 
@@ -389,26 +389,29 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 
 			pthread_mutex_lock(&mutex_frames);
 
-			if (!hay_frames_libres_mp(CONFIG.marcos_max)) {
+			t_list* frames_libres_MP = list_filter(FRAMES_MEMORIA, (void*)esta_libre_y_desasignado);
+
+			if (list_size(frames_libres_MP) < CONFIG.marcos_max) {
 				log_info(LOGGER, "Error: se supero el nivel de multiprogramacion, no hay frames libes en MP.", size, pid);
+				list_destroy(frames_libres_MP);
 				return -1;
 			}
 
 			//Reservamos los frames al PID
-			t_list* frames_libres_MP = list_filter(FRAMES_MEMORIA, (void*)esta_libre_y_desasignado);
-
 			for (int i = 0; i < CONFIG.marcos_max; i++){
 				t_frame* frame_libre = list_get(frames_libres_MP,i);
-				frame_libre->pid = pid;
+				frame_libre->pid     = pid;
 			}
 
 			pthread_mutex_unlock(&mutex_frames);
+
+			list_destroy(frames_libres_MP);
 		}
 
 		//Crea tabla de paginas para el proceso
 		t_tabla_pagina* nueva_tabla = malloc(sizeof(t_tabla_pagina));
-		nueva_tabla->paginas = list_create();
-		nueva_tabla->PID     = pid;
+		nueva_tabla->paginas        = list_create();
+		nueva_tabla->PID            = pid;
 
 		pthread_mutex_lock(&mutex_tablas_dp);
 		list_add(TABLAS_DE_PAGINAS, nueva_tabla);
@@ -913,6 +916,8 @@ void deinit() {
 
 	free(MEMORIA_PRINCIPAL);
 
+	destruir_tlb();
+
 	list_destroy_and_destroy_elements(FRAMES_MEMORIA, free);
 	list_destroy_and_destroy_elements(PIDS_CLIENTE, free);
 
@@ -1273,17 +1278,23 @@ int solicitar_frame_en_ppal(int32_t pid){
 		if (list_size(pags_proceso) < CONFIG.marcos_max) {
 
 			pthread_mutex_lock(&mutex_frames);
-			t_frame* frame = list_get(frames_libres_del_proceso(pid),0);
+			t_list* frames_libres_proceso = frames_libres_del_proceso(pid);
+			t_frame* frame = list_get(frames_libres_proceso,0);
 
 			if (frame != NULL) {
 				frame->ocupado = true;
 				frame->pid     = pid;
 
 				pthread_mutex_unlock(&mutex_frames);
-				return frame->id;
+				int id = frame->id;
+				list_destroy(frames_libres_proceso);
+				return id;
 			}
+
+			list_destroy(frames_libres_proceso);
 		}
 		pthread_mutex_unlock(&mutex_frames);
+
 		return ejecutar_algoritmo_reemplazo(pid);
 	}
 
@@ -1308,86 +1319,49 @@ int solicitar_frame_en_ppal(int32_t pid){
 
 int ejecutar_algoritmo_reemplazo(int32_t pid) {
 
-	int retorno = -1;
-
-	if (string_equals_ignore_case(CONFIG.alg_remp_mmu, "LRU"))
-		retorno = reemplazar_con_LRU(pid);
-
-	if(string_equals_ignore_case(CONFIG.alg_remp_mmu, "CLOCK-M")){
-		pthread_mutex_lock(&mutex_clock);
-		retorno = reemplazar_con_CLOCK_M(pid);
-		pthread_mutex_unlock(&mutex_clock);
-	}
-
-	return retorno;
-}
-
-int reemplazar_con_LRU(int32_t pid) {
-
+	int pos_victima;
 	t_list* paginas;
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
-		paginas = tabla_por_pid(pid)->paginas;
-		paginas = list_filter(paginas, (void*)esta_en_mp);
-		paginas = list_filter(paginas, (void*)no_esta_lockeada);
+		t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
+		paginas = list_filter(paginas_proceso, (void*)en_mp_sin_lock);
 	}
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
-		paginas = list_filter(paginas_en_mp(), (void*)no_esta_lockeada);
+		t_list* paginas_mp = paginas_en_mp();
+		paginas = list_filter(paginas_mp, (void*)no_esta_lockeada);
+		list_destroy_and_destroy_elements(paginas_mp, free);
 	}
 
-	int masVieja(t_pagina* unaPag, t_pagina* otraPag) {
-		return (otraPag->tiempo_uso > unaPag->tiempo_uso);
+	if (string_equals_ignore_case(CONFIG.alg_remp_mmu, "LRU"))
+		pos_victima = algoritmo_LRU(paginas);
+
+	if (string_equals_ignore_case(CONFIG.alg_remp_mmu, "CLOCK-M")){
+
+		bool index_frame(void* ele1 , void* ele2){
+			t_pagina* pag1 = (t_pagina*) ele1;
+			t_pagina* pag2 = (t_pagina*) ele2;
+			return pag1->frame_ppal < pag2->frame_ppal;
+		}
+
+		list_sort(paginas , index_frame);
+
+		pthread_mutex_lock(&mutex_clock);
+		pos_victima = algoritmo_CLOCK_M(paginas);
+		pthread_mutex_unlock(&mutex_clock);
 	}
 
-	list_sort(paginas, (void*)masVieja);
-
-	//COMO REEMPLAZO SEGUN LRU, ELIJO LA PRIMERA QUE ES LA MAS VIEJA
-	t_pagina* pag_reemplazo = list_get(paginas, 0);
-	lockear(pag_reemplazo);
-
-	desreferenciar_pag_tlb(pid , pag_reemplazo->id , pag_reemplazo->frame_ppal);
-
-	log_info(LOGGER, "[REEMPLAZO LRU] Saco NRO_PAG %i del PID %i en FRAME %i", pag_reemplazo->id, pag_reemplazo->pid, pag_reemplazo->frame_ppal);
-
-	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
-	if(pag_reemplazo->modificado) {
-		tirar_a_swap(pag_reemplazo);
-		pag_reemplazo->modificado = false;
-	}
-
-	pag_reemplazo->presencia  = false;
-	unlockear(pag_reemplazo);
-
-	list_destroy(paginas);
-	return pag_reemplazo->frame_ppal;
-}
-
-int reemplazar_con_CLOCK_M(int32_t pid) {
-
-    t_list* paginas;
-
-    if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
-        t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
-        paginas_proceso = list_filter(paginas_proceso, (void*)esta_en_mp);
-        paginas = list_filter(paginas_proceso, (void*)no_esta_lockeada);
-    }
-    if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
-            paginas = list_filter(paginas_en_mp(), (void*)no_esta_lockeada);
-	}
-	int retorno = algoritmo_clock(paginas);
-
-	if ( retorno == -1){
-		printf("No se encontró a la victima... F");
+	if (pos_victima == -1){
+		printf("Error ejecutando el algoritmo de reemplazo.");
 		exit(1);
 	}
 
-	t_pagina* victima = list_get(paginas,retorno);
+	t_pagina* victima = list_get(paginas, pos_victima);
 
 	lockear(victima);
 	desreferenciar_pag_tlb(pid , victima->id , victima->frame_ppal);
 
-	log_info(LOGGER, "[REEMPLAZO CLOCK-M] Saco NRO_PAG %i del PID %i en FRAME %i", victima->id, victima->pid, victima->frame_ppal);
+	log_info(LOGGER, "[REEMPLAZO] Saco NRO_PAG %i del PID %i en FRAME %i", victima->id, victima->pid, victima->frame_ppal);
 
 	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
 	if (victima->modificado) {
@@ -1395,17 +1369,28 @@ int reemplazar_con_CLOCK_M(int32_t pid) {
 		victima->modificado = false;
 	}
 
-	victima->presencia = 0;
+	victima->presencia = false;
 	unlockear(victima);
 
-	return victima->frame_ppal;
+	list_destroy(paginas);
 
+	return victima->frame_ppal;
 }
 
-int algoritmo_clock(t_list* paginas){
+int algoritmo_LRU(t_list* paginas) {
+	int masVieja(t_pagina* unaPag, t_pagina* otraPag) {
+		return (otraPag->tiempo_uso > unaPag->tiempo_uso);
+	}
+
+	list_sort(paginas, (void*)masVieja);
+	return 0;
+}
+
+int algoritmo_CLOCK_M(t_list* paginas){
  int pag_seleccionada;
 
  	 for(int i = 1; i <= 4; i++){
+
  		 for(int j = 0; j < list_size(paginas); j++){
 
  			 if (POSICION_CLOCK >= list_size(paginas)) {
@@ -1414,7 +1399,7 @@ int algoritmo_clock(t_list* paginas){
 
  			 t_pagina* pagina = list_get(paginas, POSICION_CLOCK);
 
- 			 if(i == 1 || i ==3){
+ 			 if (i == 1 || i ==3) {
  				 //Buscamos 0,0
  				 if (pagina->uso == false && pagina->modificado == false) {
  					 pag_seleccionada = POSICION_CLOCK;
@@ -1423,7 +1408,10 @@ int algoritmo_clock(t_list* paginas){
  				 } else {
  					 POSICION_CLOCK++;
  				 }
- 			 }if(i == 2 || i ==4){
+
+ 			 }
+
+ 			 if(i == 2 || i == 4) {
  				 if (pagina->uso == false && pagina->modificado == true) {
  					 pag_seleccionada = POSICION_CLOCK;
  					 POSICION_CLOCK++;
@@ -1447,13 +1435,6 @@ int obtener_tiempo_MMU(){
 }
 
 //--------------------------------------------- FUNCIONES PARA LAS LISTAS ADMIN. -----------------------------------------//
-
-bool hay_frames_libres_mp(int cant_frames_necesarios) {
-	t_list* frames_libres_MP = list_filter(FRAMES_MEMORIA, (void*)esta_libre_frame);
-	bool hay_frames = list_size(frames_libres_MP) >= cant_frames_necesarios;
-	free(frames_libres_MP);
-	return hay_frames;
-}
 
 t_list* paginas_en_mp(){
 
@@ -1611,25 +1592,33 @@ int traer_pagina_a_mp(t_pagina* pagina) {
 	//Busco frame en donde voy a alojar la pagina que me traigo de SWAP: ya sea un frame libre o bien un frame de pag q reempl.
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
+		t_list* frames_libres_proceso = frames_libres_del_proceso(pagina->pid);
 
-		if (list_size(frames_libres_del_proceso(pagina->pid)) > 0) {
-			t_frame* frame = list_get(frames_libres_del_proceso(pagina->pid),0);
-			pos_frame = frame->id;
+		if (list_size(frames_libres_proceso)> 0) {
+
+			t_frame* frame = list_get(frames_libres_proceso,0);
+			pos_frame      = frame->id;
+
 		} else {
-			pos_frame = ejecutar_algoritmo_reemplazo(pagina->pid);
+			pos_frame      = ejecutar_algoritmo_reemplazo(pagina->pid);
 		}
+
+		list_destroy(frames_libres_proceso);
 	}
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
 
 		pthread_mutex_lock(&mutex_frames);
+
 		t_frame* frame = (t_frame*)list_find(FRAMES_MEMORIA, (void*)esta_libre_frame);
+
 		if (frame != NULL) {
 			frame->ocupado = true;
 			pos_frame = frame->id;
 		} else {
 			pos_frame = ejecutar_algoritmo_reemplazo(pagina->pid);
 		}
+
 		pthread_mutex_unlock(&mutex_frames);
 	}
 
@@ -1638,6 +1627,8 @@ int traer_pagina_a_mp(t_pagina* pagina) {
 	pagina->presencia  = true;
 	pagina->modificado = false;
 	pagina->frame_ppal = pos_frame;
+
+	free(pag_serializada);
 
 	return pos_frame;
 }
@@ -1799,6 +1790,10 @@ bool esta_libre_frame(t_frame* frame) {
 
 bool esta_libre_y_desasignado(t_frame* frame) {
 	return !frame->ocupado && frame->pid == -1;
+}
+
+int en_mp_sin_lock(t_pagina* pag){
+	return !pag->lock && pag->presencia;
 }
 
 int no_esta_lockeada(t_pagina* pag){

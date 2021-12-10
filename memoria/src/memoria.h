@@ -135,13 +135,11 @@ int solicitar_frame_en_ppal(int pid);
 
 //// ---- funciones algoritmos de reemplazo
 int ejecutar_algoritmo_reemplazo(int pid);
-int reemplazar_con_LRU(int pid);
-int reemplazar_con_CLOCK_M(int pid);
+int algoritmo_LRU(t_list* paginas);
+int algoritmo_CLOCK_M(t_list* paginas);
 int obtener_tiempo_MMU();
-int algoritmo_clock(t_list* paginas);
 
 //// ---- funciones para listas administrativas
-bool            hay_frames_libres_mp(int frames_necesarios);
 t_list*         paginas_en_mp();
 t_tabla_pagina* tabla_por_pid(int pid);
 t_pagina*       pagina_por_id(int pid, int id);
@@ -165,6 +163,7 @@ void  deinit();
 //// ---- funciones de estado
 bool esta_libre_frame(t_frame* frame);
 bool esta_libre_y_desasignado(t_frame* frame);
+int  en_mp_sin_lock(t_pagina* pag);
 int  no_esta_lockeada(t_pagina* pag);
 void lockear(t_pagina* pag);
 void unlockear(t_pagina* pag);

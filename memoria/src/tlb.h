@@ -55,6 +55,8 @@ void generar_metricas_tlb();
 void dumpear_tlb();
 void limpiar_tlb();
 
+void destruir_tlb();
+
 //// ---- funciones DUMP
 void  mostrar_entradas_tlb(FILE* file);
 void  mostrar_entrada(int entrada, FILE* file);
