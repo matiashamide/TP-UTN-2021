@@ -1,0 +1,62 @@
+[INFO] 22:22:41:811 KERNEL/(819:819): 
+
+---------------------------------------------------
+
+
+[INFO] 22:22:41:811 KERNEL/(819:819): 
+
+---------------------------------------------------
+
+
+[INFO] 22:22:41:811 KERNEL/(819:819): Cree un dispositivo
+
+[INFO] 22:22:41:811 KERNEL/(819:819): Nombre dispositivo PILETA
+
+[INFO] 22:22:41:811 KERNEL/(819:819): Rafaga dispositivo 2500
+
+[INFO] 22:22:41:811 KERNEL/(819:819): Cree un dispositivo
+
+[INFO] 22:22:41:811 KERNEL/(819:819): Nombre dispositivo HUMEDAL
+
+[INFO] 22:22:41:811 KERNEL/(819:819): Rafaga dispositivo 3500
+
+[INFO] 22:22:41:811 KERNEL/(819:819): Creé un procesador
+
+[INFO] 22:22:41:811 KERNEL/(819:819): Creé un procesador
+
+[INFO] 22:22:41:811 KERNEL/(819:819): Creé un procesador
+
+[INFO] 22:22:41:811 KERNEL/(819:819): Creé un procesador
+
+[INFO] 22:22:41:812 KERNEL/(819:819): Ya cree el planificador de largo plazo
+
+[INFO] 22:22:41:812 KERNEL/(819:819): Ya cree el planificador de corto plazo utilizando el algoritmo HRRN
+
+[INFO] 22:22:41:812 KERNEL/(819:819): Ya cree el algoritmo para correr deadlock
+
+[INFO] 22:32:30:588 KERNEL/(1046:1046): 
+
+---------------------------------------------------
+
+
+[INFO] 22:32:30:588 KERNEL/(1046:1046): 
+
+---------------------------------------------------
+
+
+[INFO] 22:32:30:588 KERNEL/(1046:1046): Cree un dispositivo
+
+[INFO] 22:32:30:588 KERNEL/(1046:1046): Nombre dispositivo PILETA
+
+[INFO] 22:32:30:588 KERNEL/(1046:1046): Rafaga dispositivo 5000
+
+[INFO] 22:32:30:588 KERNEL/(1046:1046): Creé un procesador
+
+[INFO] 22:32:30:588 KERNEL/(1046:1046): Creé un procesador
+
+[INFO] 22:32:30:588 KERNEL/(1046:1046): Ya cree el planificador de largo plazo
+
+[INFO] 22:32:30:588 KERNEL/(1046:1046): Ya cree el planificador de corto plazo utilizando el algoritmo HRRN
+
+[INFO] 22:32:30:588 KERNEL/(1046:1046): Ya cree el algoritmo para correr deadlock
+
