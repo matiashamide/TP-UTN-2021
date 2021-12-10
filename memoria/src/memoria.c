@@ -784,7 +784,12 @@ int memwrite(int32_t pid, void* contenido, int32_t dir_logica,  int32_t size) {
 }
 
 void suspender_proceso(int32_t pid) {
-	t_list* paginas_proceso =  (tabla_por_pid(pid))->paginas;
+	t_tabla_pagina* tabla = tabla_por_pid(pid);
+
+	if(tabla == NULL)
+		return;
+
+	t_list* paginas_proceso = tabla->paginas;
 
 	//Sirve para dinamico y fijo
 	for (int i = 0; i < list_size(paginas_proceso); i++) {
