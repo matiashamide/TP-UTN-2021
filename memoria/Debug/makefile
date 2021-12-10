@@ -26,7 +26,7 @@ endif
 all: memoria
 
 dependents:
-	-cd /home/utnso/workspace/tp-2021-2c-DesacatadOS/futiles/Debug && $(MAKE) all
+	-cd /home/utnso/workspace/tp-2021-2c-DesacatadOS/futiles/Debug && $(MAKE) clean all
 
 # Tool invocations
 memoria: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2021-2c-DesacatadOS/futiles/Debug/libfutiles.so
