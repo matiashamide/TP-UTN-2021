@@ -76,6 +76,7 @@ int PID_GLOBAL;
 int TIEMPO_MMU;
 
 t_memoria_config CONFIG;
+t_config* CFG;
 t_log* LOGGER;
 
 //// ---- estructuras administrativas
@@ -103,7 +104,7 @@ pthread_mutex_t mutex_clock;
 //// ---- funciones de inicializacion
 void init_memoria();
 void iniciar_paginacion();
-t_memoria_config crear_archivo_config_memoria(char* ruta);
+void crear_archivo_config_memoria(char* ruta);
 
 //// ---- funciones de coordinacion de carpinchos
 void recibir_peticion_para_continuar(int conexion);
@@ -158,6 +159,7 @@ void  enviar_pagina(void* pagina, int socket_cliente, uint32_t pid, uint32_t nro
 void  eliminar_pag_swap(int32_t pid , int nro_pagina);
 void  eliminar_proceso_swap(int32_t pid);
 void  exit_memoria();
+void  exit_swamp();
 void  deinit();
 
 //// ---- funciones de estado

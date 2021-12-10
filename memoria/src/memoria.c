@@ -16,11 +16,11 @@ int main(void) {
 
 void init_memoria() {
 
-	//Levantamos archivo de configuracion
-	CONFIG = crear_archivo_config_memoria("/home/utnso/workspace/tp-2021-2c-DesacatadOS/memoria/src/memoria.config");
-
 	//Inicializamos logger
 	LOGGER = log_create("/home/utnso/workspace/tp-2021-2c-DesacatadOS/memoria/MEMORIA.log", "MEMORIA", 0, LOG_LEVEL_INFO);
+
+	//Levantamos archivo de configuracion
+	crear_archivo_config_memoria("/home/utnso/workspace/tp-2021-2c-DesacatadOS/memoria/src/memoria.config");
 
 	//Iniciamos servidor
 	SERVIDOR_MEMORIA = iniciar_servidor(CONFIG.ip_memoria, CONFIG.puerto_memoria);
@@ -90,37 +90,37 @@ void iniciar_paginacion() {
 	POSICION_CLOCK = 0;
 }
 
-t_memoria_config crear_archivo_config_memoria(char* ruta) {
-    t_config* memoria_config = config_create(ruta);
-    t_memoria_config config;
+void crear_archivo_config_memoria(char* ruta) {
+    t_config* config = config_create(ruta);
+    t_memoria_config memoria_config;
 
-    if (memoria_config == NULL) {
+    if (config == NULL) {
         log_info(LOGGER, "No se pudo leer el archivo de configuracion de memoria\n");
         exit(-1);
     }
 
-    config.ip_memoria          = config_get_string_value(memoria_config, "IP"                      );
-    config.puerto_memoria      = config_get_string_value(memoria_config, "PUERTO"                  );
-    config.ip_swap             = config_get_string_value(memoria_config, "IP_SWAP"                 );
-	config.puerto_swap         = config_get_string_value(memoria_config, "PUERTO_SWAP"             );
-    config.tamanio_memoria     = config_get_int_value   (memoria_config, "TAMANIO"                 );
-    config.tamanio_pagina      = config_get_int_value   (memoria_config, "TAMANIO_PAGINA"          );
-    config.tipo_asignacion     = config_get_string_value(memoria_config, "TIPO_ASIGNACION"         );
+    memoria_config.ip_memoria          = config_get_string_value(config, "IP"                      );
+    memoria_config.puerto_memoria      = config_get_string_value(config, "PUERTO"                  );
+    memoria_config.ip_swap             = config_get_string_value(config, "IP_SWAP"                 );
+	memoria_config.puerto_swap         = config_get_string_value(config, "PUERTO_SWAP"             );
+    memoria_config.tamanio_memoria     = config_get_int_value   (config, "TAMANIO"                 );
+    memoria_config.tamanio_pagina      = config_get_int_value   (config, "TAMANIO_PAGINA"          );
+    memoria_config.tipo_asignacion     = config_get_string_value(config, "TIPO_ASIGNACION"         );
 
-    if (string_equals_ignore_case(config.tipo_asignacion,"FIJA")) {
-        config.marcos_max      = config_get_int_value   (memoria_config, "MARCOS_POR_CARPINCHO"    );
+    if (string_equals_ignore_case(memoria_config.tipo_asignacion,"FIJA")) {
+        memoria_config.marcos_max      = config_get_int_value   (config, "MARCOS_POR_CARPINCHO"    );
     }
 
-    config.alg_remp_mmu        = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_MMU" );
-    config.cant_entradas_tlb   = config_get_int_value   (memoria_config, "CANTIDAD_ENTRADAS_TLB"   );
-    config.alg_reemplazo_tlb   = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_TLB" );
-    config.retardo_acierto_tlb = config_get_int_value   (memoria_config, "RETARDO_ACIERTO_TLB"     );
-    config.retardo_fallo_tlb   = config_get_int_value   (memoria_config, "RETARDO_FALLO_TLB"       );
-    config.path_dump_tlb       = config_get_string_value(memoria_config, "PATH_DUMP_TLB"           );
-    config.kernel_existe	   = config_get_int_value   (memoria_config, "KERNEL_EXISTE"           );
+    memoria_config.alg_remp_mmu        = config_get_string_value(config, "ALGORITMO_REEMPLAZO_MMU" );
+    memoria_config.cant_entradas_tlb   = config_get_int_value   (config, "CANTIDAD_ENTRADAS_TLB"   );
+    memoria_config.alg_reemplazo_tlb   = config_get_string_value(config, "ALGORITMO_REEMPLAZO_TLB" );
+    memoria_config.retardo_acierto_tlb = config_get_int_value   (config, "RETARDO_ACIERTO_TLB"     );
+    memoria_config.retardo_fallo_tlb   = config_get_int_value   (config, "RETARDO_FALLO_TLB"       );
+    memoria_config.path_dump_tlb       = config_get_string_value(config, "PATH_DUMP_TLB"           );
+    memoria_config.kernel_existe	   = config_get_int_value   (config, "KERNEL_EXISTE"           );
 
-    //config_destroy(memoria_config);
-    return config;
+    CONFIG = memoria_config;
+    CFG = config;
 }
 
 //--------------------------------------------------------- COORDINACION DE CARPINCHOS ----------------------------------------------------------//
@@ -184,8 +184,9 @@ void atender_carpinchos(int* cliente) {
 			int32_t size = recibir_entero(*cliente);
 			log_info(LOGGER, "MEMALLOC: el cliente %i solicito alocar memoria de %i bytes", *cliente, size);
 
-			retorno  = memalloc(pid, size, *cliente);
+			retorno = memalloc(pid, size, *cliente);
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
+
 			free(cliente);
 
 			if (existe_kernel)
@@ -909,15 +910,21 @@ void eliminar_proceso(int32_t pid) {
 }
 
 void deinit() {
+
 	free(MEMORIA_PRINCIPAL);
+
+	list_destroy_and_destroy_elements(FRAMES_MEMORIA, free);
+	list_destroy_and_destroy_elements(PIDS_CLIENTE, free);
 
 	void _tabla_de_pag_destroyer(void* elemento) {
 		list_destroy_and_destroy_elements(((t_tabla_pagina*)elemento)->paginas, free);
+		free((t_tabla_pagina*)elemento);
 	}
 
 	list_destroy_and_destroy_elements(TABLAS_DE_PAGINAS, _tabla_de_pag_destroyer);
 
 	log_destroy(LOGGER);
+	config_destroy(CFG);
 }
 
 //------------------------------------------------- FUNCIONES ALLOCs/HEADERs ---------------------------------------------//
@@ -931,8 +938,7 @@ t_alloc_disponible* obtener_alloc_disponible(int32_t pid, int32_t size, uint32_t
 	offset     = posicion_heap_actual - CONFIG.tamanio_pagina * nro_pagina;
 
 	t_alloc_disponible* alloc = malloc(sizeof(t_alloc_disponible));
-
-	heap_metadata* header = desserializar_header(pid, nro_pagina, offset);
+	heap_metadata* header     = desserializar_header(pid, nro_pagina, offset);
 
 	if (header->is_free) {
 
@@ -969,6 +975,7 @@ t_alloc_disponible* obtener_alloc_disponible(int32_t pid, int32_t size, uint32_t
 				return alloc;
 			}
 
+			free(header);
 			alloc->direc_logica      = posicion_heap_actual;
 			alloc->flag_ultimo_alloc =  1;
 			return alloc;
@@ -1757,6 +1764,14 @@ void eliminar_proceso_swap(int32_t pid){
 }
 
 void exit_memoria(){
+
+	exit_swamp();
+	deinit();
+
+	exit(1);
+}
+
+void exit_swamp() {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
 	paquete = realloc(paquete, sizeof(t_paquete_swap));
 
@@ -1774,10 +1789,6 @@ void exit_memoria(){
 
 	free(a_enviar);
 	eliminar_paquete_swap(paquete);
-
-	deinit();
-
-	exit(1);
 }
 
 //-------------------------------------------- FUNCIONES DE ESTADO - t_frame & t_pagina - ------------------------------//
