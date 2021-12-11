@@ -41,6 +41,7 @@ typedef struct {
 
 int SERVIDOR_SWAP;
 t_swamp_config CONFIG;
+t_config* CFG;
 t_log* LOGGER;
 
 t_list* FRAMES_SWAP;        // LISTA DE t_frame's
@@ -50,11 +51,12 @@ t_list* METADATA_ARCHIVOS;  // LISTA DE t_metadata_archivo's
 //FUNCIONES
 
 void init_swamp();
-t_swamp_config crear_archivo_config_swamp(char* ruta);
+void deinit_swamp();
+void crear_archivo_config_swamp(char* ruta);
 
 void crear_frames();
 void crear_archivos();
-int crear_archivo(char* path, int size);
+int  crear_archivo(char* path, int size);
 
 void atender_peticiones(int* cliente);
 int32_t recibir_operacion_swap(int socket_cliente);

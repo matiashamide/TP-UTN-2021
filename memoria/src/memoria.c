@@ -17,7 +17,7 @@ int main(void) {
 void init_memoria() {
 
 	//Inicializamos logger
-	LOGGER = log_create("/home/utnso/workspace/tp-2021-2c-DesacatadOS/memoria/MEMORIA.log", "MEMORIA", 0, LOG_LEVEL_INFO);
+	LOGGER = log_create("/home/utnso/workspace/tp-2021-2c-DesacatadOS/memoria/MEMORIA.log", "MEMORIA", 1, LOG_LEVEL_INFO);
 
 	//Levantamos archivo de configuracion
 	crear_archivo_config_memoria("/home/utnso/workspace/tp-2021-2c-DesacatadOS/memoria/src/memoria.config");
@@ -138,7 +138,6 @@ void coordinador_multihilo(){
 
 		pthread_create(&hilo_atender_carpincho, NULL, (void*)atender_carpinchos, socket_cliente);
 		pthread_detach(hilo_atender_carpincho);
-		//free(socket_cliente);
 	}
 }
 
@@ -333,7 +332,7 @@ void atender_carpinchos(int* cliente) {
 
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
-			//free(cliente);
+			free(cliente);
 
 			pthread_exit(NULL);
 

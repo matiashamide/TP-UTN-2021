@@ -32,10 +32,10 @@ int main(void) {
 void init_swamp(){
 
 	//Incializamos logger
-	LOGGER = log_create("/home/utnso/workspace/tp-2021-2c-DesacatadOS/swamp/SWAMP.log", "SWAMP", 0, LOG_LEVEL_INFO);
+	LOGGER = log_create("/home/utnso/workspace/tp-2021-2c-DesacatadOS/swamp/SWAMP.log", "SWAMP", 1, LOG_LEVEL_INFO);
 
 	//Inicializamos archivo de configuracion
-	CONFIG = crear_archivo_config_swamp("/home/utnso/workspace/tp-2021-2c-DesacatadOS/swamp/src/swamp.config");
+	crear_archivo_config_swamp("/home/utnso/workspace/tp-2021-2c-DesacatadOS/swamp/src/swamp.config");
 
 	//Iniciamos servidor
 	SERVIDOR_SWAP = iniciar_servidor(CONFIG.ip, CONFIG.puerto);
@@ -48,25 +48,27 @@ void init_swamp(){
 	crear_frames();
 }
 
-t_swamp_config crear_archivo_config_swamp(char* ruta) {
+void crear_archivo_config_swamp(char* ruta) {
 
-	t_swamp_config config;
-	t_config* swamp_config = config_create(ruta);
+	t_swamp_config swamp_config;
+	t_config* config = config_create(ruta);
 
-    if (swamp_config == NULL) {
+    if (config == NULL) {
         printf("No se pudo leer el archivo de configuracion de Swamp\n");
         exit(-1);
     }
 
-    config.ip             = config_get_string_value(swamp_config, "IP"                  );
-    config.puerto         = config_get_string_value(swamp_config, "PUERTO"              );
-    config.tamanio_swamp  = config_get_int_value   (swamp_config, "TAMANIO_SWAP"        );
-    config.tamanio_pag    = config_get_int_value   (swamp_config, "TAMANIO_PAGINA"      );
-    config.archivos_swamp = config_get_array_value (swamp_config, "ARCHIVOS_SWAP"       );
-    config.marcos_max     = config_get_int_value   (swamp_config, "MARCOS_POR_CARPINCHO");
-    config.retardo_swap   = config_get_int_value   (swamp_config, "RETARDO_SWAP"        );
+    swamp_config.ip             = config_get_string_value(config, "IP"                  );
+    swamp_config.puerto         = config_get_string_value(config, "PUERTO"              );
+    swamp_config.tamanio_swamp  = config_get_int_value   (config, "TAMANIO_SWAP"        );
+    swamp_config.tamanio_pag    = config_get_int_value   (config, "TAMANIO_PAGINA"      );
+    swamp_config.archivos_swamp = config_get_array_value (config, "ARCHIVOS_SWAP"       );
+    swamp_config.marcos_max     = config_get_int_value   (config, "MARCOS_POR_CARPINCHO");
+    swamp_config.retardo_swap   = config_get_int_value   (config, "RETARDO_SWAP"        );
 
-    return config;
+    CONFIG = swamp_config;
+    CFG    = config;
+
 }
 
 void crear_frames() {
@@ -129,6 +131,16 @@ int crear_archivo(char* path, int size) {
 	return fd;
 }
 
+void deinit_swamp(){
+
+	log_destroy(LOGGER);
+	config_destroy(CFG);
+
+	list_destroy_and_destroy_elements(FRAMES_SWAP, free);
+	list_destroy_and_destroy_elements(METADATA_ARCHIVOS, free);
+
+}
+
 //----------------------------------------------- COORDINADOR Y OPERACIONES PPALES -----------------------------------------//
 
 void atender_peticiones(int* cliente){
@@ -153,11 +165,9 @@ void atender_peticiones(int* cliente){
 
 		log_info(LOGGER, "[SWAMP]: Reservando %i paginas para el proceso %i", cant_paginas, pid);
 
-		printf("\nRESERVAR ESPACIO PID %i CANTPAGINAS %i\n", pid, cant_paginas);
-
 		rta = reservar_espacio(pid, cant_paginas);
 		send(*cliente, &rta, sizeof(uint32_t), 0);
-		//printf("\n\nReserve espacio y salio %i\n\n",rta);
+
 		break;
 
 	case TIRAR_A_SWAP:;
@@ -167,8 +177,6 @@ void atender_peticiones(int* cliente){
 		pid         = recibir_entero(*cliente);
 		nro_pagina  = recibir_entero(*cliente);
 		recv(*cliente, buffer_pag, CONFIG.tamanio_pag, 0);
-
-		printf("\nTIRAN A SWAMP PID%i PAG%i\n", pid, nro_pagina);
 
 		log_info(LOGGER, "[SWAMP]: Guardando la pagina %i del proceso %i en SWAMP", nro_pagina, pid);
 
@@ -186,7 +194,6 @@ void atender_peticiones(int* cliente){
 			exit(1);
 		}
 
-		addr = calloc(1, CONFIG.tamanio_swamp);
 		addr = mmap(NULL, CONFIG.tamanio_swamp, PROT_READ | PROT_WRITE, MAP_SHARED, archivo->fd, 0);
 
 		if (addr == MAP_FAILED) {
@@ -215,7 +222,6 @@ void atender_peticiones(int* cliente){
 		frame   = frame_de_pagina(pid, nro_pagina);
 		archivo = obtener_archivo_con_id(frame->aid);
 
-		addr = calloc(1, CONFIG.tamanio_swamp);
 		addr = mmap(NULL, CONFIG.tamanio_swamp, PROT_READ | PROT_WRITE, MAP_SHARED, archivo->fd, 0);
 
 		if (addr == MAP_FAILED) {
@@ -272,7 +278,7 @@ void atender_peticiones(int* cliente){
 	case EXIT:;
 
 		exit(1);
-		//aca podriamos liberar todo swap, igualmente se libera solo
+		deinit_swamp();
 
 		break;
 
@@ -317,6 +323,7 @@ int32_t reservar_espacio(int32_t pid, int cant_paginas) {
 
 			log_info(LOGGER, "PID %i ARCHIVO_ID %i ARCHIVO_FD %i ESPACIO_DISPONIBLE %i \n", pid, archivo->id, archivo->fd, archivo->espacio_disponible);
 			log_info(LOGGER, "Se reservaron %i paginas para el proceso %i", cant_paginas, pid);
+			list_destroy(frames);
 			return 1;
 		}
 
@@ -360,6 +367,8 @@ int32_t reservar_espacio(int32_t pid, int cant_paginas) {
 
 			log_info(LOGGER, "PID %i ARCHIVO_ID %i ARCHIVO_FD %i ESPACIO_DISPONIBLE %i \n", pid, archivo->id, archivo->fd, archivo->espacio_disponible);
 			log_info(LOGGER, "Se reservaron %i frames y %i paginas para el proceso %i", cant_frames_requeridos, cant_paginas, pid);
+			list_destroy(frames_libres_archivo);
+			list_destroy(frames_libres_proceso);
 			return 1;
 		}
 
@@ -495,8 +504,12 @@ int ultima_pagina_proceso(int32_t pid) {
 	}
 
 	list_sort(frames_asignados, (void*)id_pag_asc);
+	int frame_ult_pag = ((t_frame*)list_get(frames_asignados, 0))->id_pag;
 
-	return ((t_frame*)list_get(frames_asignados, 0))->id_pag;
+	list_destroy(frames_asignados);
+	list_destroy(frames_proceso);
+
+	return frame_ult_pag;
 }
 
 t_list* frames_del_proceso(int32_t pid) {
