@@ -186,10 +186,11 @@ void atender_carpinchos(int* cliente) {
 			retorno = memalloc(pid, size, *cliente);
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
-			free(cliente);
-
-			if (existe_kernel)
+			if (existe_kernel) {
+				free(cliente);
 				pthread_exit(NULL);
+			}
+
 
 		break;
 
@@ -217,11 +218,12 @@ void atender_carpinchos(int* cliente) {
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 			send(*cliente, dest, size_contenido, 0);
 
-			free(cliente);
 			free(dest);
 
-			if (existe_kernel)
+			if (existe_kernel) {
+				free(cliente);
 				pthread_exit(NULL);
+			}
 
 		break;
 
@@ -245,10 +247,10 @@ void atender_carpinchos(int* cliente) {
 
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
-			free(cliente);
-
-			if (existe_kernel)
+			if (existe_kernel) {
+				free(cliente);
 				pthread_exit(NULL);
+			}
 
 		break;
 
@@ -276,11 +278,12 @@ void atender_carpinchos(int* cliente) {
 
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
-			free(cliente);
 			free(contenido);
 
-			if (existe_kernel)
+			if (existe_kernel) {
+				free(cliente);
 				pthread_exit(NULL);
+			}
 
 		break;
 
@@ -291,10 +294,10 @@ void atender_carpinchos(int* cliente) {
 			suspender_proceso(pid);
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
-			free(cliente);
-
-			if (existe_kernel)
+			if (existe_kernel) {
+				free(cliente);
 				pthread_exit(NULL);
+			}
 
 		break;
 
@@ -305,10 +308,10 @@ void atender_carpinchos(int* cliente) {
 			dessuspender_proceso(pid);
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
-			free(cliente);
-
-			if (existe_kernel)
+			if (existe_kernel) {
+				free(cliente);
 				pthread_exit(NULL);
+			}
 
 		break;
 
@@ -332,9 +335,11 @@ void atender_carpinchos(int* cliente) {
 
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
-			free(cliente);
+			if (existe_kernel) {
+				free(cliente);
+				pthread_exit(NULL);
+			}
 
-			pthread_exit(NULL);
 
 		break;
 
@@ -344,11 +349,16 @@ void atender_carpinchos(int* cliente) {
 			printf("%s",mensaje);
 			fflush(stdout);
 
-			free(cliente);
+			if (existe_kernel) {
+				free(cliente);
+				pthread_exit(NULL);
+			}
 
 		break;
 
-		default:; log_info(LOGGER, "No se entendio la solicitud del cliente %i.", *cliente);
+		default:;
+			log_info(LOGGER, "No se entendio la solicitud del cliente %i.", *cliente);
+			pthread_exit(NULL);
 		break;
 
 		}
@@ -1822,23 +1832,30 @@ void set_modificado(t_pagina* pag){
 //--------------------------------------------------- FUNCIONES SIGNAL ----------------------------------------------------//
 
 void signal_metricas(){
+
 	log_info(LOGGER, "[SIGNAL METRICAS]: Recibi la senial de imprimir metricas, imprimiendo\n...");
 
-	//generar_metricas_tlb();
+	generar_metricas_tlb();
 	dump_memoria_principal();
-	exit_memoria();
 
 	exit(1);
+
 }
+
 void signal_dump(){
+
 	log_info(LOGGER, "[SIGNAL DUMP]: Recibi la senial de generar el dump, generando\n...");
+
 	dumpear_tlb();
 
 	exit(1);
 }
+
 void signal_clean_tlb(){
 	log_info(LOGGER, "[SIGNAL CLEAN TLB]: Recibi la senial para limpiar TLB, limpiando\n...");
+
 	limpiar_tlb();
+
 	exit(1);
 }
 
@@ -1854,9 +1871,11 @@ void dump_memoria_principal() {
 
 	file = fopen(path_name, "w+");
 
+	char* time = temporal_get_string_time("%d/%m/%y %H:%M:%S");
+
 	fprintf(file, "\n");
 	fprintf(file, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
-	fprintf(file, "DUMP MEMORIA PRINCIPAL \n");
+	fprintf(file, "DUMP MEMORIA PRINCIPAL %s\n", time);
 	fprintf(file, "ALGORITMO DE REEMPLAZO DE MMU UTILIZADO: %s \n", CONFIG.alg_remp_mmu);
 
 	t_pagina* pagina;
@@ -1882,6 +1901,7 @@ void dump_memoria_principal() {
 
 	fprintf(file, "||\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
 	fclose(file);
+	free(time);
 	list_destroy(pags_mp);
 
 }
