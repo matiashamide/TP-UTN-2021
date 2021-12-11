@@ -58,6 +58,7 @@ t_kernel_config crear_archivo_config_kernel(char* ruta) {
     config.grado_multiprocesamiento = config_get_int_value(kernel_config, "GRADO_MULTIPROCESAMIENTO");
 
     //config_destroy(kernel_config);
+    CONFIG = kernel_config;
 
     return config;
 }
@@ -159,6 +160,7 @@ void cerrar_kernel() {
 
 	void _IO_destroyer(void* elemento) {
 		list_destroy_and_destroy_elements(((t_dispositivo*)elemento)->cola_espera, _PCB_destroyer);
+		sem_destroy(&((t_dispositivo*)elemento)->sem);
 		free(((t_dispositivo*)elemento)->nombre);
 		free(((t_dispositivo*)elemento));
 	}
@@ -167,6 +169,7 @@ void cerrar_kernel() {
 
 
 	log_destroy(LOGGER);
+	config_destroy(CONFIG);
 
 	exit(1);
 }
@@ -187,6 +190,7 @@ void crear_dispositivos_io() {
 
 		pthread_create(&hilo_dispositivo, NULL, (void*)ejecutar_io, dispositivo_io);
 		pthread_detach(hilo_dispositivo);
+		//pthread_join(hilo_dispositivo, NULL);
 
 		log_info(LOGGER, "Cree un dispositivo\n");
 		log_info(LOGGER, "Nombre dispositivo %s\n", dispositivo_io->nombre);
@@ -215,13 +219,15 @@ void iniciar_planificador_largo_plazo() {
 	pthread_create(&planificador_largo_plazo, NULL, (void*)algoritmo_planificador_largo_plazo, NULL);
 	log_info(LOGGER, "Ya cree el planificador de largo plazo\n");
 	pthread_detach(planificador_largo_plazo);
+	//pthread_join(planificador_largo_plazo, NULL);
 }
 
 void iniciar_planificador_corto_plazo() {
 
 	pthread_create(&planificador_corto_plazo, NULL, (void*)algoritmo_planificador_corto_plazo, NULL);
 	log_info(LOGGER, "Ya cree el planificador de corto plazo utilizando el algoritmo %s\n", CONFIG_KERNEL.alg_plani);
-	pthread_detach(planificador_largo_plazo);
+	pthread_detach(planificador_corto_plazo);
+	//pthread_join(planificador_corto_plazo, NULL);
 }
 
 void iniciar_algoritmo_deadlock() {
@@ -229,6 +235,7 @@ void iniciar_algoritmo_deadlock() {
 	pthread_create(&administrador_deadlock, NULL, (void*)correr_algoritmo_deadlock, NULL);
 	log_info(LOGGER, "Ya cree el algoritmo para correr deadlock\n");
 	pthread_detach(administrador_deadlock);
+	//pthread_join(administrador_deadlock, NULL);
 }
 
 void atender_carpinchos(int* cliente) {
@@ -283,6 +290,7 @@ void crear_procesadores() {
 		pthread_create(&hilo_procesador, NULL, (void*)ejecutar, estructura_procesador);
 		log_info(LOGGER, "Creé un procesador\n");
 		pthread_detach(hilo_procesador);
+		//pthread_join(hilo_procesador, NULL);
 
 	}
 }

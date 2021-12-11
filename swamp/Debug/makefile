@@ -26,7 +26,7 @@ endif
 all: swamp
 
 dependents:
-	-cd /home/utnso/workspace/tp-2021-2c-DesacatadOS/futiles/Debug && $(MAKE) clean all
+	-cd /home/utnso/workspace/tp-2021-2c-DesacatadOS/futiles/Debug && $(MAKE) all
 
 # Tool invocations
 swamp: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2021-2c-DesacatadOS/futiles/Debug/libfutiles.so

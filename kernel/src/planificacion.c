@@ -96,8 +96,8 @@ void correr_dispatcher(PCB* pcb) {
 	procesador_libre->bit_de_ocupado = 1;
 	dar_permiso_para_continuar(pcb->conexion);
 	gettimeofday(&procesador_libre->timeValBefore, NULL);
-	sem_post(&procesador_libre->sem_exec);
 	log_info(LOGGER, "Pasó a EXEC el carpincho %d\n", pcb->PID);
+	sem_post(&procesador_libre->sem_exec);
 	pthread_mutex_unlock(&mutex_lista_procesadores);
 
 }
@@ -183,6 +183,7 @@ PCB* algoritmo_HRRN() {
 void ejecutar(t_procesador* estructura_procesador) {
 
 	while (1) {
+		signal(SIGINT,  &matar_procesador);
 		sem_wait(&estructura_procesador->sem_exec);
 		sem_post(&estructura_procesador->sem_exec);
 
@@ -564,7 +565,16 @@ void ejecutar_io(t_dispositivo* dispositivo) {
 
 			sem_post(&sem_algoritmo_planificador_largo_plazo);
 		}
+		signal(SIGINT,  &matar_dispositivo_io);
 	}
+}
+
+void matar_dispositivo_io() {
+	pthread_exit(NULL);
+}
+
+void matar_procesador() {
+	pthread_exit(NULL);
 }
 
 
@@ -868,9 +878,13 @@ void mate_close(t_procesador* estructura_procesador) {
 //LOS RECURSOS ASIGNADOS
 
 //ver el tema de que el deadlock no siga corriendo cada ese tiempo de config mientras estamos recuperandonos de un deadlock
+void matar_algoritmo_deadlock() {
+	pthread_exit(NULL);
+}
 
 void correr_algoritmo_deadlock() {
 	while(1) {
+		signal(SIGINT,  &matar_algoritmo_deadlock);
 		usleep(CONFIG_KERNEL.tiempo_deadlock*1000);
 		algoritmo_deteccion_deadlock();
 	}
@@ -932,7 +946,7 @@ void algoritmo_deteccion_deadlock() {
 					t_list* lista_bloqueados_por_semaforo_menos_este = list_filter(lista_bloqueados_por_semaforo, _criterio_procesos_distintos);
 
 					for(int k = 0; k < list_size(lista_bloqueados_por_semaforo_menos_este); k++) {
-						PCB* carpincho = list_get(lista_bloqueados_por_semaforo, k);
+						PCB* carpincho = list_get(lista_bloqueados_por_semaforo_menos_este, k);
 						for(int o = 0; o < list_size(carpincho->recursos_usados); o++) {
 							t_registro_uso_recurso* recurso_usado_carpincho = list_get(carpincho->recursos_usados, o);
 							if(strcmp(recurso_usado_carpincho->nombre, semaforo_en_que_esta_bloqueado->nombre) == 0) {
@@ -940,6 +954,8 @@ void algoritmo_deteccion_deadlock() {
 							}
 						}
 					}
+
+					list_destroy(lista_bloqueados_por_semaforo_menos_este);
 				}
 			}
 		}
@@ -1051,9 +1067,13 @@ void algoritmo_deteccion_deadlock() {
 		sem_post(&sem_grado_multiprogramacion);
 
 		pthread_mutex_unlock(&mutex_lista_semaforos_mate);
+		list_destroy(lista_bloqueados_por_semaforo);
+		list_destroy(lista_procesos_en_deadlock);
 		algoritmo_deteccion_deadlock();
 
 	} else {
+		list_destroy(lista_bloqueados_por_semaforo);
+		list_destroy(lista_procesos_en_deadlock);
 		pthread_mutex_unlock(&mutex_lista_semaforos_mate);
 
 	}
