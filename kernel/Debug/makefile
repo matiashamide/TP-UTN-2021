@@ -26,7 +26,7 @@ endif
 all: kernel
 
 dependents:
-	-cd /home/utnso/workspace/tp-2021-2c-DesacatadOS/futiles/Debug && $(MAKE) clean all
+	-cd /home/utnso/workspace/tp-2021-2c-DesacatadOS/futiles/Debug && $(MAKE) all
 
 # Tool invocations
 kernel: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2021-2c-DesacatadOS/futiles/Debug/libfutiles.so

@@ -16,11 +16,11 @@ int main(void) {
 
 void init_memoria() {
 
-	//Levantamos archivo de configuracion
-	CONFIG = crear_archivo_config_memoria("/home/utnso/workspace/tp-2021-2c-DesacatadOS/memoria/src/memoria.config");
-
 	//Inicializamos logger
 	LOGGER = log_create("/home/utnso/workspace/tp-2021-2c-DesacatadOS/memoria/MEMORIA.log", "MEMORIA", 1, LOG_LEVEL_INFO);
+
+	//Levantamos archivo de configuracion
+	crear_archivo_config_memoria("/home/utnso/workspace/tp-2021-2c-DesacatadOS/memoria/src/memoria.config");
 
 	//Iniciamos servidor
 	SERVIDOR_MEMORIA = iniciar_servidor(CONFIG.ip_memoria, CONFIG.puerto_memoria);
@@ -90,37 +90,37 @@ void iniciar_paginacion() {
 	POSICION_CLOCK = 0;
 }
 
-t_memoria_config crear_archivo_config_memoria(char* ruta) {
-    t_config* memoria_config = config_create(ruta);
-    t_memoria_config config;
+void crear_archivo_config_memoria(char* ruta) {
+    t_config* config = config_create(ruta);
+    t_memoria_config memoria_config;
 
-    if (memoria_config == NULL) {
+    if (config == NULL) {
         log_info(LOGGER, "No se pudo leer el archivo de configuracion de memoria\n");
         exit(-1);
     }
 
-    config.ip_memoria          = config_get_string_value(memoria_config, "IP"                      );
-    config.puerto_memoria      = config_get_string_value(memoria_config, "PUERTO"                  );
-    config.ip_swap             = config_get_string_value(memoria_config, "IP_SWAP"                 );
-	config.puerto_swap         = config_get_string_value(memoria_config, "PUERTO_SWAP"             );
-    config.tamanio_memoria     = config_get_int_value   (memoria_config, "TAMANIO"                 );
-    config.tamanio_pagina      = config_get_int_value   (memoria_config, "TAMANIO_PAGINA"          );
-    config.tipo_asignacion     = config_get_string_value(memoria_config, "TIPO_ASIGNACION"         );
+    memoria_config.ip_memoria          = config_get_string_value(config, "IP"                      );
+    memoria_config.puerto_memoria      = config_get_string_value(config, "PUERTO"                  );
+    memoria_config.ip_swap             = config_get_string_value(config, "IP_SWAP"                 );
+	memoria_config.puerto_swap         = config_get_string_value(config, "PUERTO_SWAP"             );
+    memoria_config.tamanio_memoria     = config_get_int_value   (config, "TAMANIO"                 );
+    memoria_config.tamanio_pagina      = config_get_int_value   (config, "TAMANIO_PAGINA"          );
+    memoria_config.tipo_asignacion     = config_get_string_value(config, "TIPO_ASIGNACION"         );
 
-    if (string_equals_ignore_case(config.tipo_asignacion,"FIJA")) {
-        config.marcos_max      = config_get_int_value   (memoria_config, "MARCOS_POR_CARPINCHO"    );
+    if (string_equals_ignore_case(memoria_config.tipo_asignacion,"FIJA")) {
+        memoria_config.marcos_max      = config_get_int_value   (config, "MARCOS_POR_CARPINCHO"    );
     }
 
-    config.alg_remp_mmu        = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_MMU" );
-    config.cant_entradas_tlb   = config_get_int_value   (memoria_config, "CANTIDAD_ENTRADAS_TLB"   );
-    config.alg_reemplazo_tlb   = config_get_string_value(memoria_config, "ALGORITMO_REEMPLAZO_TLB" );
-    config.retardo_acierto_tlb = config_get_int_value   (memoria_config, "RETARDO_ACIERTO_TLB"     );
-    config.retardo_fallo_tlb   = config_get_int_value   (memoria_config, "RETARDO_FALLO_TLB"       );
-    config.path_dump_tlb       = config_get_string_value(memoria_config, "PATH_DUMP_TLB"           );
-    config.kernel_existe	   = config_get_int_value   (memoria_config, "KERNEL_EXISTE"           );
+    memoria_config.alg_remp_mmu        = config_get_string_value(config, "ALGORITMO_REEMPLAZO_MMU" );
+    memoria_config.cant_entradas_tlb   = config_get_int_value   (config, "CANTIDAD_ENTRADAS_TLB"   );
+    memoria_config.alg_reemplazo_tlb   = config_get_string_value(config, "ALGORITMO_REEMPLAZO_TLB" );
+    memoria_config.retardo_acierto_tlb = config_get_int_value   (config, "RETARDO_ACIERTO_TLB"     );
+    memoria_config.retardo_fallo_tlb   = config_get_int_value   (config, "RETARDO_FALLO_TLB"       );
+    memoria_config.path_dump_tlb       = config_get_string_value(config, "PATH_DUMP_TLB"           );
+    memoria_config.kernel_existe	   = config_get_int_value   (config, "KERNEL_EXISTE"           );
 
-    //config_destroy(memoria_config);
-    return config;
+    CONFIG = memoria_config;
+    CFG = config;
 }
 
 //--------------------------------------------------------- COORDINACION DE CARPINCHOS ----------------------------------------------------------//
@@ -138,7 +138,6 @@ void coordinador_multihilo(){
 
 		pthread_create(&hilo_atender_carpincho, NULL, (void*)atender_carpinchos, socket_cliente);
 		pthread_detach(hilo_atender_carpincho);
-		//free(socket_cliente);
 	}
 }
 
@@ -184,7 +183,7 @@ void atender_carpinchos(int* cliente) {
 			int32_t size = recibir_entero(*cliente);
 			log_info(LOGGER, "MEMALLOC: el cliente %i solicito alocar memoria de %i bytes", *cliente, size);
 
-			retorno  = memalloc(pid, size, *cliente);
+			retorno = memalloc(pid, size, *cliente);
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
 			if (existe_kernel) {
@@ -336,8 +335,11 @@ void atender_carpinchos(int* cliente) {
 
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
-			free(cliente);
-			pthread_exit(NULL);
+			if (existe_kernel) {
+				free(cliente);
+				pthread_exit(NULL);
+			}
+
 
 		break;
 
@@ -347,7 +349,10 @@ void atender_carpinchos(int* cliente) {
 			printf("%s",mensaje);
 			fflush(stdout);
 
-			free(cliente);
+			if (existe_kernel) {
+				free(cliente);
+				pthread_exit(NULL);
+			}
 
 		break;
 
@@ -393,26 +398,29 @@ int memalloc(int32_t pid, int32_t size, int cliente){
 
 			pthread_mutex_lock(&mutex_frames);
 
-			if (!hay_frames_libres_mp(CONFIG.marcos_max)) {
+			t_list* frames_libres_MP = list_filter(FRAMES_MEMORIA, (void*)esta_libre_y_desasignado);
+
+			if (list_size(frames_libres_MP) < CONFIG.marcos_max) {
 				log_info(LOGGER, "Error: se supero el nivel de multiprogramacion, no hay frames libes en MP.", size, pid);
+				list_destroy(frames_libres_MP);
 				return -1;
 			}
 
 			//Reservamos los frames al PID
-			t_list* frames_libres_MP = list_filter(FRAMES_MEMORIA, (void*)esta_libre_y_desasignado);
-
 			for (int i = 0; i < CONFIG.marcos_max; i++){
 				t_frame* frame_libre = list_get(frames_libres_MP,i);
-				frame_libre->pid = pid;
+				frame_libre->pid     = pid;
 			}
 
 			pthread_mutex_unlock(&mutex_frames);
+
+			list_destroy(frames_libres_MP);
 		}
 
 		//Crea tabla de paginas para el proceso
 		t_tabla_pagina* nueva_tabla = malloc(sizeof(t_tabla_pagina));
-		nueva_tabla->paginas = list_create();
-		nueva_tabla->PID     = pid;
+		nueva_tabla->paginas        = list_create();
+		nueva_tabla->PID            = pid;
 
 		pthread_mutex_lock(&mutex_tablas_dp);
 		list_add(TABLAS_DE_PAGINAS, nueva_tabla);
@@ -902,15 +910,23 @@ void eliminar_proceso(int32_t pid) {
 }
 
 void deinit() {
+
 	free(MEMORIA_PRINCIPAL);
+
+	destruir_tlb();
+
+	list_destroy_and_destroy_elements(FRAMES_MEMORIA, free);
+	list_destroy_and_destroy_elements(PIDS_CLIENTE, free);
 
 	void _tabla_de_pag_destroyer(void* elemento) {
 		list_destroy_and_destroy_elements(((t_tabla_pagina*)elemento)->paginas, free);
+		free((t_tabla_pagina*)elemento);
 	}
 
 	list_destroy_and_destroy_elements(TABLAS_DE_PAGINAS, _tabla_de_pag_destroyer);
 
 	log_destroy(LOGGER);
+	config_destroy(CFG);
 }
 
 //------------------------------------------------- FUNCIONES ALLOCs/HEADERs ---------------------------------------------//
@@ -924,8 +940,7 @@ t_alloc_disponible* obtener_alloc_disponible(int32_t pid, int32_t size, uint32_t
 	offset     = posicion_heap_actual - CONFIG.tamanio_pagina * nro_pagina;
 
 	t_alloc_disponible* alloc = malloc(sizeof(t_alloc_disponible));
-
-	heap_metadata* header = desserializar_header(pid, nro_pagina, offset);
+	heap_metadata* header     = desserializar_header(pid, nro_pagina, offset);
 
 	if (header->is_free) {
 
@@ -962,6 +977,7 @@ t_alloc_disponible* obtener_alloc_disponible(int32_t pid, int32_t size, uint32_t
 				return alloc;
 			}
 
+			free(header);
 			alloc->direc_logica      = posicion_heap_actual;
 			alloc->flag_ultimo_alloc =  1;
 			return alloc;
@@ -1259,17 +1275,23 @@ int solicitar_frame_en_ppal(int32_t pid){
 		if (list_size(pags_proceso) < CONFIG.marcos_max) {
 
 			pthread_mutex_lock(&mutex_frames);
-			t_frame* frame = list_get(frames_libres_del_proceso(pid),0);
+			t_list* frames_libres_proceso = frames_libres_del_proceso(pid);
+			t_frame* frame = list_get(frames_libres_proceso,0);
 
 			if (frame != NULL) {
 				frame->ocupado = true;
 				frame->pid     = pid;
 
 				pthread_mutex_unlock(&mutex_frames);
-				return frame->id;
+				int id = frame->id;
+				list_destroy(frames_libres_proceso);
+				return id;
 			}
+
+			list_destroy(frames_libres_proceso);
 		}
 		pthread_mutex_unlock(&mutex_frames);
+
 		return ejecutar_algoritmo_reemplazo(pid);
 	}
 
@@ -1443,13 +1465,6 @@ int obtener_tiempo_MMU(){
 
 //--------------------------------------------- FUNCIONES PARA LAS LISTAS ADMIN. -----------------------------------------//
 
-bool hay_frames_libres_mp(int cant_frames_necesarios) {
-	t_list* frames_libres_MP = list_filter(FRAMES_MEMORIA, (void*)esta_libre_frame);
-	bool hay_frames = list_size(frames_libres_MP) >= cant_frames_necesarios;
-	free(frames_libres_MP);
-	return hay_frames;
-}
-
 t_list* paginas_en_mp(){
 
 	t_list* paginas = list_create();
@@ -1606,25 +1621,33 @@ int traer_pagina_a_mp(t_pagina* pagina) {
 	//Busco frame en donde voy a alojar la pagina que me traigo de SWAP: ya sea un frame libre o bien un frame de pag q reempl.
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
+		t_list* frames_libres_proceso = frames_libres_del_proceso(pagina->pid);
 
-		if (list_size(frames_libres_del_proceso(pagina->pid)) > 0) {
-			t_frame* frame = list_get(frames_libres_del_proceso(pagina->pid),0);
-			pos_frame = frame->id;
+		if (list_size(frames_libres_proceso)> 0) {
+
+			t_frame* frame = list_get(frames_libres_proceso,0);
+			pos_frame      = frame->id;
+
 		} else {
-			pos_frame = ejecutar_algoritmo_reemplazo(pagina->pid);
+			pos_frame      = ejecutar_algoritmo_reemplazo(pagina->pid);
 		}
+
+		list_destroy(frames_libres_proceso);
 	}
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
 
 		pthread_mutex_lock(&mutex_frames);
+
 		t_frame* frame = (t_frame*)list_find(FRAMES_MEMORIA, (void*)esta_libre_frame);
+
 		if (frame != NULL) {
 			frame->ocupado = true;
 			pos_frame = frame->id;
 		} else {
 			pos_frame = ejecutar_algoritmo_reemplazo(pagina->pid);
 		}
+
 		pthread_mutex_unlock(&mutex_frames);
 	}
 
@@ -1633,6 +1656,8 @@ int traer_pagina_a_mp(t_pagina* pagina) {
 	pagina->presencia  = true;
 	pagina->modificado = false;
 	pagina->frame_ppal = pos_frame;
+
+	free(pag_serializada);
 
 	return pos_frame;
 }
@@ -1759,6 +1784,14 @@ void eliminar_proceso_swap(int32_t pid){
 }
 
 void exit_memoria(){
+
+	exit_swamp();
+	deinit();
+
+	exit(1);
+}
+
+void exit_swamp() {
 	t_paquete_swap* paquete = malloc(sizeof(t_paquete_swap));
 	paquete = realloc(paquete, sizeof(t_paquete_swap));
 
@@ -1776,10 +1809,6 @@ void exit_memoria(){
 
 	free(a_enviar);
 	eliminar_paquete_swap(paquete);
-
-	deinit();
-
-	exit(1);
 }
 
 //-------------------------------------------- FUNCIONES DE ESTADO - t_frame & t_pagina - ------------------------------//
@@ -1792,16 +1821,16 @@ bool esta_libre_y_desasignado(t_frame* frame) {
 	return !frame->ocupado && frame->pid == -1;
 }
 
+int en_mp_sin_lock(t_pagina* pag){
+	return !pag->lock && pag->presencia;
+}
+
 int no_esta_lockeada(t_pagina* pag){
 	return !pag->lock;
 }
 
 int esta_en_mp(t_pagina* pag){
 	return pag->presencia;
-}
-
-int en_mp_sin_lock(t_pagina* pag){
-	return !pag->lock && pag->presencia;
 }
 
 int esta_en_swap(t_pagina* pag){
@@ -1823,23 +1852,30 @@ void set_modificado(t_pagina* pag){
 //--------------------------------------------------- FUNCIONES SIGNAL ----------------------------------------------------//
 
 void signal_metricas(){
+
 	log_info(LOGGER, "[SIGNAL METRICAS]: Recibi la senial de imprimir metricas, imprimiendo\n...");
 
-	//generar_metricas_tlb();
+	generar_metricas_tlb();
 	dump_memoria_principal();
-	exit_memoria();
 
 	exit(1);
+
 }
+
 void signal_dump(){
+
 	log_info(LOGGER, "[SIGNAL DUMP]: Recibi la senial de generar el dump, generando\n...");
+
 	dumpear_tlb();
 
 	exit(1);
 }
+
 void signal_clean_tlb(){
 	log_info(LOGGER, "[SIGNAL CLEAN TLB]: Recibi la senial para limpiar TLB, limpiando\n...");
+
 	limpiar_tlb();
+
 	exit(1);
 }
 
@@ -1855,9 +1891,11 @@ void dump_memoria_principal() {
 
 	file = fopen(path_name, "w+");
 
+	char* time = temporal_get_string_time("%d/%m/%y %H:%M:%S");
+
 	fprintf(file, "\n");
 	fprintf(file, "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
-	fprintf(file, "DUMP MEMORIA PRINCIPAL \n");
+	fprintf(file, "DUMP MEMORIA PRINCIPAL %s\n", time);
 	fprintf(file, "ALGORITMO DE REEMPLAZO DE MMU UTILIZADO: %s \n", CONFIG.alg_remp_mmu);
 
 	t_pagina* pagina;
@@ -1883,6 +1921,7 @@ void dump_memoria_principal() {
 
 	fprintf(file, "||\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
 	fclose(file);
+	free(time);
 	list_destroy(pags_mp);
 
 }
