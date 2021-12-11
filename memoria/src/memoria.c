@@ -1800,6 +1800,10 @@ int esta_en_mp(t_pagina* pag){
 	return pag->presencia;
 }
 
+int en_mp_sin_lock(t_pagina* pag){
+	return !pag->lock && pag->presencia;
+}
+
 int esta_en_swap(t_pagina* pag){
 	return !pag->presencia;
 }

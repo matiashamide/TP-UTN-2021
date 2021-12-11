@@ -121,7 +121,7 @@ void reemplazar_LRU(int pid, int pag, int frame){
 	pthread_mutex_lock(&mutexTLB);
 	t_entrada_tlb* victima = list_get_minimum(TLB, (void*) masVieja);
 	log_info(LOGGER, "|| TLB LRU || [VICTIMA] PID: %i | NRO_PAG: %i | FRAME: %i ||| [NUEVA ENTRADA] PID: %i | NRO_PAG: %i | FRAME: %i | \n", victima->pid, victima->pag, victima->frame, entrada_nueva->pid, entrada_nueva->pag, entrada_nueva->frame);
-	free(victima);
+	//free(victima);
 	list_add(TLB , entrada_nueva);
 	pthread_mutex_unlock(&mutexTLB);
 

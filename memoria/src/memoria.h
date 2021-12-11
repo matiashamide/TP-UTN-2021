@@ -166,6 +166,7 @@ void  deinit();
 bool esta_libre_frame(t_frame* frame);
 bool esta_libre_y_desasignado(t_frame* frame);
 int  no_esta_lockeada(t_pagina* pag);
+int  en_mp_sin_lock(t_pagina* pag);
 void lockear(t_pagina* pag);
 void unlockear(t_pagina* pag);
 void set_modificado(t_pagina* pag);
