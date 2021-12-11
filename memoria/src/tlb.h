@@ -1,4 +1,3 @@
-
 #ifndef TLB_H_
 #define TLB_H_
 
@@ -54,8 +53,6 @@ void printear_tlb();
 void generar_metricas_tlb();
 void dumpear_tlb();
 void limpiar_tlb();
-
-void destruir_tlb();
 
 //// ---- funciones DUMP
 void  mostrar_entradas_tlb(FILE* file);

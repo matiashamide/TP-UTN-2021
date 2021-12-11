@@ -1,3 +1,5 @@
+
+
 /*
  * memoria.h
  *
@@ -76,7 +78,6 @@ int PID_GLOBAL;
 int TIEMPO_MMU;
 
 t_memoria_config CONFIG;
-t_config* CFG;
 t_log* LOGGER;
 
 //// ---- estructuras administrativas
@@ -104,7 +105,7 @@ pthread_mutex_t mutex_clock;
 //// ---- funciones de inicializacion
 void init_memoria();
 void iniciar_paginacion();
-void crear_archivo_config_memoria(char* ruta);
+t_memoria_config crear_archivo_config_memoria(char* ruta);
 
 //// ---- funciones de coordinacion de carpinchos
 void recibir_peticion_para_continuar(int conexion);
@@ -135,11 +136,13 @@ int solicitar_frame_en_ppal(int pid);
 
 //// ---- funciones algoritmos de reemplazo
 int ejecutar_algoritmo_reemplazo(int pid);
-int algoritmo_LRU(t_list* paginas);
-int algoritmo_CLOCK_M(t_list* paginas);
+int reemplazar_con_LRU(int pid);
+int reemplazar_con_CLOCK_M(int pid);
 int obtener_tiempo_MMU();
+int algoritmo_clock(t_list* paginas);
 
 //// ---- funciones para listas administrativas
+bool            hay_frames_libres_mp(int frames_necesarios);
 t_list*         paginas_en_mp();
 t_tabla_pagina* tabla_por_pid(int pid);
 t_pagina*       pagina_por_id(int pid, int id);
@@ -157,13 +160,11 @@ void  enviar_pagina(void* pagina, int socket_cliente, uint32_t pid, uint32_t nro
 void  eliminar_pag_swap(int32_t pid , int nro_pagina);
 void  eliminar_proceso_swap(int32_t pid);
 void  exit_memoria();
-void  exit_swamp();
 void  deinit();
 
 //// ---- funciones de estado
 bool esta_libre_frame(t_frame* frame);
 bool esta_libre_y_desasignado(t_frame* frame);
-int  en_mp_sin_lock(t_pagina* pag);
 int  no_esta_lockeada(t_pagina* pag);
 void lockear(t_pagina* pag);
 void unlockear(t_pagina* pag);

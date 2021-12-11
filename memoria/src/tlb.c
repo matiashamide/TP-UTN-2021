@@ -256,10 +256,16 @@ void printear_tlb() {
 	}
 }
 
-void limpiar_tlb() {
-	list_clean_and_destroy_elements(TLB, free);
-}
+void limpiar_tlb(){
 
-void destruir_tlb(){
-	list_destroy_and_destroy_elements(TLB, free);
+	void limpiar_entrada(void* elemento){
+		t_entrada_tlb* entrada = (t_entrada_tlb*)elemento;
+
+		entrada->frame      = -1;
+		entrada->pag        = -1;
+		entrada->pid        = -1;
+		entrada->ultimo_uso = -1;
+	}
+
+	list_iterate(TLB , limpiar_entrada);
 }
