@@ -168,68 +168,9 @@ void atender_carpinchos(int* cliente) {
 
 		peticion_carpincho operacion = recibir_operacion(*cliente);
 		int32_t size_paquete = recibir_entero(*cliente);
-		int32_t pid,dir_logica, size_nombre_semaforo, size_contenido, retorno = 1;
-		char* nombre;
+		int32_t pid, dir_logica, size_contenido, retorno = 1;
 
 		switch (operacion) {
-
-		case INICIALIZAR_SEM:
-
-			size_nombre_semaforo = recibir_entero(*cliente);
-			nombre = malloc(size_nombre_semaforo);
-			recv(*cliente, &nombre, size_nombre_semaforo, MSG_WAITALL);
-
-			recibir_entero(*cliente);
-
-			dar_permiso_para_continuar(*cliente);
-
-			free(nombre);
-
-		break;
-
-		case ESPERAR_SEM:
-
-		//	size_nombre_semaforo = recibir_entero(*cliente);
-			nombre = malloc(size_paquete);
-			recv(*cliente, &nombre, size_paquete, MSG_WAITALL);
-
-			dar_permiso_para_continuar(*cliente);
-			free(nombre);
-
-		break;
-
-		case POST_SEM:
-
-		//	size_nombre_semaforo = recibir_entero(*cliente);
-			nombre = malloc(size_paquete);
-			recv(*cliente, &nombre, size_paquete, MSG_WAITALL);
-
-			dar_permiso_para_continuar(*cliente);
-			free(nombre);
-
-		break;
-
-		case DESTROY_SEM:
-
-			//size_nombre_semaforo = recibir_entero(*cliente);
-			nombre = malloc(size_paquete);
-			recv(*cliente, &nombre, size_paquete, MSG_WAITALL);
-
-			dar_permiso_para_continuar(*cliente);
-			free(nombre);
-
-		break;
-
-		case CALL_IO:
-
-			//size_nombre_semaforo = recibir_entero(*cliente);
-			nombre = malloc(size_paquete);
-			recv(*cliente, &nombre, size_paquete, MSG_WAITALL);
-
-			dar_permiso_para_continuar(*cliente);
-			free(nombre);
-
-		break;
 
 		case MEMALLOC:;
 
@@ -392,10 +333,9 @@ void atender_carpinchos(int* cliente) {
 
 			send(*cliente, &retorno, sizeof(uint32_t), 0);
 
-			if (existe_kernel) {
-				free(cliente);
-				pthread_exit(NULL);
-			}
+
+			free(cliente);
+			pthread_exit(NULL);
 
 
 		break;
@@ -419,6 +359,7 @@ void atender_carpinchos(int* cliente) {
 		break;
 
 		}
+
 	}
 }
 
