@@ -168,9 +168,68 @@ void atender_carpinchos(int* cliente) {
 
 		peticion_carpincho operacion = recibir_operacion(*cliente);
 		int32_t size_paquete = recibir_entero(*cliente);
-		int32_t pid,dir_logica, size_contenido, retorno = 1;
+		int32_t pid,dir_logica, size_nombre_semaforo, size_contenido, retorno = 1;
+		char* nombre;
 
 		switch (operacion) {
+
+		case INICIALIZAR_SEM:
+
+			size_nombre_semaforo = recibir_entero(*cliente);
+			nombre = malloc(size_nombre_semaforo);
+			recv(*cliente, &nombre, size_nombre_semaforo, MSG_WAITALL);
+
+			recibir_entero(*cliente);
+
+			dar_permiso_para_continuar(*cliente);
+
+			free(nombre);
+
+		break;
+
+		case ESPERAR_SEM:
+
+		//	size_nombre_semaforo = recibir_entero(*cliente);
+			nombre = malloc(size_paquete);
+			recv(*cliente, &nombre, size_paquete, MSG_WAITALL);
+
+			dar_permiso_para_continuar(*cliente);
+			free(nombre);
+
+		break;
+
+		case POST_SEM:
+
+		//	size_nombre_semaforo = recibir_entero(*cliente);
+			nombre = malloc(size_paquete);
+			recv(*cliente, &nombre, size_paquete, MSG_WAITALL);
+
+			dar_permiso_para_continuar(*cliente);
+			free(nombre);
+
+		break;
+
+		case DESTROY_SEM:
+
+			//size_nombre_semaforo = recibir_entero(*cliente);
+			nombre = malloc(size_paquete);
+			recv(*cliente, &nombre, size_paquete, MSG_WAITALL);
+
+			dar_permiso_para_continuar(*cliente);
+			free(nombre);
+
+		break;
+
+		case CALL_IO:
+
+			//size_nombre_semaforo = recibir_entero(*cliente);
+			nombre = malloc(size_paquete);
+			recv(*cliente, &nombre, size_paquete, MSG_WAITALL);
+
+			dar_permiso_para_continuar(*cliente);
+			free(nombre);
+
+		break;
 
 		case MEMALLOC:;
 
@@ -322,8 +381,6 @@ void atender_carpinchos(int* cliente) {
 			} else {
 				pid = pid_por_conexion(*cliente);
 			}
-
-			printf("MATECLOSE DEL PID %i", pid);
 
 			eliminar_proceso(pid);
 
@@ -1316,95 +1373,49 @@ int solicitar_frame_en_ppal(int32_t pid){
 
 int ejecutar_algoritmo_reemplazo(int32_t pid) {
 
-	int retorno = -1;
-
-	if (string_equals_ignore_case(CONFIG.alg_remp_mmu, "LRU"))
-		retorno = reemplazar_con_LRU(pid);
-
-	if(string_equals_ignore_case(CONFIG.alg_remp_mmu, "CLOCK-M")){
-		pthread_mutex_lock(&mutex_clock);
-		retorno = reemplazar_con_CLOCK_M(pid);
-		pthread_mutex_unlock(&mutex_clock);
-	}
-
-	return retorno;
-}
-
-int reemplazar_con_LRU(int32_t pid) {
-
+	int pos_victima;
 	t_list* paginas;
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
-		paginas = tabla_por_pid(pid)->paginas;
-		paginas = list_filter(paginas, (void*)esta_en_mp);
-		paginas = list_filter(paginas, (void*)no_esta_lockeada);
+		t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
+		paginas = list_filter(paginas_proceso, (void*)en_mp_sin_lock);
 	}
 
 	if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
-		paginas = list_filter(paginas_en_mp(), (void*)no_esta_lockeada);
+		t_list* paginas_mp = paginas_en_mp();
+		paginas = list_filter(paginas_mp, (void*)no_esta_lockeada);
+		list_destroy(paginas_mp);
 	}
 
-	int masVieja(t_pagina* unaPag, t_pagina* otraPag) {
-		return (otraPag->tiempo_uso > unaPag->tiempo_uso);
+	if (string_equals_ignore_case(CONFIG.alg_remp_mmu, "LRU"))
+		pos_victima = algoritmo_LRU(paginas);
+
+	if (string_equals_ignore_case(CONFIG.alg_remp_mmu, "CLOCK-M")){
+
+		bool index_frame(void* ele1 , void* ele2){
+			t_pagina* pag1 = (t_pagina*) ele1;
+			t_pagina* pag2 = (t_pagina*) ele2;
+			return pag1->frame_ppal < pag2->frame_ppal;
+		}
+
+		list_sort(paginas , index_frame);
+
+		pthread_mutex_lock(&mutex_clock);
+		pos_victima = algoritmo_CLOCK_M(paginas);
+		pthread_mutex_unlock(&mutex_clock);
 	}
 
-	list_sort(paginas, (void*)masVieja);
-
-	//COMO REEMPLAZO SEGUN LRU, ELIJO LA PRIMERA QUE ES LA MAS VIEJA
-	t_pagina* pag_reemplazo = list_get(paginas, 0);
-	lockear(pag_reemplazo);
-
-	desreferenciar_pag_tlb(pid , pag_reemplazo->id , pag_reemplazo->frame_ppal);
-
-	log_info(LOGGER, "[REEMPLAZO LRU] Saco NRO_PAG %i del PID %i en FRAME %i", pag_reemplazo->id, pag_reemplazo->pid, pag_reemplazo->frame_ppal);
-
-	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
-	if(pag_reemplazo->modificado) {
-		tirar_a_swap(pag_reemplazo);
-		pag_reemplazo->modificado = false;
-	}
-
-	pag_reemplazo->presencia  = false;
-	unlockear(pag_reemplazo);
-
-	list_destroy(paginas);
-	return pag_reemplazo->frame_ppal;
-}
-
-int reemplazar_con_CLOCK_M(int32_t pid) {
-
-    t_list* paginas;
-
-    if (string_equals_ignore_case(CONFIG.tipo_asignacion, "FIJA")) {
-        t_list* paginas_proceso = tabla_por_pid(pid)->paginas;
-        paginas_proceso = list_filter(paginas_proceso, (void*)esta_en_mp);
-        paginas = list_filter(paginas_proceso, (void*)no_esta_lockeada);
-    }
-    if (string_equals_ignore_case(CONFIG.tipo_asignacion, "DINAMICA")) {
-            paginas = list_filter(paginas_en_mp(), (void*)no_esta_lockeada);
-	}
-
-    bool index_frame(void* ele1 , void* ele2){
-		t_pagina* pag1 = (t_pagina*) ele1;
-		t_pagina* pag2 = (t_pagina*) ele2;
-		return pag1->frame_ppal < pag2->frame_ppal;
-	}
-
-	list_sort(paginas , index_frame);
-
-	int retorno = algoritmo_clock(paginas);
-
-	if ( retorno == -1){
-		printf("No se encontró a la victima... F");
+	if (pos_victima == -1){
+		printf("Error ejecutando el algoritmo de reemplazo.");
 		exit(1);
 	}
 
-	t_pagina* victima = list_get(paginas,retorno);
+	t_pagina* victima = list_get(paginas, pos_victima);
 
 	lockear(victima);
-	desreferenciar_pag_tlb(pid , victima->id , victima->frame_ppal);
+	desreferenciar_pag_tlb(pid, victima->id, victima->frame_ppal);
 
-	log_info(LOGGER, "[REEMPLAZO CLOCK-M] Saco NRO_PAG %i del PID %i en FRAME %i", victima->id, victima->pid, victima->frame_ppal);
+	log_info(LOGGER, "[REEMPLAZO] Saco NRO_PAG %i del PID %i en FRAME %i", victima->id, victima->pid, victima->frame_ppal);
 
 	//SI EL BIT DE MODIFICADO ES 1, LA GUARDO EM MV -> PORQUE TIENE CONTENIDO DIFERENTE A LO QUE ESTA EN MV
 	if (victima->modificado) {
@@ -1412,17 +1423,28 @@ int reemplazar_con_CLOCK_M(int32_t pid) {
 		victima->modificado = false;
 	}
 
-	victima->presencia = 0;
+	victima->presencia = false;
 	unlockear(victima);
 
-	return victima->frame_ppal;
+	list_destroy(paginas);
 
+	return victima->frame_ppal;
 }
 
-int algoritmo_clock(t_list* paginas){
+int algoritmo_LRU(t_list* paginas) {
+	int masVieja(t_pagina* unaPag, t_pagina* otraPag) {
+		return (otraPag->tiempo_uso > unaPag->tiempo_uso);
+	}
+
+	list_sort(paginas, (void*)masVieja);
+	return 0;
+}
+
+int algoritmo_CLOCK_M(t_list* paginas){
  int pag_seleccionada;
 
  	 for(int i = 1; i <= 4; i++){
+
  		 for(int j = 0; j < list_size(paginas); j++){
 
  			 if (POSICION_CLOCK >= list_size(paginas)) {
@@ -1431,7 +1453,7 @@ int algoritmo_clock(t_list* paginas){
 
  			 t_pagina* pagina = list_get(paginas, POSICION_CLOCK);
 
- 			 if(i == 1 || i ==3){
+ 			 if (i == 1 || i ==3) {
  				 //Buscamos 0,0
  				 if (pagina->uso == false && pagina->modificado == false) {
  					 pag_seleccionada = POSICION_CLOCK;
@@ -1440,7 +1462,10 @@ int algoritmo_clock(t_list* paginas){
  				 } else {
  					 POSICION_CLOCK++;
  				 }
- 			 }if(i == 2 || i ==4){
+
+ 			 }
+
+ 			 if(i == 2 || i == 4) {
  				 if (pagina->uso == false && pagina->modificado == true) {
  					 pag_seleccionada = POSICION_CLOCK;
  					 POSICION_CLOCK++;

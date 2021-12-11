@@ -190,7 +190,8 @@ void dumpear_tlb(){
     char* path_name = string_new();
     string_append(&path_name, CONFIG.path_dump_tlb);
     string_append(&path_name, "/");
-    string_append(&path_name, nombrar_dump_file());
+    char* nombre = nombrar_dump_file();
+    string_append(&path_name, nombre);
 
     log_info(LOGGER,"Creo un archivo de dump con el nombre %s\n", path_name);
 
@@ -210,6 +211,7 @@ void dumpear_tlb(){
     fclose(file);
 
     free(path_name);
+    free(nombre);
     free(time);
 }
 

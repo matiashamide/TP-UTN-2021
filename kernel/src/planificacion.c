@@ -226,6 +226,7 @@ void ejecutar(t_procesador* estructura_procesador) {
 		default:
 			log_warning(LOGGER,"Operacion desconocida. No quieras meter la pata");
 			printf("Operacion desconocida. No quieras meter la pata\n");
+			pthread_exit(NULL);
 			break;
 		}
 	}
